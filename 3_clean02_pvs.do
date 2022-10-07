@@ -6,11 +6,55 @@ u "$clean01survey", clear
 
 ****** Renaming variables, recoding value labels, and labeling variables ******
 
-***************************** Renaming variables *****************************  
+***************************** Recode value labels *****************************
+ * Recode values and value labels so that their values and direction make sense
+
+* All Yes/No questions
+
+recode Q6 Q11 Q12 /// 
+	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know"), ///
+	   pre(rec) label(yes_no)
+
+* All Excellent to Poor scales
+
+recode Q9 ///
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
+	   (5 = 0 Poor) (.a = .a NA) (.d = .d "Don't Know") (.r = .r Refused), /// 
+	   pre(rec) label(exc_poor)
+
+* All Very Confident to Not at all Confident scales 
+
+recode Q16 Q17 ///
+	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
+	   (3 = 1 "Not too confident") (4 = 0 "Not at all confident") /// 
+	   (.a = .a NA) (.d = .d "Don't Know") (.r = .r Refused), /// 
+	   pre(rec) label(vc_nc)
+
+* Note to Rodrigo: Double check the inclusion of "Don't know"	   
+	   
+* Other questions 
+* COVID doses question 
+* Ignore Q49 and Q49_new for now 
+
+
+***************************** Renaming variables *****************************
+* Rename variables to match question numbers in current survey 
+  
 ren Q28 Q28_A
 ren Q28_NEW Q28_B
 
-***************************** Recode value labels ***************************** 
+drop Q6 Q11 Q12 Q9 Q16 Q17
+ren rec* *
+
+***************************** Labeling variables ***************************** 
+ 
+lab var Q6 "Q6. Do you have health insurance?"
+
+* Note for NK: Will have to figure out what to do with Other, specify data 
+
+/*
+* Another option 
+u "$clean01survey", clear 
 
 * All Yes/No questions
 recode Q6 Q11 Q12 (2 = 0) 
@@ -19,33 +63,4 @@ lab de yes_no 1 "Yes" 0 "No" .r "Refused" .d "Don't know", replace
 
 lab val Q6 Q11 Q12 yes_no
 
-* Another way to do this 
-decode Q6
-
-* All Excellent to Poor scales
-
-recode Q9 (1 = 4) (2 = 3) (3 = 2) (4 = 1) (5 = 0)
-
-lab de exc_pr 4 "Excellent" 3 "Very Good" 2 "Good" 1 "Fair" 0 "Poor" /// 
-				.a "NA" .d "Don't know" .r "Refused"
-				
-lab val Q9 exc_pr
-
-* All Very Confident to Not at all Confident scales 
-
-
-* Other questions 
-* COVID doses question 
-
-*Q49
-decode Q49, gen(Q49_new)
-destring Q49_new,replace
-recode Q49_new (. = .a) if Q23 == 0 | Q24 == 1 | Q24 == .r 
-recode Q49_new (. = .r) if Q49 == .r
-
-***************************** Labeling variables ***************************** 
-* Ask Todd about variable labels? 
 lab var Q6 "Q6. Do you have health insurance?"
-
-
-* NK Note: Will have to figure out what to do with Other, specify data 
