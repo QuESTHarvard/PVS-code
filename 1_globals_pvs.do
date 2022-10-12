@@ -3,7 +3,7 @@
 * N. Kapoor 
 * This file is based off of IPA High Frequency Checks Globals do-file 
 ********************************************************************************
-
+*Test
 	* NB: Edit this section: Change value to 0 to turn off specific checks
 	
 	gl run_ids				1	//	Check Survey ID for duplicates
