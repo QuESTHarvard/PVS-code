@@ -4,6 +4,7 @@
 
 u "$clean01survey", clear 
 
+
 ****** Renaming variables, recoding value labels, and labeling variables ******
 
 ***************************** Recode value labels *****************************
