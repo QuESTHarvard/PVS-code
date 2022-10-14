@@ -33,10 +33,10 @@ ipacheck update
 run "$pvs_dq/1_globals_pvs.do"
 
 * Initial data cleaning (prepping for HFC)
-run "$pvs_dq/$country/2_clean01_pvs.do"
+run "$pvs_dq/2_cr01_pvs.do"
 
 * High frequency checks 
-run "$pvs_dq/3_hfc_pvs.do"
+run "$pvs_dq/4_an01_pvs.do"
 
 * Descriptive Analysis 
-run "$pvs_dq/4_an01_pvs.do"
+run "$pvs_dq/5_an02_pvs.do"
