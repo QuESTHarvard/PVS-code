@@ -3,7 +3,7 @@
 * September 2022
 * N. Kapoor 
 * This file is based off of IPA High Frequency Checks 4_checksurvey.do file 
-* This is a subset of commands from the IPACHECK package relevant to PVS
+* This is a subset of commands from the IPACHECK package relevant to PVS for data quality checks 
 
 clear all
 set more off 
@@ -92,6 +92,8 @@ use "$clean01survey", clear
  * This incorrect SD is making range too narrow, thus, identifying outliers that are not likely outliers 
  * Below, I try a different method, and output a file that flags outliers using the SD method
  * In global file, edit which variables to check for outliers 
+ 
+ * New Note to Todd (10/16/2022) - IPA said would fix this command last week! I haven't had a chance to check it, and may take some time for it to update 
 
 	if $run_outliers {
 		foreach var in $ol_var {

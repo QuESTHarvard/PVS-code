@@ -1,6 +1,7 @@
-* PVS Additional Cleaning
+* PVS Additional Cleaning for analyses 
 * September 2022
 * N. Kapoor & R. B. Lobato
+* Note to Todd: Eventually this file might be combined with cr01  
 
 u "$clean01survey", clear 
 
@@ -52,6 +53,7 @@ ren rec* *
 lab var Q6 "Q6. Do you have health insurance?"
 
 * Note for NK: Will have to figure out what to do with Other, specify data 
+
 
 /*
 * Another option 

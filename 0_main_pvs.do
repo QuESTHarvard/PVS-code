@@ -1,6 +1,8 @@
-* PVS Main file for data quality checks
+* PVS Main file 
 * September 2022
 * N. Kapoor 
+* This file sets all macros and runs all .do files
+* Note to Todd: Eventually, any absolutely necessary globals from the globals will be added here 
 * This is based on the data and files being in the internal file, file paths will change 
 
 

@@ -2,6 +2,9 @@
 * September 2022
 * N. Kapoor 
 * This file is based off of IPA High Frequency Checks Globals do-file 
+* Note to Todd - eventually only relevant globals will be added to the Main file to reduce the number of files 
+* I think some globals will still be useful, but a lot of the globals that include like question numbers will just have to be removed since it might vary so much by country 
+
 ********************************************************************************
 
 	* NB: Edit this section: Change value to 0 to turn off specific checks
