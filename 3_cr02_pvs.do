@@ -3,7 +3,8 @@
 * N. Kapoor & R. B. Lobato
 * Note to Todd: Eventually this file might be combined with cr01  
 
-u "$clean01survey", clear 
+* u "$clean01survey", clear 
+use "/Users/rodba/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/Internal HSPH/Data Quality/Data/clean01_all.dta"
 
 
 ****** Renaming variables, recoding value labels, and labeling variables ******
