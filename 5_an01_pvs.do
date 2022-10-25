@@ -7,7 +7,7 @@ set more off
 
  * Import clean data
 
-use "$clean01survey", clear 
+use "$pvs01", clear 
 
 * Q for Todd - I don't see how we can add N's for categorical variables within the summtab2 command?
 * 				Are there any other issues with the megatable that MEK identified that we can fix here? 
@@ -61,3 +61,5 @@ summtab2 , by(Country) vars(Q66 Q67) ///
 		  mean median range pmiss total replace excel /// 
 		  excelname(pvs_interim_results) sheetname(other_items) directory("$output") ///
 		  title(Other items)
+
+* Note to Todd: Right now I'm saving this with the HFC output, but maybe this should eventually go somewhere else

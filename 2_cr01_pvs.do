@@ -134,18 +134,18 @@ gen formversion = 1
 
 * Save data
 
-save "$clean01survey", replace 
+save "$pvs01", replace 
 
 * Save Kenya data 
 preserve
 keep if Country == 5
-save "$data/clean01_Kenya.dta", replace
+save "$data/Kenya/00 interim data/pvs_ke_01.dta", replace
 restore
 
 * Save Ethiopia data 
 preserve 
 keep if Country == 3
-save "$data/clean01_Ethiopia.dta", replace
+save "$data/Ethiopia/00 interim data/pvs_et_01", replace
 restore
 
 *------------------------------------------------------------------------------*

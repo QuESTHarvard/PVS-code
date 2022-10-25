@@ -34,7 +34,7 @@
 
 	* NB: Edit this section: Change filenames if neccesary
 	
-	gl inputfile			"$pvs_dq/hfc_inputs.xlsm"			
+	gl inputfile			"$data_mc/03 hfc/Input/hfc_inputs.xlsm"			
 	
 
 /* Datasets
@@ -51,21 +51,21 @@
 *------------------------------------------------------------------------------*
 	
 	* NB: Edit this section: Change filenames if neccesary
+	* Currently interim data and saving to interim data folder 
 	
-	gl rawsurvey			"$data/HARVARD(ET_Main,Ke_Main,Ke_F2F)_21.09.222.dta" 		
-	gl clean01survey		"$data/clean01_all.dta"			
-
-* Added date for the purposes of the quality checks 
+	gl rawsurvey			"$data_mc/00 interim data/HARVARD(ET_Main,Ke_Main,Ke_F2F)_21.09.222.dta" 		
+	gl pvs01			    "$data_mc/00 interim data/pvs_et_ke_01.dta"			
 
 **# Output Date Folder
 *------------------------------------------------------------------------------*	
 	
 	* NB: DO NOT EDIT THIS SECTION (other than the file path)
 	
-	gl folder_date			= string(year(today())) + "-`:disp %tdNN today()'-`:disp %tdDD today()'"
-	cap mkdir				"$output/$folder_date"
+*	gl folder_date			= string(year(today())) + "-`:disp %tdNN today()'-`:disp %tdDD today()'"
+*	cap mkdir				"$output/$folder_date"
 
 * Q for TODD - do we want to keep the folder date? 
+* I just removed it since we aren't really doing "HFCs" - and gets a little annoying having a different date any day you run it, even if it is the same data 
 
 /* Output files
 
@@ -85,10 +85,10 @@
 
 	* NB: Edit this section: Change filenames if neccesary
 	
-	gl id_dups_output 		"$output/$folder_date/survey_duplicates.dta"	
-	gl hfc_output			"$output/$folder_date/hfc_output.xlsx"		
-	gl surveydb_output		"$output/$folder_date/surveydb.xlsx"			
-	gl enumdb_output		"$output/$folder_date/enumdb.xlsx"			
+	gl id_dups_output 		"$output/survey_duplicates.dta"	
+	gl hfc_output			"$output/hfc_output.xlsx"		
+	gl surveydb_output		"$output/surveydb.xlsx"			
+	gl enumdb_output		"$output/enumdb.xlsx"			
 	
 /* Admin variables
 

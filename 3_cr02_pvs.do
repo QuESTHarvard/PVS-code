@@ -3,7 +3,7 @@
 * N. Kapoor & R. B. Lobato
 * Note to Todd: Eventually this file might be combined with cr01  
 
-* u "$clean01survey", clear 
+* u "$pvs01", clear 
 use "/Users/rodba/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/Internal HSPH/Data Quality/Data/clean01_all.dta"
 
 ****** Renaming variables, recoding value labels, and labeling variables ******
@@ -17,9 +17,13 @@ recode Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused), ///
 	   pre(rec) label(yes_no)
 
-recode Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q37_B Q38 Q66 /// 
+recode Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 /// 
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know"), ///
 	   pre(rec) label(yes_no_dk)
+
+* Note to Rodrigo: Q37_B isn't in these data right now so I removed it (command won't run with it there)
+* Feel free to delete this and above comment, and just leave below comment for our reference 
+* For future data, may need to add Q37_B 
 
 recode Q39 Q40 /// 
 	   (1 = 1 Yes) (2 = 0 No) ///
@@ -35,7 +39,7 @@ recode Q39 Q40 ///
 *	   pre(rec) label(exc_poor)
 **
 
-recode Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56 Q59 Q60 Q61///
+recode Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56 Q59 Q60 Q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor)
@@ -81,7 +85,7 @@ recode Q14_NEW ///
 	pre(rec) label(covid_vacc)
 	
 recode Q15 /// 
-	   (1 = 1 Yes, "I plan to receive all required doses") ///
+	   (1 = 1 "Yes, I plan to receive all required doses") ///
 	   (2 = 0 "No, don't plan to receive all required doses") ///
 	   (.r = .r Refused), ///
 	   pre(rec) label(yes_no_doses)
@@ -108,10 +112,11 @@ recode Q49 ///
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-drop Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q37_B ///
+drop Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 Q30 Q31 Q32 Q33 Q34 Q35 Q36 ///
 	Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H ///
 	Q48_I Q54 Q55 Q56 Q59 Q60 Q61 Q48_E Q48_J Q50_A Q50_B Q50_C Q50_D Q16 ///
 	Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49
+
 ren rec* *
   
 ren Q14_NEW Q14
@@ -120,11 +125,16 @@ ren Q19_4 Q19_other
 ren Q21_9 Q21_other
 ren Q28 Q28_A
 ren Q28_NEW Q28_B
-ren Q37_B Q37
+*ren Q37_B Q37
 ren Q42_10 Q42_other
 ren Q43_4 Q43_other
 
+* Q37_B not in current data (country_specific )
+
 *Ask Neena about Q7_other Q19_4, Q20_other,Q21_9, 43_4 (how do we want to name them). The options of "other" don't exixt as a separate variable in the original questionnaire.
+
+* Note to Rodrigo: You are correct, these aren't in the current data. Let's call them all "Q#_Other"
+* Feel free to delete my comments after you address them
 
 ***************************** Labeling variables ***************************** 
  
@@ -135,16 +145,10 @@ lab var Q6 "Q6. Do you have health insurance?"
 
 * Note for NK: Will have to figure out what to do with Other, specify data 
 
+***************************** Save data *****************************
+* Note to Rodrigo: When finished, save data in the "Data/Multi-country/interim 00" folder 
+* The data can be named pvs_ke_et_02
+* I wrote a command below, I can show you how to use macros at some point 
 
-/*
-* Another option 
-u "$clean01survey", clear 
+* save "$data_mc/00 interim data/pvs_et_ke_02.dta", replace
 
-* All Yes/No questions
-recode Q6 Q11 Q12 (2 = 0) 
-
-lab de yes_no 1 "Yes" 0 "No" .r "Refused" .d "Don't know", replace
-
-lab val Q6 Q11 Q12 yes_no
-
-lab var Q6 "Q6. Do you have health insurance?"

@@ -12,17 +12,19 @@ macro drop _all
 
 *Project settings
 *Individual users 
-global user "/Users/nek096/Dropbox (Harvard University)"
+global user "/Users/nek096"
 
-* Project paths 
-* Path to internal .do files folder (will change)
-global pvs_dq "$user/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/Internal HSPH/Data Quality"
+* Path to data folder 
+global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
 
-* Output (will change)
-global output "$pvs_dq/Output"
+* Path to multi-country data folder (includes input and output folders for HFCs)
+global data_mc "$data/Multi-country"
 
-* Currently using data in internal folder (will change)
-global data "$pvs_dq/Data"
+* Path to HFC output folders
+global output "$data_mc/03 hfc/Output"
+
+* Path to GitHub folder 
+global github "$user/Documents/GitHub/PVS-code"
 
 ************************************************
 * Required packages 
@@ -32,13 +34,15 @@ ipacheck update
 
 ************************************************
 * Run Globals 
-run "$pvs_dq/1_globals_pvs.do"
+run "$github/1_globals_pvs.do"
 
 * Initial data cleaning (prepping for HFC)
-run "$pvs_dq/2_cr01_pvs.do"
+run "$github/2_cr01_pvs.do"
+
+run "$github/3_cr01_pvs.do"
 
 * High frequency checks 
-run "$pvs_dq/4_an01_pvs.do"
+run "$github/4_hfc_pvs.do"
 
 * Descriptive Analysis 
-run "$pvs_dq/5_an02_pvs.do"
+run "$github/5_an01_pvs.do"

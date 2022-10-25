@@ -10,7 +10,7 @@ set more off
 
  * Import prepped data
 
-use "$clean01survey", clear 
+use "$pvs01", clear 
  
 
  *====================== Check start/end date of survey ======================* 
@@ -105,7 +105,7 @@ use "$clean01survey", clear
 			gen `var'_lower = `var'_mean - (3*`var'_sd)
 			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
 			keep if `var'_otl == 1
-			export exc InterviewerID_recoded Respondent_Serial Country `var' `var'_mean `var'_sd using "$output/$folder_date/outliers.xlsx", sh(`var', replace) first(varl)
+			export exc InterviewerID_recoded Respondent_Serial Country `var' `var'_mean `var'_sd using "$output/outliers.xlsx", sh(`var', replace) first(varl)
 			restore
 		
 	 }
