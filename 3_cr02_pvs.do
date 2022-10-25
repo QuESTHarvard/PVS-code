@@ -15,14 +15,12 @@ use "/Users/rodba/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core 
 recode Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 /// 
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused), ///
 	   pre(rec) label(yes_no)
-	   
-*Ask about the don't know. Not all have dk, but on the original version all werwe recoded with dk
 
-recode Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q37_B Q38 Q66/// 
+recode Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q37_B Q38 Q66 /// 
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know"), ///
 	   pre(rec) label(yes_no_dk)
 
-recode Q39 40 /// 
+recode Q39 Q40 /// 
 	   (1 = 1 Yes) (2 = 0 No) ///
 	   (3 = .a "I did not get healthcare in past 12 months") ///
 	   (.r = .r Refused), ///
@@ -51,7 +49,7 @@ recode Q48_J ///
 	   (5 = 0 Poor) (6 = .a "The clinic had no other staff") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor)
 	   
-recode Q50_A Q50_B Q50_C Q50_D///
+recode Q50_A Q50_B Q50_C Q50_D ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (6 = .a "I am unable to judge") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor)
@@ -108,17 +106,29 @@ recode Q49 ///
 ***************************** Renaming variables *****************************
 * Rename variables to match question numbers in current survey 
 
-***Ro Note: Ask Neena again what needs to be done here
+***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
+drop Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q37_B ///
+	Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H ///
+	Q48_I Q54 Q55 Q56 Q59 Q60 Q61 Q48_E Q48_J Q50_A Q50_B Q50_C Q50_D Q16 ///
+	Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49
+ren rec* *
   
+ren Q14_NEW Q14
+ren Q15_NEW Q15
+ren Q19_4 Q19_other
+ren Q21_9 Q21_other
 ren Q28 Q28_A
 ren Q28_NEW Q28_B
+ren Q37_B Q37
+ren Q42_10 Q42_other
+ren Q43_4 Q43_other
 
-drop Q6 Q11 Q12 Q9 Q16 Q17
-ren rec* *
+*Ask Neena about Q7_other Q19_4, Q20_other,Q21_9, 43_4 (how do we want to name them). The options of "other" don't exixt as a separate variable in the original questionnaire.
 
 ***************************** Labeling variables ***************************** 
  
 lab var Q6 "Q6. Do you have health insurance?"
+**All questions
 
 *Ro note: Ask what I need to do here*
 
