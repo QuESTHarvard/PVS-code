@@ -39,9 +39,14 @@ recode Q39 Q40 ///
 *	   pre(rec) label(exc_poor)
 **
 
-recode Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56 Q59 Q60 Q61 ///
+recode Q9 Q10 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56 Q59 Q60 Q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused), /// 
+	   pre(rec) label(exc_poor)
+	   
+recode Q22  ///
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
+	   (5 = 0 Poor) (6 = .a "I did not receive healthcare form this provider in the past 12 months") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor)
 	   
 recode Q48_E ///
