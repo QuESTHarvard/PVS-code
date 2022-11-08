@@ -3,8 +3,7 @@
 * N. Kapoor & R. B. Lobato
 * Note to Todd: Eventually this file might be combined with cr01  
 
-* u "$pvs01", clear 
-use "/Users/rodba/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/Internal HSPH/Data Quality/Data/clean01_all.dta"
+u "$data_mc/00 interim data/pvs_et_ke_01.dta", clear 
 
 ****** Renaming variables, recoding value labels, and labeling variables ******
 
@@ -110,12 +109,6 @@ recode Q49 ///
 	(.r = .r Refused), ///
 	pre(rec) label(prom_score)
 
-* Note to Rodrigo: Double check the inclusion of "Don't know"	   
-	   
-* Other questions 
-* COVID doses question 
-* Ignore Q49 and Q49_new for now 
-
 
 ***************************** Renaming variables *****************************
 * Rename variables to match question numbers in current survey 
@@ -137,12 +130,10 @@ ren Q28_NEW Q28_B
 *ren Q37_B Q37
 ren Q42_10 Q42_other
 ren Q43_4 Q43_other
-
-**What happened to 64 and 65? It seems 66 and 67 should be 64 and 65. Renamed below.
 ren Q66 Q64
 ren Q67 Q65
 
-* Question to Neena: Q37_B not in current data (country_specific ). Shall we shift 38 to become 37, etc.?
+* Q37_B not currently in these data 
 
 *Reorder variables
 
@@ -244,17 +235,9 @@ lab var Q64 "Q64. Do you have another mobile phone number besides the one I am c
 lab var Q65 "Q65. How many other mobile phone numbers do you have?"
 
 
-
-**All questions
-
-*Ro note: Ask what I need to do here*
-
 * Note for NK: Will have to figure out what to do with Other, specify data 
 
 ***************************** Save data *****************************
-* Note to Rodrigo: When finished, save data in the "Data/Multi-country/interim 00" folder 
-* The data can be named pvs_ke_et_02
-* I wrote a command below, I can show you how to use macros at some point 
 
-* save "$data_mc/00 interim data/pvs_et_ke_02.dta", replace
+*save "$data_mc/00 interim data/pvs_et_ke_02.dta", replace
 
