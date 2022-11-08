@@ -9,9 +9,9 @@ set more off
 
 use "$pvs01", clear 
 
-* Q for Todd - I don't see how we can add N's for categorical variables within the summtab2 command?
+* Q for Todd - I don't see how we can add N's for categorical variables within the summtab2 command? TL: MOST WILL BECOME BINARY ANYWAY WHEN WE RECODE RIGHT? SO MAYBE WONT MATTER MUCH. 
 * 				Are there any other issues with the megatable that MEK identified that we can fix here? 
-*				I think most will have to be done by hand
+*				I think most will have to be done by hand TL: PROBABLY TRUE. 
 
  *========================= Descriptive Analysis ============================* 
 
@@ -62,4 +62,4 @@ summtab2 , by(Country) vars(Q66 Q67) ///
 		  excelname(pvs_interim_results) sheetname(other_items) directory("$output") ///
 		  title(Other items)
 
-* Note to Todd: Right now I'm saving this with the HFC output, but maybe this should eventually go somewhere else
+* Note to Todd: Right now I'm saving this with the HFC output, but maybe this should eventually go somewhere else TL: AGREED. SEPARATE OUTPUT FOLDER I WOULD THINK, MAYBE WITHIN A NEW ANALYIS/OUTPUT FOLDER. 

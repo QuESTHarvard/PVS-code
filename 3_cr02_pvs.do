@@ -1,7 +1,7 @@
 * PVS Additional Cleaning for analyses 
 * September 2022
 * N. Kapoor & R. B. Lobato
-* Note to Todd: Eventually this file might be combined with cr01  
+* Note to Todd: Eventually this file might be combined with cr01  TL: LET'S PLEASE COMBINE
 
 * u "$pvs01", clear 
 use "/Users/rodba/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/Internal HSPH/Data Quality/Data/clean01_all.dta"

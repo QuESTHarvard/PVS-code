@@ -22,7 +22,7 @@ use "$pvs01", clear
   
 
  * Q for Todd - I'm not sure why this command isn't working, I thought it was working previously. 
- *				Any suggestions for how to fix or another way to do this? 
+ *				Any suggestions for how to fix or another way to do this? TL: THAT'S WEIRD, IT WORKED FOR ME. CAN YOU CHECK AGAIN? ALSO CAN WE CREATE AND SUMMARIZE AN INDICATOR VARIABLE FOR THIS INSTEAD OF LISTING?
 
 
  *========================== Find Survey Duplicates ==========================* 
@@ -93,7 +93,7 @@ use "$pvs01", clear
  * Below, I try a different method, and output a file that flags outliers using the SD method
  * In global file, edit which variables to check for outliers 
  
- * New Note to Todd (10/16/2022) - IPA said would fix this command last week! I haven't had a chance to check it, and may take some time for it to update 
+ * New Note to Todd (10/16/2022) - IPA said would fix this command last week! I haven't had a chance to check it, and may take some time for it to update TL: AMAZING, MAKING CHANGE ONE OBSCURE COMMAND AT A TIME, NEENA KAPOOR!! 
 
 	if $run_outliers {
 		foreach var in $ol_var {
@@ -111,10 +111,10 @@ use "$pvs01", clear
 	 }
 	 } 
 	 
-* Q for TODD - Any tips on how to improve this code? 
+* Q for TODD - Any tips on how to improve this code? TL: SADLY I DONT THINK SO. GOOD JOB. 
 * Any way to get the outliers to append into the same file? Maybe this is okay though because there are more now with more data 
 * I will update the output file to its own global eventually once we confirm the method 
-* Do we want to look for outliers by country data or across all the data? 
+* Do we want to look for outliers by country data or across all the data? TL: THIS IS AN EXCELLENT QUESTION. BY COUNTRY. 
 * Suggested method for identifying outliers? For checking data quality? 
 
  *============================= Other Specify ===============================* 
@@ -196,7 +196,7 @@ use "$pvs01", clear
    * This command requires an input file where you can specify which questions to assess by enumerator 
    * This code outputs its own file
   
- * Q for Todd - do we want to remove this enumdb? Especially if we are doing it on multi-country data, doesn't feel too useful?
+ * Q for Todd - do we want to remove this enumdb? Especially if we are doing it on multi-country data, doesn't feel too useful? TL: CUT
 
    *========================= Summarizing All Missing ============================* 
 
@@ -241,9 +241,14 @@ restore
 * Note:
 	* These percents (.d and .r) vary slightly from the survey dashboard calculations because the denominator here does not include string variables or the variables on survey characteristics (date, time, etc.)
 	
-* Q for TODD - any tips on how to improve this code? 
-* Any better way to get number of all variables in a row without using rowmiss + rownonmiss (seems silly!)
-* now that I'm doing by(Country) do we want total as well? Is there a way to do with collapse or would need to just add columns?
+* Q for TODD - any tips on how to improve this code? TL: THERE ARE WAYS TO DO SIMILAR THINGS MORE EFFICIENTLY IF WE DON'T WANT AN EXACT PERCENTAGE BUT NOT WORTH WORRYING ABOUT RN. 
+* Any better way to get number of all variables in a row without using rowmiss + rownonmiss (seems silly!) TL: IT DOES! COULD PROBABLY JUST MANUALLY ADD A DENOMINATOR AS NUMBER OF VARIABLES WONT CHANGE MUCH. 
+* now that I'm doing by(Country) do we want total as well? Is there a way to do with collapse or would need to just add columns? COULD PROBABLY SUMMARIZE BY COUNTRY RATHER THAN COLLAPSING. 
+
+OPTIONS TO EXPLORE:
+bys Country: mvpatterns Q17 (SHOWS MISSING BY COUNTRY BUT NOT SURE IF WE CAN SEPARATE OUT KINDS OF MISSING)
+misstable summarize Q28 (SHOWS MISSING AND EXTENDED MISSING FOR SPECIFIED VARIABLES)
+
 
 	
 	 
