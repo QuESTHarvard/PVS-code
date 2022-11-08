@@ -20,8 +20,6 @@ recode Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know"), ///
 	   pre(rec) label(yes_no_dk)
 
-* Note to Rodrigo: Q37_B isn't in these data right now so I removed it (command won't run with it there)
-* Feel free to delete this and above comment, and just leave below comment for our reference 
 * For future data, may need to add Q37_B 
 
 recode Q39 Q40 /// 
