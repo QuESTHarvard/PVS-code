@@ -2,7 +2,7 @@
 * September 2022
 * N. Kapoor 
 * This file sets all macros and runs all .do files
-* Note to Todd: Eventually, any absolutely necessary globals from the globals will be added here 
+* Note to Todd: Eventually, any absolutely necessary globals from the globals will be added here TL: LET'S KEEP THIS FILE AS JUST A FILE THAT CALLS UP HFCS, CLEANING, AND RECODING AS DESIRED; EVENTUALLY PEOPLE WON'T BE DOING HFCS
 * This is based on the data and files being in the internal file, file paths will change 
 
 
@@ -12,7 +12,9 @@ macro drop _all
 
 *Project settings
 *Individual users 
-global user "/Users/nek096"
+*global user "/Users/nek096"
+global user "/Users/tol145"
+
 
 * Path to data folder 
 global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"

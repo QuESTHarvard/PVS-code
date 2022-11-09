@@ -1,7 +1,7 @@
 * PVS Additional Cleaning for analyses 
 * September 2022
 * N. Kapoor & R. B. Lobato
-* Note to Todd: Eventually this file might be combined with cr01  
+* Note to Todd: Eventually this file might be combined with cr01  TL: LET'S PLEASE COMBINE
 
 u "$data_mc/00 interim data/pvs_et_ke_01.dta", clear 
 

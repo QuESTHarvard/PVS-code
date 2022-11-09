@@ -2,7 +2,7 @@
 * September 2022
 * N. Kapoor 
 * This file is based off of IPA High Frequency Checks Globals do-file 
-* Note to Todd - eventually only relevant globals will be added to the Main file to reduce the number of files 
+* Note to Todd - eventually only relevant globals will be added to the Main file to reduce the number of files TL: LETS KEEP ALL HFC GLOBALS SEPARATE--CAN WE MERGE THIS FILE WITH THE HFC DO FILE?
 * I think some globals will still be useful, but a lot of the globals that include like question numbers will just have to be removed since it might vary so much by country 
 
 ********************************************************************************
@@ -17,7 +17,7 @@
 	
 	* There are more checks you can run with the IPA package, this is a subset that is relevant for PVS
 
-	* Q for TODD - I'm considering removing lines 10-14, and not have the additional unecessary loops
+	* Q for TODD - I'm considering removing lines 10-14, and not have the additional unecessary loops TL: CUT
 	*			   I think it just makes it complicated/confusing, and is only useful if someone is doing only some of the checks 
 	*			   But if you think I should keep it, that's fine, I should just add one for summarizing missing 
 	
@@ -64,7 +64,7 @@
 *	gl folder_date			= string(year(today())) + "-`:disp %tdNN today()'-`:disp %tdDD today()'"
 *	cap mkdir				"$output/$folder_date"
 
-* Q for TODD - do we want to keep the folder date? 
+* Q for TODD - do we want to keep the folder date? TL: NO
 * I just removed it since we aren't really doing "HFCs" - and gets a little annoying having a different date any day you run it, even if it is the same data 
 
 /* Output files
@@ -163,7 +163,7 @@
 	gl earlytime			"07:00:00"
 	gl latetime				"18:00:00"
 	
-* Q for TODD - what start/end times seem reasonable? 
+* Q for TODD - what start/end times seem reasonable? TL: 7AM IS GOOD; LATE TIME MAKE 20:00 PLEASE
 
 	* Globals for questions (no ID's or interview characteristics, or string variables (other, specify))
 	* "Other, specify" variables excluded
