@@ -107,7 +107,7 @@ recode Q49_new (. = .r) if Q49 == .r
 
 *------------------------------------------------------------------------------*
 
-* Drop any unwated/empty variables 
+* Drop any unwanted/empty variables 
 
 * drop 
 
