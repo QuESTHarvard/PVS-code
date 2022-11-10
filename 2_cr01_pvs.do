@@ -9,7 +9,9 @@ clear all
 set more off 
 
 * Import raw data 
-use "$rawsurvey", clear 
+* use "$rawsurvey", clear 
+use "$data/Kenya/00 interim data/HARVARD_Main KE CATI and F2F_08.11.22.dta", clear
+
 
 * .a means NA, .r means refused, .d is don't know, . is missing 
 
@@ -47,7 +49,7 @@ recode $all_ref ($ref_num = .r)
 
 *Q1/Q2 
 recode Q2 (. = .a) if Q1 != .r
-recode Q1 (. = .r) if Q2 != .a
+recode Q1 Q1_codes (. = .r) if Q2 != .a
 
 * Q7 
 recode Q7 (. = .a) if Q6 == 2 | Q6 == .r 
@@ -94,16 +96,6 @@ recode Q47 Q47_min (. = .r) if Q47_refused == 1
 recode Q67 (. = .a) if Q66 == 2 | Q66 == .d | Q66 == .r 
 recode Q66 Q67 (. = .a) if mode == 2
 
-*------------------------------------------------------------------------------*
-
-* Decode/Destring any variables 
-
-*Q49
-decode Q49, gen(Q49_new)
-destring Q49_new,replace
-recode Q49_new (. = .a) if Q23 == 0 | Q24 == 1 | Q24 == .r 
-recode Q49_new (. = .r) if Q49 == .r
-
 
 *------------------------------------------------------------------------------*
 
@@ -120,9 +112,9 @@ recode Q49_new (. = .r) if Q49 == .r
 
 *Q2 
 
-lab var Q2 "Q2. Respondents age group"
+*lab var Q2 "Q2. Respondents age group"
 
-lab var Q62 "Q62. Respondents mother tongue or native language" 
+*lab var Q62 "Q62. Respondents mother tongue or native language" 
 
 
 * Form version is required for some commands, but not in/relevant to our PVS data, so I generated this variable 
@@ -134,19 +126,19 @@ gen formversion = 1
 
 * Save data
 
-save "$pvs01", replace 
+*save "$pvs01", replace 
 
 * Save Kenya data 
-preserve
-keep if Country == 5
+*preserve
+*keep if Country == 5
 save "$data/Kenya/00 interim data/pvs_ke_01.dta", replace
-restore
+*restore
 
 * Save Ethiopia data 
-preserve 
-keep if Country == 3
-save "$data/Ethiopia/00 interim data/pvs_et_01", replace
-restore
+*preserve 
+*keep if Country == 3
+*save "$data/Ethiopia/00 interim data/pvs_et_01", replace
+*restore
 
 *------------------------------------------------------------------------------*
 

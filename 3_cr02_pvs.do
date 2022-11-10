@@ -3,7 +3,9 @@
 * N. Kapoor & R. B. Lobato
 * Note to Todd: Eventually this file might be combined with cr01  TL: LET'S PLEASE COMBINE
 
-u "$data_mc/00 interim data/pvs_et_ke_01.dta", clear 
+* u "$data_mc/00 interim data/pvs_et_ke_01.dta", clear 
+u "$data/Kenya/00 interim data/pvs_ke_01.dta", clear 
+
 
 ****** Renaming variables, recoding value labels, and labeling variables ******
 
@@ -13,11 +15,12 @@ u "$data_mc/00 interim data/pvs_et_ke_01.dta", clear
 * All Yes/No questions
 
 recode Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 /// 
-	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused), ///
+	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 
 recode Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 /// 
-	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know"), ///
+	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know") /// 
+	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk)
 
 * For future data, may need to add Q37_B 
@@ -29,50 +32,40 @@ recode Q39 Q40 ///
 	   pre(rec) label(yes_no_na)
 	   
 * All Excellent to Poor scales
-**Ask about the don't knows and na when that's not on the raw data. Option above and below
-*recode Q22 ///
-*	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-*	   (5 = 0 Poor) (.a = .a NA) (.d = .d "Don't Know") (.r = .r Refused), /// 
-*	   pre(rec) label(exc_poor)
-**
 
 recode Q9 Q10 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56 Q59 Q60 Q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (.r = .r Refused), /// 
+	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(exc_poor)
 	   
 recode Q22  ///
-	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (6 = .a "I did not receive healthcare form this provider in the past 12 months") (.r = .r Refused), /// 
-	   pre(rec) label(exc_poor)
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
+	   (6 = .a "I did not receive healthcare form this provider in the past 12 months") /// 
+	   (.r = .r Refused), /// 
+	   pre(rec) label(exc_pr_hlthcare)
 	   
 recode Q48_E ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (6 = .a "I have not had prior visits or tests") (.r = .r Refused), /// 
-	   pre(rec) label(exc_poor)
+	   pre(rec) label(exc_pr_visits)
 	 
 recode Q48_J ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (6 = .a "The clinic had no other staff") (.r = .r Refused), /// 
-	   pre(rec) label(exc_poor)
+	   pre(rec) label(exc_poor_staff)
 	   
 recode Q50_A Q50_B Q50_C Q50_D ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (6 = .d "I am unable to judge") (.r = .r Refused), /// 
-	   pre(rec) label(exc_poor)
+	   (5 = 0 Poor) (6 = .d "I am unable to judge") (.r = .r Refused) ///
+	   (.a = .a NA), /// 
+	   pre(rec) label(exc_poor_judge)
 
 * All Very Confident to Not at all Confident scales 
-**Same dk na question
-*recode Q16 Q17 ///
-*	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
-*	   (3 = 1 "Not too confident") (4 = 0 "Not at all confident") /// 
-*	   (.a = .a NA) (.d = .d "Don't Know") (.r = .r Refused), /// 
-*	   pre(rec) label(vc_nc)
 	   
 recode Q16 Q17 Q51 Q52 Q53 ///
 	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
 	   (3 = 1 "Not too confident") (4 = 0 "Not at all confident") /// 
-	   (.r = .r Refused), /// 
+	   (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(vc_nc)
 	   
 *Miscellaneous questions with unique answer options
@@ -81,30 +74,39 @@ recode Interviewer_Gender ///
 	(1 = 0 Male) (2 = 1 Female), ///
 	pre(rec) label(int_gender)
 
+* Make sure no under 18 - TODD is this okay to do? 
+drop if Q2 == 1 | Q1 < 18
+
+recode Q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
+	(6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 ">80") (.r = .r "Refused") (.a = .a NA), ///
+	pre(rec) label(age_cat)
+
+* Not sure why there is an error here? 
+
 recode Q3 ///
 	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
 
 recode Q14_NEW ///
 	(1 = 0 "0- no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
-	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused), ///
+	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(covid_vacc)
 	
 recode Q15 /// 
 	   (1 = 1 "Yes, I plan to receive all required doses") ///
 	   (2 = 0 "No, don't plan to receive all required doses") ///
-	   (.r = .r Refused), ///
+	   (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no_doses)
 	   
 recode Q24 ///
 	(1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") ///
-	(.r = .r Refused), ///
+	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(number_visits)
 	
 recode Q49 ///
 	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
 	(7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
-	(.r = .r Refused), ///
+	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(prom_score)
 
 
@@ -112,7 +114,7 @@ recode Q49 ///
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-drop Interviewer_Gender Q3 Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 Q30 Q31 Q32 Q33 Q34 Q35 Q36 ///
+drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 Q30 Q31 Q32 Q33 Q34 Q35 Q36 ///
 	Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H ///
 	Q48_I Q54 Q55 Q56 Q59 Q60 Q61 Q48_E Q48_J Q50_A Q50_B Q50_C Q50_D Q16 ///
 	Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49
@@ -239,3 +241,132 @@ lab var Q65 "Q65. How many other mobile phone numbers do you have?"
 
 *save "$data_mc/00 interim data/pvs_et_ke_02.dta", replace
 
+
+***************************** Deriving variables *****************************
+
+
+* age_calc: exact respondent age or middle of age range 
+gen age_calc = Q1 
+recode age_calc (.r = 23.5) if Q2 == 0
+recode age_calc (.r = 34.5) if Q2 == 1
+recode age_calc (.r = 44.5) if Q2 == 2
+recode age_calc (.r = 54.5) if Q2 == 3
+recode age_calc (.r = 64.5) if Q2 == 4
+recode age_calc (.r = 74.5) if Q2 == 5
+recode age_calc (.r = 80) if Q2 == 6
+lab def ref .r "Refused"
+lab val age_calc ref
+
+* age_cat: categorical age 
+gen age_cat = Q2
+recode age_cat (.a = 0) if Q1 >= 18 & Q1 <= 29
+recode age_cat (.a = 1) if Q1 >= 30 & Q1 <= 39
+recode age_cat (.a = 2) if Q1 >= 40 & Q1 <= 49
+recode age_cat (.a = 3) if Q1 >= 50 & Q1 <= 59
+recode age_cat (.a = 4) if Q1 >= 60 & Q1 <= 69
+recode age_cat (.a = 5) if Q1 >= 70 & Q1 <= 79
+recode age_cat (.a = 6) if Q1 >= 80
+lab val age_cat age_cat
+
+* female: gender 	   
+gen female = Q3
+lab val female gender
+
+* urban: type of region respondent lives in 
+recode Q4 (6 7 = 1 "urban") (8 = 0 "rural") (.r = .r "Refused"), gen(urban)
+
+* education 
+
+* insur_type 
+* TODD - I'm just putting Other as refused for now 
+recode Q7 (3 = 0 public) (4 5 6 = 1 private) /// 
+		  (995 = .r "Refused") (.a = .a NA), gen(insur_type)
+
+* insured, health_chronic, ever_covid, covid_confirmed, usual_source
+* inpatient, unmet_need 
+* Yes/No/Refused -Q6 Q11 Q12 Q13 Q18 Q29 Q41 
+gen insured = Q6 
+gen health_chronic = Q11
+gen ever_covid = Q12
+gen covid_confirmed = Q13 
+recode covid_confirmed (.a = 0) if ever_covid == 0
+gen usual_source = Q18
+gen inpatient = Q29 
+gen unmet_need = Q41 
+lab val insured health_chronic ever_covid covid_confirmed usual_source ///
+		inpatient unmet_need yes_no
+
+* blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
+* blood_chol care_mental 
+* Yes/No/Don't Know/Refused - Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 
+
+gen blood_pressure = Q30 
+gen mammogram = Q31
+gen cervical_cancer = Q32
+gen eyes_exam = Q33
+gen teeth_exam = Q34
+gen blood_sugar = Q35 
+gen blood_chol = Q36
+gen care_mental = Q38 
+lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
+	blood_sugar blood_chol care_mental yes_no_dk
+
+* TODD - see if systems_fail code makes sense
+
+gen systems_fail = 1 if Q39 == 1 | Q40 == 1	   
+recode systems_fail (. = 0) if Q39 == 0 & Q40 == 0	
+recode systems_fail (. = .r) if Q39 == .r | Q40 == .r	      
+recode systems_fail (. = .a) (0 = .a) (1 = .a) if Q39 == .a | Q40 == .a	   
+lab val systems_fail yes_no_na
+
+* Excellent to Poor scales   	   
+* Q9, Q10, 
+* health, health_mental...
+
+recode Q9 Q10 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q60 Q61 /// 
+	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") /// 
+	   (.r = .r "Refused") (.a = .a NA), pre(der)label(exc_poor_der2)
+	   	   
+ren (derQ9 derQ10 derQ48_A derQ48_B derQ48_C derQ48_D derQ48_F derQ48_G derQ48_H /// 
+	 derQ48_I derQ60 derQ61) (health health_mental last_qual last_skills /// 
+	 last_supplies last_respect last_explain last_decisions ///
+	 last_visit_rate last_wait_rate vignette_poor vignette_good)
+	   
+recode Q22 (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+	   (.a = .a "I did not receive healthcare form this provider in the past 12 months"), /// 
+	   pre(der)label(exc_pr_hlthcare_der)
+
+recode Q48_E (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+	   (.a = .a "I have not had prior visits or tests"), /// 
+	   pre(der)label(exc_pr_visits_der)
+
+recode Q48_J (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+	   (.a = .a "The clinic had no other staff"), /// 
+	   pre(der)label(exc_pr_staff_der)
+	   
+ren (derQ22 derQ48_E Q48_J) (usual_quality last_know last_courtesy)
+
+recode Q54 Q55 Q56 Q59 /// 
+	   (0 1 = 0 "Fair/Poor") (2 = 1 "Good") ( 3 4 = 2 "Excellent/Very Good") /// 
+	   (.r = .r "Refused") (.a = .a NA), pre(der) label(exc_poor_der3)
+
+ren (derQ54 derQ55 derQ56 derQ59) (qual_public qual_private qual_ngo covid_manage)
+
+recode Q50_A Q50_B Q50_C Q50_D ///
+	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+	   (.d = .d "The clinic had no other staff"), /// 
+	   pre(der) label(exc_pr_judge_der)
+
+ren (derQ50_A derQ50_B derQ50_C derQ50_D) ///
+	(phc_women phc_child phc_chronic phc_mental)
+	   
+	   
+* All Very Confident to Not at all Confident scales 
+	   
+recode Q51 Q52 Q53 ///
+	   (3 = 1 "Very confident") ///
+	   (0 1 2 = 0 "Somewhat confident/Not too confident/Not at all confident") /// 
+	   (.r = .r Refused) (.a = .a NA), /// 
+	   pre(der) label(vc_nc_der)
+
+ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
