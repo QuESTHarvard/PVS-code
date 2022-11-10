@@ -112,6 +112,8 @@ recode Q49 ///
 recode Q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
+
+
 	
 ***************************** Renaming variables *****************************
 * Rename variables to match question numbers in current survey 
@@ -324,6 +326,21 @@ lab def pa 0 "Not activated (Not too confident and Not at all confident for eith
 			2 "Activated (Very confident on Q16 and Q17)" .r "Refused", replace
 lab val patient_activation pa
 
+* usual_type
+recode Q20 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
+		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
+		   (.a = .a "NA") (.r = .r "Refused"), gen(usual_type)
+
+* usual_reason
+recode Q21 (2 = 1 "Convenience (short distance)") /// 
+			(1 8 = 2 "Cost (low cost, covered by insurance)") ///
+			(4 = 3 "Techincal quality (provider skills)") ///
+			(3 5 = 4 "Interpersonal quality (short waiting time, respect)") ///
+			(6 = 5 "Service readiness (medicines and equipment available)") ///
+			(7 = 6 "Only facility available") ///
+			(.r 9 = .r "Other or Refused") ///
+			(.a = .a "NA") , gen(usual_reason)
+			
 * blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
 * blood_chol care_mental 
 * Yes/No/Don't Know/Refused - Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 
@@ -338,7 +355,6 @@ gen care_mental = Q38
 lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
 	blood_sugar blood_chol care_mental yes_no_dk
 
-
 * systems_fail 
 * TODD - see if systems_fail code makes sense
 gen systems_fail = 1 if Q39 == 1 | Q40 == 1	   
@@ -346,6 +362,30 @@ recode systems_fail (. = 0) if Q39 == 0 & Q40 == 0
 recode systems_fail (. = .r) if Q39 == .r | Q40 == .r	      
 recode systems_fail (. = .a) (0 = .a) (1 = .a) if Q39 == .a | Q40 == .a	   
 lab val systems_fail yes_no_na
+
+* unmet reason 
+recode Q42 (1 = 1 "Cost (High cost)") ///
+			(2 = 2 "Convenience (Far distance)") ///
+			(3 5 = 3 "Interpersonal quality (Long waiting time, Respect)") ///
+			(4 = 4 "Technical quality (Poor provider skills)") ///
+			(6 = 5 "Service readiness (Medicines and equipment not available)") ///
+			(8 9 = 6 "COVID (COVID restritions or COVID fear)") ///
+			(10 = 7 "Other") ///
+			(.a 7 = .a "NA or Illness not serious") ///
+			(.r = .r "Refused"), gen(unmet_reason)
+
+			
+* last_type 
+recode Q44 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
+		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
+		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
+
+* last_reason
+gen last_reason = Q45
+lab def lr 1 "Urgent or new problem" 2 "Follow-up for chronic disease" ///
+		   3 "Preventative or health check" .a "NA" .r "Refused"
+lab val last_reason lr
+
 
 *last_wait_time
 gen last_wait_time = 0 if Q46_min <= 15
@@ -407,7 +447,15 @@ recode Q50_A Q50_B Q50_C Q50_D ///
 ren (derQ50_A derQ50_B derQ50_C derQ50_D) ///
 	(phc_women phc_child phc_chronic phc_mental)
 	   
-	   
+
+* last_promote
+gen last_promote = 0 if Q49 < 8
+recode last_promote (. = 1) if Q49 == 8 | Q49 == 9 | Q49 == 10
+recode last_promote (. = .a) if Q49 == .a
+recode last_promote (. = .r) if Q49 == .r
+lab def lp 0 "Detractor" 1 "Promoter" .r "Refused" .a "NA"
+lab val last_promote lp
+
 * All Very Confident to Not at all Confident scales 
 	   
 recode Q51 Q52 Q53 ///
@@ -417,6 +465,7 @@ recode Q51 Q52 Q53 ///
 	   pre(der) label(vc_nc_der)
 
 ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
+
 
 * system_outlook 
 gen system_outlook = Q57
@@ -429,7 +478,6 @@ lab def sr 1 "Health system needs to be rebuilt" 2 "Health system needs major ch
 lab val system_reform sr
 
 * income
-
 recode Q63 (1 2 = 0 "Lowest income") (3 4 5 = 1 "Middle income") (6 7 = 2 "Highest income") ///
 		   (.r = .r "Refused"), gen(income)
 
