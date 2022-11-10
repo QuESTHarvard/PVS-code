@@ -78,8 +78,8 @@ recode Interviewer_Gender ///
 drop if Q2 == 1 | Q1 < 18
 
 recode Q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
-	(6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 ">80") (.r = .r "Refused") (.a = .a NA), ///
-	pre(rec) label(age_cat)
+	(6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") /// 
+	(.a = .a "NA"), pre(rec) label(age_cat)
 
 * Not sure why there is an error here? 
 
