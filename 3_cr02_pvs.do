@@ -531,6 +531,11 @@ phc_mental conf_sick conf_afford conf_opinion qual_public ///
 qual_private qual_ngo system_outlook system_reform covid_manage vignette_poor /// 
 vignette_good income, after(Interviewer_Gender)
 
+***************************** Labeling variables ***************************** 
+ 
+lab var age_calc "Exact respondent age or middle number of age range"
+lab var age_cat "Categorical age"
+
 **************************** Save data *****************************
 
 save "$data/Kenya/00 interim data/pvs_ke_03.dta", replace
