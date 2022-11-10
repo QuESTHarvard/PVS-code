@@ -109,7 +109,10 @@ recode Q49 ///
 	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(prom_score)
 
-
+recode Q57 ///
+	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
+	(.r = .r "Refused") , pre(rec) label(system_outlook)
+	
 ***************************** Renaming variables *****************************
 * Rename variables to match question numbers in current survey 
 
@@ -117,7 +120,7 @@ recode Q49 ///
 drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 Q30 Q31 Q32 Q33 Q34 Q35 Q36 ///
 	Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H ///
 	Q48_I Q54 Q55 Q56 Q59 Q60 Q61 Q48_E Q48_J Q50_A Q50_B Q50_C Q50_D Q16 ///
-	Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49
+	Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49 Q57
 
 ren rec* *
   
@@ -239,11 +242,11 @@ lab var Q65 "Q65. How many other mobile phone numbers do you have?"
 
 ***************************** Save data *****************************
 
-*save "$data_mc/00 interim data/pvs_et_ke_02.dta", replace
-
+save "$data/Kenya/00 interim data/pvs_ke_02.dta", replace
 
 ***************************** Deriving variables *****************************
 
+u "$data/Kenya/00 interim data/pvs_ke_02.dta", clear
 
 * age_calc: exact respondent age or middle of age range 
 gen age_calc = Q1 
@@ -277,6 +280,9 @@ recode Q4 (6 7 = 1 "urban") (8 = 0 "rural") (.r = .r "Refused"), gen(urban)
 
 * education 
 
+recode Q8 (7 = 0 "None") (8 = 1 "Primary") (9 10 = 2 "Secondary") /// 
+	      (11 = 3 "Post-secondary"), gen(education)
+
 * insur_type 
 * TODD - I'm just putting Other as refused for now 
 recode Q7 (3 = 0 public) (4 5 6 = 1 private) /// 
@@ -296,10 +302,31 @@ gen unmet_need = Q41
 lab val insured health_chronic ever_covid covid_confirmed usual_source ///
 		inpatient unmet_need yes_no
 
+* covid_vax
+recode Q14 ///
+	(0 = 0 "unvaccinated (0 doses)") (1 = 1 "partial vaccination (1 dose)") /// 
+	(2 3 4 = 2 "fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
+	gen(covid_vax)
+
+* covid_vax_intent 
+gen covid_vax_intent = Q15 
+lab val covid_vax_intent yes_no_doses
+
+* patient_activiation
+* TODD - see if this code makes sense 
+gen patient_activation = 2 if Q16 == 3 & Q17 == 3	
+recode patient_activation (. = 1) if Q16 == 3 & Q17 == 2 | Q16 == 2 & Q17 == 3 | /// 
+						  Q16 == 2 & Q17 == 2	
+recode patient_activation (. = .r) if Q16 == .r | Q17 == .r
+recode patient_activation (. = 0) if Q16 == 0 | Q16 == 1 | Q17 == 0 | Q17 == 1
+lab def pa 0 "Not activated (Not too confident and Not at all confident for either category)" ///
+			1 "Somewhat activated (Very or somewhat confident on Q16 and Q17)" /// 
+			2 "Activated (Very confident on Q16 and Q17)" .r "Refused", replace
+lab val patient_activation pa
+
 * blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
 * blood_chol care_mental 
 * Yes/No/Don't Know/Refused - Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 
-
 gen blood_pressure = Q30 
 gen mammogram = Q31
 gen cervical_cancer = Q32
@@ -311,17 +338,37 @@ gen care_mental = Q38
 lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
 	blood_sugar blood_chol care_mental yes_no_dk
 
-* TODD - see if systems_fail code makes sense
 
+* systems_fail 
+* TODD - see if systems_fail code makes sense
 gen systems_fail = 1 if Q39 == 1 | Q40 == 1	   
 recode systems_fail (. = 0) if Q39 == 0 & Q40 == 0	
 recode systems_fail (. = .r) if Q39 == .r | Q40 == .r	      
 recode systems_fail (. = .a) (0 = .a) (1 = .a) if Q39 == .a | Q40 == .a	   
 lab val systems_fail yes_no_na
 
+*last_wait_time
+gen last_wait_time = 0 if Q46_min <= 15
+recode last_wait_time (. = 1) if Q46_min >= 15 & Q46_min < 60
+recode last_wait_time (. = 2) if Q46_min >= 60 & Q46_min < .
+recode last_wait_time (. = .a) if Q46_min == .a
+recode last_wait_time (. = .r) if Q46_min == .r
+lab def lwt 0 "Short (15 minutes)" 1 "Moderate (< 1 hour)" 2 "Long (> 1 hour)" ///
+			.r "Refused" .a "NA"
+lab val last_wait_time lwt
+
+*last_visit_time
+gen last_visit_time = 0 if Q47_min <= 15
+recode last_visit_time (. = 1) if Q47_min > 15 & Q47_min < .
+recode last_visit_time (. = .a) if Q47_min == .a
+recode last_visit_time (. = .r) if Q47_min == .r
+lab def lvt 0 "<= 15 minutes" 1 "> 15 minutes " ///
+			.r "Refused" .a "NA"
+lab val last_visit_time lvt
+
+* health, health_mental...
 * Excellent to Poor scales   	   
 * Q9, Q10, 
-* health, health_mental...
 
 recode Q9 Q10 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q60 Q61 /// 
 	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") /// 
@@ -370,3 +417,19 @@ recode Q51 Q52 Q53 ///
 	   pre(der) label(vc_nc_der)
 
 ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
+
+* system_outlook 
+gen system_outlook = Q57
+lab val system_outlook system_outlook
+
+* system_reform 
+gen system_reform = Q58
+lab def sr 1 "Health system needs to be rebuilt" 2 "Health system needs major changes" /// 
+		3 "Health system only needs minor chanes" .r "Refused", replace
+lab val system_reform sr
+
+* income
+
+recode Q63 (1 2 = 0 "Lowest income") (3 4 5 = 1 "Middle income") (6 7 = 2 "Highest income") ///
+		   (.r = .r "Refused"), gen(income)
+
