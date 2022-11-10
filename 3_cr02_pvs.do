@@ -280,29 +280,14 @@ lab val female gender
 * urban: type of region respondent lives in 
 recode Q4 (6 7 = 1 "urban") (8 = 0 "rural") (.r = .r "Refused"), gen(urban)
 
-* education 
-
-recode Q8 (7 = 0 "None") (8 = 1 "Primary") (9 10 = 2 "Secondary") /// 
-	      (11 = 3 "Post-secondary"), gen(education)
-
 * insur_type 
-* TODD - I'm just putting Other as refused for now 
+* NOTE - I'm just putting Other as refused for now 
 recode Q7 (3 = 0 public) (4 5 6 = 1 private) /// 
 		  (995 = .r "Refused") (.a = .a NA), gen(insur_type)
 
-* insured, health_chronic, ever_covid, covid_confirmed, usual_source
-* inpatient, unmet_need 
-* Yes/No/Refused -Q6 Q11 Q12 Q13 Q18 Q29 Q41 
-gen insured = Q6 
-gen health_chronic = Q11
-gen ever_covid = Q12
-gen covid_confirmed = Q13 
-recode covid_confirmed (.a = 0) if ever_covid == 0
-gen usual_source = Q18
-gen inpatient = Q29 
-gen unmet_need = Q41 
-lab val insured health_chronic ever_covid covid_confirmed usual_source ///
-		inpatient unmet_need yes_no
+* education 
+recode Q8 (7 = 0 "None") (8 = 1 "Primary") (9 10 = 2 "Secondary") /// 
+	      (11 = 3 "Post-secondary"), gen(education)
 
 * covid_vax
 recode Q14 ///
@@ -315,7 +300,7 @@ gen covid_vax_intent = Q15
 lab val covid_vax_intent yes_no_doses
 
 * patient_activiation
-* TODD - see if this code makes sense 
+* NOTE - Todd, see if this code makes sense 
 gen patient_activation = 2 if Q16 == 3 & Q17 == 3	
 recode patient_activation (. = 1) if Q16 == 3 & Q17 == 2 | Q16 == 2 & Q17 == 3 | /// 
 						  Q16 == 2 & Q17 == 2	
@@ -340,30 +325,46 @@ recode Q21 (2 = 1 "Convenience (short distance)") ///
 			(7 = 6 "Only facility available") ///
 			(.r 9 = .r "Other or Refused") ///
 			(.a = .a "NA") , gen(usual_reason)
-			
-* blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
-* blood_chol care_mental 
-* Yes/No/Don't Know/Refused - Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 
-gen blood_pressure = Q30 
-gen mammogram = Q31
-gen cervical_cancer = Q32
-gen eyes_exam = Q33
-gen teeth_exam = Q34
-gen blood_sugar = Q35 
-gen blood_chol = Q36
-gen care_mental = Q38 
-lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
-	blood_sugar blood_chol care_mental yes_no_dk
 
+* visits
+gen visits = 0 if Q23 == 0 | Q24 == 0
+recode visits (. = 1) if Q23 >=1 & Q23 <= 4 | Q24 == 1
+recode visits (. = 2) if Q23 > 4 & Q23 < . | Q24 == 2 | Q24 == 3
+recode visits (. = .r) if Q23 == .r | Q24 == .r
+lab def visits 0 "Non-user (0 visits)" 1 "Occasional usuer (1-4 visits)" ///
+			   2 "Frequent user (more than 4)"
+lab val visits visits	
+
+* visits_covid
+gen visits_covid = Q25_B
+recode visits_covid (.a = 1) if Q25_A == 1
+
+*fac_number
+* NOTE - what to do with people who say 0 or 1 for Q27? It's 24 people - for now put them in 0 group
+gen fac_number = 0 if Q26 == 1 | Q27 == 0 | Q27 == 1
+recode fac_number (. = 1) if Q27 == 2 | Q27 == 3
+recode fac_number (. = 2) if Q23 > 3
+recode fac_number (. = .a) if Q26 == .a | Q27 == .a
+recode fac_number (. = .r) if Q26 == .r | Q27 == .r
+lab def fn 0 "1 facility (Q26 is yes)" 1 "2-3 facilities (Q27 is 2 or 3)" ///
+		   2 "More than 3 facilities (Q27 is 4 or more)" .a "NA" .r "Refused"
+lab val fac_number fn
+
+* visits_total
+gen visits_total = Q23 + Q28_A + Q28_B
+* something strange may be happening with Q28_A refuse - just changing them all to refuse for now
+recode visits_total (. = .r) if Q23 == .d | Q23 == .r | Q28_A == .d | Q28_A == .r ///
+								| Q28_B == .d | Q28_B == .r 
+			
 * systems_fail 
-* TODD - see if systems_fail code makes sense
+* NOTE - Todd, see if systems_fail code makes sense
 gen systems_fail = 1 if Q39 == 1 | Q40 == 1	   
 recode systems_fail (. = 0) if Q39 == 0 & Q40 == 0	
 recode systems_fail (. = .r) if Q39 == .r | Q40 == .r	      
 recode systems_fail (. = .a) (0 = .a) (1 = .a) if Q39 == .a | Q40 == .a	   
 lab val systems_fail yes_no_na
 
-* unmet reason 
+* unmet_reason 
 recode Q42 (1 = 1 "Cost (High cost)") ///
 			(2 = 2 "Convenience (Far distance)") ///
 			(3 5 = 3 "Interpersonal quality (Long waiting time, Respect)") ///
@@ -386,7 +387,6 @@ lab def lr 1 "Urgent or new problem" 2 "Follow-up for chronic disease" ///
 		   3 "Preventative or health check" .a "NA" .r "Refused"
 lab val last_reason lr
 
-
 *last_wait_time
 gen last_wait_time = 0 if Q46_min <= 15
 recode last_wait_time (. = 1) if Q46_min >= 15 & Q46_min < 60
@@ -406,48 +406,6 @@ lab def lvt 0 "<= 15 minutes" 1 "> 15 minutes " ///
 			.r "Refused" .a "NA"
 lab val last_visit_time lvt
 
-* health, health_mental...
-* Excellent to Poor scales   	   
-* Q9, Q10, 
-
-recode Q9 Q10 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q60 Q61 /// 
-	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") /// 
-	   (.r = .r "Refused") (.a = .a NA), pre(der)label(exc_poor_der2)
-	   	   
-ren (derQ9 derQ10 derQ48_A derQ48_B derQ48_C derQ48_D derQ48_F derQ48_G derQ48_H /// 
-	 derQ48_I derQ60 derQ61) (health health_mental last_qual last_skills /// 
-	 last_supplies last_respect last_explain last_decisions ///
-	 last_visit_rate last_wait_rate vignette_poor vignette_good)
-	   
-recode Q22 (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-	   (.a = .a "I did not receive healthcare form this provider in the past 12 months"), /// 
-	   pre(der)label(exc_pr_hlthcare_der)
-
-recode Q48_E (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-	   (.a = .a "I have not had prior visits or tests"), /// 
-	   pre(der)label(exc_pr_visits_der)
-
-recode Q48_J (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-	   (.a = .a "The clinic had no other staff"), /// 
-	   pre(der)label(exc_pr_staff_der)
-	   
-ren (derQ22 derQ48_E Q48_J) (usual_quality last_know last_courtesy)
-
-recode Q54 Q55 Q56 Q59 /// 
-	   (0 1 = 0 "Fair/Poor") (2 = 1 "Good") ( 3 4 = 2 "Excellent/Very Good") /// 
-	   (.r = .r "Refused") (.a = .a NA), pre(der) label(exc_poor_der3)
-
-ren (derQ54 derQ55 derQ56 derQ59) (qual_public qual_private qual_ngo covid_manage)
-
-recode Q50_A Q50_B Q50_C Q50_D ///
-	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-	   (.d = .d "The clinic had no other staff"), /// 
-	   pre(der) label(exc_pr_judge_der)
-
-ren (derQ50_A derQ50_B derQ50_C derQ50_D) ///
-	(phc_women phc_child phc_chronic phc_mental)
-	   
-
 * last_promote
 gen last_promote = 0 if Q49 < 8
 recode last_promote (. = 1) if Q49 == 8 | Q49 == 9 | Q49 == 10
@@ -455,17 +413,6 @@ recode last_promote (. = .a) if Q49 == .a
 recode last_promote (. = .r) if Q49 == .r
 lab def lp 0 "Detractor" 1 "Promoter" .r "Refused" .a "NA"
 lab val last_promote lp
-
-* All Very Confident to Not at all Confident scales 
-	   
-recode Q51 Q52 Q53 ///
-	   (3 = 1 "Very confident") ///
-	   (0 1 2 = 0 "Somewhat confident/Not too confident/Not at all confident") /// 
-	   (.r = .r Refused) (.a = .a NA), /// 
-	   pre(der) label(vc_nc_der)
-
-ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
-
 
 * system_outlook 
 gen system_outlook = Q57
@@ -480,4 +427,96 @@ lab val system_reform sr
 * income
 recode Q63 (1 2 = 0 "Lowest income") (3 4 5 = 1 "Middle income") (6 7 = 2 "Highest income") ///
 		   (.r = .r "Refused"), gen(income)
+
+
+**** Yes/No Questions ****
+
+* insured, health_chronic, ever_covid, covid_confirmed, usual_source inpatient
+* unmet_need 
+* Yes/No/Refused -Q6 Q11 Q12 Q13 Q18 Q29 Q41 
+gen insured = Q6 
+gen health_chronic = Q11
+gen ever_covid = Q12
+gen covid_confirmed = Q13 
+recode covid_confirmed (.a = 0) if ever_covid == 0
+gen usual_source = Q18
+gen inpatient = Q29 
+gen unmet_need = Q41 
+lab val insured health_chronic ever_covid covid_confirmed usual_source ///
+		inpatient unmet_need yes_no
+
+* blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
+* blood_chol care_mental 
+* Yes/No/Don't Know/Refused - Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 
+gen blood_pressure = Q30 
+gen mammogram = Q31
+gen cervical_cancer = Q32
+gen eyes_exam = Q33
+gen teeth_exam = Q34
+gen blood_sugar = Q35 
+gen blood_chol = Q36
+gen care_mental = Q38 
+lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
+	blood_sugar blood_chol care_mental yes_no_dk
+	
+**** Excellent to Poor scales *****	   
+
+* health, health_mental, last_qual, last_skills, last_supplies, last_respect, 
+* last_explain, last_decision, last_visit_rate, last_wait_rate, vignette_poor,
+* vignette_good
+
+recode Q9 Q10 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q60 Q61 /// 
+	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") /// 
+	   (.r = .r "Refused") (.a = .a NA), pre(der)label(exc_poor_der2)
+	   	   
+ren (derQ9 derQ10 derQ48_A derQ48_B derQ48_C derQ48_D derQ48_F derQ48_G derQ48_H /// 
+	 derQ48_I derQ60 derQ61) (health health_mental last_qual last_skills /// 
+	 last_supplies last_respect last_explain last_decisions ///
+	 last_visit_rate last_wait_rate vignette_poor vignette_good)
+
+* usual_quality,last_know, last_courtesy 
+
+recode Q22 (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+	   (.a = .a "I did not receive healthcare form this provider in the past 12 months"), /// 
+	   pre(der)label(exc_pr_hlthcare_der)
+
+recode Q48_E (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+	   (.a = .a "I have not had prior visits or tests"), /// 
+	   pre(der)label(exc_pr_visits_der)
+
+recode Q48_J (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+	   (.a = .a "The clinic had no other staff"), /// 
+	   pre(der)label(exc_pr_staff_der)
+	   
+ren (derQ22 derQ48_E Q48_J) (usual_quality last_know last_courtesy)
+
+* qual_public qual_private qual_ngo covid_manage
+
+recode Q54 Q55 Q56 Q59 /// 
+	   (0 1 = 0 "Fair/Poor") (2 = 1 "Good") ( 3 4 = 2 "Excellent/Very Good") /// 
+	   (.r = .r "Refused") (.a = .a NA), pre(der) label(exc_poor_der3)
+
+ren (derQ54 derQ55 derQ56 derQ59) (qual_public qual_private qual_ngo covid_manage)
+
+* phc_women phc_child phc_chronic phc_mental
+
+recode Q50_A Q50_B Q50_C Q50_D ///
+	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+	   (.d = .d "The clinic had no other staff"), /// 
+	   pre(der) label(exc_pr_judge_der)
+
+ren (derQ50_A derQ50_B derQ50_C derQ50_D) ///
+	(phc_women phc_child phc_chronic phc_mental)
+
+**** All Very Confident to Not at all Confident scales ****
+
+* conf_sick conf_afford conf_opinion
+
+recode Q51 Q52 Q53 ///
+	   (3 = 1 "Very confident") ///
+	   (0 1 2 = 0 "Somewhat confident/Not too confident/Not at all confident") /// 
+	   (.r = .r Refused) (.a = .a NA), /// 
+	   pre(der) label(vc_nc_der)
+
+ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
 
