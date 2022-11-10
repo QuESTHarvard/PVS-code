@@ -74,14 +74,11 @@ recode Interviewer_Gender ///
 	(1 = 0 Male) (2 = 1 Female), ///
 	pre(rec) label(int_gender)
 
-* Make sure no under 18 - TODD is this okay to do? 
-drop if Q2 == 1 | Q1 < 18
-
 recode Q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
-	(6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") /// 
-	(.a = .a "NA"), pre(rec) label(age_cat)
+		  (6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") ///
+		  (.a = .a "NA"), pre(rec) label(age_cat)
 
-* Not sure why there is an error here? 
+* TODD Not sure why there is an error here? It works sometimes but not other times
 
 recode Q3 ///
 	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
@@ -358,11 +355,11 @@ recode visits_total (. = .r) if Q23 == .d | Q23 == .r | Q28_A == .d | Q28_A == .
 			
 * systems_fail 
 * NOTE - Todd, see if systems_fail code makes sense
-gen systems_fail = 1 if Q39 == 1 | Q40 == 1	   
-recode systems_fail (. = 0) if Q39 == 0 & Q40 == 0	
-recode systems_fail (. = .r) if Q39 == .r | Q40 == .r	      
-recode systems_fail (. = .a) (0 = .a) (1 = .a) if Q39 == .a | Q40 == .a	   
-lab val systems_fail yes_no_na
+gen system_fail = 1 if Q39 == 1 | Q40 == 1	   
+recode system_fail (. = 0) if Q39 == 0 & Q40 == 0	
+recode system_fail (. = .r) if Q39 == .r | Q40 == .r	      
+recode system_fail (. = .a) (0 = .a) (1 = .a) if Q39 == .a | Q40 == .a	   
+lab val system_fail yes_no_na
 
 * unmet_reason 
 recode Q42 (1 = 1 "Cost (High cost)") ///
@@ -488,7 +485,7 @@ recode Q48_J (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = 
 	   (.a = .a "The clinic had no other staff"), /// 
 	   pre(der)label(exc_pr_staff_der)
 	   
-ren (derQ22 derQ48_E Q48_J) (usual_quality last_know last_courtesy)
+ren (derQ22 derQ48_E derQ48_J) (usual_quality last_know last_courtesy)
 
 * qual_public qual_private qual_ngo covid_manage
 
@@ -519,4 +516,22 @@ recode Q51 Q52 Q53 ///
 	   pre(der) label(vc_nc_der)
 
 ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
+
+order Q* /// 
+age_calc age_cat female urban insured insur_type education health health_mental /// 
+health_chronic ever_covid covid_confirmed covid_vax covid_vax_intent /// 
+patient_activation usual_source usual_type usual_reason usual_quality visits ///
+visits_covid fac_number visits_total inpatient blood_pressure mammogram ///
+cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental ///
+system_fail unmet_need unmet_reason last_type last_reason last_wait_time ///
+last_visit_time last_qual last_skills last_supplies last_respect last_know ///
+last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
+last_promote phc_women phc_child phc_chronic ///
+phc_mental conf_sick conf_afford conf_opinion qual_public /// 
+qual_private qual_ngo system_outlook system_reform covid_manage vignette_poor /// 
+vignette_good income, after(Interviewer_Gender)
+
+**************************** Save data *****************************
+
+save "$data/Kenya/00 interim data/pvs_ke_03.dta", replace
 
