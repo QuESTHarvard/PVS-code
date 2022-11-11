@@ -118,7 +118,6 @@ recode Q67 (. = .a) if Q66 == 2 | Q66 == .d | Q66 == .r
 * Drop any unwanted/empty variables 
 
 * drop 
-* Make sure no under 18 - TODD is this okay to do? 
 drop if Q2 == 1 | Q1 < 18
 
 *------------------------------------------------------------------------------*
