@@ -400,7 +400,10 @@ append using "$data/Kenya/00 interim data/pvs_ke_02.dta"
 
 ren Q56 Q56_KE 
 ren Q19 Q19_KE 
-* TODD - may need to fix some other variables, like Mode 
+lab def m 1 "CATI" 2 "F2F"
+lab val mode m
+
+* TODD - may need to fix some other variables
 * Not sure why the ordering below isn't working well for Q#
 
 order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language /// 
