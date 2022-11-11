@@ -45,11 +45,17 @@ recode $all_ref ($ref_num = .r)
 recode Q2 (. = .a) if Q1 != .r
 recode Q1 (. = .r) if Q2 != .a
 
+*Q6 why completely missing?
+
 * Q7 
 recode Q7 (. = .a) if Q6 == 2 | Q6 == .r 
 
 * Q13 
 recode Q13 (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d 
+
+*TEMP
+drop Q13B Q13E Q13E_10
+
 
 * Q15
 recode Q15_NEW (. = .a) if Q14_NEW == 3 | Q14_NEW == 4 | Q14_NEW == 5 | Q14_NEW == .r
@@ -76,12 +82,12 @@ recode Q42 (. = .a) if Q41 == 2 | Q41 == .r
 
 
 * Q43-49 NA's
-recode Q43 Q44 Q45 Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F /// 
+recode Q43_CO Q43_PE Q43_UY Q44 Q45 Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F /// 
 	   Q48_G Q48_H Q48_I Q48_J Q49 (. = .a) if Q23 == 0 | Q24 == 1 | Q24 == .r
 	   
 recode Q44 (. = .a) if Q43 == 4 | Q43 == .r
 
-*Q46/Q47 refused
+*Q46/Q47 refused--not in LAC data...what even is this?
 recode Q46 Q46_min (. = .r) if Q46_refused == 1
 recode Q47 Q47_min (. = .r) if Q47_refused == 1
 
