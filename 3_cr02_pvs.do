@@ -78,8 +78,6 @@ recode Q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
 		  (6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") ///
 		  (.a = .a "NA"), pre(rec) label(age_cat)
 
-* TODD Not sure why there is an error here? It works sometimes but not other times
-
 recode Q3 ///
 	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
