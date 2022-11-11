@@ -400,16 +400,18 @@ ren Q56 Q56_KE
 lab var Q56_KE "Q56. Kenya: How would you rate the quality of the NGO or faith-based healthcare?"
 ren Q19 Q19_KE 
 lab var Q19_KE "Q19. Kenya: Is this a public, private, or NGO/faith-based healthcare facility?"
+ren Q43 Q43_KE 
+lab var Q43_KE "Q43. Kenya: Is this a public, private, or NGO/faith-based healthcare facility?"
 
 lab def m 1 "CATI" 2 "F2F"
 lab val mode m
 lab var mode "Mode of interview"
 
 * TODD - may need to fix some other variables
-* Not sure why the ordering below isn't working well for Q#
+* ordering below wasn't working well at first 
 
-order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language /// 
-Interviewer_Gender mode Country Language Date time_new IntLength int_length Q* 
+order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language Interviewer_Gender mode Country Language Date time_new IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q7_other Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 Q19_KE Q19_CO Q19_PE Q19_UY Q19_other Q20 Q20_other Q21 Q21_other Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q42_other Q43_KE Q43_CO Q43_PE Q43_UY Q43_other Q44 Q44_other Q45 Q45_other Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1
+
 
 save "$data_mc/00 interim data/pvs_ke_lac_01.dta", replace
 
