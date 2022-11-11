@@ -468,10 +468,12 @@ lab def pa 0 "Not activated (Not too confident and Not at all confident for eith
 			2 "Activated (Very confident on Q16 and Q17)" .r "Refused", replace
 lab val patient_activation pa
 
+/* DELETE
 * usual_type
 recode Q20 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
 		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
 		   (.a = .a "NA") (.r = .r "Refused"), gen(usual_type)
+*/
 
 * usual_reason
 recode Q21 (2 = 1 "Convenience (short distance)") /// 
@@ -532,11 +534,12 @@ recode Q42 (1 = 1 "Cost (High cost)") ///
 			(.a 7 = .a "NA or Illness not serious") ///
 			(.r = .r "Refused"), gen(unmet_reason)
 
-			
+/* DELETE			
 * last_type 
 recode Q44 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
 		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
 		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
+*/
 
 * last_reason
 gen last_reason = Q45
@@ -676,30 +679,82 @@ ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
 
 **** COUNTRY SPECIFIC **** NK STOPPED HERE 
 * urban: type of region respondent lives in 
-recode Q4 (6 7 = 1 "urban") (8 = 0 "rural") (.r = .r "Refused"), gen(urban)
+recode Q4 (9 10 = 1 "urban") (11 = 0 "rural") (.r = .r "Refused") if Country==2, gen(urbanCO) //Colombia
+recode Q4 (6 7 = 1 "urban") (8 = 0 "rural") (.r = .r "Refused") if Country==7, gen(urbanPE) //Peru
+recode Q4 (12 13 = 1 "urban") (14 = 0 "rural") (.r = .r "Refused") if Country==10, gen(urbanUY) //Uruguay
+egen urban = rowtotal(urbanCO urbanPE urbanUY) 
 
 * insur_type 
 * NOTE - I'm just putting Other as refused for now 
-recode Q7 (3 = 0 public) (4 5 6 = 1 private) /// 
-		  (995 = .r "Refused") (.a = .a NA), gen(insur_type)
+recode Q7 (15 16 17 18 = 0 public) (28 = 1 private) /// CO
+		  (995 = .r "Refused") (.a = .a NA) if Country==2, gen(insur_typeCO)
+
+recode Q7 (10 11 12 = 0 public) (13 = 1 private) /// PE
+		  (995 = .r "Refused") (14 .a = .a NA) if Country==7, gen(insur_typePE)
+
+recode Q7 (19 20 22 = 0 public) (21 = 1 private) /// UY
+		  (995 = .r "Refused") (.a = .a NA) if Country==10, gen(insur_typeUY)
+		  
+egen insur_type = rowtotal(insur_typeCO insur_typePE insur_typeUY) 
+
 
 * education 
-recode Q8 (7 = 0 "None") (8 = 1 "Primary") (9 10 = 2 "Secondary") /// 
-	      (11 = 3 "Post-secondary"), gen(education)
+recode Q8 (25 26 = 0 "None") (27 = 1 "Primary") (28 = 2 "Secondary") /// 
+	      (29 30 31 = 3 "Post-secondary") if Country==2, gen(educationCO)
+		  
+recode Q8 (18 19 = 0 "None") (20 = 1 "Primary") (21 = 2 "Secondary") /// 
+	      (22 23 24 = 3 "Post-secondary") if Country==7, gen(educationPE)
+		  
+recode Q8 (32 33 = 0 "None") (34 = 1 "Primary") (35 = 2 "Secondary") /// 
+	      (36 37 38 = 3 "Post-secondary") if Country==10, gen(educationUY)
+		  
+egen education = rowtotal(educationCO educationPE educationUY) 
+
 		  
 * usual_type
-recode Q20 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
-		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
-		   (.a = .a "NA") (.r = .r "Refused"), gen(usual_type)
+recode Q20 (80 82 83 = 0 "Public primary") (81 84 = 1 "Public Secondary") ///
+		   (85 87 88 = 2 "Private primary") (86 89 = 3 "Private secondary") ///
+		   (.a = .a "NA") (.r = .r "Refused") if Country==2, gen(usual_typeCO)
+		   
+recode Q20 (40 43 = 0 "Public primary") (41 42 44 = 1 "Public Secondary") ///
+		   (45 46 47 48 = 2 "Private primary") (49 = 3 "Private secondary") ///
+		   (.a = .a "NA") (.r = .r "Refused") if Country==7, gen(usual_typePE)
+		   
+recode Q20 (92 94 = 0 "Public primary") (93 = 1 "Public Secondary") ///
+		   (96 97 98 100 101 102 = 2 "Private primary") (99 103 = 3 "Private secondary") ///
+		   (.a = .a "NA") (.r = .r "Refused") if Country==10, gen(usual_typeUY)
+		   
+egen usual_type = rowtotal(usual_typeCO usual_typePE usual_typeUY) 
+
 		   
 * last_type 
-recode Q44 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
-		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
-		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
+recode Q44 (80 82 83 = 0 "Public primary") (81 84 = 1 "Public Secondary") ///
+		   (85 87 88 = 2 "Private primary") (86 89 = 3 "Private secondary") ///
+		   (.a = .a "NA") (.r = .r "Refused") if Country==2, gen(last_typeCO)
+		   
+recode Q44 (40 43 = 0 "Public primary") (41 42 44 = 1 "Public Secondary") ///
+		   (45 46 47 48 = 2 "Private primary") (49 = 3 "Private secondary") ///
+		   (.a = .a "NA") (.r = .r "Refused") if Country==7, gen(last_typePE)
+		   
+recode Q44 (92 94 = 0 "Public primary") (93 = 1 "Public Secondary") ///
+		   (96 97 98 100 101 102 = 2 "Private primary") (99 103 = 3 "Private secondary") ///
+		   (.a = .a "NA") (.r = .r "Refused") if Country==10, gen(last_typeUY)
+		   
+egen last_type = rowtotal(last_typeCO last_typePE last_typeUY) 
+
 
 * income
-recode Q63 (1 2 = 0 "Lowest income") (3 4 5 = 1 "Middle income") (6 7 = 2 "Highest income") ///
-		   (.r = .r "Refused"), gen(income)
+recode Q63 (39 40 48 = 0 "Lowest income") (41 42 43 = 1 "Middle income") (44 45 = 2 "Highest income") ///
+		   (.r = .r "Refused") if Country==2, gen(incomeCO)
+		   
+recode Q63 (31 32 38 = 0 "Lowest income") (33 34 35 = 1 "Middle income") (36 37 = 2 "Highest income") ///
+		   (.r = .r "Refused") if Country==7, gen(incomePE)
+		   
+recode Q63 (49 50 61 = 0 "Lowest income") (51 52 53 = 1 "Middle income") (54 55 = 2 "Highest income") ///
+		   (.r = .r "Refused") if Country==10, gen(incomeUY)
+		   
+egen income = rowtotal(incomeCO incomePE incomeUY) 
+		 
 
 * NRK just edited, has not run this 
 order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language Interviewer_Gender mode Country Language Date time_new IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q7_other Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 Q19_KE Q19_CO Q19_PE Q19_UY Q19_other Q20 Q20_other Q21 Q21_other Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q42_other Q43_KE Q43_CO Q43_PE Q43_UY Q43_other Q44 Q44_other Q45 Q45_other Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1 ///
