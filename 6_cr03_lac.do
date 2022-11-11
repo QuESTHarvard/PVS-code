@@ -701,9 +701,8 @@ recode Q44 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
 recode Q63 (1 2 = 0 "Lowest income") (3 4 5 = 1 "Middle income") (6 7 = 2 "Highest income") ///
 		   (.r = .r "Refused"), gen(income)
 
-
-order Respondent_Serial ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language /// 
-Interviewer_Gender mode Country Language Date time_new IntLength int_length Q* /// 
+* NRK just edited, has not run this 
+order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language Interviewer_Gender mode Country Language Date time_new IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q7_other Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 Q19_KE Q19_CO Q19_PE Q19_UY Q19_other Q20 Q20_other Q21 Q21_other Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q42_other Q43_KE Q43_CO Q43_PE Q43_UY Q43_other Q44 Q44_other Q45 Q45_other Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1 ///
 age_calc age_cat female urban insured insur_type education health health_mental /// 
 health_chronic ever_covid covid_confirmed covid_vax covid_vax_intent /// 
 patient_activation usual_source usual_type usual_reason usual_quality visits ///
