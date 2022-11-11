@@ -413,6 +413,9 @@ lab var mode "Mode of interview"
 order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language Interviewer_Gender mode Country Language Date time_new IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q7_other Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 Q19_KE Q19_CO Q19_PE Q19_UY Q19_other Q20 Q20_other Q21 Q21_other Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q42_other Q43_KE Q43_CO Q43_PE Q43_UY Q43_other Q44 Q44_other Q45 Q45_other Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1
 
 
+lab var Q43_other "Q43. Other"
+lab var Q13E_10 "Q13E. Other"
+
 save "$data_mc/00 interim data/pvs_ke_lac_01.dta", replace
 
 ***************************** Deriving variables *****************************
@@ -467,11 +470,6 @@ lab def pa 0 "Not activated (Not too confident and Not at all confident for eith
 			1 "Somewhat activated (Very or somewhat confident on Q16 and Q17)" /// 
 			2 "Activated (Very confident on Q16 and Q17)" .r "Refused", replace
 lab val patient_activation pa
-
-* usual_type
-recode Q20 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
-		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
-		   (.a = .a "NA") (.r = .r "Refused"), gen(usual_type)
 
 * usual_reason
 recode Q21 (2 = 1 "Convenience (short distance)") /// 
@@ -532,11 +530,7 @@ recode Q42 (1 = 1 "Cost (High cost)") ///
 			(.a 7 = .a "NA or Illness not serious") ///
 			(.r = .r "Refused"), gen(unmet_reason)
 
-			
-* last_type 
-recode Q44 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
-		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
-		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
+		
 
 * last_reason
 gen last_reason = Q45
@@ -590,7 +584,7 @@ gen insured = Q6
 gen health_chronic = Q11
 gen ever_covid = Q12
 gen covid_confirmed = Q13 
-recode covid_confirmed (.a = 0) if ever_covid == 0
+*recode covid_confirmed (.a = 0) if ever_covid == 1
 gen usual_source = Q18
 gen inpatient = Q29 
 gen unmet_need = Q41 
@@ -648,9 +642,8 @@ recode Q54 Q55 Q56_KE Q56_PE Q56_UY Q59 ///
 	   (0 1 = 0 "Fair/Poor") (2 = 1 "Good") ( 3 4 = 2 "Excellent/Very Good") /// 
 	   (.r = .r "Refused") (.a = .a NA), pre(der) label(exc_poor_der3)
 
-ren (derQ54 derQ55 derQ56_KE derQ56_PE derQ56_UY derQ59) /// 
-	(qual_public qual_private qual_ngo_ke qual_PE qual_UY  covid_manage)
-* TODD - maybe fix these var names for PE and UY? 
+ren (derQ54 derQ55 derQ56_KE derQ56_PE derQ56_UY derQ59) ///
+    (qual_public qual_private qual_ngo_ke qual_ss_PE qual_mut_UY covid_manage)
 
 * phc_women phc_child phc_chronic phc_mental
 
@@ -674,31 +667,40 @@ recode Q51 Q52 Q53 ///
 
 ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
 
-**** COUNTRY SPECIFIC **** NK STOPPED HERE 
+**** COUNTRY SPECIFIC ****
 * urban: type of region respondent lives in 
-recode Q4 (6 7 = 1 "urban") (8 = 0 "rural") (.r = .r "Refused"), gen(urban)
+recode Q4 (6 7 9 10 12 13 = 1 "urban") (8 11 14 = 0 "rural") (.r = .r "Refused"), gen(urban)
 
 * insur_type 
 * NOTE - I'm just putting Other as refused for now 
-recode Q7 (3 = 0 public) (4 5 6 = 1 private) /// 
+recode Q7 (14 = .a)
+recode Q7 (3 15 16 17 18 10 11 12 19 20 22 = 0 public) (4 5 6 28 13 21 = 1 private) /// 
 		  (995 = .r "Refused") (.a = .a NA), gen(insur_type)
 
 * education 
-recode Q8 (7 = 0 "None") (8 = 1 "Primary") (9 10 = 2 "Secondary") /// 
-	      (11 = 3 "Post-secondary"), gen(education)
+recode Q8 (7 25 26 18 19 32 33 = 0 "None") /// 
+		  (8 27 20 34 = 1 "Primary") (9 10 28 21 35 = 2 "Secondary") /// 
+	      (11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary"), gen(education)
 		  
 * usual_type
-recode Q20 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
-		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
-		   (.a = .a "NA") (.r = .r "Refused"), gen(usual_type)
+recode Q20 (12 14 15 16 80 82 83 40 43 92 94 90 = 0 "Public primary") /// 
+		   (13 81 84 41 42 44 93 51= 1 "Public Secondary") ///
+		   (17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 104 = 2 "Private primary") /// 
+		   (19 21 86 89 49 99 103 105 = 3 "Private secondary") ///
+		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type)
 		   
 * last_type 
-recode Q44 (12 14 15 16 = 0 "Public primary") (13 = 1 "Public Secondary") ///
-		   (17 18 20 = 2 "Private primary") (19 21 = 3 "Private secondary") ///
-		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
+
+recode Q44 (12 14 15 16 80 82 83 40 43 92 94 90 50 = 0 "Public primary") /// 
+		   (13 81 84 41 42 44 93 51 = 1 "Public Secondary") ///
+		   (17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 104 = 2 "Private primary") /// 
+		   (19 21 86 89 49 99 103 105 91 = 3 "Private secondary") ///
+		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type)
 
 * income
-recode Q63 (1 2 = 0 "Lowest income") (3 4 5 = 1 "Middle income") (6 7 = 2 "Highest income") ///
+recode Q63 (1 2 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") /// 
+		   (3 4 5 41 42 43 33 34 35 51 52 53 = 1 "Middle income") /// 
+		   (6 7 44 45 36 37 54 55 = 2 "Highest income") ///
 		   (.r = .r "Refused"), gen(income)
 
 * NRK just edited, has not run this 
@@ -713,7 +715,7 @@ last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 last_promote phc_women phc_child phc_chronic ///
 phc_mental conf_sick conf_afford conf_opinion qual_public /// 
-qual_private qual_ngo system_outlook system_reform covid_manage vignette_poor /// 
+qual_private qual_ngo_ke qual_ss_PE qual_mut_UY system_outlook system_reform covid_manage vignette_poor /// 
 vignette_good income
 
 ***************************** Labeling variables ***************************** 
@@ -781,7 +783,9 @@ lab var	conf_afford	"Confidence in ability to afford care healthcare if became v
 lab var	conf_opinion "Confidence that the government considers public's opinion when making decisions about the healthcare system"
 lab var	qual_public	"Overall quality ratiing of government or public healthcare system in country"
 lab var	qual_private "Overall quality rating of private healthcare system in country"
-lab var	qual_ngo "Overall quality rating of NGO/faith-based healthcare system in country"	
+lab var qual_ss_PE "Peru: Overall quality rating of social security system in country "
+lab var qual_mut_UY "Uruguay: Overall quality rating of mutual healthcare system in country "
+lab var qual_ngo_ke "Kenya: Overall quality rating of NGO/faith-based healthcare system in country"  
 lab var	system_outlook "Opinion on whether heatlh system is getting better, staying the same, or getting worse"
 lab var	system_reform "Opinion on whether health system needs major changes, major changes, or must be completely rebuilt" 
 lab var	covid_manage "Respondent's rating the government's management of the COVID-19 pandemic" 
@@ -792,4 +796,5 @@ lab var	income "Income group"
 
 **************************** Save data *****************************
 
+save "$data_mc/00 interim data/pvs_ke_lac_02.dta", replace
 
