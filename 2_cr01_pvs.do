@@ -102,6 +102,8 @@ recode Q66 Q67 (. = .a) if mode == 2
 * Drop any unwanted/empty variables 
 
 * drop 
+* Make sure no under 18 - TODD is this okay to do? 
+drop if Q2 == 1 | Q1 < 18
 
 *------------------------------------------------------------------------------*
 * In IPA code they also check that "key" variable has no missing values, generate a short key variable, drop data based on date/time
@@ -112,7 +114,7 @@ recode Q66 Q67 (. = .a) if mode == 2
 
 *Q2 
 
-*lab var Q2 "Q2. Respondents age group"
+lab var Q2 "Q2. Respondents age group"
 
 *lab var Q62 "Q62. Respondents mother tongue or native language" 
 

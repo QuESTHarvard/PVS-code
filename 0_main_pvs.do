@@ -12,7 +12,7 @@ macro drop _all
 
 *Project settings
 *Individual users 
-*global user "/Users/nek096"
+global user "/Users/nek096"
 global user "/Users/tol145"
 
 
@@ -22,7 +22,7 @@ global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core
 * Path to multi-country data folder (includes input and output folders for HFCs)
 global data_mc "$data/Multi-country"
 
-* Path to HFC output folders
+* Path to HFC output folders - may change
 global output "$data_mc/03 hfc/Output"
 
 * Path to GitHub folder 

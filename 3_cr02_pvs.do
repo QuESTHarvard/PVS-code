@@ -143,6 +143,7 @@ order Q*, after(Interviewer_Gender)
 
 ***************************** Labeling variables ***************************** 
  
+lab var int_length "Interview length (in minutes)"
 lab var Q1 "Q1. Respondent еxact age"
 lab var Q2 "Q2. Respondent's age group"
 lab var Q3 "Q3. Q3. Respondent gender (Female)"
@@ -200,8 +201,10 @@ lab var Q45 "Q45. What was the main reason you went?"
 lab var Q45_other "Q45. Other"
 lab var Q46_refused "Q46. Refused"
 lab var Q46 "Q46. Approximately how long did you wait before seeing the provider?"
+lab var Q46_min "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var Q47_refused "Q47. Refused"
 lab var Q47 "Q47. Approximately how much time did the provider spend with you?"
+lab var Q47_min "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var Q48_A "Q48_A. How would you rate the overall quality of care you received?"
 lab var Q48_B "Q48_B. How would you rate the knowledge and skills of your provider?"
 lab var Q48_C "Q48_C. How would you rate the equipment and supplies that the provider had?"
@@ -239,6 +242,7 @@ lab var Q65 "Q65. How many other mobile phone numbers do you have?"
 
 ***************************** Save data *****************************
 
+drop formversion
 save "$data/Kenya/00 interim data/pvs_ke_02.dta", replace
 
 ***************************** Deriving variables *****************************
@@ -515,7 +519,8 @@ recode Q51 Q52 Q53 ///
 
 ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
 
-order Q* /// 
+order Respondent_Serial ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language /// 
+Interviewer_Gender mode Country Language Date time_new IntLength int_length Q* /// 
 age_calc age_cat female urban insured insur_type education health health_mental /// 
 health_chronic ever_covid covid_confirmed covid_vax covid_vax_intent /// 
 patient_activation usual_source usual_type usual_reason usual_quality visits ///
@@ -527,7 +532,7 @@ last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 last_promote phc_women phc_child phc_chronic ///
 phc_mental conf_sick conf_afford conf_opinion qual_public /// 
 qual_private qual_ngo system_outlook system_reform covid_manage vignette_poor /// 
-vignette_good income, after(Interviewer_Gender)
+vignette_good income
 
 ***************************** Labeling variables ***************************** 
  
