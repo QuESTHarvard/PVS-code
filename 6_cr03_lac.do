@@ -300,10 +300,9 @@ lab var Q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var Q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var Q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var Q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var Q19_PE "Q19. Is this a public, private, or ... healthcare facility?"
-lab var Q19_UY "Q19. Is this a public, private, or ... healthcare facility?"
-lab var Q19_CO "Q19. Is this a public, private, or ... healthcare facility?"
-* NK check these 
+lab var Q19_PE "Q19. Peru: Is this a public or private healthcare facility?"
+lab var Q19_UY "Q19. Uruguay: Is this a public, private, or mutual healthcare facility?"
+lab var Q19_CO "Q19. Colombia: Is this a public or private healthcare facility?"
 lab var Q19_other "Q19. Other"
 lab var Q20 "Q20. What type of healthcare facility is this?"
 lab var Q20_other "Q20. Other"
@@ -333,9 +332,9 @@ lab var Q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var Q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var Q42 "Q42. The last time this happened, what was the main reason?"
 lab var Q42_other "Q42. Other"
-lab var Q43_PE "Q43. Is this a public, private, or ... healthcare facility?"
-lab var Q43_UY "Q43. Is this a public, private, or ... healthcare facility?"
-lab var Q43_CO "Q143. Is this a public, private, or ... healthcare facility?"
+lab var Q43_PE "Q43. Peru: Is this a public or private healthcare facility?"
+lab var Q43_UY "Q43. Uruguay: Is this a public, private, or mutual healthcare facility?"
+lab var Q43_CO "Q43. Colombia: Is this a public or private healthcare facility?"
 lab var Q43_other "Other"
 lab var Q44 "Q44. What type of healthcare facility is this?"
 lab var Q44_other "Q44. Other"
@@ -367,9 +366,8 @@ lab var Q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var Q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var Q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var Q55 "Q55. How would you rate the quality of private for-profit healthcare?"
-lab var Q56_PE "Q56. How would you rate the quality of the social security system?"
-lab var Q56_UY "Q56. How would you rate the quality of the mutual healthcare system?"
-* ^ NK check this 
+lab var Q56_PE "Q56. Peru: How would you rate the quality of the social security system?"
+lab var Q56_UY "Q56. Uruguay: How would you rate the quality of the mutual healthcare system?"
 lab var Q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var Q58 "Q58. Which of these statements do you agree with the most?"
 lab var Q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -399,9 +397,13 @@ save "$data_mc/00 interim data/pvs_lac_02.dta", replace
 append using "$data/Kenya/00 interim data/pvs_ke_02.dta"
 
 ren Q56 Q56_KE 
+lab var Q56_KE "Q56. Kenya: How would you rate the quality of the NGO or faith-based healthcare?"
 ren Q19 Q19_KE 
+lab var Q19_KE "Q19. Kenya: Is this a public, private, or NGO/faith-based healthcare facility?"
+
 lab def m 1 "CATI" 2 "F2F"
 lab val mode m
+lab var mode "Mode of interview"
 
 * TODD - may need to fix some other variables
 * Not sure why the ordering below isn't working well for Q#
