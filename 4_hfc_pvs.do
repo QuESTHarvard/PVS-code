@@ -7,10 +7,12 @@
 
 clear all
 set more off 
+use "$data_mc/00 interim data/pvs_ke_lac_01.dta", replace
 
  * Import prepped data
 
-use "$pvs01", clear 
+* use "$pvs01", clear 
+
  
 
  *====================== Check start/end date of survey ======================* 

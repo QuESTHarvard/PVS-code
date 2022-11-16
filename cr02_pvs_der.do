@@ -291,7 +291,7 @@ recode Q8 (7 = 0 "None") (8 = 1 "Primary") (9 10 = 2 "Secondary") ///
 * covid_vax
 recode Q14 ///
 	(0 = 0 "unvaccinated (0 doses)") (1 = 1 "partial vaccination (1 dose)") /// 
-	(2 3 4 = 2 "fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
+	(2 3 4 = 2 "fully vaccinated (2+ doses)") (.r = .r Refused), ///
 	gen(covid_vax)
 
 * covid_vax_intent 

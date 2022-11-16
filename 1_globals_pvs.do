@@ -34,7 +34,7 @@
 
 	* NB: Edit this section: Change filenames if neccesary
 	
-	gl inputfile			"$data_mc/03 hfc/Input/hfc_inputs.xlsm"			
+	gl inputfile			"$data_mc/03 test output/Input/hfc_inputs2.xlsm"			
 	
 
 /* Datasets
@@ -148,7 +148,7 @@
 	* Required Variables:
 	
 	gl key					"Respondent_Serial"												
-	gl id 					"Unique_ID"													
+	gl id 					"Respondent_ID"													
 	gl enum					"InterviewerID_recoded"
 	gl date					"Date"	
 	gl time					"time_new"
@@ -285,8 +285,8 @@
 *------------------------------------------------------------------------------*
 	
 	
-	gl os_parent			"Q7 Q19 Q20 Q21 Q42 Q43 Q44 Q62"
-	gl os_child 			"Q7_other Q19_4 Q20_other Q21_9 Q42_10 Q43_4 Q44_other Q45_other Q62_other"
+	gl os_parent			"Q7 Q19_KE Q19_CO Q19_PE Q19_UY Q20 Q21 Q42 Q43_KE Q43_CO Q43_PE Q44 Q62"
+	gl os_child 			"Q7_other Q19_other Q20_other Q21_other Q42_other Q43_other Q44_other Q45_other Q62_other"
 	gl os_nolabel			""													
 
 	* NB: Set-up required options in the input file
