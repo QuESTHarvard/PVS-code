@@ -47,7 +47,8 @@ gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 * Drop any unwanted/empty variables
 * Generate any new needed variables
 
-* Make sure no under 18 - TODD is this okay to do? 
+* Make sure no under 18 
+* NOTE: TODD is this okay to do? 
 drop if Q2 == 1 | Q1 < 18
 
 gen wave = 1
@@ -56,9 +57,11 @@ gen wave = 1
 
 * Recode all Refused and Don't know
 
+* NOTE:
 * Todd - curious about your thoughts on over-recoding. 
-* I could not do these recodes below and instead do it in the value label corrections. 
-* Then, would need to change all the .r in the "NA" section to 996. 
+* I could not do these recodes below (67 & 71) and instead do it in the value label corrections. 
+* Then, would need to change all the .r in the "NA" section to 996, but that's minor 
+* After you review it all, would be great to discuss your thoughts on the order of this recoding 
 
 * Don't know is 997 in these raw data 
 recode Q23 Q25_A Q25_B Q27 Q28 Q28_NEW Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q63 ///
@@ -235,10 +238,10 @@ recode Q57 ///
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 Q30 Q31 Q32 Q33 Q34 Q35 Q36 ///
-	Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H ///
-	Q48_I Q54 Q55 Q56 Q59 Q60 Q61 Q48_E Q48_J Q50_A Q50_B Q50_C Q50_D Q16 ///
-	Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49 Q57
+drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q18 Q25_A Q26 Q29 Q41 Q30 Q31 /// 
+	 Q32 Q33 Q34 Q35 Q36 Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D ///
+	 Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56 Q59 Q60 Q61 Q48_E Q48_J Q50_A Q50_B ///
+	 Q50_C Q50_D Q16 Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49 Q57
 
 ren rec* *
   
@@ -253,6 +256,7 @@ ren Q42_10 Q42_other
 ren Q43_4 Q43_other
 ren Q66 Q64
 ren Q67 Q65
+ren time_new Time
 
 * Q37_B not currently in these data 
 
@@ -397,7 +401,6 @@ gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 * Drop any unwanted/empty variables
 * Generate any new needed variables
 
-* Make sure no under 18 - Todd is this okay to do? 
 drop if Q2 == 1 | Q1 < 18
 
 gen mode = 1
@@ -428,10 +431,13 @@ recode Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q14_NEW ///
 recode Q2 (. = .a) if Q1 != .r
 recode Q1 (. = .r) if Q2 != .a
 
-*Q6 why completely missing?
+* NOTE:
+* Q6 why completely missing?
 
 * Q7 
 * recode Q7 (. = .a) if Q6 == 2 | Q6 == .r 
+* NOTE: Changing none to NA (reflects other countries Q6/Q7)
+recode Q7 (14 = .a)
 
 * Q13 
 recode Q13 (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d 
@@ -439,6 +445,7 @@ recode Q13B (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d
 recode Q13E (. = .a) if Q13B == .a | Q13B == 1 | Q13B == .d | Q13B == .r
 
 * drop Q13B Q13E Q13E_10
+* NOTE: I think it's okay to keep these in the final data, just will change to .a for other countries 
 
 * Q15
 recode Q15_NEW (. = .a) if Q14_NEW == 3 | Q14_NEW == 4 | Q14_NEW == 5 | Q14_NEW == .r
@@ -483,6 +490,7 @@ recode Q44 (. = .a) if Q43_PE == .r | Q43_UY == .r | Q43_CO  == .r
 *Q46/Q47 refused
 * recode Q46 Q46_min (. = .r) if Q46_refused == 1
 * recode Q47 Q47_min (. = .r) if Q47_refused == 1
+* NOTE: we should ask for these variables for LAC countries 
 
 * Q56_PE, Q56_UY
 recode Q56_PE (. = .a) if Country != 7
@@ -490,6 +498,8 @@ recode Q56_UY (. = .a) if Country != 10
 
 *Q62
 recode Q62 (. = .a) if Country == 10
+
+* NOTE: It looks like Q62 wasn't asked in UY? Adding this for now, but should check this
 
 *Q66/67
 recode Q67 (. = .a) if Q66 == 2 | Q66 == .d | Q66 == .r 
@@ -567,7 +577,7 @@ recode Q16 Q17 Q51 Q52 Q53  ///
 	   (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(vc_nc)
 	   
-*Miscellaneous questions with unique answer options
+* Miscellaneous questions with unique answer options
 
 recode Interviewer_Gender ///
 	(1 = 0 Male) (2 = 1 Female), ///
@@ -612,7 +622,7 @@ recode Q57 ///
 * Renaming variables 
 * Rename variables to match question numbers in current survey 
 
-***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
+* Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
 drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q13B Q13E Q18 Q25_A Q26 Q29 Q41 /// 
 	 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C ///
 	 Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56_PE Q56_UY Q59 Q60 Q61 Q48_E /// 
@@ -636,6 +646,7 @@ ren Q45_11 Q45_other
 ren Q66 Q64
 ren Q67 Q65
 ren date Date
+ren time_new Time
 
 * Q37_B not currently in these data 
 
@@ -772,10 +783,18 @@ lab def m 1 "CATI" 2 "F2F"
 lab val mode m
 lab var mode "Mode of interview"
 
+* Country-specific skip patterns
+recode Q19_KE Q43_KE Q56_KE (. = .a) if Country != 5
+recode Q13B Q13E (. = .a) if Country == 5
+recode Q19_UY Q43_UY Q56_UY (. = .a) if Country != 10
+recode Q19_PE Q43_PE Q56_PE (. = .a) if Country != 7
+recode Q19_CO Q43_CO (. = .a) if Country != 2
+* NOTE: Ro, did I miss any? 
+
 * ordering below wasn't working well at first 
 
 order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded /// 
-Interviewer_Language Interviewer_Gender mode Country Language Date time_new /// 
+Interviewer_Language Interviewer_Gender mode Country Language Date Time /// 
 IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q7_other Q8 Q9 Q10 ///
 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 Q19_KE Q19_CO Q19_PE Q19_UY /// 
 Q19_other Q20 Q20_other Q21 Q21_other Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A ///
@@ -785,7 +804,10 @@ Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F ///
 Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 /// 
 Q56_KE Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1
 
-* Add country-specific skip patterns?
+* NOTE: Consider dropping these below 
+* drop Respondent_ID ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language ///
+* Interviewer_Gender IntLength
+* Then, Respondent_Serial, mode, Country, Language, Date, Time, int_length remain
 
 save "$data_mc/02 recoded data/pvs_ke_lac_01.dta", replace
 
