@@ -34,13 +34,13 @@ use "$data/Kenya/00 interim data/HARVARD_Main KE CATI and F2F_08.11.22.dta", cle
 
 * Converting interview length to minutes so it can be summarized
 
-generate int_length = (hh(IntLength)*3600 + mm(IntLength)*60 + ss(IntLength)) / 60
+gen int_length = (hh(IntLength)*3600 + mm(IntLength)*60 + ss(IntLength)) / 60
 
 * Converting Q46 and Q47 to minutes so it can be summarized
 
-generate Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
+gen Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
 
-generate Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
+gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 
 *------------------------------------------------------------------------------*
 
@@ -92,7 +92,7 @@ recode Q15_NEW (. = .a) if Q14_NEW == 3 | Q14_NEW == 4 | Q14_NEW == 5 | Q14_NEW 
 
 *Q19-22
 recode Q19 Q20 Q21 Q22 (. = .a) if Q18 == 2 | Q18 == .r 
-recode Q20 (. = .a) if Q19 == 4
+recode Q20 (. = .a) if Q19 == 4 | Q19 == .r
 
 * NA's for Q23-27 
 recode Q24 (. = .a) if Q23 != .d | Q23 != .r
@@ -384,20 +384,20 @@ use "$data_mc/00 interim data/LAC interim data 10252022.dta", clear
 
 * Converting interview length to minutes so it can be summarized
 
-generate int_length = (hh(IntLength)*3600 + mm(IntLength)*60 + ss(IntLength)) / 60
+gen int_length = (hh(IntLength)*3600 + mm(IntLength)*60 + ss(IntLength)) / 60
 
 * Converting Q46 and Q47 to minutes so it can be summarized
 
-generate Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
+gen Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
 
-generate Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
+gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 
 *------------------------------------------------------------------------------*
 
 * Drop any unwanted/empty variables
 * Generate any new needed variables
 
-* Make sure no under 18 - TODD is this okay to do? 
+* Make sure no under 18 - Todd is this okay to do? 
 drop if Q2 == 1 | Q1 < 18
 
 gen mode = 1
@@ -438,7 +438,6 @@ recode Q13 (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d
 recode Q13B (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d 
 recode Q13E (. = .a) if Q13B == .a | Q13B == 1 | Q13B == .d | Q13B == .r
 
-*TEMP
 * drop Q13B Q13E Q13E_10
 
 * Q15
@@ -463,6 +462,8 @@ recode Q27 (. = .a) if Q26 != 2
 * Q31 & Q32
 recode Q31 (. = .a) if Q3 == 1 | Q1 < 50 | Q2 == 1 | Q2 == 2 | Q2 == 3 | Q2 == 4 | Q1 == .r | Q2 == .r 
 recode Q32 (. = .a) if Q3 == 1 | Q1 == .r | Q2 == .r
+
+* NOTE: This may change depending on which gender question is correct, Q3 or Q3a
 
 * Q42
 recode Q42 (. = .a) if Q41 == 2 | Q41 == .r
@@ -612,10 +613,10 @@ recode Q57 ///
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q13B Q13E Q18 Q25_A Q26 Q29 Q41 Q30 Q31 Q32 Q33 Q34 Q35 Q36 ///
-	Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H ///
-	Q48_I Q54 Q55 Q56_PE Q56_UY Q59 Q60 Q61 Q48_E Q48_J Q50_A Q50_B Q50_C Q50_D Q16 ///
-	Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49 Q57
+drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q13B Q13E Q18 Q25_A Q26 Q29 Q41 /// 
+	 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C ///
+	 Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56_PE Q56_UY Q59 Q60 Q61 Q48_E /// 
+	 Q48_J Q50_A Q50_B Q50_C Q50_D Q16 Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49 Q57
 
 ren rec* *
  
@@ -760,12 +761,12 @@ save "$data_mc/02 recoded data/pvs_lac_01.dta", replace
 u "$data_mc/02 recoded data/pvs_lac_01.dta", clear
 append using "$data_mc/02 recoded data/pvs_ke_01.dta"
 
-ren Q56 Q56_KE 
-lab var Q56_KE "Q56. Kenya: How would you rate the quality of the NGO or faith-based healthcare?"
 ren Q19 Q19_KE 
 lab var Q19_KE "Q19. Kenya: Is this a public, private, or NGO/faith-based healthcare facility?"
 ren Q43 Q43_KE 
 lab var Q43_KE "Q43. Kenya: Is this a public, private, or NGO/faith-based healthcare facility?"
+ren Q56 Q56_KE 
+lab var Q56_KE "Q56. Kenya: How would you rate the quality of the NGO or faith-based healthcare?"
 
 lab def m 1 "CATI" 2 "F2F"
 lab val mode m
@@ -784,8 +785,9 @@ Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F ///
 Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 /// 
 Q56_KE Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1
 
-save "$data_mc/02 recoded data/pvs_ke_lac_01.dta", replace
+* Add country-specific skip patterns?
 
+save "$data_mc/02 recoded data/pvs_ke_lac_01.dta", replace
 
 *------------------------------------------------------------------------------*
 
@@ -805,6 +807,7 @@ gl date			"Date"
 * gl os_child 			"Q7_other Q19_other Q20_other Q21_other Q42_other Q43_other Q44_other Q45_other Q62_other"
 												
 
+* This command lists all other, specify values
  
 ipacheckspecify using "${inputfile}",			///
 	id(${id})									///
@@ -818,6 +821,4 @@ ipacheckspecify using "${inputfile}",			///
 	
 *	loc childvars "`r(childvarlist)'"
    
- * This command lists all other, specify values
-
  
