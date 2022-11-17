@@ -8,9 +8,9 @@ This file loads country-specific raw data, cleans these data, and appends these
 datasets to one clean multi-country datset. 
 
 Cleaning includes:
-	- Fixing date/time variables
+	- Creating new variables (e.g., time variables) 
 	- Recoding skip patterns, refused, and don't know 
-	- Correcting any values or value labels 
+	- Correcting any values and value labels and their direction 
 
 Note: * .a means NA, .r means refused, .d is don't know, . is missing 
 
@@ -51,14 +51,12 @@ gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 * NOTE: TODD is this okay to do? 
 drop if Q2 == 1 | Q1 < 18
 
-gen wave = 1
-
 *------------------------------------------------------------------------------*
 
 * Recode all Refused and Don't know
 
 * NOTE:
-* Todd - curious about your thoughts on over-recoding. 
+* Todd: for future - curious about your thoughts on over-recoding. 
 * I could not do these recodes below (67 & 71) and instead do it in the value label corrections. 
 * Then, would need to change all the .r in the "NA" section to 996, but that's minor 
 * After you review it all, would be great to discuss your thoughts on the order of this recoding 
@@ -144,6 +142,8 @@ recode Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know") /// 
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk)
+
+lab val Q46_refused Q47_refused yes_no
 
 * For future data, may need to add Q37_B 
 
@@ -266,6 +266,17 @@ ren ECS_ID Respondent_ID
 order Q*, sequential
 order Q*, after(Interviewer_Gender)
 
+* Numeric questions needing NA and Refused value labels 
+lab def na_rf .a "NA" .r "Refused"
+lab val Q1 Q23 Q25_B Q27 Q28_A Q28_B Q46 Q46_min Q47 Q47_min Q65 na_rf
+
+* NOTE:
+* I am aware that some of the country-specific questions or questions with 8+ 
+* options have value labels, but not labels for .a or .r.  I don't think it's 
+* worth the effort right now (e.g. Q20), but will have R help me with ths in future.
+* Hopefully Ipsos can send us a detailed codebook for country-specific value labels
+* and then it would be easy.   
+
 *------------------------------------------------------------------------------*
 
 * Labeling variables 
@@ -273,7 +284,7 @@ order Q*, after(Interviewer_Gender)
 lab var int_length "Interview length (in minutes)"
 lab var Q1 "Q1. Respondent еxact age"
 lab var Q2 "Q2. Respondent's age group"
-lab var Q3 "Q3. Q3. Respondent gender (Female)"
+lab var Q3 "Q3. Q3. Respondent gender"
 lab var Q4 "Q4. Type of area where respondent lives"
 lab var Q5 "Q5. County, state, region where respondent lives"
 lab var Q6 "Q6. Do you have health insurance?"
@@ -375,6 +386,10 @@ save "$data_mc/02 recoded data/pvs_ke_01.dta", replace
 
 ********************************** Ethiopia ***********************************
 
+* NOTE: In future, may receive Kenya/Ethiopia data together and will not need to
+* recode separately. For now, this is necessary. Fortunately, very few (or none)
+* changes between Kenya and Ethiopia data/code. 
+
 * Import raw data 
 u "$data_mc/00 interim data/HARVARD(ET_Main,Ke_Main,Ke_F2F)_21.09.222.dta", clear
 * These are interim data with Ethiopia and Kenya combined
@@ -404,20 +419,11 @@ gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 * Generate any new needed variables
 
 * Make sure no under 18 
-* NOTE: TODD is this okay to do? 
 drop if Q2 == 1 | Q1 < 18
-
-gen wave = 1
 
 *------------------------------------------------------------------------------*
 
 * Recode all Refused and Don't know
-
-* NOTE:
-* Todd - curious about your thoughts on over-recoding. 
-* I could not do these recodes below (67 & 71) and instead do it in the value label corrections. 
-* Then, would need to change all the .r in the "NA" section to 996, but that's minor 
-* After you review it all, would be great to discuss your thoughts on the order of this recoding 
 
 * Don't know is 997 in these raw data 
 recode Q23 Q25_A Q25_B Q27 Q28 Q28_NEW Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q63 ///
@@ -500,6 +506,8 @@ recode Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know") /// 
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk)
+
+lab val Q46_refused Q47_refused yes_no
 
 * For future data, may need to add Q37_B 
 
@@ -614,7 +622,7 @@ ren Q66 Q64
 ren Q67 Q65
 ren time_new Time
 drop Respondent_ID 
-* This is currently empty - check with future data 
+* NOTE: This is currently empty - check in future data 
 ren ECS_ID Respondent_ID
 
 
@@ -625,6 +633,11 @@ ren ECS_ID Respondent_ID
 order Q*, sequential
 order Q*, after(Interviewer_Gender)
 
+	
+* Numeric questions needing NA and Refused value labels 
+lab def na_rf .a "NA" .r "Refused"
+lab val Q23 Q25_B Q27 Q28_A Q28_B Q46 Q46_min Q47 Q47_min Q65 na_rf
+
 *------------------------------------------------------------------------------*
 
 * Labeling variables 
@@ -632,7 +645,7 @@ order Q*, after(Interviewer_Gender)
 lab var int_length "Interview length (in minutes)"
 lab var Q1 "Q1. Respondent еxact age"
 lab var Q2 "Q2. Respondent's age group"
-lab var Q3 "Q3. Q3. Respondent gender (Female)"
+lab var Q3 "Q3. Q3. Respondent gender"
 lab var Q4 "Q4. Type of area where respondent lives"
 lab var Q5 "Q5. County, state, region where respondent lives"
 lab var Q6 "Q6. Do you have health insurance?"
@@ -764,7 +777,6 @@ gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 drop if Q2 == 1 | Q1 < 18
 
 gen mode = 1
-gen wave = 1
 
 *------------------------------------------------------------------------------*
 
@@ -805,7 +817,7 @@ recode Q13B (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d
 recode Q13E (. = .a) if Q13B == .a | Q13B == 1 | Q13B == .d | Q13B == .r
 
 * drop Q13B Q13E Q13E_10
-* NOTE: I think it's okay to keep these in the final data, just will change to .a for other countries 
+* NOTE: I think it's okay to keep these in the final data, just will change to .a for other countries after merge
 
 * Q15
 recode Q15_NEW (. = .a) if Q14_NEW == 3 | Q14_NEW == 4 | Q14_NEW == 5 | Q14_NEW == .r
@@ -817,6 +829,10 @@ recode Q19_PE (. = .a) if Country != 7
 recode Q19_UY (. = .a) if Country != 10
 recode Q19_CO (. = .a) if Country != 2
 * recode Q20 (. = .a) if Q19_PE == 4 | Q19_UY == 4 | Q19_CO  == 4
+* NOTE: Todd, I realized that for Kenya/Ethiopia when other was selected in 
+* Q19, the programming directed to just Other, specify - but this appears to not 
+* be the case in LAC countries. Hopefully we get their final tools soon and this 
+* will be clearer. 
 recode Q20 (. = .a) if Q19_PE == .r | Q19_UY == .r | Q19_CO  == .r
 
 * NA's for Q23-27 
@@ -831,6 +847,8 @@ recode Q31 (. = .a) if Q3 == 1 | Q1 < 50 | Q2 == 1 | Q2 == 2 | Q2 == 3 | Q2 == 4
 recode Q32 (. = .a) if Q3 == 1 | Q1 == .r | Q2 == .r
 
 * NOTE: This may change depending on which gender question is correct, Q3 or Q3a
+* Based on missing for Q31/Q32, I think Q3a was used for skip pattern. 
+* TODD - okay to change Q3 to Q3a here for Monday? 
 
 * Q42
 recode Q42 (. = .a) if Q41 == 2 | Q41 == .r
@@ -850,7 +868,10 @@ recode Q44 (. = .a) if Q43_PE == .r | Q43_UY == .r | Q43_CO  == .r
 *Q46/Q47 refused
 * recode Q46 Q46_min (. = .r) if Q46_refused == 1
 * recode Q47 Q47_min (. = .r) if Q47_refused == 1
+
 * NOTE: we should ask for these variables for LAC countries 
+* TODD - okay to recode missing to .r for Q46 and Q47 for Monday? 
+* (So we don't see missing in megatable)
 
 * Q56_PE, Q56_UY
 recode Q56_PE (. = .a) if Country != 7
@@ -951,6 +972,10 @@ recode Q3 ///
 	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
 
+recode Q3a ///
+	(1 = 0 Man) (2 = 1 Woman) (.r = .r Refused), ///
+	pre(rec) label(gender2)
+
 recode Q14_NEW ///
 	(1 = 0 "0- no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
 	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused) (.a = .a NA), ///
@@ -977,13 +1002,15 @@ recode Q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 
+	
+
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
 * Rename variables to match question numbers in current survey 
 
 * Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q13B Q18 Q25_A Q26 Q29 Q41 /// 
+drop Interviewer_Gender Q2 Q3 Q3a Q6 Q11 Q12 Q13 Q13B Q18 Q25_A Q26 Q29 Q41 /// 
 	 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C ///
 	 Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56_PE Q56_UY Q59 Q60 Q61 Q48_E /// 
 	 Q48_J Q50_A Q50_B Q50_C Q50_D Q16 Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49 Q57
@@ -1015,6 +1042,10 @@ ren time_new Time
 order Q*, sequential
 order Q*, after(Interviewer_Gender)
 
+* Numeric questions needing NA and Refused value labels 
+lab def na_rf .a "NA" .r "Refused"
+lab val Q23 Q25_B Q27 Q28_A Q28_B Q46 Q46_min Q47 Q47_min Q65 na_rf
+
 *------------------------------------------------------------------------------*
 
 * Labeling variables 
@@ -1022,7 +1053,8 @@ order Q*, after(Interviewer_Gender)
 lab var int_length "Interview length (in minutes)"
 lab var Q1 "Q1. Respondent еxact age"
 lab var Q2 "Q2. Respondent's age group"
-lab var Q3 "Q3. Q3. Respondent gender (Female)"
+lab var Q3 "Q3. Q3. Respondent gender"
+lab var Q3a "Q3A. Are you a man or a woman?"
 lab var Q4 "Q4. Type of area where respondent lives"
 lab var Q5 "Q5. County, state, region where respondent lives"
 lab var Q6 "Q6. Do you have health insurance?"
@@ -1121,7 +1153,7 @@ lab var Q63 "Q63. Total monthly household income"
 lab var Q64 "Q64. Do you have another mobile phone number?"
 lab var Q65 "Q65. How many other mobile phone numbers do you have?"
 
-* Variables not in these data: PSU_ID Interviewer_Language Language
+* NOTE: Variables not in these data: PSU_ID Interviewer_Language Language, and others 
 
 save "$data_mc/02 recoded data/pvs_lac_01.dta", replace
 
@@ -1152,12 +1184,12 @@ recode Q3a Q13B Q13E (. = .a) if Country == 5 | Country == 3
 recode Q19_UY Q43_UY Q56_UY (. = .a) if Country != 10
 recode Q19_PE Q43_PE Q56_PE (. = .a) if Country != 7
 recode Q19_CO Q43_CO (. = .a) if Country != 2
-* NOTE: Ro, did I miss any? 
+* NOTE: R, did I miss any? 
 * The survey characteristic variables are okay to ignore for now (ID's, etc.)
 
 * ordering below wasn't working well at first 
 
-order Respondent_Serial Respondent_ID Unique_ID PSU_ID wave InterviewerID_recoded /// 
+order Respondent_Serial Respondent_ID Unique_ID PSU_ID InterviewerID_recoded /// 
 Interviewer_Language Interviewer_Gender mode Country Language Date Time /// 
 IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q7_other Q8 Q9 Q10 ///
 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY /// 
@@ -1168,13 +1200,14 @@ Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F ///
 Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 /// 
 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1
 
-* NOTE: Consider dropping these below. TODD - thoughts on dropping? 
+* NOTE: Consider dropping these below. TODD - thoughts on dropping for Monday? 
+
 * drop PSU_ID InterviewerID_recoded Interviewer_Language ///
-* Interviewer_Gender IntLength Unique_ID wave
+* Interviewer_Gender IntLength Unique_ID
+
 * Then, Respondent_Serial, Respondent_ID, mode, Country, Language, Date, Time, int_length remain
 
 save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
-
 
 *------------------------------------------------------------------------------*
 
@@ -1189,6 +1222,8 @@ gl id 			"Respondent_ID"
 gl key			"Respondent_Serial"	
 gl enum			"InterviewerID_recoded"
 gl date			"Date"	
+gl time			"Time"
+gl duration		"int_length"
 gl keepvars 	"Country"
 global all_dk 	"Q13B Q13E Q23 Q25_A Q25_B Q27 Q28_A Q28_B Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q50_A Q50_B Q50_C Q50_D Q63 Q64 Q65"
 global all_num 	"Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY Q20 Q21 Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q43_KE_ET Q43_CO Q43_PE Q43_UY Q44 Q45 Q46 Q47 Q46_min Q46_refused Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q63 Q64 Q65"
@@ -1227,6 +1262,7 @@ ipacheckids ${id},							///
 *=============================== Outliers ==================================* 
  
 * This command checks for outliers among numeric survey variables 
+* This code requires an input file that lists variables to check for outliers 
 
 ipacheckoutliers using "${inputfile}",			///
 	id(${id})									///
@@ -1241,6 +1277,8 @@ ipacheckoutliers using "${inputfile}",			///
 *============================= Other Specify ===============================* 
  
 * This command lists all other, specify values
+* This command requires an input file that lists all the variables with other, specify text 
+
  
 ipacheckspecify using "${inputfile}",			///
 	id(${id})									///
@@ -1255,6 +1293,10 @@ ipacheckspecify using "${inputfile}",			///
 *	loc childvars "`r(childvarlist)'"
 
 *========================= Summarizing All Missing ============================* 
+
+* Below I summarize NA (.a), Don't know (.d), Refused (.r) and true Missing (.) 
+* across the numeric variables(only questions) in the dataset by country
+* This is helpful to check if cleaning commands above are working (esp skip pattern recode)
    
 * Count number of NA, Don't know, and refused across the row 
 ipaanycount $all_num, gen(na_count) numval(.a)

@@ -2,6 +2,13 @@
 * September 2022
 * N. Kapoor 
 
+/*
+
+This file loads creates derived variables for analysis from the multi-country 
+dataset created in the cr01 file. 
+
+*/
+
 ***************************** Deriving variables *****************************
 
 u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", clear
@@ -30,15 +37,17 @@ recode age_cat (.a = 6) if Q1 >= 80
 lab val age_cat age_cat
 
 * female: gender 	   
-gen female = Q3
-lab val female gender
+gen gender = Q3
+lab val gender gender
 
 * NOTE: Confirm if Q3 or Q3a is correct for LAC 
+* NOTE: I renamed this from female to gender because 'another gender' 
+* 		Let me know if you disagree  
 
 * covid_vax
 recode Q14 ///
-	(0 = 0 "unvaccinated (0 doses)") (1 = 1 "partial vaccination (1 dose)") /// 
-	(2 3 4 = 2 "fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
+	(0 = 0 "Unvaccinated (0 doses)") (1 = 1 "Partial vaccination (1 dose)") /// 
+	(2 3 4 = 2 "Fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
 	gen(covid_vax)
 	
 * covid_vax_intent 
@@ -173,7 +182,7 @@ gen health_chronic = Q11
 gen ever_covid = Q12
 gen covid_confirmed = Q13 
 *recode covid_confirmed (.a = 0) if ever_covid == 1
-* NOTE: ^ not sure if this should be done 
+* NOTE: ^ not sure if this should be done, I don't think so 
 gen usual_source = Q18
 gen inpatient = Q29 
 gen unmet_need = Q41 
@@ -259,7 +268,7 @@ ren (derQ51 derQ52 derQ53) (conf_sick conf_afford conf_opinion)
 **** COUNTRY SPECIFIC ****
 
 * urban: type of region respondent lives in 
-recode Q4 (6 7 9 10 12 13 = 1 "urban") (8 11 14 = 0 "rural") ///
+recode Q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insur_type 
@@ -299,7 +308,7 @@ recode Q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") ///
 		   
 **** Order Variables ****
 		   
-order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded /// 
+order Respondent_Serial Respondent_ID Unique_ID PSU_ID InterviewerID_recoded /// 
 	  Interviewer_Language Interviewer_Gender mode Country Language Date ///
 	  Time IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 ///
 	  Q7_other  Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 ///
@@ -309,7 +318,7 @@ order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded ///
 	  Q44_other Q45 Q45_other Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused ///
 	  Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A ///
 	  Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE Q56_PE Q56_UY Q57 Q58 Q59 ///
-	  Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1 age_calc age_cat female ///
+	  Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1 age_calc age_cat gender ///
 	  urban insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation ///
 	  usual_source usual_type usual_reason usual_quality visits visits_covid ///
@@ -327,7 +336,7 @@ order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded ///
  
 lab var age_calc "Exact respondent age or middle number of age range"
 lab var age_cat "Categorical age"
-lab var female "Gender" 
+lab var gender "Gender" 
 lab var urban "Type of region respondent lives in"
 lab var insured "Insurance status "
 lab var insur_type "Type of insurance (for those who have insurance)" 
