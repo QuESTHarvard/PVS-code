@@ -4,7 +4,7 @@
 
 ***************************** Deriving variables *****************************
 
-u "$data_mc/00 interim data/pvs_ke_lac_01.dta", clear
+u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", clear
 
 * age_calc: exact respondent age or middle of age range 
 gen age_calc = Q1 
@@ -264,40 +264,42 @@ recode Q4 (6 7 9 10 12 13 = 1 "urban") (8 11 14 = 0 "rural") ///
 
 * insur_type 
 * NOTE: I'm just putting Other as refused for now 
-recode Q7 (3 15 16 17 18 10 11 12 19 20 22 = 0 public) (4 5 6 28 13 21 = 1 private) /// 
+recode Q7 (1 3 15 16 17 18 10 11 12 19 20 22 = 0 public) (2 4 5 6 7 28 13 21 = 1 private) /// 
 		  (995 = .r "Refused") (.a = .a NA), gen(insur_type)
 
 * education 
-recode Q8 (7 25 26 18 19 32 33 = 0 "None") /// 
-		  (8 27 20 34 = 1 "Primary") (9 10 28 21 35 = 2 "Secondary") /// 
-	      (11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary"), gen(education)
-		  
+recode Q8 (1 7 25 26 18 19 32 33 = 0 "None") /// 
+		  (2 3 8 27 20 34 = 1 "Primary") (4 9 10 28 21 35 = 2 "Secondary") /// 
+	      (5 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary"), gen(education)
+		   
 * usual_type
-recode Q20 (12 14 15 16 80 82 83 40 43 92 94 90 = 0 "Public primary") /// 
-		   (13 81 84 41 42 44 93 51= 1 "Public Secondary") ///
-		   (17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 104 = 2 "Private primary") /// 
-		   (19 21 86 89 49 99 103 105 = 3 "Private secondary") ///
+recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
+		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
+		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
+		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
+		   (90 104 51 105 = 4 "Other") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type)
 		   
 * last_type 
-recode Q44 (12 14 15 16 80 82 83 40 43 92 94 90 50 = 0 "Public primary") /// 
-		   (13 81 84 41 42 44 93 51 = 1 "Public Secondary") ///
-		   (17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 104 = 2 "Private primary") /// 
-		   (19 21 86 89 49 99 103 105 91 = 3 "Private secondary") ///
+recode Q44 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
+		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
+		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
+		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
+		   (90 104 51 50 91 105 = 4 "Other") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type)
 
 * income
-recode Q63 (1 2 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") /// 
-		   (3 4 5 41 42 43 33 34 35 51 52 53 = 1 "Middle income") /// 
-		   (6 7 44 45 36 37 54 55 = 2 "Highest income") ///
+recode Q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") /// 
+		   (3 4 5 11 12 41 42 43 33 34 35 51 52 53 = 1 "Middle income") /// 
+		   (6 7 13 14 44 45 36 37 54 55 = 2 "Highest income") ///
 		   (.r = .r "Refused"), gen(income)
-
+* Ethiopia data missing labels on Q63 
 		   
 **** Order Variables ****
 		   
 order Respondent_Serial Respondent_ID ECS_ID PSU_ID InterviewerID_recoded /// 
 	  Interviewer_Language Interviewer_Gender mode Country Language Date ///
-	  time_new IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 ///
+	  Time IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 ///
 	  Q7_other  Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 ///
 	  Q19_KE Q19_CO Q19_PE Q19_UY Q19_other Q20 Q20_other Q21 Q21_other Q22 ///
 	  Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 ///
@@ -397,5 +399,5 @@ lab var	income "Income group"
 
 **************************** Save data *****************************
 
-save "$data_mc/00 interim data/pvs_ke_lac_02.dta", replace
+save "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", replace
 
