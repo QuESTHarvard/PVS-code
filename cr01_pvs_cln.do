@@ -1175,9 +1175,9 @@ save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 
 ***************************** Data quality checks *****************************
 
-u "$data_mc/02 recoded data/pvs_ke_lac_01.dta", replace
+u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 
-* Macros for IPA commands
+* Macros for these commands
 gl inputfile	"$data_mc/03 test output/Input/hfc_inputs.xlsm"	
 gl hfc_output	"$output/hfc_output.xlsx"				
 gl id 			"Respondent_Serial"	
@@ -1190,7 +1190,55 @@ global all_num 	"Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 
 * gl os_child 			"Q7_other Q19_other Q20_other Q21_other Q42_other Q43_other Q44_other Q45_other Q62_other"
 												
 
-* This command lists all other, specify values
+*====================== Check start/end date of survey ======================* 
+
+
+* list $id if $date < date("01-Jul-2020", "DMY") | $date > date("01-Dec-2022", "DMY") 
+
+* list $id if Time > date("18:00:00", "07:00:00") | Time < date("18:00:00", "%tcHH:MM:SS")												
+												
+* NOTE: The above lines are still not working well for me. 
+* Just leaving in case we decide to add	them back 											
+												
+*========================== Find Survey Duplicates ==========================* 
+
+ * This command finds and exports duplicates in Survey ID
+
+ 
+
+ipacheckids ${id},							///
+	enumerator(${enum}) 					///	
+	date(${date})	 						///
+	key(${key}) 							///
+	outfile("${hfc_output}") 				///
+	outsheet("id duplicates")				///
+	keep(${id_keepvars})	 				///
+	dupfile("${id_dups_output}")			///
+	sheetreplace							
+						
+
+    * Other methods 
+
+	isid $id
+	duplicates list $id
+
+*=============================== Outliers ==================================* 
+ 
+ * This command checks for outliers among numeric survey variables 
+
+ipacheckoutliers using "${inputfile}",			///
+	id(${id})									///
+	enumerator(${enum}) 						///	
+	date(${date})	 							///
+	sheet("outliers")							///
+     outfile("${hfc_output}") 					///
+	outsheet("outliers")						///
+	sheetreplace
+
+   
+*============================= Other Specify ===============================* 
+ 
+ * This command lists all other, specify values
  
 ipacheckspecify using "${inputfile}",			///
 	id(${id})									///
@@ -1203,5 +1251,7 @@ ipacheckspecify using "${inputfile}",			///
 	sheetreplace
 	
 *	loc childvars "`r(childvarlist)'"
+
+*========================= Summarizing All Missing ============================* 
    
  

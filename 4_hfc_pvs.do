@@ -207,7 +207,7 @@ use "$data_mc/00 interim data/pvs_ke_lac_01.dta", replace
 
 * Count number of NA, Don't know, and refused across the row 
 ipaanycount $all_num, gen(na_count) numval(.a)
-ipaanycount $all_dk, gen(dk_count) numval(.d)
+ipaanycount $all_num, gen(dk_count) numval(.d)
 ipaanycount $all_num, gen(rf_count) numval(.r)
 
 * Count of total true missing 
