@@ -294,6 +294,8 @@ recode Q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") ///
 		   (6 7 13 14 44 45 36 37 54 55 = 2 "Highest income") ///
 		   (.r = .r "Refused"), gen(income)
 * Ethiopia data missing labels on Q63 
+
+* NOTE: Ignored country-specific questions Q13B and Q13E
 		   
 **** Order Variables ****
 		   
@@ -398,6 +400,7 @@ lab var	vignette_good "Rating of vignette in Q61 (good care)"
 lab var	income "Income group"
 
 **************************** Save data *****************************
+
 
 save "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", replace
 

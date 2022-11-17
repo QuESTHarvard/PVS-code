@@ -257,7 +257,8 @@ ren Q43_4 Q43_other
 ren Q66 Q64
 ren Q67 Q65
 ren time_new Time
-
+ren ECS_ID Respondent_ID 
+* Check ID variable in future data 
 * Q37_B not currently in these data 
 
 *Reorder variables
@@ -612,6 +613,10 @@ ren Q43_4 Q43_other
 ren Q66 Q64
 ren Q67 Q65
 ren time_new Time
+drop Respondent_ID 
+* This is currently empty - check with future data 
+ren ECS_ID Respondent_ID
+
 
 * Q37_B not currently in these data 
 
@@ -878,7 +883,7 @@ lab var Q53
 
 * All Yes/No questions
 
-recode Q6 Q11 Q12 Q13 Q13B Q13E Q18 Q25_A Q26 Q29 Q41 /// 
+recode Q6 Q11 Q12 Q13 Q13B Q18 Q25_A Q26 Q29 Q41 /// 
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 
@@ -978,7 +983,7 @@ recode Q57 ///
 * Rename variables to match question numbers in current survey 
 
 * Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q13B Q13E Q18 Q25_A Q26 Q29 Q41 /// 
+drop Interviewer_Gender Q2 Q3 Q6 Q11 Q12 Q13 Q13B Q18 Q25_A Q26 Q29 Q41 /// 
 	 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C ///
 	 Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56_PE Q56_UY Q59 Q60 Q61 Q48_E /// 
 	 Q48_J Q50_A Q50_B Q50_C Q50_D Q16 Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49 Q57
@@ -1116,7 +1121,7 @@ lab var Q63 "Q63. Total monthly household income"
 lab var Q64 "Q64. Do you have another mobile phone number?"
 lab var Q65 "Q65. How many other mobile phone numbers do you have?"
 
-* Variables not in these data: ECS_ID PSU_ID Interviewer_Language Language
+* Variables not in these data: PSU_ID Interviewer_Language Language
 
 save "$data_mc/02 recoded data/pvs_lac_01.dta", replace
 
@@ -1152,7 +1157,7 @@ recode Q19_CO Q43_CO (. = .a) if Country != 2
 
 * ordering below wasn't working well at first 
 
-order Respondent_Serial Respondent_ID ECS_ID Unique_ID PSU_ID wave InterviewerID_recoded /// 
+order Respondent_Serial Respondent_ID Unique_ID PSU_ID wave InterviewerID_recoded /// 
 Interviewer_Language Interviewer_Gender mode Country Language Date Time /// 
 IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q7_other Q8 Q9 Q10 ///
 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY /// 
@@ -1163,10 +1168,10 @@ Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F ///
 Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 /// 
 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1
 
-* NOTE: Consider dropping these below 
-* drop Respondent_ID ECS_ID PSU_ID InterviewerID_recoded Interviewer_Language ///
+* NOTE: Consider dropping these below. TODD - thoughts on dropping? 
+* drop PSU_ID InterviewerID_recoded Interviewer_Language ///
 * Interviewer_Gender IntLength Unique_ID wave
-* Then, Respondent_Serial, mode, Country, Language, Date, Time, int_length remain
+* Then, Respondent_Serial, Respondent_ID, mode, Country, Language, Date, Time, int_length remain
 
 save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 
@@ -1178,17 +1183,16 @@ save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 
 * Macros for these commands
-gl inputfile	"$data_mc/03 test output/Input/hfc_inputs.xlsm"	
-gl hfc_output	"$output/hfc_output.xlsx"				
-gl id 			"Respondent_Serial"	
+gl inputfile	"$data_mc/03 test output/Input/dq_inputs.xlsm"	
+gl dq_output	"$output/dq_output.xlsx"				
+gl id 			"Respondent_ID"	
+gl key			"Respondent_Serial"	
 gl enum			"InterviewerID_recoded"
 gl date			"Date"	
-global all_num 	"Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 Q19 Q20 Q21 Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q43 Q44 Q45 Q46_min Q46_refused Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56 Q57 Q58 Q59 Q60 Q61 Q62 Q63 Q64 Q65"
-
-* Other, specify 
-* gl os_parent			"Q7 Q19_KE Q19_CO Q19_PE Q19_UY Q20 Q21 Q42 Q43_KE Q43_CO Q43_PE Q44 Q62"
-* gl os_child 			"Q7_other Q19_other Q20_other Q21_other Q42_other Q43_other Q44_other Q45_other Q62_other"
-												
+gl keepvars 	"Country"
+global all_dk 	"Q13B Q13E Q23 Q25_A Q25_B Q27 Q28_A Q28_B Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q50_A Q50_B Q50_C Q50_D Q63 Q64 Q65"
+global all_num 	"Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY Q20 Q21 Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q43_KE_ET Q43_CO Q43_PE Q43_UY Q44 Q45 Q46 Q47 Q46_min Q46_refused Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q63 Q64 Q65"
+							
 
 *====================== Check start/end date of survey ======================* 
 
@@ -1197,7 +1201,7 @@ global all_num 	"Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 
 
 * list $id if Time > date("18:00:00", "07:00:00") | Time < date("18:00:00", "%tcHH:MM:SS")												
 												
-* NOTE: The above lines are still not working well for me. 
+* NOTE: The above lines are still not working well for me. It runs - but appears to not be accurate 
 * Just leaving in case we decide to add	them back 											
 												
 *========================== Find Survey Duplicates ==========================* 
@@ -1205,15 +1209,13 @@ global all_num 	"Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 
  * This command finds and exports duplicates in Survey ID
 
  
-
 ipacheckids ${id},							///
 	enumerator(${enum}) 					///	
 	date(${date})	 						///
 	key(${key}) 							///
-	outfile("${hfc_output}") 				///
+	outfile("${dq_output}") 				///
 	outsheet("id duplicates")				///
-	keep(${id_keepvars})	 				///
-	dupfile("${id_dups_output}")			///
+	keep(${keepvars})	 					///
 	sheetreplace							
 						
 
@@ -1224,28 +1226,28 @@ ipacheckids ${id},							///
 
 *=============================== Outliers ==================================* 
  
- * This command checks for outliers among numeric survey variables 
+* This command checks for outliers among numeric survey variables 
 
 ipacheckoutliers using "${inputfile}",			///
 	id(${id})									///
 	enumerator(${enum}) 						///	
 	date(${date})	 							///
 	sheet("outliers")							///
-     outfile("${hfc_output}") 					///
+    outfile("${dq_output}") 					///
 	outsheet("outliers")						///
 	sheetreplace
 
    
 *============================= Other Specify ===============================* 
  
- * This command lists all other, specify values
+* This command lists all other, specify values
  
 ipacheckspecify using "${inputfile}",			///
 	id(${id})									///
 	enumerator(${enum})							///	
 	date(${date})	 							///
 	sheet("other specify")						///
-    outfile("${hfc_output}") 					///
+    outfile("${dq_output}") 					///
 	outsheet1("other specify")					///
 	outsheet2("other specify (choices)")		///
 	sheetreplace
@@ -1254,4 +1256,39 @@ ipacheckspecify using "${inputfile}",			///
 
 *========================= Summarizing All Missing ============================* 
    
- 
+* Count number of NA, Don't know, and refused across the row 
+ipaanycount $all_num, gen(na_count) numval(.a)
+ipaanycount $all_dk, gen(dk_count) numval(.d)
+ipaanycount $all_num, gen(rf_count) numval(.r)
+
+* Count of total true missing 
+egen all_missing_count = rowmiss($all_num)
+gen missing_count = all_missing_count  - (na_count + dk_count + rf_count)
+
+* Denominator for percent of NA and Refused 
+egen nonmissing_count = rownonmiss($all_num)
+gen total = all_missing_count + nonmissing_count
+
+* Denominator for percent of Don't know 
+egen dk_nonmiss_count = rownonmiss($all_dk) 
+egen dk_miss_count = rowmiss($all_dk) 
+gen total_dk = dk_nonmiss_count + dk_miss_count 
+
+
+preserve
+
+collapse (sum) na_count dk_count rf_count missing_count total total_dk, by(Country)
+gen na_perc = na_count/total
+gen dk_perc = dk_count/total_dk
+gen rf_perc = rf_count/total 
+gen miss_perc = missing_count/total 
+lab var na_perc "NA (%)" 
+lab var dk_perc "Don't know (%)"
+lab var rf_perc "Refused (%)"
+lab var miss_perc "Missing (%)"
+export exc Country na_perc dk_perc rf_perc miss_perc using "$dq_output", sh(missing, replace) first(varl)
+
+restore 
+
+* Other options 
+* misstable summarize Q28_A
