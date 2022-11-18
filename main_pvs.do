@@ -2,9 +2,6 @@
 * September 2022
 * N. Kapoor 
 * This file sets all macros and runs all .do files
-* Note to Todd: Eventually, any absolutely necessary globals from the globals will be added here TL: LET'S KEEP THIS FILE AS JUST A FILE THAT CALLS UP HFCS, CLEANING, AND RECODING AS DESIRED; EVENTUALLY PEOPLE WON'T BE DOING HFCS
-* This is based on the data and files being in the internal file, file paths will change 
-
 
 ************************************************
 * Drop all macros
@@ -13,8 +10,7 @@ macro drop _all
 *Project settings
 *Individual users 
 global user "/Users/nek096"
-global user "/Users/tol145"
-
+*global user "/Users/tol145"
 
 * Path to data folder 
 global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
@@ -23,7 +19,7 @@ global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core
 global data_mc "$data/Multi-country"
 
 * Path to HFC output folders - may change
-global output "$data_mc/03 hfc/Output"
+global output "$data_mc/03 test output/Output"
 
 * Path to GitHub folder 
 global github "$user/Documents/GitHub/PVS-code"
@@ -35,16 +31,13 @@ net install ipacheck, all replace from("https://raw.githubusercontent.com/Povert
 ipacheck update
 
 ************************************************
-* Run Globals 
-run "$github/1_globals_pvs.do"
 
-* Initial data cleaning (prepping for HFC)
-run "$github/2_cr01_pvs.do"
+* Initial data cleaning and creating multi-country dataset 
+run "$github/cr01_pvs_cln.do"
 
-run "$github/3_cr01_pvs.do"
+* Deriving variables for analysis
+run "$github/cr02_pvs_der.do"
 
-* High frequency checks 
-run "$github/4_hfc_pvs.do"
+* Descriptive analysis (megatables)
+run "$github/an01_pvs.do"
 
-* Descriptive Analysis 
-run "$github/5_an01_pvs.do"
