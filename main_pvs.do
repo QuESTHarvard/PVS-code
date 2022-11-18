@@ -32,12 +32,12 @@ ipacheck update
 
 ************************************************
 
-* Initial data cleaning 
+* Initial data cleaning and creating multi-country dataset 
 run "$github/cr01_pvs_cln.do"
 
-* Deriving variables 
+* Deriving variables for analysis
 run "$github/cr02_pvs_der.do"
 
-* Descriptive analysis  
+* Descriptive analysis (megatables)
 run "$github/an01_pvs.do"
 

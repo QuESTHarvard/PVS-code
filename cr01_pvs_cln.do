@@ -296,7 +296,7 @@ lab var Q10 "Q10. In general, would you say your mental health is?"
 lab var Q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var Q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var Q13 "Q13. Was it confirmed by a test?"
-lab var Q14 "Q14. How many doses of a COVID-19 vaccine have you received, or have you not"
+lab var Q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var Q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var Q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var Q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
@@ -657,7 +657,7 @@ lab var Q10 "Q10. In general, would you say your mental health is?"
 lab var Q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var Q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var Q13 "Q13. Was it confirmed by a test?"
-lab var Q14 "Q14. How many doses of a COVID-19 vaccine have you received, or have you not"
+lab var Q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var Q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var Q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var Q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
@@ -973,7 +973,7 @@ recode Q3 ///
 	pre(rec) label(gender)
 
 recode Q3a ///
-	(1 = 0 Man) (2 = 1 Woman) (.r = .r Refused), ///
+	(1 = 0 Man) (2 = 1 Woman) (.r = .r Refused) (.a = .a "NA"), ///
 	pre(rec) label(gender2)
 
 recode Q14_NEW ///
@@ -991,6 +991,15 @@ recode Q24 ///
 	(1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") ///
 	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(number_visits)
+
+recode Q45 ///
+	(13 = 1 "Care for an urgent or acute health problem (accident or injury, fever, diarrhea, or a new pain or symptom)" ) ///
+	(14 = 2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes; mental health conditions") ///
+	(15 = 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)") ///
+	(.a = .a "NA") (995 = 995 "Other, specify") (.r = .r "Refused"), ///
+	pre(rec) label(main_reason)
+
+* NOTE: Rodrigo, double check this. Q45 words seem to be slightly different for Kenya/Eth
 	
 recode Q49 ///
 	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
@@ -1011,7 +1020,7 @@ recode Q57 ///
 
 * Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
 drop Interviewer_Gender Q2 Q3 Q3a Q6 Q11 Q12 Q13 Q13B Q18 Q25_A Q26 Q29 Q41 /// 
-	 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q48_A Q48_B Q48_C ///
+	 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 Q39 Q40 Q9 Q10 Q22 Q45 Q48_A Q48_B Q48_C ///
 	 Q48_D Q48_F Q48_G Q48_H Q48_I Q54 Q55 Q56_PE Q56_UY Q59 Q60 Q61 Q48_E /// 
 	 Q48_J Q50_A Q50_B Q50_C Q50_D Q16 Q17 Q51 Q52 Q53 Q3 Q14_NEW Q15 Q24 Q49 Q57
 
@@ -1069,7 +1078,7 @@ lab var Q13 "Q13. Was it confirmed by a test?"
 lab var Q13B "Q13B. Did you seek health care for COVID-19? (LAC Countries)"
 lab var Q13E "Q13E. Why didnt you receive health care for COVID-19? (LAC Countries)"
 lab var Q13E_10 "Q13E. Other"
-lab var Q14 "Q14. How many doses of a COVID-19 vaccine have you received, or have you not"
+lab var Q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var Q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var Q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var Q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
@@ -1179,7 +1188,7 @@ lab val mode m
 lab var mode "Mode of interview"
 
 * Country-specific skip patterns
-recode Q19_KE_ET Q43_KE_ET Q56_KE_ET (. = .a) if Country != 5 | Country != 3
+recode Q6 Q19_KE_ET Q43_KE_ET Q56_KE_ET (. = .a) if Country != 5 | Country != 3
 recode Q3a Q13B Q13E (. = .a) if Country == 5 | Country == 3
 recode Q19_UY Q43_UY Q56_UY (. = .a) if Country != 10
 recode Q19_PE Q43_PE Q56_PE (. = .a) if Country != 7
@@ -1209,7 +1218,14 @@ Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _
 
 save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 
+* NOTE: 
+* Ethiopia data missing value labels on Q63 and Q62, it's fine for now 
+
+
 *------------------------------------------------------------------------------*
+* NOTE: I think all of these checks are necessary for now. As we move forward
+* I will probably comment out this whole section so it does not get run each time, 
+* but is useful when we clean a new country's data. 
 
 ***************************** Data quality checks *****************************
 

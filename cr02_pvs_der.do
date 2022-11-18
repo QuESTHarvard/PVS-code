@@ -55,7 +55,7 @@ gen covid_vax_intent = Q15
 lab val covid_vax_intent yes_no_doses
 
 * patient_activiation
-* NOTE: Todd, see if this code makes sense 
+* NOTE: See if this code makes sense 
 gen patient_activation = 2 if Q16 == 3 & Q17 == 3	
 recode patient_activation (. = 1) if Q16 == 3 & Q17 == 2 | Q16 == 2 & Q17 == 3 | /// 
 						  Q16 == 2 & Q17 == 2	
@@ -104,12 +104,13 @@ lab val fac_number fn
 gen visits_total = Q23 + Q28_A + Q28_B
 * NOTE: 
 * something strange may be happening with Q28_A refuse 
-* just changing them all to refuse for now
+* ^ future NRK does not remember why past NRK wrote that
 recode visits_total (. = .r) if Q23 == .d | Q23 == .r | Q28_A == .d | Q28_A == .r ///
 								| Q28_B == .d | Q28_B == .r 
-			
+* ^just changing them all to refuse for now
+
 * systems_fail 
-* NOTE: Todd, see if systems_fail code makes sense
+* NOTE: see if systems_fail code makes sense
 gen system_fail = 1 if Q39 == 1 | Q40 == 1	   
 recode system_fail (. = 0) if Q39 == 0 & Q40 == 0	
 recode system_fail (. = .r) if Q39 == .r | Q40 == .r	      
@@ -132,7 +133,7 @@ recode Q42 (1 = 1 "Cost (High cost)") ///
 * last_reason
 gen last_reason = Q45
 lab def lr 1 "Urgent or new problem" 2 "Follow-up for chronic disease" ///
-		   3 "Preventative or health check" .a "NA" .r "Refused"
+		   3 "Preventative or health check" 995 "Other" .a "NA" .r "Refused"
 lab val last_reason lr
 
 *last_wait_time
@@ -181,8 +182,6 @@ gen insured = Q6
 gen health_chronic = Q11
 gen ever_covid = Q12
 gen covid_confirmed = Q13 
-*recode covid_confirmed (.a = 0) if ever_covid == 1
-* NOTE: ^ not sure if this should be done, I don't think so 
 gen usual_source = Q18
 gen inpatient = Q29 
 gen unmet_need = Q41 
@@ -279,30 +278,30 @@ recode Q7 (1 3 15 16 17 18 10 11 12 19 20 22 = 0 public) (2 4 5 6 7 28 13 21 = 1
 * education 
 recode Q8 (1 7 25 26 18 19 32 33 = 0 "None") /// 
 		  (2 3 8 27 20 34 = 1 "Primary") (4 9 10 28 21 35 = 2 "Secondary") /// 
-	      (5 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary"), gen(education)
+	      (5 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
+		  (.r = .r "Refused"), gen(education)
 		   
 * usual_type
 recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
 		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
 		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
 		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
-		   (90 104 51 105 = 4 "Other") ///
-		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type)
+		   (90 104 51 105 995 = 4 "Other") ///
+		   (.a = .a "NA") ( .r = .r "Refused"), gen(usual_type)
 		   
 * last_type 
 recode Q44 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
 		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
 		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
 		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
-		   (90 104 51 50 91 105 = 4 "Other") ///
-		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type)
+		   (90 104 51 50 91 105 995 = 4 "Other") ///
+		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
 
 * income
 recode Q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") /// 
 		   (3 4 5 11 12 41 42 43 33 34 35 51 52 53 = 1 "Middle income") /// 
 		   (6 7 13 14 44 45 36 37 54 55 = 2 "Highest income") ///
-		   (.r = .r "Refused"), gen(income)
-* Ethiopia data missing labels on Q63 
+		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 
 * NOTE: Ignored country-specific questions Q13B and Q13E
 		   
@@ -312,12 +311,12 @@ order Respondent_Serial Respondent_ID Unique_ID PSU_ID InterviewerID_recoded ///
 	  Interviewer_Language Interviewer_Gender mode Country Language Date ///
 	  Time IntLength int_length Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 ///
 	  Q7_other  Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 ///
-	  Q19_KE Q19_CO Q19_PE Q19_UY Q19_other Q20 Q20_other Q21 Q21_other Q22 ///
+	  Q19_KE_ET Q19_CO Q19_PE Q19_UY Q19_other Q20 Q20_other Q21 Q21_other Q22 ///
 	  Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 ///
-	  Q38 Q39 Q40 Q41 Q42 Q42_other Q43_KE Q43_CO Q43_PE Q43_UY Q43_other Q44 ///
+	  Q38 Q39 Q40 Q41 Q42 Q42_other Q43_KE_ET Q43_CO Q43_PE Q43_UY Q43_other Q44 ///
 	  Q44_other Q45 Q45_other Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused ///
 	  Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A ///
-	  Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE Q56_PE Q56_UY Q57 Q58 Q59 ///
+	  Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 ///
 	  Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1 age_calc age_cat gender ///
 	  urban insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation ///
