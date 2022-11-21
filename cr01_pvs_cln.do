@@ -22,7 +22,8 @@ set more off
 ************************************* KENYA ************************************
 
 * Import raw data 
-use "$data/Kenya/00 interim data/HARVARD_Main KE CATI and F2F_08.11.22.dta", clear
+* use "$data/Kenya/00 interim data/HARVARD_Main KE CATI and F2F_08.11.22.dta", clear
+use "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", clear
 
 *------------------------------------------------------------------------------*
 
@@ -34,13 +35,16 @@ use "$data/Kenya/00 interim data/HARVARD_Main KE CATI and F2F_08.11.22.dta", cle
 
 * Converting interview length to minutes so it can be summarized
 
-gen int_length = (hh(IntLength)*3600 + mm(IntLength)*60 + ss(IntLength)) / 60
+* gen int_length = (hh(IntLength)*3600 + mm(IntLength)*60 + ss(IntLength)) / 604
+gen int_length = IntLength / 60
 
 * Converting Q46 and Q47 to minutes so it can be summarized
 
-gen Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
+* gen Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
 
-gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
+* gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
+gen Q46_min = Q46 / 60
+gen Q47_min = Q47 / 60
 
 *------------------------------------------------------------------------------*
 
