@@ -808,3 +808,5 @@ lab var	vignette_poor "Rating of vignette in Q60 (poor care)"
 lab var	vignette_good "Rating of vignette in Q61 (good care)"
 *lab var	language "Native language"
 lab var	income "Income group"
+
+save "$data_mc/02 recoded data/pvs_ke_03.dta", replace

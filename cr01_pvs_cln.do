@@ -336,7 +336,7 @@ lab var Q41 "Q41. Have you needed medical attention but you did not get it in pa
 lab var Q42 "Q42. The last time this happened, what was the main reason?"
 lab var Q42_other "Q42. Other"
 lab var Q43 "Q43. Last healthcare visit in a public, private, or NGO/faith-based facility?"
-lab var Q43_other "Other"
+lab var Q43_other "Q43. Other"
 lab var Q44 "Q44. What type of healthcare facility is this?"
 lab var Q44_other "Q44. Other"
 lab var Q45 "Q45. What was the main reason you went?"
@@ -383,7 +383,9 @@ lab var Q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Save data
 
-save "$data_mc/02 recoded data/pvs_ke_01.dta", replace
+* save "$data_mc/02 recoded data/pvs_ke_01.dta", replace
+* Just saving as a different version for now
+ save "$data_mc/02 recoded data/pvs_ke_02.dta", replace
 
 
 *------------------------------------------------------------------------------*
@@ -697,7 +699,7 @@ lab var Q41 "Q41. Have you needed medical attention but you did not get it in pa
 lab var Q42 "Q42. The last time this happened, what was the main reason?"
 lab var Q42_other "Q42. Other"
 lab var Q43 "Q43. Last healthcare visit in a public, private, or NGO/faith-based facility?"
-lab var Q43_other "Other"
+lab var Q43_other "Q43. Other"
 lab var Q44 "Q44. What type of healthcare facility is this?"
 lab var Q44_other "Q44. Other"
 lab var Q45 "Q45. What was the main reason you went?"
@@ -1247,7 +1249,7 @@ gl duration		"int_length"
 gl keepvars 	"Country"
 global all_dk 	"Q13B Q13E Q23 Q25_A Q25_B Q27 Q28_A Q28_B Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q50_A Q50_B Q50_C Q50_D Q63 Q64 Q65"
 global all_num 	"Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY Q20 Q21 Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q43_KE_ET Q43_CO Q43_PE Q43_UY Q44 Q45 Q46 Q47 Q46_min Q46_refused Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q63 Q64 Q65"
-							
+
 
 *====================== Check start/end date of survey ======================* 
 
