@@ -383,9 +383,7 @@ lab var Q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Save data
 
-* save "$data_mc/02 recoded data/pvs_ke_01.dta", replace
-* Just saving as a different version for now
- save "$data_mc/02 recoded data/pvs_ke_02.dta", replace
+save "$data_mc/02 recoded data/pvs_ke_01.dta", replace
 
 
 *------------------------------------------------------------------------------*
@@ -849,8 +847,8 @@ recode Q26 (. = .a) if Q23 == 0 | Q23 == 1 | Q24 == 1 | Q24 == .r
 recode Q27 (. = .a) if Q26 != 2
 
 * Q31 & Q32
-recode Q31 (. = .a) if Q3 == 1 | Q1 < 50 | Q2 == 1 | Q2 == 2 | Q2 == 3 | Q2 == 4 | Q1 == .r | Q2 == .r 
-recode Q32 (. = .a) if Q3 == 1 | Q1 == .r | Q2 == .r
+recode Q31 (. = .a) if Q3a == 1 | Q1 < 50 | Q2 == 1 | Q2 == 2 | Q2 == 3 | Q2 == 4 | Q1 == .r | Q2 == .r 
+recode Q32 (. = .a) if Q3a == 1 | Q1 == .r | Q2 == .r
 
 * NOTE: This may change depending on which gender question is correct, Q3 or Q3a
 * Based on missing for Q31/Q32, I think Q3a was used for skip pattern. 
@@ -872,8 +870,8 @@ recode Q44 (. = .a) if Q43_PE == .r | Q43_UY == .r | Q43_CO  == .r
 
 
 *Q46/Q47 refused
-* recode Q46 Q46_min (. = .r) if Q46_refused == 1
-* recode Q47 Q47_min (. = .r) if Q47_refused == 1
+ recode Q46 Q46_min (. = .r) 
+ recode Q47 Q47_min (. = .r) 
 
 * NOTE: we should ask for these variables for LAC countries 
 * TODD - okay to recode missing to .r for Q46 and Q47 for Monday? 
@@ -1068,7 +1066,7 @@ lab val Q23 Q25_B Q27 Q28_A Q28_B Q46 Q46_min Q47 Q47_min Q65 na_rf
 lab var int_length "Interview length (in minutes)"
 lab var Q1 "Q1. Respondent еxact age"
 lab var Q2 "Q2. Respondent's age group"
-lab var Q3 "Q3. Q3. Respondent gender"
+lab var Q3 "Q3. Respondent gender"
 lab var Q3a "Q3A. Are you a man or a woman?"
 lab var Q4 "Q4. Type of area where respondent lives"
 lab var Q5 "Q5. County, state, region where respondent lives"
@@ -1217,8 +1215,7 @@ Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _
 
 * NOTE: Consider dropping these below. TODD - thoughts on dropping for Monday? 
 
-* drop PSU_ID InterviewerID_recoded Interviewer_Language ///
-* Interviewer_Gender IntLength Unique_ID
+drop IntLength Unique_ID
 
 * Then, Respondent_Serial, Respondent_ID, mode, Country, Language, Date, Time, int_length remain
 
