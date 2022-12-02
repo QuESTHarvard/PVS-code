@@ -40,7 +40,6 @@ lab val age_cat age_cat
 gen gender = Q3
 lab val gender gender
 
-* NOTE: Confirm if Q3 or Q3a is correct for LAC 
 * NOTE: I renamed this from female to gender because 'another gender' 
 * 		Let me know if you disagree  
 
@@ -203,54 +202,91 @@ lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
 	blood_sugar blood_chol care_mental yes_no_dk
 	
 **** Excellent to Poor scales *****	   
+* NOTE: I left my previous code commented out for now 
 
 * health, health_mental, last_qual, last_skills, last_supplies, last_respect, 
 * last_explain, last_decision, last_visit_rate, last_wait_rate, vignette_poor,
 * vignette_good
 
-recode Q9 Q10 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q60 Q61 /// 
-	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") /// 
-	   (.r = .r "Refused") (.a = .a NA), pre(der)label(exc_poor_der2)
+* recode Q9 Q10 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q60 Q61 /// 
+*	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") /// 
+*	   (.r = .r "Refused") (.a = .a NA), pre(der)label(exc_poor_der2)
 	   	   
-ren (derQ9 derQ10 derQ48_A derQ48_B derQ48_C derQ48_D derQ48_F derQ48_G derQ48_H /// 
-	 derQ48_I derQ60 derQ61) (health health_mental last_qual last_skills /// 
-	 last_supplies last_respect last_explain last_decisions ///
-	 last_visit_rate last_wait_rate vignette_poor vignette_good)
+* ren (derQ9 derQ10 derQ48_A derQ48_B derQ48_C derQ48_D derQ48_F derQ48_G derQ48_H /// 
+*	 derQ48_I derQ60 derQ61) (health health_mental last_qual last_skills /// 
+*	 last_supplies last_respect last_explain last_decisions ///
+*	 last_visit_rate last_wait_rate vignette_poor vignette_good)
+
+gen health = Q9 
+gen health_mental = Q10 
+gen last_qual = Q48_A 
+gen last_skills = Q48_B 
+gen last_supplies = Q48_C 
+gen last_respect = Q48_D 
+gen last_explain = Q48_F 
+gen last_decisions = Q48_G
+gen last_visit_rate = Q48_H 
+gen last_wait_rate = Q48_I 
+gen vignette_poor = Q60
+gen vignette_good = Q61
+lab val health health_mental last_qual last_skills last_supplies last_respect /// 
+last_explain last_decisions last_visit_rate last_wait_rate vignette_poor /// 
+vignette_good exc_poor
 
 * usual_quality,last_know, last_courtesy 
 
-recode Q22 (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-	   (.a = .a "I did not receive healthcare form this provider in the past 12 months"), /// 
-	   pre(der)label(exc_pr_hlthcare_der)
+*recode Q22 (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+*	   (.a = .a "I did not receive healthcare form this provider in the past 12 months"), /// 
+*	   pre(der)label(exc_pr_hlthcare_der)
 
-recode Q48_E (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-	   (.a = .a "I have not had prior visits or tests"), /// 
-	   pre(der)label(exc_pr_visits_der)
+*recode Q48_E (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+*	   (.a = .a "I have not had prior visits or tests"), /// 
+*	   pre(der)label(exc_pr_visits_der)
 
-recode Q48_J (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-	   (.a = .a "The clinic had no other staff"), /// 
-	   pre(der)label(exc_pr_staff_der)
-	   
-ren (derQ22 derQ48_E derQ48_J) (usual_quality last_know last_courtesy)
-
-* qual_public qual_private qual_ngo covid_manage
-
-recode Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q59 /// 
-	   (0 1 = 0 "Fair/Poor") (2 = 1 "Good") ( 3 4 = 2 "Excellent/Very Good") /// 
-	   (.r = .r "Refused") (.a = .a NA), pre(der) label(exc_poor_der3)
-
-ren (derQ54 derQ55 derQ56_KE_ET derQ56_PE derQ56_UY derQ59) ///
-    (qual_public qual_private qual_ngo_ke qual_ss_PE qual_mut_UY covid_manage)
+*recode Q48_J (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+*	   (.a = .a "The clinic had no other staff"), /// 
+*	   pre(der)label(exc_pr_staff_der)
 
 * phc_women phc_child phc_chronic phc_mental
 
-recode Q50_A Q50_B Q50_C Q50_D ///
-	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-	   (.d = .d "The clinic had no other staff"), /// 
-	   pre(der) label(exc_pr_judge_der)
+* recode Q50_A Q50_B Q50_C Q50_D ///
+*	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
+*	   (.d = .d "The clinic had no other staff"), /// 
+*	   pre(der) label(exc_pr_judge_der)
 
-ren (derQ50_A derQ50_B derQ50_C derQ50_D) ///
-	(phc_women phc_child phc_chronic phc_mental)
+* ren (derQ50_A derQ50_B derQ50_C derQ50_D) ///
+*	(phc_women phc_child phc_chronic phc_mental)
+	   
+gen usual_quality = Q22
+gen last_know = Q48_E 
+gen last_courtesy = Q48_J 
+lab val usual_quality exc_pr_helthcare
+lab val last_know exc_pr_visits
+lab val last_courtesy exc_pr_staff
+
+gen phc_women = Q50_A
+gen phc_child = Q50_B
+gen phc_chronic = Q50_C
+gen phc_mental = Q50_D
+lab val phc_women phc_child phc_chronic phc_mental exc_poor_judge
+
+* qual_public qual_private qual_ngo covid_manage
+
+* recode Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q59 /// 
+*	   (0 1 = 0 "Fair/Poor") (2 = 1 "Good") ( 3 4 = 2 "Excellent/Very Good") /// 
+*	   (.r = .r "Refused") (.a = .a NA), pre(der) label(exc_poor_der3)
+
+*ren (derQ54 derQ55 derQ56_KE_ET derQ56_PE derQ56_UY derQ59) ///
+*    (qual_public qual_private qual_ngo_ke qual_ss_pe qual_mut_uy covid_manage)
+	
+gen qual_public = Q54
+gen qual_private = Q55 
+gen qual_ngo_ke = Q56_KE_ET
+gen qual_ss_pe = Q56_PE
+gen qual_mut_uy = Q56_UY
+gen covid_manage = Q59
+lab val qual_public qual_private qual_ngo_ke qual_ss_pe qual_mut_uy covid_manage exc_poor
+
 
 **** All Very Confident to Not at all Confident scales ****
 
@@ -317,7 +353,7 @@ order Respondent_Serial Respondent_ID PSU_ID InterviewerID_recoded ///
 	  Q44_other Q45 Q45_other Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused ///
 	  Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A ///
 	  Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 ///
-	  Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1 age_calc age_cat gender ///
+	  Q60 Q61 Q62 Q62_other Q63 Q64 Q65 _v1 age_calc age_cat gender ///
 	  urban insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation ///
 	  usual_source usual_type usual_reason usual_quality visits visits_covid ///
@@ -396,8 +432,8 @@ lab var	conf_afford	"Confidence in ability to afford care healthcare if became v
 lab var	conf_opinion "Confidence that the government considers public's opinion when making decisions about the healthcare system"
 lab var	qual_public	"Overall quality ratiing of government or public healthcare system in country"
 lab var	qual_private "Overall quality rating of private healthcare system in country"
-lab var qual_ss_PE "Peru: Overall quality rating of social security system in country "
-lab var qual_mut_UY "Uruguay: Overall quality rating of mutual healthcare system in country "
+lab var qual_ss_pe "Peru: Overall quality rating of social security system in country "
+lab var qual_mut_uy "Uruguay: Overall quality rating of mutual healthcare system in country "
 lab var qual_ngo_ke "Kenya: Overall quality rating of NGO/faith-based healthcare system in country"  
 lab var	system_outlook "Opinion on whether heatlh system is getting better, staying the same, or getting worse"
 lab var	system_reform "Opinion on whether health system needs major changes, major changes, or must be completely rebuilt" 
@@ -406,6 +442,17 @@ lab var	vignette_poor "Rating of vignette in Q60 (poor care)"
 lab var	vignette_good "Rating of vignette in Q61 (good care)"
 *lab var	language "Native language"
 lab var	income "Income group"
+
+**************************** TEMP CODE *****************************
+
+* Rename all variables to lowercase
+* Consider doing this at an earlier stage
+
+rename (Respondent_Serial Respondent_ID PSU_ID InterviewerID_recoded Interviewer_Language Interviewer_Gender Country Language Date Time Province County SubLocation Matrix Sum_size_region Total) (respondent_serial respondent_id psu_id interviewer_id interviewer_language interviewer_gender country language date time province county sublocation matrix sum_size_region total)
+
+
+rename (Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q7_other Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q13E_10 Q14 Q15 Q16 Q17 Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY Q19_other Q20 Q20_other Q21 Q21_other Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q42_other Q43_KE_ET Q43_CO Q43_PE Q43_UY Q43_other Q44 Q44_other Q44_other Q45 Q45_other Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65) (q1_codes q1 q2 q3 q3a q4 q5 q6 q7 q7_other q8 q9 q10 q11 q12 q13 q13b q13e q13e_10 q14 q15 q16 q17 q18 q19_ke_et q19_CO q19_pe q19_uy q19_other q20 q20_other q21 q21_other q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43_ke_et q43_co q43_pe q43_uy q43_other q44 q44_other q44_other q45 q45_other q46 q46_min q46_refused q47 q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 q62 q62_other q63 q64 q65)
+
 
 **************************** Save data *****************************
 

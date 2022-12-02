@@ -27,6 +27,22 @@ use "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", 
 
 *------------------------------------------------------------------------------*
 
+* Recode extreme values to missing 
+
+foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46 Q47 {
+		
+			egen `var'_sd = sd(`var')
+			egen `var'_mean = mean(`var')
+			gen `var'_upper = `var'_mean + (3*`var'_sd)
+			gen `var'_lower = `var'_mean - (3*`var'_sd)
+			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
+			replace `var' = . if `var'_otl == 1
+			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
+		
+	 }
+
+*------------------------------------------------------------------------------*
+
 * Fix interview length variable and other time variables 
 * Edit this section to include other date and time variables as needed 
 
@@ -41,8 +57,8 @@ gen int_length = IntLength / 60
 * Converting Q46 and Q47 to minutes so it can be summarized
 
 * gen Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
-
 * gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
+
 gen Q46_min = Q46 / 60
 gen Q47_min = Q47 / 60
 
@@ -55,7 +71,11 @@ gen Q47_min = Q47 / 60
 * NOTE: TODD is this okay to do? 
 drop if Q2 == 1 | Q1 < 18
 
+drop if QC_short == 2
+drop QC_short
+
 *------------------------------------------------------------------------------*
+
 
 * Recode all Refused and Don't know
 
@@ -417,6 +437,22 @@ gen Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
 
 gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 
+
+*------------------------------------------------------------------------------*
+* Recode extreme values to missing 
+
+foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46_min Q47_min {
+		
+			egen `var'_sd = sd(`var')
+			egen `var'_mean = mean(`var')
+			gen `var'_upper = `var'_mean + (3*`var'_sd)
+			gen `var'_lower = `var'_mean - (3*`var'_sd)
+			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
+			replace `var' = . if `var'_otl == 1
+			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
+		
+	 }
+
 *------------------------------------------------------------------------------*
 
 * Drop any unwanted/empty variables
@@ -773,6 +809,22 @@ gen Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
 
 gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 
+
+*------------------------------------------------------------------------------*
+* Recode extreme values to missing 
+
+foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46_min Q47_min {
+		
+			egen `var'_sd = sd(`var')
+			egen `var'_mean = mean(`var')
+			gen `var'_upper = `var'_mean + (3*`var'_sd)
+			gen `var'_lower = `var'_mean - (3*`var'_sd)
+			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
+			replace `var' = . if `var'_otl == 1
+			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
+		
+	 }
+
 *------------------------------------------------------------------------------*
 
 * Drop any unwanted/empty variables
@@ -780,8 +832,8 @@ gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 
 drop if Q2 == 1 | Q1 < 18
 
-gen mode = 1
-
+gen mode = 1	 
+	 
 *------------------------------------------------------------------------------*
 
 * Recode all Refused and Don't know
@@ -807,8 +859,7 @@ recode Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q14_NEW ///
 recode Q2 (. = .a) if Q1 != .r
 recode Q1 (. = .r) if Q2 != .a
 
-* NOTE:
-* Q6 why completely missing?
+* Q6 was not asked, all respondents were asked Q7
 
 * Q7 
 * recode Q7 (. = .a) if Q6 == 2 | Q6 == .r 
@@ -820,8 +871,8 @@ recode Q13 (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d
 recode Q13B (. = .a) if Q12 == 2 | Q12 == .r | Q12 == .d 
 recode Q13E (. = .a) if Q13B == .a | Q13B == 1 | Q13B == .d | Q13B == .r
 
-* drop Q13B Q13E Q13E_10
-* NOTE: I think it's okay to keep these in the final data, just will change to .a for other countries after merge
+* NOTE: I think it's okay to keep Q13B Q13E Q13E_10 these in the final data
+* Just will change to .a for other countries after merge
 
 * Q15
 recode Q15_NEW (. = .a) if Q14_NEW == 3 | Q14_NEW == 4 | Q14_NEW == 5 | Q14_NEW == .r
@@ -850,9 +901,7 @@ recode Q27 (. = .a) if Q26 != 2
 recode Q31 (. = .a) if Q3a == 1 | Q1 < 50 | Q2 == 1 | Q2 == 2 | Q2 == 3 | Q2 == 4 | Q1 == .r | Q2 == .r 
 recode Q32 (. = .a) if Q3a == 1 | Q1 == .r | Q2 == .r
 
-* NOTE: This may change depending on which gender question is correct, Q3 or Q3a
-* Based on missing for Q31/Q32, I think Q3a was used for skip pattern. 
-* TODD - okay to change Q3 to Q3a here for Monday? 
+* NOTE: Q3a was assigned sex at birth, used for skip pattern in LAC
 
 * Q42
 recode Q42 (. = .a) if Q41 == 2 | Q41 == .r
@@ -870,12 +919,10 @@ recode Q44 (. = .a) if Q43_PE == .r | Q43_UY == .r | Q43_CO  == .r
 
 
 *Q46/Q47 refused
- recode Q46 Q46_min (. = .r) 
- recode Q47 Q47_min (. = .r) 
-
-* NOTE: we should ask for these variables for LAC countries 
-* TODD - okay to recode missing to .r for Q46 and Q47 for Monday? 
-* (So we don't see missing in megatable)
+* recode Q46 Q46_min (. = .r) 
+* recode Q47 Q47_min (. = .r) 
+* Now that we change the outliers to missing we can't use this here (but could move this earlier)
+* We should ask for Q46_refused and Q47_refused
 
 * Q56_PE, Q56_UY
 recode Q56_PE (. = .a) if Country != 7
@@ -1002,8 +1049,7 @@ recode Q45 ///
 	(15 = 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)") ///
 	(.a = .a "NA") (995 = 995 "Other, specify") (.r = .r "Refused"), ///
 	pre(rec) label(main_reason)
-
-* NOTE: Rodrigo, double check this. Q45 words seem to be slightly different for Kenya/Eth
+	
 	
 recode Q49 ///
 	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
@@ -1197,10 +1243,7 @@ recode Q3a Q13B Q13E (. = .a) if Country == 5 | Country == 3
 recode Q19_UY Q43_UY Q56_UY (. = .a) if Country != 10
 recode Q19_PE Q43_PE Q56_PE (. = .a) if Country != 7
 recode Q19_CO Q43_CO (. = .a) if Country != 2
-* NOTE: R, did I miss any? 
-* The survey characteristic variables are okay to ignore for now (ID's, etc.)
 
-* ordering below wasn't working well at first 
 
 order Respondent_Serial Respondent_ID Unique_ID PSU_ID InterviewerID_recoded /// 
 Interviewer_Language Interviewer_Gender mode Country Language Date Time /// 
@@ -1211,9 +1254,9 @@ Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q42_other Q43_KE_ET //
 Q43_CO Q43_PE Q43_UY Q43_other Q44 Q44_other Q45 Q45_other Q46 Q46_min ///
 Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F /// 
 Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 /// 
-Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 QC_short _v1
+Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 _v1
 
-* NOTE: Consider dropping these below. TODD - thoughts on dropping for Monday? 
+* NOTE: Consider dropping these below. 
 
 drop IntLength Unique_ID
 
@@ -1226,6 +1269,8 @@ save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 
 
 *------------------------------------------------------------------------------*
+	 
+
 * NOTE: I think all of these checks are necessary for now. As we move forward
 * I will probably comment out this whole section so it does not get run each time, 
 * but is useful when we clean a new country's data. 
