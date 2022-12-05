@@ -308,30 +308,62 @@ recode Q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
 
 * insur_type 
 * NOTE: I'm just putting Other as refused for now 
+* Javier said Mutualists is not public or private
 recode Q7 (1 3 15 16 17 18 10 11 12 19 20 22 = 0 public) (2 4 5 6 7 28 13 21 = 1 private) /// 
+		  (20 = 3 other) ///
 		  (995 = .r "Refused") (.a = .a NA), gen(insur_type)
 
 * education 
-recode Q8 (1 7 25 26 18 19 32 33 = 0 "None") /// 
-		  (2 3 8 27 20 34 = 1 "Primary") (4 9 10 28 21 35 = 2 "Secondary") /// 
-	      (5 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
+recode Q8 (1 2 7 25 26 18 19 32 33 = 0 "None") /// 
+		  (3 8 27 20 34 = 1 "Primary") (4 9 28 21 35 = 2 "Secondary") /// 
+	      (5 10 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
 		   
-* usual_type
-recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
-		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
-		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
-		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
-		   (90 104 51 105 995 = 4 "Other") ///
-		   (.a = .a "NA") ( .r = .r "Refused"), gen(usual_type)
+* usual_type_own
+recode Q19_KE_ET (1 = 0 public) (2 3 = 1 private) (4 = 2 other) /// 
+		(.a = .a NA) (.r = .r Refused), ///
+		gen(usual_type_own)
+recode usual_type_own (.a = 0) if Q19_CO == 1 | Q19_PE == 1 | Q19_UY == 1
+recode usual_type_own (.a = 1) if Q19_CO == 2 | Q19_PE == 2 | Q19_UY == 2 | Q19_UY == 3
+recode usual_type_own (.a = 2) if Q19_UY == 5
+recode usual_type_own (.a = .r) if Q19_CO == .r | Q19_PE == .r | Q19_UY == .r | Q19_UY == .r
+
+
+* usual_type_lvl 
+recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 90 104 = 0 "primary") /// 
+		   (3 4 5 13 81 84 41 42 44 93  9 19 21 86 89 49 99 103 8 9 19 21 86 89 49 99 103 105 = 1 "secondary") ///
+		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
+
+* last_type_own
+recode Q43_KE_ET (1 = 0 public) (2 3 = 1 private) (4 = 2 other) /// 
+		(.a = .a NA) (.r = .r Refused), ///
+		gen(last_type_own)
+recode last_type_own (.a = 0) if Q43_CO == 1 | Q43_PE == 1 | Q43_UY == 1
+recode last_type_own (.a = 1) if Q43_CO == 2 | Q43_PE == 2 | Q43_UY == 2 | Q43_UY == 3
+recode last_type_own (.a = 2) if Q43_UY == 5
+recode last_type_own (.a = .r) if Q43_CO == .r | Q43_PE == .r | Q43_UY == .r | Q43_UY == .r
+
+* last_type_lvl 
+recode Q44 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 90 104 = 0 "primary") /// 
+		   (3 4 5 13 81 84 41 42 44 93  9 19 21 86 89 49 99 103 8 9 19 21 86 89 49 99 103 105 = 1 "secondary") ///
+		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
+
+
+* usual_type 
+* recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
+*		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
+*		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
+*		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
+*		   (90 104 51 105 995 = 4 "Other") ///
+*		   (.a = .a "NA") ( .r = .r "Refused"), gen(usual_type)
 		   
 * last_type 
-recode Q44 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
-		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
-		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
-		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
-		   (90 104 51 50 91 105 995 = 4 "Other") ///
-		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
+* recode Q44 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
+*		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
+*		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
+*		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
+*		   (90 104 51 50 91 105 995 = 4 "Other") ///
+*		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
 
 * income
 recode Q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") /// 
@@ -353,18 +385,18 @@ order Respondent_Serial Respondent_ID PSU_ID InterviewerID_recoded ///
 	  Q44_other Q45 Q45_other Q46 Q46_min Q46_refused Q47 Q47_min Q47_refused ///
 	  Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A ///
 	  Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 ///
-	  Q60 Q61 Q62 Q62_other Q63 Q64 Q65 _v1 age_calc age_cat gender ///
+	  Q60 Q61 Q62 Q62_other Q63 Q64 Q65 age_calc age_cat gender ///
 	  urban insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation ///
-	  usual_source usual_type usual_reason usual_quality visits visits_covid ///
+	  usual_source usual_type_own usual_type_lvl usual_reason usual_quality visits visits_covid ///
 	  fac_number visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
-	  system_fail unmet_need unmet_reason last_type last_reason last_wait_time ///
+	  system_fail unmet_need unmet_reason last_type_own last_type_lvl last_reason last_wait_time ///
 	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
-	  conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_PE ///
-	  qual_mut_UY system_outlook system_reform covid_manage vignette_poor /// 
+	  conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
+	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
 	  vignette_good income
 
 ***************************** Labeling variables ***************************** 
@@ -385,7 +417,8 @@ lab var	covid_vax "COVID-19 vaccination status"
 lab var	covid_vax_intent "Intent to receive all recommended COVID-19 vaccine doses if available (if received < 2 doses)"
 lab var	patient_activation "Patient activation - can manage overall health and tell a provider concerns even when they do not ask"
 lab var	usual_source "Usual source of care"
-lab var	usual_type "Facility type for usual source of care"
+lab var	usual_type_own "Facility ownership for usual source of care"
+lab var	usual_type_lvl "Facility level for usual source of care"
 lab var	usual_reason "Main reason for choosing usual source of care facility"
 lab var	usual_quality "Overall quality rating of usual source of care"
 lab var	visits "Visits made in-person to a facility in past 12 months"
@@ -405,7 +438,8 @@ lab var	care_mental	"Received care for depression, anxiety or another mental hea
 lab var	system_fail	"Failed by the health system- medical mistake made or discriminated against by provider"	
 lab var	unmet_need "Needed medical attention but did not get healthcare"
 lab var	unmet_reason "Reason for not getting healthcare when needed medical attention"
-lab var	last_type "Facility type for last visit to a healthcare provider"
+lab var	last_type_own "Facility ownership for last visit to a healthcare provider"
+lab var	last_type_lvl "Facility level for last visit to a healthcare provider"
 lab var	last_reason	"Reason for last healthcare visit" 
 lab var	last_wait_time "Length of time waited for last visit to a healthcare provider"
 lab var	last_visit_time "Length of time spent with the provider during last healthcare visit"
@@ -443,6 +477,8 @@ lab var	vignette_good "Rating of vignette in Q61 (good care)"
 *lab var	language "Native language"
 lab var	income "Income group"
 
+save "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", replace
+
 **************************** TEMP CODE *****************************
 
 * Rename all variables to lowercase
@@ -457,5 +493,5 @@ rename (Q1_codes Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q7_other Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q1
 **************************** Save data *****************************
 
 
-save "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", replace
+save "$data_mc/02 recoded data/pvs_ke_et_lac_03.dta", replace
 

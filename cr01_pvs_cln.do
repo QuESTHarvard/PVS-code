@@ -25,21 +25,6 @@ set more off
 * use "$data/Kenya/00 interim data/HARVARD_Main KE CATI and F2F_08.11.22.dta", clear
 use "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", clear
 
-*------------------------------------------------------------------------------*
-
-* Recode extreme values to missing 
-
-foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46 Q47 {
-		
-			egen `var'_sd = sd(`var')
-			egen `var'_mean = mean(`var')
-			gen `var'_upper = `var'_mean + (3*`var'_sd)
-			gen `var'_lower = `var'_mean - (3*`var'_sd)
-			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
-			replace `var' = . if `var'_otl == 1
-			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
-		
-	 }
 
 *------------------------------------------------------------------------------*
 
@@ -68,7 +53,6 @@ gen Q47_min = Q47 / 60
 * Generate any new needed variables
 
 * Make sure no under 18 
-* NOTE: TODD is this okay to do? 
 drop if Q2 == 1 | Q1 < 18
 
 drop if QC_short == 2
@@ -96,7 +80,23 @@ recode Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14_NEW Q15_NEW Q16 Q17 ///
 	   Q46_refused Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G /// 
 	   Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 /// 
 	   Q56 Q57 Q58 Q59 Q60 Q61 Q62 Q63 Q66 Q67 (996 = .r)	
-	
+
+*------------------------------------------------------------------------------*
+
+* Recode extreme values to missing 
+
+foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46 Q47 {
+		
+			egen `var'_sd = sd(`var')
+			egen `var'_mean = mean(`var')
+			gen `var'_upper = `var'_mean + (3*`var'_sd)
+			gen `var'_lower = `var'_mean - (3*`var'_sd)
+			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
+			replace `var' = . if `var'_otl == 1
+			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
+		
+	 }
+	 
 *------------------------------------------------------------------------------*
 
 * Recode missing values to NA for questions respondents would not have been asked due to skip patterns
@@ -439,21 +439,6 @@ gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
 
 
 *------------------------------------------------------------------------------*
-* Recode extreme values to missing 
-
-foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46_min Q47_min {
-		
-			egen `var'_sd = sd(`var')
-			egen `var'_mean = mean(`var')
-			gen `var'_upper = `var'_mean + (3*`var'_sd)
-			gen `var'_lower = `var'_mean - (3*`var'_sd)
-			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
-			replace `var' = . if `var'_otl == 1
-			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
-		
-	 }
-
-*------------------------------------------------------------------------------*
 
 * Drop any unwanted/empty variables
 * Generate any new needed variables
@@ -478,6 +463,23 @@ recode Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14_NEW Q15_NEW Q16 Q17 ///
 	   Q56 Q57 Q58 Q59 Q60 Q61 Q62 Q63 Q66 Q67 (996 = .r)	
 	
 *------------------------------------------------------------------------------*
+
+* Recode extreme values to missing 
+
+foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46_min Q47_min {
+		
+			egen `var'_sd = sd(`var')
+			egen `var'_mean = mean(`var')
+			gen `var'_upper = `var'_mean + (3*`var'_sd)
+			gen `var'_lower = `var'_mean - (3*`var'_sd)
+			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
+			replace `var' = . if `var'_otl == 1
+			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
+		
+	 }
+
+*------------------------------------------------------------------------------*
+
 
 * Recode missing values to NA for questions respondents would not have been asked due to skip patterns
 
@@ -663,7 +665,7 @@ ren Q67 Q65
 ren time_new Time
 drop Respondent_ID 
 * NOTE: This is currently empty - check in future data 
-ren ECS_ID Respondent_ID
+ren ECS_ID Respondent_ID 
 
 
 * Q37_B not currently in these data 
@@ -789,7 +791,9 @@ save "$data_mc/02 recoded data/pvs_et_01.dta", replace
 clear all
 
 * Import raw data 
-use "$data_mc/00 interim data/LAC interim data 10252022.dta", clear
+
+import spss using "/$data_mc/01 raw data/LATAM(Co_Pe_Ur)_v1_completes_backcoded_weighted.sav", clear
+
 
 *------------------------------------------------------------------------------*
 
@@ -808,22 +812,6 @@ gen int_length = (hh(IntLength)*3600 + mm(IntLength)*60 + ss(IntLength)) / 60
 gen Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
 
 gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
-
-
-*------------------------------------------------------------------------------*
-* Recode extreme values to missing 
-
-foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46_min Q47_min {
-		
-			egen `var'_sd = sd(`var')
-			egen `var'_mean = mean(`var')
-			gen `var'_upper = `var'_mean + (3*`var'_sd)
-			gen `var'_lower = `var'_mean - (3*`var'_sd)
-			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
-			replace `var' = . if `var'_otl == 1
-			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
-		
-	 }
 
 *------------------------------------------------------------------------------*
 
@@ -851,6 +839,22 @@ recode Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q13B Q13E Q14_NEW ///
 	   Q52 Q53 Q54 Q55 Q56_UY Q56_PE Q57 Q58 Q59 Q60 Q61 Q62 Q63 Q66 Q67 /// 
 	   (996 = .r)	
 	
+*------------------------------------------------------------------------------*
+
+* Recode extreme values to missing 
+
+foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46_min Q47_min {
+		
+			egen `var'_sd = sd(`var')
+			egen `var'_mean = mean(`var')
+			gen `var'_upper = `var'_mean + (3*`var'_sd)
+			gen `var'_lower = `var'_mean - (3*`var'_sd)
+			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
+			replace `var' = . if `var'_otl == 1
+			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
+		
+	 }
+
 *------------------------------------------------------------------------------*
 
 * Recode missing values to NA for questions respondents would not have been asked due to skip patterns
@@ -908,7 +912,7 @@ recode Q42 (. = .a) if Q41 == 2 | Q41 == .r
 
 
 * Q43-49 NA's
-recode Q43_CO Q43_PE Q43_UY Q44 Q45 Q46 Q46_min Q47 Q47_min Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F /// 
+recode Q43_CO Q43_PE Q43_UY Q44 Q45 Q46 Q46_min Q46_996 Q47 Q47_min Q47_996  Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F /// 
 	   Q48_G Q48_H Q48_I Q48_J Q49 (. = .a) if Q23 == 0 | Q24 == 1 | Q24 == .r
 	   
 recode Q43_PE (. = .a) if Country != 7
@@ -919,10 +923,9 @@ recode Q44 (. = .a) if Q43_PE == .r | Q43_UY == .r | Q43_CO  == .r
 
 
 *Q46/Q47 refused
-* recode Q46 Q46_min (. = .r) 
-* recode Q47 Q47_min (. = .r) 
-* Now that we change the outliers to missing we can't use this here (but could move this earlier)
-* We should ask for Q46_refused and Q47_refused
+recode Q46 Q46_min (. = .r) if Q46_996 == 1
+recode Q47 Q47_min (. = .r) if Q47_996 == 1
+
 
 * Q56_PE, Q56_UY
 recode Q56_PE (. = .a) if Country != 7
@@ -931,7 +934,7 @@ recode Q56_UY (. = .a) if Country != 10
 *Q62
 recode Q62 (. = .a) if Country == 10
 
-* NOTE: It looks like Q62 wasn't asked in UY? Adding this for now, but should check this
+* NOTE: Q62 was not asked in UY
 
 *Q66/67
 recode Q67 (. = .a) if Q66 == 2 | Q66 == .d | Q66 == .r 
@@ -1091,8 +1094,8 @@ ren Q44_Other Q44_other
 ren Q45_11 Q45_other
 ren Q66 Q64
 ren Q67 Q65
-ren date Date
 ren time_new Time
+ren (Q46_996 Q47_996) (Q46_refused Q47_refused)
 
 * Q37_B not currently in these data 
 
@@ -1175,9 +1178,9 @@ lab var Q45 "Q45. What was the main reason you went?"
 lab var Q45_other "Q45. Other"
 lab var Q46_min "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var Q47_min "Q47. In minutes: Approximately how much time did the provider spend with you?"
-*lab var Q46_refused "Q46. Refused"
+lab var Q46_refused "Q46. Refused"
 lab var Q46 "Q46. Approximately how long did you wait before seeing the provider?"
-*lab var Q47_refused "Q47. Refused"
+lab var Q47_refused "Q47. Refused"
 lab var Q47 "Q47. Approximately how much time did the provider spend with you?"
 lab var Q48_A "Q48_A. How would you rate the overall quality of care you received?"
 lab var Q48_B "Q48_B. How would you rate the knowledge and skills of your provider?"
@@ -1244,6 +1247,8 @@ recode Q19_UY Q43_UY Q56_UY (. = .a) if Country != 10
 recode Q19_PE Q43_PE Q56_PE (. = .a) if Country != 7
 recode Q19_CO Q43_CO (. = .a) if Country != 2
 
+recode Language (. = 0) if Country == 10 | Country == 7 | Country == 2
+lab def Language 1 "English" 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali" 0 "Spanish", replace
 
 order Respondent_Serial Respondent_ID Unique_ID PSU_ID InterviewerID_recoded /// 
 Interviewer_Language Interviewer_Gender mode Country Language Date Time /// 
@@ -1254,9 +1259,9 @@ Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q42_other Q43_KE_ET //
 Q43_CO Q43_PE Q43_UY Q43_other Q44 Q44_other Q45 Q45_other Q46 Q46_min ///
 Q46_refused Q47 Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F /// 
 Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 /// 
-Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 _v1
+Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q62_other Q63 Q64 Q65 
 
-* NOTE: Consider dropping these below. 
+* NOTE: Consider dropping these below. Any others to drop?
 
 drop IntLength Unique_ID
 
