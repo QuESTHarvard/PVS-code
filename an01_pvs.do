@@ -7,7 +7,7 @@ set more off
 
  * Import clean data with derived variables 
 
-use "$data_mc/02 recoded data/pvs_ke_et_lac_03.dta", clear 
+use "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", clear 
 
 
  *========================= Descriptive Analysis ============================* 
@@ -67,23 +67,23 @@ summtab2 , by(Country) vars(Q64 Q65) ///
 * Derived variables 
 summtab2 , by(Country) vars(age_calc age_cat gender urban insured insur_type education health health_mental health_chronic ///
 		   ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation /// 
-		   usual_source usual_type usual_reason usual_quality visits visits_covid ///
+		   usual_source usual_type_own usual_type_lvl usual_type_own_lvl usual_reason usual_quality visits visits_covid ///
 		   fac_number visits_total inpatient blood_pressure mammogram ///
 		   cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
-		   system_fail unmet_need unmet_reason last_type last_reason last_wait_time ///
+		   system_fail unmet_need unmet_reason last_type_own last_type_lvl last_type_own_lvl last_reason last_wait_time ///
 		   last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 		   last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 		   last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
-		   conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_PE ///
-		   qual_mut_UY system_outlook system_reform covid_manage vignette_poor /// 
+		   conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
+		   qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
 		   vignette_good income) ///
 		   type(1 2 2 2 2 2 2 2 2 2 ///
 				2 2 2 2 2	 ///			
-				2 2 2 2 1 1 ///
+				2 2 2 2 2 2 1 1 ///
 				1 1 2 2 2 ///
 				2 2 2 2 2 2 ///
-				2 2 2 2 2 1 /// 
-				1 2 2 2 2 2 ///
+				2 2 2 2 2 2 2 /// 
+				2 2 2 2 2 2 2 ///
 				2 2 2 2 2 ///
 				2 2 2 2 2 2 ///  
 				2 2 2 2 2 2 ///
@@ -102,7 +102,7 @@ set more off
 
  * Import clean data with derived variables 
 
-use "$data_mc/02 recoded data/pvs_ke_et_lac_03.dta", clear 
+use "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", clear 
 drop if Country == 3
 
  *========================= Descriptive Analysis ============================* 
@@ -163,24 +163,24 @@ summtab2 , by(Country) vars(Q64 Q65) ///
 * Derived variables 
 summtab2 , by(Country) vars(age_calc age_cat gender urban insured insur_type education health health_mental health_chronic ///
 		   ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation /// 
-		   usual_source usual_type usual_reason usual_quality visits visits_covid ///
+		   usual_source usual_type_own usual_type_lvl usual_type_own_lvl usual_reason usual_quality visits visits_covid ///
 		   fac_number visits_total inpatient blood_pressure mammogram ///
 		   cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
-		   system_fail unmet_need unmet_reason last_type last_reason last_wait_time ///
+		   system_fail unmet_need unmet_reason last_type_own last_type_lvl last_type_own_lvl last_reason last_wait_time ///
 		   last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 		   last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 		   last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
-		   conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_PE ///
-		   qual_mut_UY system_outlook system_reform covid_manage vignette_poor /// 
+		   conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
+		   qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
 		   vignette_good income) ///
 		   type(1 2 2 2 2 2 2 2 2 2 ///
 				2 2 2 2 2	 ///			
-				2 2 2 2 1 1 ///
+				2 2 2 2 2 2 1 1 ///
 				1 1 2 2 2 ///
 				2 2 2 2 2 2 ///
-				2 2 2 2 2 1 /// 
-				1 2 2 2 2 2 ///
-				2 2 2 2 2 ///
+				2 2 2 2 2 2 /// 
+				2 2 2 2 2 2 2 ///
+				2 2 2 2 2 2 ///
 				2 2 2 2 2 2 ///  
 				2 2 2 2 2 2 ///
 				2 2 2 2 2 ///

@@ -307,11 +307,11 @@ recode Q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insur_type 
-* NOTE: I'm just putting Other as refused for now 
+* NOTE: check other, specify later
 * Javier said Mutualists is not public or private
-recode Q7 (1 3 15 16 17 18 10 11 12 19 20 22 = 0 public) (2 4 5 6 7 28 13 21 = 1 private) /// 
-		  (20 = 3 other) ///
-		  (995 = .r "Refused") (.a = .a NA), gen(insur_type)
+recode Q7 (1 3 15 16 17 18 10 11 12 19 22 = 0 public) (2 4 5 6 7 28 13 21 = 1 private) /// 
+		  (20 995 = 3 other) ///
+		  (.r = .r "Refused") (.a = .a NA), gen(insur_type)
 
 * education 
 recode Q8 (1 2 7 25 26 18 19 32 33 = 0 "None") /// 
@@ -330,9 +330,25 @@ recode usual_type_own (.a = .r) if Q19_CO == .r | Q19_PE == .r | Q19_UY == .r | 
 
 
 * usual_type_lvl 
-recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 90 104 = 0 "primary") /// 
-		   (3 4 5 13 81 84 41 42 44 93  9 19 21 86 89 49 99 103 8 9 19 21 86 89 49 99 103 105 = 1 "secondary") ///
+recode Q20 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "primary") /// 
+		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "secondary") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
+		   
+* usual_type_own_lvl
+gen usual_type_own_lvl = . 
+recode usual_type_own_lvl (. = 0) if usual_type_own == 0 & usual_type_lvl == 0
+recode usual_type_own_lvl (. = 1) if usual_type_own == 0 & usual_type_lvl == 1
+recode usual_type_own_lvl (. = 2) if usual_type_own == 1 & usual_type_lvl == 0
+recode usual_type_own_lvl (. = 3) if usual_type_own == 1 & usual_type_lvl == 1
+recode usual_type_own_lvl (. = 4) if usual_type_own == 2 & usual_type_lvl == 0
+recode usual_type_own_lvl (. = 5) if usual_type_own == 2 & usual_type_lvl == 1
+recode usual_type_own_lvl (. = .a) if usual_type_own == .a | usual_type_lvl == .a
+recode usual_type_own_lvl (. = .r) if usual_type_own == .r | usual_type_lvl == .r
+lab def fac_own_lvl 0 "Public primary" 1 "Public secondary" 2 "Private primary" /// 
+					3 "Private secondary" 4 "Other primary" 5 "Other secondary" ///
+					.a NA .r Refused, replace
+lab val usual_type_own_lvl fac_own_lvl
+
 
 * last_type_own
 recode Q43_KE_ET (1 = 0 public) (2 3 = 1 private) (4 = 2 other) /// 
@@ -343,11 +359,29 @@ recode last_type_own (.a = 1) if Q43_CO == 2 | Q43_PE == 2 | Q43_UY == 2 | Q43_U
 recode last_type_own (.a = 2) if Q43_UY == 5
 recode last_type_own (.a = .r) if Q43_CO == .r | Q43_PE == .r | Q43_UY == .r | Q43_UY == .r
 
-* last_type_lvl 
-recode Q44 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 90 104 = 0 "primary") /// 
-		   (3 4 5 13 81 84 41 42 44 93  9 19 21 86 89 49 99 103 8 9 19 21 86 89 49 99 103 105 = 1 "secondary") ///
-		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
 
+
+* last_type_lvl 
+recode Q44 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "primary") /// 
+		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "secondary") ///
+		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
+		   
+* last_type_own_lvl
+gen last_type_own_lvl = . 
+recode last_type_own_lvl (. = 0) if last_type_own == 0 & last_type_lvl == 0
+recode last_type_own_lvl (. = 1) if last_type_own == 0 & last_type_lvl == 1
+recode last_type_own_lvl (. = 2) if last_type_own == 1 & last_type_lvl == 0
+recode last_type_own_lvl (. = 3) if last_type_own == 1 & last_type_lvl == 1
+recode last_type_own_lvl (. = 4) if last_type_own == 2 & last_type_lvl == 0
+recode last_type_own_lvl (. = 5) if last_type_own == 2 & last_type_lvl == 1
+recode last_type_own_lvl (. = .a) if last_type_own == .a | last_type_lvl == .a
+recode last_type_own_lvl (. = .r) if last_type_own == .r | last_type_lvl == .r
+lab def fac_own_lvl 0 "Public primary" 1 "Public secondary" 2 "Private primary" /// 
+					3 "Private secondary" 4 "Other primary" 5 "Other secondary" ///
+					.a NA .r Refused, replace
+lab val last_type_own_lvl fac_own_lvl
+
+* Previous code for facility type
 
 * usual_type 
 * recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
@@ -388,10 +422,12 @@ order Respondent_Serial Respondent_ID PSU_ID InterviewerID_recoded ///
 	  Q60 Q61 Q62 Q62_other Q63 Q64 Q65 age_calc age_cat gender ///
 	  urban insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation ///
-	  usual_source usual_type_own usual_type_lvl usual_reason usual_quality visits visits_covid ///
+	  usual_source usual_type_own usual_type_lvl usual_type_own_lvl ///
+	  usual_reason usual_quality visits visits_covid ///
 	  fac_number visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
-	  system_fail unmet_need unmet_reason last_type_own last_type_lvl last_reason last_wait_time ///
+	  system_fail unmet_need unmet_reason last_type_own last_type_lvl ///
+	  last_type_own_lvl last_reason last_wait_time ///
 	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
@@ -419,12 +455,13 @@ lab var	patient_activation "Patient activation - can manage overall health and t
 lab var	usual_source "Usual source of care"
 lab var	usual_type_own "Facility ownership for usual source of care"
 lab var	usual_type_lvl "Facility level for usual source of care"
+lab var	usual_type_own_lvl "Facility ownership and level for usual source of care"
 lab var	usual_reason "Main reason for choosing usual source of care facility"
 lab var	usual_quality "Overall quality rating of usual source of care"
 lab var	visits "Visits made in-person to a facility in past 12 months"
 lab var	visits_covid "Number of reported visits made for COVID in-person to a facility in past 12 months"
 lab var	fac_number "Number of facilities visited if had more than one visit during the past 12 months"
-lab var	visits_total "Total number of healthcare contacts, including those made to a facility, home visits and telemedicine visits"
+lab var	visits_total "Total number of healthcare contacts: facility, home visits and telemedicine visits"
 lab var	inpatient "Stayed overnight as a facility in past 12 months (inpatient care)"
 lab var	blood_pressure "Blood pressure checked by healthcare provider in past 12 months"
 lab var	mammogram "Mammogram done by healtchare provider in past 12 months"
@@ -440,6 +477,7 @@ lab var	unmet_need "Needed medical attention but did not get healthcare"
 lab var	unmet_reason "Reason for not getting healthcare when needed medical attention"
 lab var	last_type_own "Facility ownership for last visit to a healthcare provider"
 lab var	last_type_lvl "Facility level for last visit to a healthcare provider"
+lab var last_type_own_lvl "Facility ownership and level for last visit to a healthcare provider"
 lab var	last_reason	"Reason for last healthcare visit" 
 lab var	last_wait_time "Length of time waited for last visit to a healthcare provider"
 lab var	last_visit_time "Length of time spent with the provider during last healthcare visit"
@@ -464,7 +502,7 @@ lab var	phc_mental "Public primary care system rating for: mental health"
 lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick"
 lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick"
 lab var	conf_opinion "Confidence that the government considers public's opinion when making decisions about the healthcare system"
-lab var	qual_public	"Overall quality ratiing of government or public healthcare system in country"
+lab var	qual_public	"Overall quality rating of government or public healthcare system in country"
 lab var	qual_private "Overall quality rating of private healthcare system in country"
 lab var qual_ss_pe "Peru: Overall quality rating of social security system in country "
 lab var qual_mut_uy "Uruguay: Overall quality rating of mutual healthcare system in country "
