@@ -84,16 +84,17 @@ recode Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14_NEW Q15_NEW Q16 Q17 ///
 *------------------------------------------------------------------------------*
 
 * Recode extreme values to missing 
+* Note to Ro: Changed this since we last chatted to only be positive outliers. 
+* Positive outliers online 
 
 foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46 Q47 {
 		
 			egen `var'_sd = sd(`var')
 			egen `var'_mean = mean(`var')
 			gen `var'_upper = `var'_mean + (3*`var'_sd)
-			gen `var'_lower = `var'_mean - (3*`var'_sd)
-			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
+			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < 0
 			replace `var' = . if `var'_otl == 1
-			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
+			drop `var'_sd `var'_mean `var'_upper `var'_otl
 		
 	 }
 	 
@@ -471,10 +472,9 @@ foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46_min Q47_min {
 			egen `var'_sd = sd(`var')
 			egen `var'_mean = mean(`var')
 			gen `var'_upper = `var'_mean + (3*`var'_sd)
-			gen `var'_lower = `var'_mean - (3*`var'_sd)
-			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
+			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < 0
 			replace `var' = . if `var'_otl == 1
-			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
+			drop `var'_sd `var'_mean `var'_upper `var'_otl
 		
 	 }
 
@@ -848,13 +848,13 @@ foreach var in Q23 Q25_B Q27 Q28 Q28_NEW Q46_min Q47_min {
 			egen `var'_sd = sd(`var')
 			egen `var'_mean = mean(`var')
 			gen `var'_upper = `var'_mean + (3*`var'_sd)
-			gen `var'_lower = `var'_mean - (3*`var'_sd)
-			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < `var'_lower & `var' < .
+			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < 0
 			replace `var' = . if `var'_otl == 1
-			drop `var'_sd `var'_mean `var'_upper `var'_lower `var'_otl
-		
+			drop `var'_sd `var'_mean `var'_upper `var'_otl
 	 }
+	 
 
+			
 *------------------------------------------------------------------------------*
 
 * Recode missing values to NA for questions respondents would not have been asked due to skip patterns
