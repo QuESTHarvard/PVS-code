@@ -89,7 +89,7 @@ recode visits (. = 1) if q23 >=1 & q23 <= 4 | q24 == 1
 recode visits (. = 2) if q23 > 4 & q23 < . | q24 == 2 | q24 == 3
 recode visits (. = .r) if q23 == .r | q24 == .r
 lab def visits 0 "Non-user (0 visits)" 1 "Occasional usuer (1-4 visits)" ///
-			   2 "Frequent user (more than 4)"
+			   2 "Frequent user (more than 4)" .r "Refused"
 lab val visits visits	
 
 * visits_covid
@@ -134,8 +134,6 @@ recode q42 (1 = 1 "Cost (High cost)") ///
 			(10 = 7 "Other") ///
 			(.a 7 = .a "NA or Illness not serious") ///
 			(.r = .r "Refused"), gen(unmet_reason)
-
-		
 
 * last_reason
 gen last_reason = q45
@@ -265,12 +263,13 @@ vignette_good exc_poor
 * ren (derQ50_A derQ50_B derQ50_C derQ50_D) ///
 *	(phc_women phc_child phc_chronic phc_mental)
 	   
-gen usual_quality = q22
-gen last_know = q48_e 
-gen last_courtesy = q48_j 
-lab val usual_quality exc_pr_helthcare
+
+gen usual_quality =q22
+gen last_know = q48_E 
+gen last_courtesy = q48_J 
+lab val usual_quality exc_pr_hlthcare
 lab val last_know exc_pr_visits
-lab val last_courtesy exc_pr_staff
+lab val last_courtesy exc_poor_staff
 
 gen phc_women = q50_a
 gen phc_child = q50_b
@@ -308,6 +307,13 @@ recode q51 q52 q53 ///
 ren (derq51 derq52 derq53) (conf_sick conf_afford conf_opinion)
 
 **** COUNTRY SPECIFIC ****
+* NOTE to Rodrigo: 
+* An important thing to review with these items will be that there is no overlap 
+* in numbers between two categories - that will results in error in the recode
+* Browsing var # by derived variable will be a good way to review work as well as 
+* two-way tab 
+* Another thing you could do is look at the megatables to see if the percents
+* are what is expected between the Q# and derived variable (same idea as two-way tab)
 
 * urban: type of region respondent lives in 
 recode q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
@@ -316,8 +322,9 @@ recode q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
 * insur_type 
 * NOTE: check other, specify later
 * Javier said Mutualists is not public or private
-recode q7 (1 3 15 16 17 18 10 11 12 19 22 = 0 public) (2 4 5 6 7 28 13 21 = 1 private) /// 
-		  (20 995 = 3 other) ///
+
+recode q7 (1 3 15 16 17 18 10 11 12 19 22 = 0 Public) (2 4 5 6 7 28 13 21 = 1 Private) /// 
+		  (20 995 = 3 Other) ///
 		  (.r = .r "Refused") (.a = .a NA), gen(insur_type)
 
 * education 
@@ -326,8 +333,7 @@ recode q8 (1 2 7 25 26 18 19 32 33 = 0 "None") ///
 	      (5 10 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
 		   
-* usual_type_own
-recode q19_ke_et (1 = 0 public) (2 3 = 1 private) (4 = 2 other) /// 
+recode q19_KE_ET (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
 recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1
@@ -336,8 +342,9 @@ recode usual_type_own (.a = 2) if q19_uy == 5
 recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r | q19_uy == .r
 
 * usual_type_lvl 
-recode q20 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "primary") /// 
-		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "secondary") ///
+
+recode q20 (1 2 3 6 7 8 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
+		   (4 5 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
 		   
 * usual_type_own_lvl
@@ -350,15 +357,15 @@ recode usual_type_own_lvl (. = 4) if usual_type_own == 2 & usual_type_lvl == 0
 recode usual_type_own_lvl (. = 5) if usual_type_own == 2 & usual_type_lvl == 1
 recode usual_type_own_lvl (. = .a) if usual_type_own == .a | usual_type_lvl == .a
 recode usual_type_own_lvl (. = .r) if usual_type_own == .r | usual_type_lvl == .r
-lab def fac_own_lvl 0 "Public primary" 1 "Public secondary" 2 "Private primary" /// 
-					3 "Private secondary" 4 "Other primary" 5 "Other secondary" ///
+lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Private primary" /// 
+					3 "Private secondary (or higher)" 4 "Other primary" 5 "Other secondary (or higher)" ///
 					.a NA .r Refused, replace
 lab val usual_type_own_lvl fac_own_lvl
 
 
 * last_type_own
-recode q43_ke_et (1 = 0 public) (2 3 = 1 private) (4 = 2 other) /// 
-		(.a = .a na) (.r = .r refused), ///
+recode q43_KE_ET (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
+		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
 recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1
 recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 | q43_uy == 3
@@ -368,8 +375,9 @@ recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r | q
 
 
 * last_type_lvl 
+
 recode q44 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
-		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary") ///
+		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
 		   
 * last_type_own_lvl
@@ -382,8 +390,8 @@ recode last_type_own_lvl (. = 4) if last_type_own == 2 & last_type_lvl == 0
 recode last_type_own_lvl (. = 5) if last_type_own == 2 & last_type_lvl == 1
 recode last_type_own_lvl (. = .a) if last_type_own == .a | last_type_lvl == .a
 recode last_type_own_lvl (. = .r) if last_type_own == .r | last_type_lvl == .r
-lab def fac_own_lvl 0 "Public primary" 1 "Public secondary" 2 "Private primary" /// 
-					3 "Private secondary" 4 "Other primary" 5 "Other secondary" ///
+lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Private primary" /// 
+					3 "Private secondary (or higher)" 4 "Other primary" 5 "Other secondary (or higher)" ///
 					.a NA .r Refused, replace
 lab val last_type_own_lvl fac_own_lvl
 
@@ -405,13 +413,22 @@ lab val last_type_own_lvl fac_own_lvl
 *		   (90 104 51 50 91 105 995 = 4 "Other") ///
 *		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
 
+* native language
+recode Q62 (1 5 8 9 10 11 12 13 14 15 23 24 25 26 27 28 29 30 31 32 ///
+			44 45 49 81 = 0 "Minority group languages") /// 
+		   (2 3 4 6 7 21 22 53 87 = 1 "Majority group languages") /// 
+		   (995 998 = 2 "Other") ///
+		   (.r = .r "Refused") (.a = .a "NA"), gen(native_lang)
+
 * income
 recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") /// 
 		   (3 4 5 11 12 41 42 43 33 34 35 51 52 53 = 1 "Middle income") /// 
 		   (6 7 13 14 44 45 36 37 54 55 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
+		   
 
 * NOTE: Ignored country-specific questions Q13B and Q13E
+
 		   
 **** Order Variables ****
 		   
@@ -439,87 +456,87 @@ order respondent_serial respondent_id psu_id interviewerid_recoded ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
 	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good income
+	  vignette_good native_lang income 
 
 ***************************** Labeling variables ***************************** 
  
-lab var age_calc "Exact respondent age or middle number of age range"
-lab var age_cat "Categorical age"
-lab var gender "Gender" 
-lab var urban "Type of region respondent lives in"
-lab var insured "Insurance status "
-lab var insur_type "Type of insurance (for those who have insurance)" 
-lab var education "Highest level of education completed "
-lab var	health "Self-rated health"
-lab var	health_mental "Self-rated mental health"
-lab var	health_chronic "Longstanding illness or health problem (chronic illness)"
-lab var	ever_covid "Ever had COVID-19 or coronavirus"
-lab var	covid_confirmed	"COVID-19 or coronavirus confirmed by a COVID-19 test"
-lab var	covid_vax "COVID-19 vaccination status"
-lab var	covid_vax_intent "Intent to receive all recommended COVID-19 vaccine doses if available (if received < 2 doses)"
-lab var	patient_activation "Patient activation - can manage overall health and tell a provider concerns even when they do not ask"
-lab var	usual_source "Usual source of care"
-lab var	usual_type_own "Facility ownership for usual source of care"
-lab var	usual_type_lvl "Facility level for usual source of care"
-lab var	usual_type_own_lvl "Facility ownership and level for usual source of care"
-lab var	usual_reason "Main reason for choosing usual source of care facility"
-lab var	usual_quality "Overall quality rating of usual source of care"
-lab var	visits "Visits made in-person to a facility in past 12 months"
-lab var	visits_covid "Number of reported visits made for COVID in-person to a facility in past 12 months"
-lab var	fac_number "Number of facilities visited if had more than one visit during the past 12 months"
-lab var	visits_total "Total number of healthcare contacts: facility, home visits and telemedicine visits"
-lab var	inpatient "Stayed overnight as a facility in past 12 months (inpatient care)"
-lab var	blood_pressure "Blood pressure checked by healthcare provider in past 12 months"
-lab var	mammogram "Mammogram done by healtchare provider in past 12 months"
-lab var	cervical_cancer "Cervical cancer screening done by healthcare provider in past 12 months"
-lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months"
-lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months"
-lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months"
-lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months"		
+lab var age_calc "Exact respondent age or middle number of age range (Q1 & Q2)"
+lab var age_cat "Age (categorical) (Q1 &Q2)"
+lab var gender "Gender (Q3)" 
+lab var urban "Type of region respondent lives in (Q4)"
+lab var insured "Insurance status (Q6)"
+lab var insur_type "Type of insurance (for those who have insurance) (Q7)" 
+lab var education "Highest level of education completed (Q8)"
+lab var	health "Self-rated health (Q9)"
+lab var	health_mental "Self-rated mental health (Q10)"
+lab var	health_chronic "Longstanding illness or health problem (chronic illness) (Q11)"
+lab var	ever_covid "Ever had COVID-19 or coronavirus (Q12)"
+lab var	covid_confirmed	"COVID-19 or coronavirus confirmed by a COVID-19 test (Q13)"
+lab var	covid_vax "COVID-19 vaccination status (Q14)"
+lab var	covid_vax_intent "Intent to receive all COVID vaccine doses if available (Q15)"
+lab var	patient_activation "Patient activation: manage overall health and tell a provider concerns (Q16/Q17)"
+lab var	usual_source "Usual source of care (Q18)"
+lab var	usual_type_own "Facility ownership for usual source of care (Q19)"
+lab var	usual_type_lvl "Facility level for usual source of care (Q20)"
+lab var	usual_type_own_lvl "Facility ownership and level for usual source of care (Q19 & Q20)"
+lab var	usual_reason "Main reason for choosing usual source of care facility (Q21)"
+lab var	usual_quality "Overall quality rating of usual source of care (Q22)"
+lab var	visits "Visits made in-person to a facility in past 12 months (Q23 & Q24)"
+lab var	visits_covid "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
+lab var	fac_number "Number of facilities visited during the past 12 months (Q26/Q27)"
+lab var	visits_total "Total number of healthcare contacts: facility, home, and tele (Q23/Q28A/Q28B)"
+lab var	inpatient "Stayed overnight as a facility in past 12 months (inpatient care) (Q29)"
+lab var	blood_pressure "Blood pressure checked by healthcare provider in past 12 months (Q30)"
+lab var	mammogram "Mammogram done by healtchare provider in past 12 months (Q31)"
+lab var	cervical_cancer "Cervical cancer screening done by healthcare provider in past 12 months (Q32)"
+lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (Q33)"
+lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (Q34)"
+lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (Q35)"
+lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (Q36)"		
 *lab var	hiv_test "HIV test done by healthcare provider in past 12 months"
-lab var	care_mental	"Received care for depression, anxiety or another mental health condition"
-lab var	system_fail	"Failed by the health system- medical mistake made or discriminated against by provider"	
-lab var	unmet_need "Needed medical attention but did not get healthcare"
-lab var	unmet_reason "Reason for not getting healthcare when needed medical attention"
-lab var	last_type_own "Facility ownership for last visit to a healthcare provider"
-lab var	last_type_lvl "Facility level for last visit to a healthcare provider"
-lab var last_type_own_lvl "Facility ownership and level for last visit to a healthcare provider"
-lab var	last_reason	"Reason for last healthcare visit" 
-lab var	last_wait_time "Length of time waited for last visit to a healthcare provider"
-lab var	last_visit_time "Length of time spent with the provider during last healthcare visit"
-lab var	last_qual "Last visit rating: overall quality"
-lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence)"
-lab var	last_supplies "Last visit rating: equipment and supplies provider had available"
-lab var	last_respect "Last visit rating: provider respect"
-lab var	last_know "Last visit rating: knowledge of prior tests and visits"
-lab var	last_explain "Last visit rating: explained things in an understrandable way"
-lab var	last_decisions "Last visit rating: involved you in decisions about your care"
-lab var	last_visit_rate "Last visit rating: amount of time provider spent with you"
-lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen"
-lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff"
+lab var	care_mental	"Received care for depression, anxiety or another mental health condition (Q38)"
+lab var	system_fail	"Failed by the health system: mistake made or discriminated against (Q39/Q40)"	
+lab var	unmet_need "Needed medical attention but did not get healthcare (Q41)"
+lab var	unmet_reason "Reason for not getting healthcare when needed medical attention (Q42)"
+lab var	last_type_own "Facility ownership for last visit to a healthcare provider (Q43)"
+lab var	last_type_lvl "Facility level for last visit to a healthcare provider (Q44)"
+lab var last_type_own_lvl "Facility ownership and level for last visit to a healthcare provider (Q43/Q44)"
+lab var	last_reason	"Reason for last healthcare visit (Q45)" 
+lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (Q46)"
+lab var	last_visit_time "Length of time spent with the provider during last healthcare visit (Q47)"
+lab var	last_qual "Last visit rating: overall quality (Q48A)"
+lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence) (Q48B)"
+lab var	last_supplies "Last visit rating: equipment and supplies provider had available (Q48C)"
+lab var	last_respect "Last visit rating: provider respect (Q48D)"
+lab var	last_know "Last visit rating: knowledge of prior tests and visits (Q48E)"
+lab var	last_explain "Last visit rating: explained things in an understradable way (Q48F)"
+lab var	last_decisions "Last visit rating: involved you in decisions about your care (Q48G)"
+lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (Q48H)"
+lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q48I)"
+lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (Q48J)"
 *lab var	last_comp_index "System competence composite index (average of X items)"
 *lab var	last_user_index "User experience composite index (average of X items)"
-lab var	last_promote "Net promoter score for facility visited for last visit to a healthcare provider"
-lab var	phc_women "Public primary care system rating for: pregnant women"
-lab var	phc_child "Public primary care system rating for: children"
-lab var	phc_chronic "Public primary care system rating for: chronic conditions"
-lab var	phc_mental "Public primary care system rating for: mental health"
+lab var	last_promote "Net promoter score for facility visited for last visit (Q49)"
+lab var	phc_women "Public primary care system rating for: pregnant women (Q50A)"
+lab var	phc_child "Public primary care system rating for: children (Q50B)"
+lab var	phc_chronic "Public primary care system rating for: chronic conditions (Q50C)"
+lab var	phc_mental "Public primary care system rating for: mental health (Q50D)"
 *lab var	phc_index "Public primary care system composite index"
-lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick"
-lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick"
-lab var	conf_opinion "Confidence that the government considers public's opinion when making decisions about the healthcare system"
-lab var	qual_public	"Overall quality rating of government or public healthcare system in country"
-lab var	qual_private "Overall quality rating of private healthcare system in country"
-lab var qual_ss_pe "Peru: Overall quality rating of social security system in country "
-lab var qual_mut_uy "Uruguay: Overall quality rating of mutual healthcare system in country "
-lab var qual_ngo_ke "Kenya: Overall quality rating of NGO/faith-based healthcare system in country"  
-lab var	system_outlook "Opinion on whether heatlh system is getting better, staying the same, or getting worse"
-lab var	system_reform "Opinion on whether health system needs major changes, major changes, or must be completely rebuilt" 
-lab var	covid_manage "Respondent's rating the government's management of the COVID-19 pandemic" 
+lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick (Q51)"
+lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (Q52)"
+lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q53)"
+lab var	qual_public	"Overall quality rating of government or public healthcare system in country (Q54)"
+lab var	qual_private "Overall quality rating of private healthcare system in country (Q55)"
+lab var qual_ss_pe "Peru: Overall quality rating of social security system in country (Q56)"
+lab var qual_mut_uy "Uruguay: Overall quality rating of mutual healthcare system in country (Q56)"
+lab var qual_ngo_ke "Kenya: Overall quality rating of NGO healthcare system in country (Q56)"  
+lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q57)"
+lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q58)" 
+lab var	covid_manage "Respondent's rating the government's management of the COVID-19 pandemic (Q59)" 
 lab var	vignette_poor "Rating of vignette in Q60 (poor care)"
 lab var	vignette_good "Rating of vignette in Q61 (good care)"
-*lab var	language "Native language"
-lab var	income "Income group"
+lab var	native_lang "Native language (Q62)"
+lab var	income "Income group (Q63)"
 
 save "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", replace
 

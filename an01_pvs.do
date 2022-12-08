@@ -9,6 +9,8 @@ set more off
 
 use "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", clear 
 
+* NOTE: Some of these take a while to run. Is there a faster way to do this? 
+
 
  *========================= Descriptive Analysis ============================* 
 
@@ -76,11 +78,11 @@ summtab2 , by(Country) vars(age_calc age_cat gender urban insured insur_type edu
 		   last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 		   conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
 		   qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-		   vignette_good income) ///
+		   vignette_good native_lang income) ///
 		   type(1 2 2 2 2 2 2 2 2 2 ///
 				2 2 2 2 2	 ///			
-				2 2 2 2 2 2 1 1 ///
-				1 1 2 2 2 ///
+				2 2 2 2 2 2 2 1 ///
+				2 1 2 2 2 ///
 				2 2 2 2 2 2 ///
 				2 2 2 2 2 2 2 /// 
 				2 2 2 2 2 2 2 ///
@@ -88,7 +90,7 @@ summtab2 , by(Country) vars(age_calc age_cat gender urban insured insur_type edu
 				2 2 2 2 2 2 ///  
 				2 2 2 2 2 2 ///
 				2 2 2 2 2 ///
-				2 2) /// 
+				2 2 2) /// 
 		  catmisstype(missnoperc) /// 
 		  mean median range pmiss total replace excel /// 
 		  excelname(pvs_interim_results) sheetname(derived variables) directory("$output") /// 
@@ -172,11 +174,11 @@ summtab2 , by(Country) vars(age_calc age_cat gender urban insured insur_type edu
 		   last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 		   conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
 		   qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-		   vignette_good income) ///
+		   vignette_good native_lang income) ///
 		   type(1 2 2 2 2 2 2 2 2 2 ///
 				2 2 2 2 2	 ///			
-				2 2 2 2 2 2 1 1 ///
-				1 1 2 2 2 ///
+				2 2 2 2 2 2 2 1 ///
+				2 1 2 2 2 ///
 				2 2 2 2 2 2 ///
 				2 2 2 2 2 2 /// 
 				2 2 2 2 2 2 2 ///
@@ -184,7 +186,7 @@ summtab2 , by(Country) vars(age_calc age_cat gender urban insured insur_type edu
 				2 2 2 2 2 2 ///  
 				2 2 2 2 2 2 ///
 				2 2 2 2 2 ///
-				2 2) /// 
+				2 2 2) /// 
 		  catmisstype(missnoperc) wts(weight) /// 
 		  mean median range pmiss total replace excel /// 
 		  excelname(pvs_interim_results_wt) sheetname(derived variables) directory("$output") /// 
