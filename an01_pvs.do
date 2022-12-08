@@ -67,7 +67,7 @@ summtab2 , by(country) vars(q64 q65) ///
 		  title(Other items)
 
 * Derived variables 
-summtab2 , by(Country) vars(age_calc age_cat gender urban insured insur_type education health health_mental health_chronic ///
+summtab2 , by(country) vars(age_calc age_cat gender urban insured insur_type education health health_mental health_chronic ///
 		   ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation /// 
 		   usual_source usual_type_own usual_type_lvl usual_type_own_lvl usual_reason usual_quality visits visits_covid ///
 		   fac_number visits_total inpatient blood_pressure mammogram ///
@@ -113,7 +113,7 @@ drop if Country == 3
 
 * Survey characteristics and Part 1: basic demographics - Q1-17
 
-summtab2 , by(Country) vars(int_length mode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q11 /// 
+summtab2 , by(country) vars(int_length mode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q11 /// 
 		   q12 q13 q13b q13e q14 q15 q16 q17) /// 
 		   type(1 2 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2) /// 
 		  catmisstype(missnoperc) wts(weight) /// 
@@ -124,7 +124,7 @@ summtab2 , by(Country) vars(int_length mode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q
 * Add back language or other interview characteristics once they are accurate
 		  
 * Part 2: Utilization of care and system competence Q18-42
-summtab2 , by(Country) vars(q18 q19_ke_et q19_co q19_pe q19_uy q20 q21 q22 q23 ///
+summtab2 , by(country) vars(q18 q19_ke_et q19_co q19_pe q19_uy q20 q21 q22 q23 ///
 		   q24 q25_a q25_b q26 q27 q28_a q28_b /// 
 		   q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42) /// 
 		  type(2 2 2 2 2 2 2 2 1 2 2 1 2 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2) ///
@@ -135,7 +135,7 @@ summtab2 , by(Country) vars(q18 q19_ke_et q19_co q19_pe q19_uy q20 q21 q22 q23 /
 		  
 		  
 * Part 3: Care experience 
-summtab2 , by(Country) vars(q43_ke_et q43_co q43_pe q43_uy q44 q45 q46_min q47_min ///
+summtab2 , by(country) vars(q43_ke_et q43_co q43_pe q43_uy q44 q45 q46_min q47_min ///
 		  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i /// 
 		  q48_j q49) /// 
 		  type(2 2 2 2 2 2 1 1 2 2 2 2 2 2 2 2 2 2 1) ///
@@ -146,7 +146,7 @@ summtab2 , by(Country) vars(q43_ke_et q43_co q43_pe q43_uy q44 q45 q46_min q47_m
 	  
 		  
 * Part 4: Health system confidence
-summtab , by(Country) catvars(q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
+summtab , by(country) catvars(q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
 		  q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 /// 
 		  q62 q63) ///  
 		  catmisstype(missnoperc) wts(weight) total /// 
@@ -155,7 +155,7 @@ summtab , by(Country) catvars(q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
 		  title(Health system confidence)
 
 * Other items
-summtab2 , by(Country) vars(q64 q65) /// 
+summtab2 , by(country) vars(q64 q65) /// 
 		  type(2 1) /// 
 		   catmisstype(missnoperc) wts(weight) /// 
 		  mean median range pmiss total replace excel /// 
@@ -163,7 +163,7 @@ summtab2 , by(Country) vars(q64 q65) ///
 		  title(Other items)
 
 * Derived variables 
-summtab2 , by(Country) vars(age_calc age_cat gender urban insured insur_type education health health_mental health_chronic ///
+summtab2 , by(country) vars(age_calc age_cat gender urban insured insur_type education health health_mental health_chronic ///
 		   ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation /// 
 		   usual_source usual_type_own usual_type_lvl usual_type_own_lvl usual_reason usual_quality visits visits_covid ///
 		   fac_number visits_total inpatient blood_pressure mammogram ///
