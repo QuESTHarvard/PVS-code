@@ -293,8 +293,8 @@ lab val qual_public qual_private qual_ngo_ke qual_ss_pe qual_mut_uy covid_manage
 * conf_sick conf_afford conf_opinion
 
 recode q51 q52 q53 ///
-	   (3 = 1 "very confident") ///
-	   (0 1 2 = 0 "somewhat confident/not too confident/not at all confident") /// 
+	   (3 = 1 "Very confident") ///
+	   (0 1 2 = 0 "Somewhat confident/Not too confident/Not at all confident") /// 
 	   (.r = .r refused) (.a = .a na), /// 
 	   pre(der) label(vc_nc_der)
 
