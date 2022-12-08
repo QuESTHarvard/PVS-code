@@ -105,7 +105,7 @@ set more off
  * Import clean data with derived variables 
 
 use "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", clear 
-drop if Country == 3
+drop if country == 3
 
  *========================= Descriptive Analysis ============================* 
 
