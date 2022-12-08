@@ -17,20 +17,20 @@ use "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", clear
 
 * Survey characteristics and Part 1: basic demographics - Q1-17
 
-summtab2 , by(Country) vars(int_length mode Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 /// 
-		   Q12 Q13 Q13B Q13E Q14 Q15 Q16 Q17) /// 
+summtab2 , by(country) vars(int_length mode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q11 /// 
+		   q12 q13 q13b q13e q14 q15 q16 q17) /// 
 		   type(1 2 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2) /// 
 		  catmisstype(missnoperc) /// 
 		  mean median range pmiss total replace excel /// 
 		  excelname(pvs_interim_results) sheetname(demographics) directory("$output") /// 
 		  title(Survey Characteristics & Basic Demographics) 
 
-* Add back language or other interview characteristics once they are accurate
+* Add back language or other interview characteristics if interested
 		  
 * Part 2: Utilization of care and system competence Q18-42
-summtab2 , by(Country) vars(Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY Q20 Q21 Q22 Q23 ///
-		   Q24 Q25_A Q25_B Q26 Q27 Q28_B Q28_B /// 
-		   Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42) /// 
+summtab2 , by(country) vars(q18 q19_ke_et q19_co q19_pe q19_uy q20 q21 q22 q23 ///
+		   q24 q25_a q25_b q26 q27 q28_a q28_b /// 
+		   q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42) /// 
 		  type(2 2 2 2 2 2 2 2 1 2 2 1 2 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2) ///
 		  catmisstype(missnoperc) /// 
 		  mean median range pmiss total replace excel /// 
@@ -39,9 +39,9 @@ summtab2 , by(Country) vars(Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY Q20 Q21 Q22 Q23 /
 		  
 		  
 * Part 3: Care experience 
-summtab2 , by(Country) vars(Q43_KE_ET Q43_CO Q43_PE Q43_UY Q44 Q45 Q46_min Q47_min ///
-		  Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I /// 
-		  Q48_J Q49) /// 
+summtab2 , by(country) vars(q43_ke_et q43_co q43_pe q43_uy q44 q45 q46_min q47_min ///
+		  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i /// 
+		  q48_j q49) /// 
 		  type(2 2 2 2 2 2 1 1 2 2 2 2 2 2 2 2 2 2 1) ///
 		  catmisstype(missnoperc) total /// 
 		  mean median range pmiss replace excel /// 
@@ -50,16 +50,16 @@ summtab2 , by(Country) vars(Q43_KE_ET Q43_CO Q43_PE Q43_UY Q44 Q45 Q46_min Q47_m
 	  
 		  
 * Part 4: Health system confidence
-summtab , by(Country) catvars(Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 /// 
-		  Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 /// 
-		  Q62 Q63) ///  
+summtab , by(country) catvars(q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
+		  q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 /// 
+		  q62 q63) ///  
 		  catmisstype(missnoperc) total /// 
 		  replace excel /// 
 		  excelname(pvs_interim_results) sheetname(part_4) directory("$output") ///
 		  title(Health system confidence)
 
 * Other items
-summtab2 , by(Country) vars(Q64 Q65) /// 
+summtab2 , by(country) vars(q64 q65) /// 
 		  type(2 1) /// 
 		   catmisstype(missnoperc) /// 
 		  mean median range pmiss total replace excel /// 
@@ -113,8 +113,8 @@ drop if Country == 3
 
 * Survey characteristics and Part 1: basic demographics - Q1-17
 
-summtab2 , by(Country) vars(int_length mode Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 /// 
-		   Q12 Q13 Q13B Q13E Q14 Q15 Q16 Q17) /// 
+summtab2 , by(Country) vars(int_length mode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q11 /// 
+		   q12 q13 q13b q13e q14 q15 q16 q17) /// 
 		   type(1 2 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2) /// 
 		  catmisstype(missnoperc) wts(weight) /// 
 		  mean median range pmiss total replace excel /// 
@@ -124,9 +124,9 @@ summtab2 , by(Country) vars(int_length mode Q1 Q2 Q3 Q3a Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q
 * Add back language or other interview characteristics once they are accurate
 		  
 * Part 2: Utilization of care and system competence Q18-42
-summtab2 , by(Country) vars(Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY Q20 Q21 Q22 Q23 ///
-		   Q24 Q25_A Q25_B Q26 Q27 Q28_B Q28_B /// 
-		   Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42) /// 
+summtab2 , by(Country) vars(q18 q19_ke_et q19_co q19_pe q19_uy q20 q21 q22 q23 ///
+		   q24 q25_a q25_b q26 q27 q28_a q28_b /// 
+		   q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42) /// 
 		  type(2 2 2 2 2 2 2 2 1 2 2 1 2 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2) ///
 		  catmisstype(missnoperc) wts(weight) /// 
 		  mean median range pmiss total replace excel /// 
@@ -135,9 +135,9 @@ summtab2 , by(Country) vars(Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY Q20 Q21 Q22 Q23 /
 		  
 		  
 * Part 3: Care experience 
-summtab2 , by(Country) vars(Q43_KE_ET Q43_CO Q43_PE Q43_UY Q44 Q45 Q46_min Q47_min ///
-		  Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I /// 
-		  Q48_J Q49) /// 
+summtab2 , by(Country) vars(q43_ke_et q43_co q43_pe q43_uy q44 q45 q46_min q47_min ///
+		  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i /// 
+		  q48_j q49) /// 
 		  type(2 2 2 2 2 2 1 1 2 2 2 2 2 2 2 2 2 2 1) ///
 		  catmisstype(missnoperc) wts(weight) total /// 
 		  mean median range pmiss replace excel /// 
@@ -146,16 +146,16 @@ summtab2 , by(Country) vars(Q43_KE_ET Q43_CO Q43_PE Q43_UY Q44 Q45 Q46_min Q47_m
 	  
 		  
 * Part 4: Health system confidence
-summtab , by(Country) catvars(Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 /// 
-		  Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 /// 
-		  Q62 Q63) ///  
+summtab , by(Country) catvars(q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
+		  q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 /// 
+		  q62 q63) ///  
 		  catmisstype(missnoperc) wts(weight) total /// 
 		  replace excel /// 
 		  excelname(pvs_interim_results_wt) sheetname(part_4) directory("$output") ///
 		  title(Health system confidence)
 
 * Other items
-summtab2 , by(Country) vars(Q64 Q65) /// 
+summtab2 , by(Country) vars(q64 q65) /// 
 		  type(2 1) /// 
 		   catmisstype(missnoperc) wts(weight) /// 
 		  mean median range pmiss total replace excel /// 

@@ -15,12 +15,6 @@ u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", clear
 
 *------------------------------------------------------------------------------*
 
-*Change all variable names to lower case
-
-rename *, lower
-
-*------------------------------------------------------------------------------*
-
 * age_calc: exact respondent age or middle of age range 
 gen age_calc = q1 
 recode age_calc (.r = 23.5) if q2 == 0
@@ -208,7 +202,7 @@ lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam ///
 	blood_sugar blood_chol care_mental yes_no_dk
 	
 **** Excellent to Poor scales *****	   
-* NOTE: I left my previous code commented out for now 
+* NOTE: I left my previous code commented out for now, Todd you can delete 
 
 * health, health_mental, last_qual, last_skills, last_supplies, last_respect, 
 * last_explain, last_decision, last_visit_rate, last_wait_rate, vignette_poor,
@@ -265,8 +259,8 @@ vignette_good exc_poor
 	   
 
 gen usual_quality =q22
-gen last_know = q48_E 
-gen last_courtesy = q48_J 
+gen last_know = q48_e
+gen last_courtesy = q48_j
 lab val usual_quality exc_pr_hlthcare
 lab val last_know exc_pr_visits
 lab val last_courtesy exc_poor_staff
@@ -333,12 +327,12 @@ recode q8 (1 2 7 25 26 18 19 32 33 = 0 "None") ///
 	      (5 10 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
 		   
-recode q19_KE_ET (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
+recode q19_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
 recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1
-recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | q19_uy == 3
-recode usual_type_own (.a = 2) if q19_uy == 5
+recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 
+recode usual_type_own (.a = 2) if q19_uy == 5 | q19_uy == 995
 recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r | q19_uy == .r
 
 * usual_type_lvl 
@@ -364,7 +358,7 @@ lab val usual_type_own_lvl fac_own_lvl
 
 
 * last_type_own
-recode q43_KE_ET (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
+recode q43_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
 recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1
@@ -414,7 +408,7 @@ lab val last_type_own_lvl fac_own_lvl
 *		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
 
 * native language
-recode Q62 (1 5 8 9 10 11 12 13 14 15 23 24 25 26 27 28 29 30 31 32 ///
+recode q62 (1 5 8 9 10 11 12 13 14 15 23 24 25 26 27 28 29 30 31 32 ///
 			44 45 49 81 = 0 "Minority group languages") /// 
 		   (2 3 4 6 7 21 22 53 87 = 1 "Majority group languages") /// 
 		   (995 998 = 2 "Other") ///
@@ -525,7 +519,7 @@ lab var	phc_mental "Public primary care system rating for: mental health (Q50D)"
 lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick (Q51)"
 lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (Q52)"
 lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q53)"
-lab var	qual_public	"Overall quality rating of government or public healthcare system in country (Q54)"
+lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (Q54)"
 lab var	qual_private "Overall quality rating of private healthcare system in country (Q55)"
 lab var qual_ss_pe "Peru: Overall quality rating of social security system in country (Q56)"
 lab var qual_mut_uy "Uruguay: Overall quality rating of mutual healthcare system in country (Q56)"
@@ -538,10 +532,9 @@ lab var	vignette_good "Rating of vignette in Q61 (good care)"
 lab var	native_lang "Native language (Q62)"
 lab var	income "Income group (Q63)"
 
-save "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", replace
-
 **************************** Save data *****************************
 
+save "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", replace
 
-save "$data_mc/02 recoded data/pvs_ke_et_lac_03.dta", replace
+
 

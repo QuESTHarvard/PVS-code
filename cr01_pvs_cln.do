@@ -8,9 +8,12 @@ This file loads country-specific raw data, cleans these data, and appends these
 datasets to one clean multi-country datset. 
 
 Cleaning includes:
-	- Creating new variables (e.g., time variables) 
+	- Dropping any unusable records 
+	- Recoding outliers to missing 
 	- Recoding skip patterns, refused, and don't know 
+	- Creating new variables (e.g., time variables), renaming variables, labeling variables 
 	- Correcting any values and value labels and their direction 
+	
 
 Note: * .a means NA, .r means refused, .d is don't know, . is missing 
 
@@ -22,7 +25,6 @@ set more off
 ************************************* KENYA ************************************
 
 * Import raw data 
-* use "$data/Kenya/00 interim data/HARVARD_Main KE CATI and F2F_08.11.22.dta", clear
 use "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", clear
 
 *------------------------------------------------------------------------------*
@@ -30,6 +32,10 @@ use "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", 
 *Change all variable names to lower case
 
 rename *, lower
+
+* Note to Todd: Ro added this here. I think this is fine, I probably would have added
+* it at the end of country cleaning, but it doesn't really matter
+* Is this okay? 
 
 *------------------------------------------------------------------------------*
 
@@ -40,15 +46,9 @@ rename *, lower
 * format time_new Q46 Q47 %tcHH:MM:SS
 
 * Converting interview length to minutes so it can be summarized
-
-* gen int_length = (hh(IntLength)*3600 + mm(IntLength)*60 + ss(IntLength)) / 604
 gen int_length = intlength / 60
 
 * Converting Q46 and Q47 to minutes so it can be summarized
-
-* gen Q46_min = (hh(Q46)*3600 + mm(Q46)*60 + ss(Q46)) / 60
-* gen Q47_min = (hh(Q47)*3600 + mm(Q47)*60 + ss(Q47)) / 60
-
 gen q46_min = q46 / 60
 gen q47_min = q47 / 60
 
@@ -60,6 +60,9 @@ gen q47_min = q47 / 60
 * Make sure no under 18 
 drop if q2 == 1 | q1 < 18
 
+* Drop interviews that are short and could be low-quality 
+* as identified by Ipsos in the qc_short var 
+
 drop if qc_short == 2
 drop qc_short
 
@@ -69,7 +72,7 @@ drop qc_short
 * Recode all Refused and Don't know
 
 * NOTE:
-* Todd: for future - curious about your thoughts on over-recoding. 
+* Todd: Curious about your thoughts on over-recoding. 
 * I could not do these recodes below (67 & 71) and instead do it in the value label corrections. 
 * Then, would need to change all the .r in the "NA" section to 996, but that's minor 
 * After you review it all, would be great to discuss your thoughts on the order of this recoding 
@@ -90,8 +93,8 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 *------------------------------------------------------------------------------*
 
 * Recode extreme values to missing 
-* Note to Ro: Changed this since we last chatted to only be positive outliers. 
-* Positive outliers online 
+* Positive outliers only (+3 SD from the mean)
+* All visit count variables and wait time variables 
 
 foreach var in q23 q25_b q27 q28 q28_new q46 q47 {
 		
@@ -106,7 +109,8 @@ foreach var in q23 q25_b q27 q28 q28_new q46 q47 {
 	 
 *------------------------------------------------------------------------------*
 
-* Recode missing values to NA for questions respondents would not have been asked due to skip patterns
+* Recode missing values to NA for questions respondents would not have been asked 
+* due to skip patterns
 
 *q1/q2 
 recode q2 (. = .a) if q1 != .r
@@ -302,7 +306,7 @@ lab val q1 q23 q25_b q27 q28_a q28_b q46 q46_min q47 q47_min q65 na_rf
 * NOTE:
 * I am aware that some of the country-specific questions or questions with 8+ 
 * options have value labels, but not labels for .a or .r.  I don't think it's 
-* worth the effort right now (e.g. Q20), but will have R help me with ths in future.
+* worth the effort right now (e.g. Q20), but will have Ro help me with ths in future.
 * Hopefully Ipsos can send us a detailed codebook for country-specific value labels
 * and then it would be easy.   
 
@@ -311,6 +315,7 @@ lab val q1 q23 q25_b q27 q28_a q28_b q46 q46_min q47 q47_min q65 na_rf
 * Labeling variables 
  
 lab var int_length "Interview length (in minutes)"
+lab var interviewer_gender "Interviewer gender"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Q3. Respondent gender"
@@ -401,7 +406,7 @@ lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, op
 lab var q62 "Q62. Respondent's mother tongue or native language"
 lab var q62_other "Q62. Other"
 lab var q63 "Q63. Total monthly household income"
-lab var q64 "Q64. Do you have another mobile phone number besides the one I am calling you on?"
+lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 *------------------------------------------------------------------------------*
@@ -433,9 +438,6 @@ rename *, lower
 
 * Fix interview length variable and other time variables 
 * Edit this section to include other date and time variables as needed 
-
-* Formatting time 
-* format time_new Q46 Q47 %tcHH:MM:SS
 
 * Converting interview length to minutes so it can be summarized
 
@@ -475,8 +477,10 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 *------------------------------------------------------------------------------*
 
 * Recode extreme values to missing 
+* Positive outliers only (+3 SD from the mean)
+* All visit count variables and wait time variables 
 
-foreach var in q23 q25_B q27 q28 q28_NEW q46_min q47_min {
+foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
 		
 			egen `var'_sd = sd(`var')
 			egen `var'_mean = mean(`var')
@@ -492,13 +496,8 @@ foreach var in q23 q25_B q27 q28 q28_NEW q46_min q47_min {
 
 * Recode missing values to NA for questions respondents would not have been asked due to skip patterns
 
-*Q66/67
-recode Q67 (. = .a) if Q66 == 2 | Q66 == .d | Q66 == .r 
-recode Q66 Q67 (. = .a) if mode == 2
-
 *q1/q2 
 recode q2 (. = .a) if q1 != .r
-recode q1 q1_codes (. = .r) if q2 != .a
 
 * q7 
 recode q7 (. = .a) if q6 == 2 | q6 == .r 
@@ -540,6 +539,7 @@ recode q47 q47_min (. = .r) if q47_refused == 1
 *q66/67
 recode q67 (. = .a) if q66 == 2 | q66 == .d | q66 == .r 
 recode q66 q67 (. = .a) if mode == 2
+
 
 ****** Renaming variables, recoding value labels, and labeling variables ******
 
@@ -675,7 +675,7 @@ ren q67 q65
 ren time_new time
 drop respondent_id
 * NOTE: This is currently empty - check in future data 
-ren ecs_id respondent_iD 
+ren ecs_id respondent_id 
 
 
 * Q37_B not currently in these data 
@@ -695,6 +695,7 @@ lab val q23 q25_b q27 q28_a q28_b q46 q46_min q47 q47_min q65 na_rf
 * Labeling variables 
  
 lab var int_length "Interview length (in minutes)"
+lab var interviewer_gender "Interviewer gender"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Q3. Respondent gender"
@@ -785,7 +786,7 @@ lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, op
 lab var q62 "Q62. Respondent's mother tongue or native language"
 lab var q62_other "Q62. Other"
 lab var q63 "Q63. Total monthly household income"
-lab var q64 "Q64. Do you have another mobile phone number besides the one I am calling you on?"
+lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 *------------------------------------------------------------------------------*
@@ -815,9 +816,6 @@ rename *, lower
 * Fix interview length variable and other time variables 
 * Edit this section to include other date and time variables as needed 
 
-* Formatting time 
-* format time_new Q46 Q47 %tcHH:MM:SS
-
 * Converting interview length to minutes so it can be summarized
 
 gen int_length = (hh(intlength)*3600 + mm(intlength)*60 + ss(intlength)) / 60
@@ -826,7 +824,7 @@ gen int_length = (hh(intlength)*3600 + mm(intlength)*60 + ss(intlength)) / 60
 
 gen q46_min = (hh(q46)*3600 + mm(q46)*60 + ss(q46)) / 60
 
-gen q47_min = (hh(qQ47)*3600 + mm(q47)*60 + ss(q47)) / 60
+gen q47_min = (hh(q47)*3600 + mm(q47)*60 + ss(q47)) / 60
 
 *------------------------------------------------------------------------------*
 
@@ -857,6 +855,9 @@ recode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q13b q13e q14_new ///
 *------------------------------------------------------------------------------*
 
 * Recode extreme values to missing 
+* Positive outliers only (+3 SD from the mean)
+* All visit count variables and wait time variables 
+
 
 foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
 		
@@ -903,10 +904,16 @@ recode q19_pe (. = .a) if country != 7
 recode q19_uy (. = .a) if country != 10
 recode q19_co (. = .a) if country != 2
 * recode Q20 (. = .a) if Q19_PE == 4 | Q19_UY == 4 | Q19_CO  == 4
+
 * NOTE: Todd, I realized that for Kenya/Ethiopia when other was selected in 
 * Q19, the programming directed to just Other, specify - but this appears to not 
 * be the case in LAC countries. Hopefully we get their final tools soon and this 
 * will be clearer. 
+
+* NOTE: UY appears to have NGO when it should be other
+recode q19_uy (3 = 995)
+
+
 recode q20 (. = .a) if q19_pe == .r | q19_uy == .r | q19_co  == .r
 
 * NA's for q23-27 
@@ -954,7 +961,6 @@ recode q62 (. = .a) if country == 10
 *q66/67
 recode q67 (. = .a) if q66 == 2 | q66 == .d | q66 == .r
 
-* recode Q66 Q67 (. = .a) if mode == 2
 
 ****** Renaming variables, recoding value labels, and labeling variables ******
 
@@ -1116,7 +1122,7 @@ ren (q46_996 q47_996) (q46_refused q47_refused)
 * Reorder variables
 
 order q*, sequential
-order q*, after(Interviewer_Gender)
+order q*, after(interviewer_gender)
 
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused"
@@ -1125,8 +1131,10 @@ lab val q23 q25_b q27 q28_a q28_b q46 q46_min q47 q47_min q65 na_rf
 *------------------------------------------------------------------------------*
 
 * Labeling variables 
- 
+
+lab var interviewerid_recoded "Interviewer ID (anonymised)"
 lab var int_length "Interview length (in minutes)"
+lab var interviewer_gender "Interviewer gender"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
@@ -1197,8 +1205,8 @@ lab var q46 "Q46. Approximately how long did you wait before seeing the provider
 lab var q47_refused "Q47. Refused"
 lab var q47 "Q47. Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
-lab var q48_a "Q48_B. How would you rate the knowledge and skills of your provider?"
-lab var q48_a "Q48_C. How would you rate the equipment and supplies that the provider had?"
+lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
+lab var q48_c "Q48_C. How would you rate the equipment and supplies that the provider had?"
 lab var q48_d "Q48_D. How would you rate the level of respect your provider showed you?"
 lab var q48_e "Q48_E. How would you rate your provider knowledge about your prior visits?"
 lab var q48_f "Q48_F. How would you rate whether your provider explained things clearly?"
@@ -1207,17 +1215,17 @@ lab var q48_h "Q48_H. How would you rate the amount of time your provider spent 
 lab var q48_i "Q48_I. How would you rate the amount of time you waited before being seen?"
 lab var q48_j "Q48_J. How would you rate the courtesy and helpfulness at the facility?"
 lab var q49 "Q49. How likely would recommend this facility to a friend or family member?"
-lab var q50_A "Q50_A. How would you rate the quality of care provided for care for pregnancy?"
-lab var q50_B "Q50_B. How would you rate the quality of care provided for children?"
-lab var q50_C "Q50_C. How would you rate the quality of care provided for chronic conditions?"
-lab var q50_D "Q50_D. How would you rate the quality of care provided for the mental health?"
+lab var q50_a "Q50_A. How would you rate the quality of care provided for care for pregnancy?"
+lab var q50_b "Q50_B. How would you rate the quality of care provided for children?"
+lab var q50_c "Q50_C. How would you rate the quality of care provided for chronic conditions?"
+lab var q50_d "Q50_D. How would you rate the quality of care provided for the mental health?"
 lab var q51 "Q51. How confident are you that you'd get good healthcare if you were very sick?"
 lab var q52 "Q52. How confident are you that you'd be able to afford the care you requiered?"
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private for-profit healthcare?"
-lab var q56_PE "Q56. Peru: How would you rate the quality of the social security system?"
-lab var q56_UY "Q56. Uruguay: How would you rate the quality of the mutual healthcare system?"
+lab var q56_pe "Q56. Peru: How would you rate the quality of the social security system?"
+lab var q56_uy "Q56. Uruguay: How would you rate the quality of the mutual healthcare system?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -1226,7 +1234,7 @@ lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, op
 lab var q62 "Q62. Respondent's mother tongue or native language"
 *lab var q62_other "q62. Other"
 lab var q63 "Q63. Total monthly household income"
-lab var q64 "Q64. Do you have another mobile phone number?"
+lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * NOTE: Variables not in these data: PSU_ID Interviewer_Language Language, and others 
@@ -1248,7 +1256,7 @@ lab var q19_ke_et "Q19. Kenya/Ethiopia: Is this a public, private, or NGO/faith-
 ren q43 q43_ke_et 
 lab var q43_ke_et "Q43. Kenya/Ethiopia: Is this a public, private, or NGO/faith-based facility?"
 ren q56 q56_ke_et 
-lab var q56_ke_et "Q56. Kenya/Ethiopia: How would you rate the quality of the NGO or faith-based healthcare?"
+lab var q56_ke_et "Q56. Kenya/Ethiopia: How would you rate quality of NGO/faith-based healthcare?"
 
 
 lab def m 1 "CATI" 2 "F2F"
@@ -1280,16 +1288,18 @@ q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 q62 q62_other q63 q64 q65
 
 drop intlength unique_id
 
-* Then, Respondent_Serial, Respondent_ID, mode, Country, Language, Date, Time, int_length remain
-
 save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 
 * NOTE: 
 * Ethiopia data missing value labels on Q63 and Q62, it's fine for now 
 
-
 *------------------------------------------------------------------------------*
-	 
+
+* NOTE to Todd: 
+* I feel like this .do file is already getting very long / hard to navigate
+* Wondering if we should consider country-specific cr01 files? 
+* Or, maybe we can create temporary country-specific ones until they are finalized 
+* and then compile here 	 
 
 * NOTE: I think all of these checks are necessary for now. As we move forward
 * I will probably comment out this whole section so it does not get run each time, 
@@ -1302,15 +1312,15 @@ u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 * Macros for these commands
 gl inputfile	"$data_mc/03 test output/Input/dq_inputs.xlsm"	
 gl dq_output	"$output/dq_output.xlsx"				
-gl id 			"Respondent_ID"	
-gl key			"Respondent_Serial"	
-gl enum			"InterviewerID_recoded"
-gl date			"Date"	
-gl time			"Time"
+gl id 			"respondent_id"	
+gl key			"respondent_serial"	
+gl enum			"interviewerid_recoded"
+gl date			"date"	
+gl time			"time"
 gl duration		"int_length"
-gl keepvars 	"Country"
-global all_dk 	"Q13B Q13E Q23 Q25_A Q25_B Q27 Q28_A Q28_B Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q50_A Q50_B Q50_C Q50_D Q63 Q64 Q65"
-global all_num 	"Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 Q19_KE_ET Q19_CO Q19_PE Q19_UY Q20 Q21 Q22 Q23 Q24 Q25_A Q25_B Q26 Q27 Q28_A Q28_B Q29 Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q39 Q40 Q41 Q42 Q43_KE_ET Q43_CO Q43_PE Q43_UY Q44 Q45 Q46 Q47 Q46_min Q46_refused Q47_min Q47_refused Q48_A Q48_B Q48_C Q48_D Q48_E Q48_F Q48_G Q48_H Q48_I Q48_J Q49 Q50_A Q50_B Q50_C Q50_D Q51 Q52 Q53 Q54 Q55 Q56_KE_ET Q56_PE Q56_UY Q57 Q58 Q59 Q60 Q61 Q62 Q63 Q64 Q65"
+gl keepvars 	"country"
+global all_dk 	"q13b q13e q23 q25_a q25_b q27 q28_a q28_b q30 q31 q32 q33 q34 q35 q36 q38 q50_a q50_b q50_c q50_d q63 q64 q65"
+global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q19_ke_et q19_co q19_pe q19_uy q20 q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_ke_et q43_co q43_pe q43_uy q44 q45 q46 q47 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 q62 q63 q64 q65"
 
 
 *====================== Check start/end date of survey ======================* 
@@ -1363,11 +1373,12 @@ ipacheckoutliers using "${inputfile}",			///
 * This command lists all other, specify values
 * This command requires an input file that lists all the variables with other, specify text 
 
+*format %td date
  
 ipacheckspecify using "${inputfile}",			///
 	id(${id})									///
 	enumerator(${enum})							///	
-	date(${date})	 							///
+	date(date)	 							///
 	sheet("other specify")						///
     outfile("${dq_output}") 					///
 	outsheet1("other specify")					///
@@ -1393,7 +1404,7 @@ gen missing_count = all_missing_count  - (na_count + dk_count + rf_count)
 
 * Denominator for percent of NA and Refused 
 egen nonmissing_count = rownonmiss($all_num)
-gen total = all_missing_count + nonmissing_count
+gen total_miss = all_missing_count + nonmissing_count
 
 * Denominator for percent of Don't know 
 egen dk_nonmiss_count = rownonmiss($all_dk) 
@@ -1403,16 +1414,16 @@ gen total_dk = dk_nonmiss_count + dk_miss_count
 
 preserve
 
-collapse (sum) na_count dk_count rf_count missing_count total total_dk, by(Country)
-gen na_perc = na_count/total
+collapse (sum) na_count dk_count rf_count missing_count total_miss total_dk, by(country)
+gen na_perc = na_count/total_miss
 gen dk_perc = dk_count/total_dk
-gen rf_perc = rf_count/total 
-gen miss_perc = missing_count/total 
+gen rf_perc = rf_count/total_miss
+gen miss_perc = missing_count/total_miss 
 lab var na_perc "NA (%)" 
 lab var dk_perc "Don't know (%)"
 lab var rf_perc "Refused (%)"
 lab var miss_perc "Missing (%)"
-export exc Country na_perc dk_perc rf_perc miss_perc using "$dq_output", sh(missing, replace) first(varl)
+export exc country na_perc dk_perc rf_perc miss_perc using "$dq_output", sh(missing, replace) first(varl)
 
 restore 
 
