@@ -1358,6 +1358,8 @@ ipacheckids ${id},							///
 * This command checks for outliers among numeric survey variables 
 * This code requires an input file that lists variables to check for outliers 
 
+* NOTE: This should be done before dropping outliers 
+
 ipacheckoutliers using "${inputfile}",			///
 	id(${id})									///
 	enumerator(${enum}) 						///	
@@ -1378,7 +1380,7 @@ ipacheckoutliers using "${inputfile}",			///
 ipacheckspecify using "${inputfile}",			///
 	id(${id})									///
 	enumerator(${enum})							///	
-	date(date)	 							///
+	date(${date})	 							///
 	sheet("other specify")						///
     outfile("${dq_output}") 					///
 	outsheet1("other specify")					///
