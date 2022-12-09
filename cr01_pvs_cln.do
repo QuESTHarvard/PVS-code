@@ -33,10 +33,6 @@ use "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", 
 
 rename *, lower
 
-* Note to Todd: Ro added this here. I think this is fine, I probably would have added
-* it at the end of country cleaning, but it doesn't really matter
-* Is this okay? 
-
 *------------------------------------------------------------------------------*
 
 * Fix interview length variable and other time variables 
@@ -96,7 +92,7 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 * Positive outliers only (+3 SD from the mean)
 * All visit count variables and wait time variables 
 
-foreach var in q23 q25_b q27 q28 q28_new q46 q47 {
+foreach var in q23 q25_b q27 q28 q28_new q46 q47 q46_min q47_min {
 		
 			egen `var'_sd = sd(`var')
 			egen `var'_mean = mean(`var')
@@ -106,6 +102,12 @@ foreach var in q23 q25_b q27 q28 q28_new q46 q47 {
 			drop `var'_sd `var'_mean `var'_upper `var'_otl
 		
 	 }
+	 
+* NOTE to Todd: We should probably make sure the recode cutoff numbers make sense
+* q23 upper: 11.16, q25_b upper: 2.85, q27_upper: 4.80, q28_upper: 2.26, 
+* q28_new_upper: 2.51, q46_min_upper: 499.12, q47_upper: 1532.24
+* Personally, I don't think these make a lot of sense for the visits questions
+* I think we should consider looking at the distribution and set a cut-off ourselves
 	 
 *------------------------------------------------------------------------------*
 
@@ -491,6 +493,9 @@ foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
 		
 	 }
 
+* q23_upper: 11.7, q25_b_upper: 3.16, q27_upper: 4.74, q28_upper: 7.71, q28_new_upper: 4.87, 
+* q46_upper: 274.88, q47_upper: 202.77 
+
 *------------------------------------------------------------------------------*
 
 
@@ -860,16 +865,20 @@ recode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q13b q13e q14_new ///
 
 
 foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
-		
-			egen `var'_sd = sd(`var')
-			egen `var'_mean = mean(`var')
-			gen `var'_upper = `var'_mean + (3*`var'_sd)
-			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < 0
-			replace `var' = . if `var'_otl == 1
-			drop `var'_sd `var'_mean `var'_upper `var'_otl
+	foreach i in 2 7 10 {
+			egen `var'_sd_`i' = sd(`var') if country == `i'
+			egen `var'_mean_`i' = mean(`var') if country == `i'
+			gen `var'_upper_`i' = `var'_mean_`i' + (3*`var'_sd_`i') if country == `i'
+			gen `var'_otl_`i' = 1 if `var' > `var'_upper_`i' & `var' < . | `var' < 0
+			replace `var' = . if `var'_otl_`i' == 1
+*			drop `var'_sd* `var'_mean* `var'_upper* `var'_otl*
+		}
+			
 	 }
-	 
 
+* NOTE:
+* Comment out line 874 to see uppers. Similar to KE and ET, except Q23 in UY 
+* I could also remove outliers after appending the data with this above loop 
 			
 *------------------------------------------------------------------------------*
 
@@ -1273,20 +1282,15 @@ recode q19_co q43_co (. = .a) if country != 2
 recode language (. = 0) if country == 10 | country == 7 | country == 2
 lab def language 1 "English" 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali" 0 "Spanish", replace
 
+order q*, sequential
 order respondent_serial respondent_id unique_id psu_id interviewerid_recoded /// 
 interviewer_language interviewer_gender mode country language date time /// 
-intlength int_length q1_codes q1 q2 q3 q3a q4 q5 q6 q7 q7_other q8 q9 q10 ///
-q11 q12 q13 q13b q13e q13e_10 q14 q15 q16 q17 q18 q19_ke_et q19_co q19_pe q19_uy /// 
-q19_other q20 q20_other q21 q21_other q22 q23 q24 q25_a q25_b q26 q27 q28_a ///
-q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43_ke_et ///
-q43_co q43_pe q43_uy q43_other q44 q44_other q45 q45_other q46 q46_min ///
-q46_refused q47 q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
-q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
-q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 q62 q62_other q63 q64 q65
+intlength int_length q1_codes
 
 * NOTE: Consider dropping these below. Any others to drop?
+* Dropped q46 and q47 because some data in time format, some in not
 
-drop intlength unique_id
+drop intlength unique_id q46 q47 
 
 save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 

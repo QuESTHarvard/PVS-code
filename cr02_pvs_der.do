@@ -433,7 +433,7 @@ order respondent_serial respondent_id psu_id interviewerid_recoded ///
 	  q19_ke_et q19_co q19_pe q19_uy q19_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 ///
 	  q38 q39 q40 q41 q42 q42_other q43_ke_et q43_co q43_pe q43_uy q43_other q44 ///
-	  q44_other q45 q45_other q46 q46_min q46_refused q47 q47_min q47_refused ///
+	  q44_other q45 q45_other q46_min q46_refused q47_min q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ke_et q56_pe q56_uy q57 q58 q59 ///
 	  q60 q61 q62 q62_other q63 q64 q65 age_calc age_cat gender ///
@@ -454,8 +454,8 @@ order respondent_serial respondent_id psu_id interviewerid_recoded ///
 
 ***************************** Labeling variables ***************************** 
  
-lab var age_calc "Exact respondent age or middle number of age range (Q1 & Q2)"
-lab var age_cat "Age (categorical) (Q1 &Q2)"
+lab var age_calc "Exact respondent age or middle number of age range (Q1/Q2)"
+lab var age_cat "Age (categorical) (Q1/Q2)"
 lab var gender "Gender (Q3)" 
 lab var urban "Type of region respondent lives in (Q4)"
 lab var insured "Insurance status (Q6)"
@@ -467,15 +467,15 @@ lab var	health_chronic "Longstanding illness or health problem (chronic illness)
 lab var	ever_covid "Ever had COVID-19 or coronavirus (Q12)"
 lab var	covid_confirmed	"COVID-19 or coronavirus confirmed by a COVID-19 test (Q13)"
 lab var	covid_vax "COVID-19 vaccination status (Q14)"
-lab var	covid_vax_intent "Intent to receive all COVID vaccine doses if available (Q15)"
+lab var	covid_vax_intent "Intent to receive all recommended COVID vaccine doses if available (Q15)"
 lab var	patient_activation "Patient activation: manage overall health and tell a provider concerns (Q16/Q17)"
 lab var	usual_source "Usual source of care (Q18)"
 lab var	usual_type_own "Facility ownership for usual source of care (Q19)"
 lab var	usual_type_lvl "Facility level for usual source of care (Q20)"
-lab var	usual_type_own_lvl "Facility ownership and level for usual source of care (Q19 & Q20)"
+lab var	usual_type_own_lvl "Facility ownership and level for usual source of care (Q19/Q20)"
 lab var	usual_reason "Main reason for choosing usual source of care facility (Q21)"
 lab var	usual_quality "Overall quality rating of usual source of care (Q22)"
-lab var	visits "Visits made in-person to a facility in past 12 months (Q23 & Q24)"
+lab var	visits "Visits made in-person to a facility in past 12 months (Q23/Q24)"
 lab var	visits_covid "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
 lab var	fac_number "Number of facilities visited during the past 12 months (Q26/Q27)"
 lab var	visits_total "Total number of healthcare contacts: facility, home, and tele (Q23/Q28A/Q28B)"
@@ -487,7 +487,7 @@ lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (Q33)"
 lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (Q34)"
 lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (Q35)"
 lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (Q36)"		
-*lab var	hiv_test "HIV test done by healthcare provider in past 12 months"
+*lab var	hiv_test "HIV test done by healthcare provider in past 12 months (Q37_A)"
 lab var	care_mental	"Received care for depression, anxiety or another mental health condition (Q38)"
 lab var	system_fail	"Failed by the health system: mistake made or discriminated against (Q39/Q40)"	
 lab var	unmet_need "Needed medical attention but did not get healthcare (Q41)"
@@ -503,7 +503,7 @@ lab var	last_skills "Last visit rating: knowledge and skills of provider (Care c
 lab var	last_supplies "Last visit rating: equipment and supplies provider had available (Q48C)"
 lab var	last_respect "Last visit rating: provider respect (Q48D)"
 lab var	last_know "Last visit rating: knowledge of prior tests and visits (Q48E)"
-lab var	last_explain "Last visit rating: explained things in an understradable way (Q48F)"
+lab var	last_explain "Last visit rating: explained things in an understandable way (Q48F)"
 lab var	last_decisions "Last visit rating: involved you in decisions about your care (Q48G)"
 lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (Q48H)"
 lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q48I)"
@@ -523,7 +523,7 @@ lab var	qual_public	"Overall quality rating of gov or public healthcare system i
 lab var	qual_private "Overall quality rating of private healthcare system in country (Q55)"
 lab var qual_ss_pe "Peru: Overall quality rating of social security system in country (Q56)"
 lab var qual_mut_uy "Uruguay: Overall quality rating of mutual healthcare system in country (Q56)"
-lab var qual_ngo_ke "Kenya: Overall quality rating of NGO healthcare system in country (Q56)"  
+lab var qual_ngo "Kenya/Ethiopia: Overall quality rating of NGO healthcare system in country (Q56)"  
 lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q57)"
 lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q58)" 
 lab var	covid_manage "Respondent's rating the government's management of the COVID-19 pandemic (Q59)" 

@@ -76,7 +76,7 @@ summtab2 , by(country) vars(age_calc age_cat gender urban insured insur_type edu
 		   last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 		   last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 		   last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
-		   conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
+		   conf_afford conf_opinion qual_public qual_private qual_ngo qual_ss_pe ///
 		   qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
 		   vignette_good native_lang income) ///
 		   type(1 2 2 2 2 2 2 2 2 2 ///
@@ -172,7 +172,7 @@ summtab2 , by(country) vars(age_calc age_cat gender urban insured insur_type edu
 		   last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 		   last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 		   last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
-		   conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
+		   conf_afford conf_opinion qual_public qual_private qual_ngo qual_ss_pe ///
 		   qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
 		   vignette_good native_lang income) ///
 		   type(1 2 2 2 2 2 2 2 2 2 ///
