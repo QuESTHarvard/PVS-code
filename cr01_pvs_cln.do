@@ -92,6 +92,7 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 * Positive outliers only (+3 SD from the mean)
 * All visit count variables and wait time variables 
 
+/*
 foreach var in q23 q25_b q27 q28 q28_new q46 q47 q46_min q47_min {
 		
 			egen `var'_sd = sd(`var')
@@ -102,12 +103,9 @@ foreach var in q23 q25_b q27 q28 q28_new q46 q47 q46_min q47_min {
 			drop `var'_sd `var'_mean `var'_upper `var'_otl
 		
 	 }
+*/
 	 
-* NOTE to Todd: We should probably make sure the recode cutoff numbers make sense
-* q23 upper: 11.16, q25_b upper: 2.85, q27_upper: 4.80, q28_upper: 2.26, 
-* q28_new_upper: 2.51, q46_min_upper: 499.12, q47_upper: 1532.24
-* Personally, I don't think these make a lot of sense for the visits questions
-* I think we should consider looking at the distribution and set a cut-off ourselves
+* NOTE will instead drop implausible numbers
 	 
 *------------------------------------------------------------------------------*
 
@@ -482,6 +480,7 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 * Positive outliers only (+3 SD from the mean)
 * All visit count variables and wait time variables 
 
+/*
 foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
 		
 			egen `var'_sd = sd(`var')
@@ -493,8 +492,9 @@ foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
 		
 	 }
 
-* q23_upper: 11.7, q25_b_upper: 3.16, q27_upper: 4.74, q28_upper: 7.71, q28_new_upper: 4.87, 
-* q46_upper: 274.88, q47_upper: 202.77 
+*/
+
+* NOTE will instead drop implausible numbers 
 
 *------------------------------------------------------------------------------*
 
@@ -863,7 +863,7 @@ recode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q13b q13e q14_new ///
 * Positive outliers only (+3 SD from the mean)
 * All visit count variables and wait time variables 
 
-
+/*
 foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
 	foreach i in 2 7 10 {
 			egen `var'_sd_`i' = sd(`var') if country == `i'
@@ -871,14 +871,13 @@ foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
 			gen `var'_upper_`i' = `var'_mean_`i' + (3*`var'_sd_`i') if country == `i'
 			gen `var'_otl_`i' = 1 if `var' > `var'_upper_`i' & `var' < . | `var' < 0
 			replace `var' = . if `var'_otl_`i' == 1
-*			drop `var'_sd* `var'_mean* `var'_upper* `var'_otl*
+			drop `var'_sd* `var'_mean* `var'_upper* `var'_otl*
 		}
 			
 	 }
+*/
+* NOTE will instead drop implausible numbers 
 
-* NOTE:
-* Comment out line 874 to see uppers. Similar to KE and ET, except Q23 in UY 
-* I could also remove outliers after appending the data with this above loop 
 			
 *------------------------------------------------------------------------------*
 
@@ -1363,6 +1362,7 @@ ipacheckids ${id},							///
 * This code requires an input file that lists variables to check for outliers 
 
 * NOTE: This should be done before dropping outliers 
+* The "by" function may not be working
 
 ipacheckoutliers using "${inputfile}",			///
 	id(${id})									///
