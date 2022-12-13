@@ -315,10 +315,9 @@ recode q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
 
 * insur_type 
 * NOTE: check other, specify later
-* Javier said Mutualists is not public or private
 
-recode q7 (1 3 15 16 17 18 10 11 12 19 22 = 0 Public) (2 4 5 6 7 28 13 21 = 1 Private) /// 
-		  (20 995 = 3 Other) ///
+recode q7 (1 3 15 16 17 18 10 11 12 19 22 = 0 Public) (2 4 5 6 7 28 13 21 20 = 1 Private) /// 
+		  (995 = 3 Other) ///
 		  (.r = .r "Refused") (.a = .a NA), gen(insur_type)
 
 * education 
@@ -326,14 +325,16 @@ recode q8 (1 2 7 25 26 18 19 32 33 = 0 "None") ///
 		  (3 8 27 20 34 = 1 "Primary") (4 9 28 21 35 = 2 "Secondary") /// 
 	      (5 10 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
-		   
+
+* usual_type_own
+		  
 recode q19_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
 recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1
-recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 
-recode usual_type_own (.a = 2) if q19_uy == 5 | q19_uy == 995
-recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r | q19_uy == .r
+recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | q19_uy == 5
+recode usual_type_own (.a = 2) if q19_uy == 3 | q19_uy == 995
+recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r 
 
 * usual_type_lvl 
 
@@ -362,9 +363,9 @@ recode q43_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) ///
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
 recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1
-recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 | q43_uy == 3
-recode last_type_own (.a = 2) if q43_uy == 5
-recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r | q43_uy == .r
+recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 | q43_uy == 5
+recode last_type_own (.a = 2) if q43_uy == 3 | q43_uy == 995
+recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r 
 
 
 
