@@ -527,7 +527,7 @@ lab var qual_mut_uy "Uruguay: Overall quality rating of mutual healthcare system
 lab var qual_ngo "Kenya/Ethiopia: Overall quality rating of NGO healthcare system in country (Q56)"  
 lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q57)"
 lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q58)" 
-lab var	covid_manage "Respondent's rating the government's management of the COVID-19 pandemic (Q59)" 
+lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q59)" 
 lab var	vignette_poor "Rating of vignette in Q60 (poor care)"
 lab var	vignette_good "Rating of vignette in Q61 (good care)"
 lab var	native_lang "Native language (Q62)"
