@@ -316,7 +316,7 @@ recode q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
 * insur_type 
 * NOTE: check other, specify later
 
-recode q7 (1 3 15 16 17 18 10 11 12 19 22 = 0 Public) (2 4 5 6 7 28 13 21 20 = 1 Private) /// 
+recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 = 0 Public) (2 4 5 6 7 28 13 21 = 1 Private) /// 
 		  (995 = 3 Other) ///
 		  (.r = .r "Refused") (.a = .a NA), gen(insur_type)
 
@@ -331,8 +331,8 @@ recode q8 (1 2 7 25 26 18 19 32 33 = 0 "None") ///
 recode q19_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
-recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1
-recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | q19_uy == 5
+recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1 | q19_uy == 5
+recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 
 recode usual_type_own (.a = 2) if q19_uy == 3 | q19_uy == 995
 recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r 
 
@@ -362,8 +362,8 @@ lab val usual_type_own_lvl fac_own_lvl
 recode q43_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
-recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1
-recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 | q43_uy == 5
+recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1 | q43_uy == 5
+recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 
 recode last_type_own (.a = 2) if q43_uy == 3 | q43_uy == 995
 recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r 
 
