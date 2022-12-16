@@ -88,8 +88,7 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 
 *------------------------------------------------------------------------------*
 
-* Recode extreme values to missing 
-* Positive outliers only (+3 SD from the mean)
+* Recode implausible values to missing 
 * All visit count variables and wait time variables 
 
 /*
@@ -106,6 +105,15 @@ foreach var in q23 q25_b q27 q28 q28_new q46 q47 q46_min q47_min {
 */
 	 
 * NOTE will instead drop implausible numbers
+
+* q23 max is 50, q25_b max is 6, q27 max is 7, q28 max is 12, q28_new max is 15
+* I propose dropping no outliers for visits 
+* What about wait time? Not sure whether to do 3.5 SD or make a judgement based on plausible values 
+
+* Should we look for if q25_b > q23? Or q27 > q23? 
+* What about q27 = 0 or 1?
+* These all seem like implausible values to me 
+
 	 
 *------------------------------------------------------------------------------*
 
