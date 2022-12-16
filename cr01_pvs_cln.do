@@ -1258,6 +1258,7 @@ append using "$data_mc/02 recoded data/pvs_ke_01.dta"
 append using "$data_mc/02 recoded data/pvs_et_01.dta"
 
 * NOTE: Is there a good way to confirm this append is working well in terms of values and value labels? 
+* NOTE: Fix Kenya date on append 
 
 ren q19 q19_ke_et 
 lab var q19_ke_et "Q19. Kenya/Ethiopia: Is this a public, private, or NGO/faith-based facility?"
