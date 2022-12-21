@@ -341,7 +341,7 @@ recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1 | q19_
 recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | q1920a_la == 1 | ///
 								  q1920a_la == 3 | q1920a_la == 4 | q1920b_la == 3 | q1920b_la == 4 | ///
 								  q1920a_la == 6 | q1920b_la == 6
-recode usual_type_own (.a = 2) if q19_uy == 3 | q19_uy == 995 | q1920a_la == 9 | q1920b_la == 9
+recode usual_type_own (.a = 2) if q19_uy == 3 | q19_uy == 995 | q1920a_la == 9 | q1920b_la == 7
 recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r 
 
 * usual_type_lvl 
@@ -356,6 +356,8 @@ recode usual_type_lvl (. = 1) if q1920a_la == 1 | q1920a_la == 3 | q1920b_la == 
 recode usual_type_lvl (. = .a) if q1920a_la == .a | q1920b_la == .a
 
 * NOTE: check this! 
+
+* NOTE: Maybe add an other for Lao? also for last visit level? But we will see with other, specify data
 
 		   
 * usual_type_own_lvl
@@ -384,7 +386,6 @@ recode last_type_own (.a = 2) if q43_uy == 3 | q43_uy == 995
 recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r 
 
 * last_type_lvl 
-
 recode q44 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
 		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
