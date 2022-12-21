@@ -15,7 +15,7 @@ Cleaning includes:
 	- Correcting any values and value labels and their direction 
 	
 
-Note: * .a means NA, .r means refused, .d is don't know, . is missing 
+Note: .a means NA, .r means refused, .d is don't know, . is missing 
 
 */
 
@@ -92,23 +92,29 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 * All visit count variables and wait time variables 
 
 /*
-foreach var in q23 q25_b q27 q28 q28_new q46 q47 q46_min q47_min {
+foreach var in q46 q47 q46_min q47_min {
 		
 			egen `var'_sd = sd(`var')
 			egen `var'_mean = mean(`var')
 			gen `var'_upper = `var'_mean + (3*`var'_sd)
 			gen `var'_otl = 1 if `var' > `var'_upper & `var' < . | `var' < 0
-			replace `var' = . if `var'_otl == 1
-			drop `var'_sd `var'_mean `var'_upper `var'_otl
+*			replace `var' = . if `var'_otl == 1
+*			drop `var'_sd `var'_mean `var'_upper `var'_otl
 		
 	 }
 */
 	 
-* NOTE will instead drop implausible numbers
 
 * q23 max is 50, q25_b max is 6, q27 max is 7, q28 max is 12, q28_new max is 15
 * I propose dropping no outliers for visits 
-* What about wait time? Not sure whether to do 3.5 SD or make a judgement based on plausible values 
+* What about wait time? Not sure whether to do 3 SD or make a judgement based on plausible values
+* Upper for 3 SD from mean for q46 is 4.8 hours, and for q47 is 25.53 hours
+* For q47, the distribution is being skewed by a very large number, 19,000 minutes (316 hours)
+* If I recode that value and calculate upper, the upper is 70 minutes
+* That drastically changes which are recoded to missing
+* I think 3 SD from the mean doesn't make much sense for this either, and should just drop implausible values 
+
+
 
 * Should we look for if q25_b > q23? Or q27 > q23? 
 * What about q27 = 0 or 1?
@@ -273,6 +279,8 @@ recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 
+gen recinterviewerid_recoded = interviewerid_recoded + 35
+
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
@@ -282,7 +290,7 @@ recode q57 ///
 drop interviewer_gender q2 q3 q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
 	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
-	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57
+	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57 interviewerid_recoded
 
 ren rec* *
  
@@ -326,7 +334,7 @@ lab var int_length "Interview length (in minutes)"
 lab var interviewer_gender "Interviewer gender"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
-lab var q3 "Q3. Q3. Respondent gender"
+lab var q3 "Q3. Respondent gender"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
@@ -421,7 +429,7 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Save data
 
-save "$data_mc/02 recoded data/pvs_ke_01.dta", replace
+save "$data_mc/02 recoded data/pvs_ke.dta", replace
 
 *------------------------------------------------------------------------------*
 
@@ -661,6 +669,10 @@ recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 
+* LAC Interviewer ID's 1-16, Ethiopia 17 - 35, Kenya 35 onwards 
+gen recinterviewerid_recoded = interviewerid_recoded + 16
+
+
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
@@ -670,7 +682,7 @@ recode q57 ///
 drop interviewer_gender q2 q3 q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
 	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
-	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57	
+	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57	interviewerid_recoded
 
 ren rec* *
   
@@ -806,7 +818,7 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Save data
 
-save "$data_mc/02 recoded data/pvs_et_01.dta", replace
+save "$data_mc/02 recoded data/pvs_et.dta", replace
 
 *------------------------------------------------------------------------------*
 
@@ -1254,20 +1266,24 @@ lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * NOTE: Variables not in these data: PSU_ID Interviewer_Language Language, and others 
+* NOTE: 16 seems like a low number of interviewers across all three countries
 
-save "$data_mc/02 recoded data/pvs_lac_01.dta", replace
+save "$data_mc/02 recoded data/pvs_lac.dta", replace
 
 *------------------------------------------------------------------------------*
 
 ********************************* Append data *********************************
 
-u "$data_mc/02 recoded data/pvs_lac_01.dta", clear
-append using "$data_mc/02 recoded data/pvs_ke_01.dta"
-append using "$data_mc/02 recoded data/pvs_et_01.dta"
+u "$data_mc/02 recoded data/pvs_lac.dta", clear
+append using "$data_mc/02 recoded data/pvs_ke.dta"
+append using "$data_mc/02 recoded data/pvs_et.dta"
+append using "$data_mc/02 recoded data/pvs_la.dta"
+
 
 * NOTE: Is there a good way to confirm this append is working well in terms of values and value labels? 
 * NOTE: Fix Kenya date on append 
 
+* Kenya/Ethiopia variables 
 ren q19 q19_ke_et 
 lab var q19_ke_et "Q19. Kenya/Ethiopia: Is this a public, private, or NGO/faith-based facility?"
 ren q43 q43_ke_et 
@@ -1275,20 +1291,44 @@ lab var q43_ke_et "Q43. Kenya/Ethiopia: Is this a public, private, or NGO/faith-
 ren q56 q56_ke_et 
 lab var q56_ke_et "Q56. Kenya/Ethiopia: How would you rate quality of NGO/faith-based healthcare?"
 
-
-lab def m 1 "CATI" 2 "F2F"
-lab val mode m
+* Mode
+lab val mode mode
 lab var mode "Mode of interview"
 
 * Country-specific skip patterns
-recode q6 q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3
-recode q3a q13b q13e (. = .a) if country == 5 | country == 3
+recode q6 q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
+recode q3a q13b q13e (. = .a) if country == 5 | country == 3 | country == 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q19_pe q43_pe q56_pe (. = .a) if country != 7
 recode q19_co q43_co (. = .a) if country != 2
-
+recode q18a_la q1920a_la q18b_la q1920b_la q43_la q44_la ///		
+		(. = .a) if country != 11
+		
+* Country-specific value labels 
 recode language (. = 0) if country == 10 | country == 7 | country == 2
-lab def language 1 "English" 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali" 0 "Spanish", replace
+lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Kmong", modify
+
+*Q4
+label define labels6 18 "City" 19 "Rural area"  20 "Suburb", modify
+
+*Q5
+label define labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang", modify
+
+*Q7
+label define labels9 29 "Public" 30 "Private", modify
+
+*Q8
+label define labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
+					  47 "Lower secondary (1-4 years)" /// 
+					  48 "Upper secondary (5-7 years)" ///
+					  49 "Post-secondary and non-tertiary (13-15 years)" ///
+					  50 "Tertiary (Associates or higher)", modify
+
+*Q62
+label define labels51 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other", modify
+
+*Q63
+label define labels52 101 "Range A (Less than 1,000,000) Kip" 102 "Range B (1,000,000 to 1,500,000) Kip" 103 "Range C (1,500,001 to 2,000,000) Kip" 104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip", replace
 
 order q*, sequential
 order respondent_serial respondent_id unique_id psu_id interviewerid_recoded /// 
@@ -1299,8 +1339,9 @@ intlength int_length q1_codes
 * Dropped q46 and q47 because some data in time format, some in not
 
 drop intlength unique_id q46 q47 
+ren interviewerid_recoded interviewerid
 
-save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
+save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 * NOTE: 
 * Ethiopia data missing value labels on Q63 and Q62, it's fine for now 
@@ -1317,6 +1358,7 @@ save "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
 * I will probably comment out this whole section so it does not get run each time, 
 * but is useful when we clean a new country's data. 
 
+/*
 ***************************** Data quality checks *****************************
 
 u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace

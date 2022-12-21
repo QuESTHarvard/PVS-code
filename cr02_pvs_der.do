@@ -11,7 +11,7 @@ dataset created in the cr01 file.
 
 ***************************** Deriving variables *****************************
 
-u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", clear
+u "$data_mc/02 recoded data/pvs_appended.dta", clear
 
 *------------------------------------------------------------------------------*
 
@@ -182,11 +182,16 @@ gen health_chronic = q11
 gen ever_covid = q12
 gen covid_confirmed = q13 
 gen usual_source = q18
+recode usual_source (. = 1) if q18a_la == 1 & q1920a_la == 1 | q18a_la == 1 & q1920a_la == 2 | ///
+							   q18a_la == 1 & q1920a_la == 3 | q18a_la == 1 & q1920a_la == 4
+recode usual_source (. = 0) if q18a_la == 0 | q1920a_la == 7 | q1920a_la == 8 | q1920a_la == 9
+
+* ^ Note check this! 
+
 gen inpatient = q29 
 gen unmet_need = q41 
 lab val insured health_chronic ever_covid covid_confirmed usual_source ///
-		inpatient unmet_need yes_no
-
+		inpatient unmet_need yes_no	
 * blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
 * blood_chol care_mental 
 * Yes/No/Don't Know/Refused - Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 
@@ -310,20 +315,20 @@ ren (derq51 derq52 derq53) (conf_sick conf_afford conf_opinion)
 * are what is expected between the Q# and derived variable (same idea as two-way tab)
 
 * urban: type of region respondent lives in 
-recode q4 (6 7 9 10 12 13 = 1 "Urban") (8 11 14 = 0 "Rural") ///
+recode q4 (6 7 9 10 12 13 18 20 = 1 "Urban") (8 11 14 19 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insur_type 
 * NOTE: check other, specify later
 
-recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 = 0 Public) (2 4 5 6 7 28 13 21 = 1 Private) /// 
+recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 = 0 Public) (2 4 5 6 7 28 13 21 30 = 1 Private) /// 
 		  (995 = 3 Other) ///
 		  (.r = .r "Refused") (.a = .a NA), gen(insur_type)
 
 * education 
-recode q8 (1 2 7 25 26 18 19 32 33 = 0 "None") /// 
-		  (3 8 27 20 34 = 1 "Primary") (4 9 28 21 35 = 2 "Secondary") /// 
-	      (5 10 11 29 30 31 22 23 24 36 37 38 = 3 "Post-secondary") ///
+recode q8 (1 2 7 25 26 18 19 32 33 45 = 0 "None") /// 
+		  (3 8 27 20 34 46 = 1 "Primary") (4 9 28 21 35 47 48 = 2 "Secondary") /// 
+	      (5 10 11 29 30 31 22 23 24 36 37 38 49 50 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
 
 * usual_type_own
@@ -331,9 +336,12 @@ recode q8 (1 2 7 25 26 18 19 32 33 = 0 "None") ///
 recode q19_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
-recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1 | q19_uy == 5
-recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 
-recode usual_type_own (.a = 2) if q19_uy == 3 | q19_uy == 995
+recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1 | q19_uy == 5 | ///
+								  q1920a_la == 1 | q1920a_la == 2 | q1920b_la == 1 | q1920b_la == 2
+recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | q1920a_la == 1 | ///
+								  q1920a_la == 3 | q1920a_la == 4 | q1920b_la == 3 | q1920b_la == 4 | ///
+								  q1920a_la == 6 | q1920b_la == 6
+recode usual_type_own (.a = 2) if q19_uy == 3 | q19_uy == 995 | q1920a_la == 9 | q1920b_la == 9
 recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r 
 
 * usual_type_lvl 
@@ -341,6 +349,14 @@ recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r
 recode q20 (1 2 3 6 7 8 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
 		   (4 5 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
+
+recode usual_type_lvl (. = 0) if q1920a_la == 2 | q1920a_la == 4 | q1920a_la == 6 | ///
+								 q1920b_la == 2 | q1920b_la == 4 | q1920b_la == 6
+recode usual_type_lvl (. = 1) if q1920a_la == 1 | q1920a_la == 3 | q1920b_la == 1 | q1920b_la == 3
+recode usual_type_lvl (. = .a) if q1920a_la == .a | q1920b_la == .a
+
+* NOTE: check this! 
+
 		   
 * usual_type_own_lvl
 gen usual_type_own_lvl = . 
@@ -362,19 +378,20 @@ lab val usual_type_own_lvl fac_own_lvl
 recode q43_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
-recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1 | q43_uy == 5
-recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 
+recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1 | q43_uy == 5 | q43_la == 1
+recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 | q43_la == 2 | q43_la == 3
 recode last_type_own (.a = 2) if q43_uy == 3 | q43_uy == 995
 recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r 
-
-
 
 * last_type_lvl 
 
 recode q44 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
 		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
-		   
+recode last_type_lvl (. = 0) if q44_la == 2 | q44_la == 3
+recode last_type_lvl (. = 1) if q44_la == 1 
+recode last_type_lvl (. = .a) if q44_la == .a
+
 * last_type_own_lvl
 gen last_type_own_lvl = . 
 recode last_type_own_lvl (. = 0) if last_type_own == 0 & last_type_lvl == 0
@@ -410,15 +427,15 @@ lab val last_type_own_lvl fac_own_lvl
 
 * native language
 recode q62 (1 5 8 9 10 11 12 13 14 15 23 24 25 26 27 28 29 30 31 32 ///
-			44 45 49 81 = 0 "Minority group languages") /// 
-		   (2 3 4 6 7 21 22 53 87 = 1 "Majority group languages") /// 
-		   (995 998 = 2 "Other") ///
+			44 45 49 81 102 103 = 0 "Minority group languages") /// 
+		   (2 3 4 6 7 21 22 53 87 101 = 1 "Majority group languages") /// 
+		   (995 998 104 = 2 "Other") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(native_lang)
 
 * income
-recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") /// 
-		   (3 4 5 11 12 41 42 43 33 34 35 51 52 53 = 1 "Middle income") /// 
-		   (6 7 13 14 44 45 36 37 54 55 = 2 "Highest income") ///
+recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest income") /// 
+		   (3 4 5 11 12 41 42 43 33 34 35 51 52 53 103 104 105 = 1 "Middle income") /// 
+		   (6 7 13 14 44 45 36 37 54 55 106 107 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		   
 
@@ -427,13 +444,16 @@ recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 = 0 "Lowest income") ///
 		   
 **** Order Variables ****
 		   
-order respondent_serial respondent_id psu_id interviewerid_recoded /// 
+order respondent_serial respondent_id psu_id interviewerid /// 
 	  interviewer_language interviewer_gender mode country language date ///
 	  time int_length q1_codes q1 q2 q3 q3a q4 q5 q6 q7 ///
-	  q7_other  q8 q9 q10 q11 q12 q13 q13b q13e q13e_10 q14 q15 q16 q17 q18 ///
-	  q19_ke_et q19_co q19_pe q19_uy q19_other q20 q20_other q21 q21_other q22 ///
+	  q7_other q8 q9 q10 q11 q12 q13 q13b q13e q13e_10 q14 q15 q16 q17 q18 ///
+	  q18a_la q18b_la ///
+	  q19_ke_et q19_co q19_pe q19_uy q19_other q1920a_la q1920a_other q1920b_la ///
+	  q1920b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q38 q39 q40 q41 q42 q42_other q43_ke_et q43_co q43_pe q43_uy q43_other q44 ///
+	  q38 q39 q40 q41 q42 q42_other q43_ke_et q43_co q43_pe q43_uy q43_la q43_other /// 
+	  q44 q44_la ///
 	  q44_other q45 q45_other q46_min q46_refused q47_min q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ke_et q56_pe q56_uy q57 q58 q59 ///
@@ -533,9 +553,18 @@ lab var	vignette_good "Rating of vignette in Q61 (good care)"
 lab var	native_lang "Native language (Q62)"
 lab var	income "Income group (Q63)"
 
+
 **************************** Save data *****************************
 
-save "$data_mc/02 recoded data/pvs_ke_et_lac_02.dta", replace
+save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
+
+
+rm "$data_mc/02 recoded data/pvs_appended.dta"
+rm "$data_mc/02 recoded data/pvs_ke.dta"
+rm "$data_mc/02 recoded data/pvs_et.dta"
+rm "$data_mc/02 recoded data/pvs_lac.dta"
+rm "$data_mc/02 recoded data/pvs_la.dta"
+
 
 
 
