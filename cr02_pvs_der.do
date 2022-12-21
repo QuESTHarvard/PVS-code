@@ -174,7 +174,7 @@ lab val system_reform sr
 
 **** Yes/No Questions ****
 
-* insured, health_chronic, ever_covid, covid_confirmed, usual_source inpatient
+* insured, health_chronic, ever_covid, covid_confirmed, usual_source, inpatient
 * unmet_need 
 * Yes/No/Refused -Q6 Q11 Q12 Q13 Q18 Q29 Q41 
 gen insured = q6 
@@ -183,10 +183,11 @@ gen ever_covid = q12
 gen covid_confirmed = q13 
 gen usual_source = q18
 recode usual_source (. = 1) if q18a_la == 1 & q1920a_la == 1 | q18a_la == 1 & q1920a_la == 2 | ///
-							   q18a_la == 1 & q1920a_la == 3 | q18a_la == 1 & q1920a_la == 4
-recode usual_source (. = 0) if q18a_la == 0 | q1920a_la == 7 | q1920a_la == 8 | q1920a_la == 9
+							   q18a_la == 1 & q1920a_la == 3 | q18a_la == 1 & q1920a_la == 4 | ///
+							   q18a_la == 1 & q1920a_la == 6 | q18b_la == 1
+recode usual_source (. = 0) if q18a_la == 0 | q18a_la == 1 & q18b_la == 0
 
-* ^ Note check this! 
+* NOTE: check Laos addition 
 
 gen inpatient = q29 
 gen unmet_need = q41 
@@ -560,11 +561,11 @@ lab var	income "Income group (Q63)"
 save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 
-rm "$data_mc/02 recoded data/pvs_appended.dta"
-rm "$data_mc/02 recoded data/pvs_ke.dta"
-rm "$data_mc/02 recoded data/pvs_et.dta"
-rm "$data_mc/02 recoded data/pvs_lac.dta"
-rm "$data_mc/02 recoded data/pvs_la.dta"
+*rm "$data_mc/02 recoded data/pvs_appended.dta"
+*rm "$data_mc/02 recoded data/pvs_ke.dta"
+*rm "$data_mc/02 recoded data/pvs_et.dta"
+*rm "$data_mc/02 recoded data/pvs_lac.dta"
+*rm "$data_mc/02 recoded data/pvs_la.dta"
 
 
 

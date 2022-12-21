@@ -107,6 +107,7 @@ foreach var in q46 q47 q46_min q47_min {
 
 * q23 max is 50, q25_b max is 6, q27 max is 7, q28 max is 12, q28_new max is 15
 * I propose dropping no outliers for visits 
+
 * What about wait time? Not sure whether to do 3 SD or make a judgement based on plausible values
 * Upper for 3 SD from mean for q46 is 4.8 hours, and for q47 is 25.53 hours
 * For q47, the distribution is being skewed by a very large number, 19,000 minutes (316 hours)
@@ -114,12 +115,23 @@ foreach var in q46 q47 q46_min q47_min {
 * That drastically changes which are recoded to missing
 * I think 3 SD from the mean doesn't make much sense for this either, and should just drop implausible values 
 
+recode q46_min (1800 = .)
+* For q47 there's 34+ above one hour, I just recoded these for now 
+recode q47_min (19440 = .) (1200 = .)
 
-
+* Check for other implausible values 
 * Should we look for if q25_b > q23? Or q27 > q23? 
 * What about q27 = 0 or 1?
 * These all seem like implausible values to me 
+* Any others I'm missing? 
 
+list q23 q25_b if q25_b > q23 & q25_b < . 
+* Okay in Kenya data 
+list q23 q27 if q27 > q23 & q27 < . 
+* Okay in Kenya data 
+list q23 q27 if q27 == 0 | q27 == 1
+* Not a perfect method because of q24, would need to create a q23/q24 mid-point variable 
+* to check this more accurately 
 	 
 *------------------------------------------------------------------------------*
 
@@ -496,8 +508,9 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 * Positive outliers only (+3 SD from the mean)
 * All visit count variables and wait time variables 
 
+
 /*
-foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
+foreach var in q46_min q47_min {
 		
 			egen `var'_sd = sd(`var')
 			egen `var'_mean = mean(`var')
@@ -507,8 +520,19 @@ foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
 			drop `var'_sd `var'_mean `var'_upper `var'_otl
 		
 	 }
-
 */
+* q23 max is 50, q25_b max is 10, q27 max is 10, q28 max is 92, next is 24, 
+* q28_new max is 30, q46_min max is 600, q47_min max is 1200
+* q46_min upper is 274 minutes, 202 minutes 
+
+recode q28 (92 = .)
+
+* Check for other implausible values 
+list q23 q25_b if q25_b > q23 & q25_b < . 
+* Okay in Ethiopia data 
+list q23 q27 if q27 > q23 & q27 < . 
+* Okay in Ethiopia data 
+list q23 q27 if q27 == 0 | q27 == 1
 
 * NOTE will instead drop implausible numbers 
 
@@ -896,9 +920,34 @@ foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
 			
 	 }
 */
+
 * NOTE will instead drop implausible numbers 
 
+* Colombia 
+* q23 max is 36, q25_b max is 8, q27 max is 10, q28 max is 12, q28_new max is 80,
+* next is 30, q46_min max is 720, q47_min is 420
+
+* Peru 
+* q23 max is 50, q25_b max is 15, q27 max is 10, q28 max is 30, q28_new max is 30,
+* q46_min max is 660, q47_min is 480
+
+* Uruguay
+* q23 highest values are 200, 156, 48...
+* q25_b max is 20, q27 max is 6, q28 max is 15, q28_new max is 50,
+* q46_min max is 660, q47_min is 480
+
+recode q23 (200 = .) (156 = .)
+recode q28_new (80 = .)
 			
+* Other implausible values 
+			
+list q23 q25_b if q25_b > q23 & q25_b < . 
+* Okay in LAC data 
+list q23 q27 if q27 > q23 & q27 < . 
+* Okay in LAC data 
+list q23 q27 if q27 == 0 | q27 == 1
+* Okay in LAC data
+
 *------------------------------------------------------------------------------*
 
 * Recode missing values to NA for questions respondents would not have been asked due to skip patterns

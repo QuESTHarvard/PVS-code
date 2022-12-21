@@ -205,12 +205,17 @@ recode q15 (. = .a) if q14 != 1
 
 *q19-22
 recode q1920a_la q18b_la q1920b_la q21 q22 (. = .a) if q18a_la == 2 
-recode q18b_la q1920b_la (. = .a) if q1920a_la != 7 | q1920a_la != 9 | q1920a_la != 8
+recode q18b_la q1920b_la (. = .a) if q1920a_la == 1 | q1920a_la == 2 | q1920a_la == 3 | ///
+									 q1920a_la == 4 | q1920a_la == 6 | q1920a_la == 9
 recode q21 q22 (. = .a) if q18b_la == 2
 
-* NOTE: These skip pattern recoding is not adding up. Maybe it's just refusal or don't know?
 * Q. I thought those who responded pharmacy or traditional healer in q1920a were asked 
 *	 about q18b?
+*	If that is correct, I don't think this skip pattern worked for ~16 of the 76 
+*   people who said pharmacy or traditional healer 
+* 	There are ~16 poeple who say private pharmacy or traditional healer but were not asked q18b
+* 	Or is that all refusal? 
+
 * Q. It appears a lot to be missing for Q22? Did I miss something in the skip pattern? 
 * Or just refusal? 
 
@@ -422,6 +427,24 @@ drop q2 q3 q4 q5 q7 q8 q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 q45 q30 q31
 	 interviewerid
 
 ren rec* *
+
+*------------------------------------------------------------------------------*
+
+* Check for implausible values
+* q23 q25_b q27 q28_a q28_b q46_min q47_min
+* NOTE: For all visit counts we are reviewing values and recoding implausible values
+* to missing (~visits > 50) 
+* We are still deciding what to do for q46_min and q47_min (may recode 3 SD from the mean)
+
+* All count values in Laos look plausible, some time spent with provider (q47_min) seems high 
+
+ 
+list q23 q25_b if q25_b > q23 & q25_b < . 
+* Two potentially implausible values, where visits for COVID is higher than visits 
+list q23 q27 if q27 > q23 & q27 < . 
+* One potentially implausible value, where number of facilities is higher than number of visits
+list q23 q27 if q27 == 0 | q27 == 1
+* This is okay 
 
 
 *------------------------------------------------------------------------------*
