@@ -1,5 +1,5 @@
 * PVS cleaning for appending datasets
-* September 2022
+* December 2022
 * TEMP file for Laos 
 * N. Kapoor 
 
@@ -371,7 +371,7 @@ recode q57 ///
 * NOTE: We have only received data from Ipsos so far, so the value labels are programmed
 * to include all of countries being fielded by Ipsos 
 * For Laos, for now, I'll recode the values to start after Ipsos countries and then 
-* re-label the values on append 
+* re-label the values on append (see append code at end)
 * Not sure if there is a better way to do this? but this seems to work for now 
 
 * Interviewer ID - Other country data is anonomized interview ID from 1 through 57
@@ -550,3 +550,78 @@ order respondent_serial language interviewerid_recoded weight q1 q2 q3 q4 q5 q6 
 
 
 save "$data_mc/02 recoded data/pvs_la.dta", replace
+
+/*
+* NOTE to Emma/Amit: 
+* Here is my code for appending all the datasets if you want to see how I added 
+* the value labels for Laos
+
+*------------------------------------------------------------------------------*
+
+********************************* Append data *********************************
+
+u "$data_mc/02 recoded data/pvs_lac.dta", clear
+append using "$data_mc/02 recoded data/pvs_ke.dta"
+append using "$data_mc/02 recoded data/pvs_et.dta"
+append using "$data_mc/02 recoded data/pvs_la.dta"
+
+* NOTE: Fix Kenya date on append 
+
+* Kenya/Ethiopia variables 
+ren q19 q19_ke_et 
+lab var q19_ke_et "Q19. Kenya/Ethiopia: Is this a public, private, or NGO/faith-based facility?"
+ren q43 q43_ke_et 
+lab var q43_ke_et "Q43. Kenya/Ethiopia: Is this a public, private, or NGO/faith-based facility?"
+ren q56 q56_ke_et 
+lab var q56_ke_et "Q56. Kenya/Ethiopia: How would you rate quality of NGO/faith-based healthcare?"
+
+* Mode
+lab val mode mode
+lab var mode "Mode of interview"
+
+* Country-specific skip patterns
+recode q6 q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
+recode q3a q13b q13e (. = .a) if country == 5 | country == 3 | country == 11 
+recode q19_uy q43_uy q56_uy (. = .a) if country != 10
+recode q19_pe q43_pe q56_pe (. = .a) if country != 7
+recode q19_co q43_co (. = .a) if country != 2
+recode q18a_la q1920a_la q18b_la q1920b_la q43_la q44_la ///		
+		(. = .a) if country != 11
+		
+* Country-specific value labels 
+
+recode language (. = 0) if country == 10 | country == 7 | country == 2
+lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Kmong", modify
+
+*Q4
+label define labels6 18 "City" 19 "Rural area"  20 "Suburb", modify
+
+*Q5
+label define labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang", modify
+
+*Q7
+label define labels9 29 "Public" 30 "Private", modify
+
+*Q8
+label define labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
+					  47 "Lower secondary (1-4 years)" /// 
+					  48 "Upper secondary (5-7 years)" ///
+					  49 "Post-secondary and non-tertiary (13-15 years)" ///
+					  50 "Tertiary (Associates or higher)", modify
+
+*Q62
+label define labels51 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other", modify
+
+*Q63
+label define labels52 101 "Range A (Less than 1,000,000) Kip" 102 "Range B (1,000,000 to 1,500,000) Kip" 103 "Range C (1,500,001 to 2,000,000) Kip" 104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip", replace
+
+order q*, sequential
+order respondent_serial respondent_id unique_id psu_id interviewerid_recoded /// 
+interviewer_language interviewer_gender mode country language date time /// 
+intlength int_length q1_codes
+
+drop intlength unique_id q46 q47 
+ren interviewerid_recoded interviewerid
+
+save "$data_mc/02 recoded data/pvs_appended.dta", replace
+
