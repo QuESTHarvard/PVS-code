@@ -1,15 +1,15 @@
-* PVS deriving variables for aanalysis 
-* September 2022
-* N. Kapoor 
+* People's Voice Survey derived variable creation
+* Date of last update: Jan 4, 2023
+* Last updated by: T Lewis
 
 /*
 
 This file loads creates derived variables for analysis from the multi-country 
-dataset created in the cr01 file. 
+dataset created in the cr01_pvs_clin.do file. 
 
 */
 
-***************************** Deriving variables *****************************
+***************************** Deriving variables *******************************
 
 u "$data_mc/02 recoded data/pvs_appended.dta", clear
 
@@ -43,7 +43,7 @@ gen gender = q3
 lab val gender gender
 
 * NOTE: I renamed this from female to gender because 'another gender' 
-* 		Let me know if you disagree  
+* 		Let me know if you disagree  TL: Agree
 
 * covid_vax
 recode q14 ///
@@ -56,7 +56,7 @@ gen covid_vax_intent = q15
 lab val covid_vax_intent yes_no_doses
 
 * patient_activiation
-* NOTE: See if this code makes sense 
+* NOTE: See if this code makes sense TL: WE NEED TO DECIDE ON THIS TOGETHER IN PERSON--MONDAY?
 gen patient_activation = 2 if q16 == 3 & q17 == 3	
 recode patient_activation (. = 1) if q16 == 3 & q17 == 2 | q16 == 2 & q17 == 3 | /// 
 						  q16 == 2 & q17 == 2	
@@ -76,7 +76,7 @@ recode q21 (2 = 1 "Convenience (short distance)") ///
 			(7 = 6 "Only facility available") ///
 			(.r 9 = .r "Other or Refused") ///
 			(.a = .a "NA") , gen(usual_reason)
-
+*TL: I think we may need a visits variable that is just continue, combining 23 and 24. Could we add here and the data dictionary?
 * visits
 gen visits = 0 if q23 == 0 | q24 == 0
 recode visits (. = 1) if q23 >=1 & q23 <= 4 | q24 == 1
@@ -91,7 +91,7 @@ gen visits_covid = q25_b
 recode visits_covid (.a = 1) if q25_a == 1
 
 *fac_number
-* NOTE: what to do with people who say 0 or 1 for Q27? It's 24 people - for now put them in 0 group
+* NOTE: what to do with people who say 0 or 1 for Q27? It's 24 people - for now put them in 0 group TL: I assume if you say 0 to q27, you mean 0 additional doctors, so those people would have 1 facility. I assume if you say 1, you mean "1 additional/different doctor" for a total of 2 different facilities. If you agree with my logic, let's code that way and please include a note to that effect explaining what we did for those 24 people right here in the file. 
 gen fac_number = 0 if q26 == 1 | q27 == 0 | q27 == 1
 recode fac_number (. = 1) if q27 == 2 | q27 == 3
 recode fac_number (. = 2) if q23 > 3
@@ -99,13 +99,17 @@ recode fac_number (. = .a) if q26 == .a | q27 == .a
 recode fac_number (. = .r) if q26 == .r | q27 == .r
 lab def fn 0 "1 facility (Q26 is yes)" 1 "2-3 facilities (Q27 is 2 or 3)" ///
 		   2 "More than 3 facilities (Q27 is 4 or more)" .a "NA" .r "Refused"
-lab val fac_number fn
+lab val fac_number fn 
+*TL: could we make this 1, 2, 3, instead of starting at 0? Easier to process.
 
 * visits_total
 gen visits_total = q23 + q28_a + q28_b
+*TL: Your code is making the new var missing if any of the three is missing. But if any of the three variables
+*has a number, we want to capture it. Try this below--it treats missing as zero:
+egen visits_total2 = rowtotal(q23 q28_a q28_b)
 * NOTE: 
 * something strange may be happening with Q28_A refuse 
-* ^ future NRK does not remember why past NRK wrote that
+* ^ future NRK does not remember why past NRK wrote that TL: LOL
 recode visits_total (. = .r) if q23 == .d | q23 == .r | q28_a == .d | q28_a == .r ///
 								| q28_b == .d | q28_b == .r
 * ^just changing them all to refuse for now
@@ -117,6 +121,11 @@ recode system_fail (. = 0) if q39 == 0 & q40 == 0
 recode system_fail (. = .r) if q39 == .r | q40 == .r	      
 recode system_fail (. = .a) (0 = .a) (1 = .a) if q39 == .a | q40 == .a	   
 lab val system_fail yes_no_na
+
+*TL: I would typically use replace here--gen var = ., then replace 1 if, replace 0 if, etc. so you can see what values haven't been recoded. particulalry valuable for variables with many values.
+*For this var in particular, I would do this:
+egen system_fail2 = rowmax(q39 q40) 
+*We should just note that if you said no or yes to one of them, we considered that your answer if your other response was missing or "i did not get health care". This code gives you a 0 even if you have a refused or missing in just one, which is what we want. There's a lot of true missings here also--what's up with that?
 
 * unmet_reason 
 recode q42 (1 = 1 "Cost (High cost)") ///
@@ -208,20 +217,6 @@ lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam ///
 	blood_sugar blood_chol care_mental yes_no_dk
 	
 **** Excellent to Poor scales *****	   
-* NOTE: I left my previous code commented out for now, Todd you can delete 
-
-* health, health_mental, last_qual, last_skills, last_supplies, last_respect, 
-* last_explain, last_decision, last_visit_rate, last_wait_rate, vignette_poor,
-* vignette_good
-
-* recode Q9 Q10 Q48_A Q48_B Q48_C Q48_D Q48_F Q48_G Q48_H Q48_I Q60 Q61 /// 
-*	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") /// 
-*	   (.r = .r "Refused") (.a = .a NA), pre(der)label(exc_poor_der2)
-	   	   
-* ren (derQ9 derQ10 derQ48_A derQ48_B derQ48_C derQ48_D derQ48_F derQ48_G derQ48_H /// 
-*	 derQ48_I derQ60 derQ61) (health health_mental last_qual last_skills /// 
-*	 last_supplies last_respect last_explain last_decisions ///
-*	 last_visit_rate last_wait_rate vignette_poor vignette_good)
 
 gen health = q9 
 gen health_mental = q10 
@@ -356,7 +351,7 @@ recode usual_type_lvl (. = 0) if q1920a_la == 2 | q1920a_la == 4 | q1920a_la == 
 recode usual_type_lvl (. = 1) if q1920a_la == 1 | q1920a_la == 3 | q1920b_la == 1 | q1920b_la == 3
 recode usual_type_lvl (. = .a) if q1920a_la == .a | q1920b_la == .a
 
-* NOTE: check this! 
+* NOTE: check this! TL: Is this a note to me? Something in particular you want me to check?
 
 * NOTE: Maybe add an other for Lao? also for last visit level? But we will see with other, specify data
 
