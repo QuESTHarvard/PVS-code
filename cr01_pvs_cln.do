@@ -1,11 +1,9 @@
-* PVS cleaning for appending datasets
-* September 2022
-* N. Kapoor & R. B. Lobato
+* People's Voice Survey data cleaning and appending
+* Date of last update: Jan 4, 2023
+* Last updated by: T Lewis
 
 /*
-
-This file loads country-specific raw data, cleans these data, and appends these
-datasets to one clean multi-country datset. 
+This file cleans data by country and appends data into a multi-country dataset.
 
 Cleaning includes:
 	- Dropping any unusable records 
@@ -14,9 +12,7 @@ Cleaning includes:
 	- Creating new variables (e.g., time variables), renaming variables, labeling variables 
 	- Correcting any values and value labels and their direction 
 	
-
-Note: .a means NA, .r means refused, .d is don't know, . is missing 
-
+Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true missing 
 */
 
 clear all
@@ -53,31 +49,26 @@ gen q47_min = q47 / 60
 * Drop any unwanted/empty variables
 * Generate any new needed variables
 
-* Make sure no under 18 
+* Drop respondents under 18 
 drop if q2 == 1 | q1 < 18
 
 * Drop interviews that are short and could be low-quality 
-* as identified by Ipsos in the qc_short var 
+* as identified by Ipsos in the qc_short var (<10 min; 165 interviews)
 
 drop if qc_short == 2
 drop qc_short
 
 *------------------------------------------------------------------------------*
 
+*TL: PREFER TO DO THIS WITH THE VARIABLES BELOW SINCE THAT STEP HAS TO HAPPEN ANYWAY
 
-* Recode all Refused and Don't know
+* Recode all Refused and Don't know responses
 
-* NOTE:
-* Todd: Curious about your thoughts on over-recoding. 
-* I could not do these recodes below (67 & 71) and instead do it in the value label corrections. 
-* Then, would need to change all the .r in the "NA" section to 996, but that's minor 
-* After you review it all, would be great to discuss your thoughts on the order of this recoding 
-
-* Don't know is 997 in these raw data 
+* In raw data, 997 = "don't know" 
 recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 q63 ///
 	   q66 q67 (997 = .d)
 
-* Refused is 996 in these raw data 
+* In raw data, 996 = "refused" 
 recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
 	   q18 q19 q20 q21 q22 q23 q24 q25_a q25_b q26 q27 q28 q28_new q29 q30 /// 
 	   q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46 q47 ///
@@ -85,12 +76,12 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 	   q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
 	   q56 q57 q58 q59 q60 q61 q62 q63 q66 q67 (996 = .r)	
 
-
 *------------------------------------------------------------------------------*
 
 * Recode implausible values to missing 
 * All visit count variables and wait time variables 
 
+*TL: LET'S DROP THIS LOOP BUT PLEASE SAVE SOMEWHERE FOR FUTURE USE IF NEEDED!
 /*
 foreach var in q46 q47 q46_min q47_min {
 		
@@ -108,22 +99,15 @@ foreach var in q46 q47 q46_min q47_min {
 * q23 max is 50, q25_b max is 6, q27 max is 7, q28 max is 12, q28_new max is 15
 * I propose dropping no outliers for visits 
 
-* What about wait time? Not sure whether to do 3 SD or make a judgement based on plausible values
-* Upper for 3 SD from mean for q46 is 4.8 hours, and for q47 is 25.53 hours
-* For q47, the distribution is being skewed by a very large number, 19,000 minutes (316 hours)
-* If I recode that value and calculate upper, the upper is 70 minutes
-* That drastically changes which are recoded to missing
-* I think 3 SD from the mean doesn't make much sense for this either, and should just drop implausible values 
+recode q46_min (1800 = .) 
+*TL: I AGREE WITH JUST DROPPING 1800.
 
-recode q46_min (1800 = .)
-* For q47 there's 34+ above one hour, I just recoded these for now 
-recode q47_min (19440 = .) (1200 = .)
+recode q47_min (19440 = .) (1200 = .) 
+*TL: LET'S CHANGE TO MISS ANY OVER 120 MIN. 13 PEOPLE SAID 120, SO IT'S LIKELY A REAL FINDING.
 
 * Check for other implausible values 
-* Should we look for if q25_b > q23? Or q27 > q23? 
-* What about q27 = 0 or 1?
-* These all seem like implausible values to me 
-* Any others I'm missing? 
+* Should we look for if q25_b > q23? Or q27 > q23? TL: YES, GOOD. WHAT WILL WE DO WITH IMPLAUSIBLE ANSWERS?
+* What about q27 = 0 or 1? TL: YES, GOOD
 
 list q23 q25_b if q25_b > q23 & q25_b < . 
 * Okay in Kenya data 
@@ -131,37 +115,41 @@ list q23 q27 if q27 > q23 & q27 < .
 * Okay in Kenya data 
 list q23 q27 if q27 == 0 | q27 == 1
 * Not a perfect method because of q24, would need to create a q23/q24 mid-point variable 
-* to check this more accurately 
-	 
+* to check this more accurately
+
+*TL: COULD ALSO LOOK AT Q23 VS Q39/40
+
 *------------------------------------------------------------------------------*
 
-* Recode missing values to NA for questions respondents would not have been asked 
-* due to skip patterns
+* Recode missing values to NA for intentionally skipped questions
 
 *q1/q2 
 recode q2 (. = .a) if q1 != .r
-recode q1 q1_codes (. = .r) if q2 != .a
+recode q1 q1_codes (. = .r) if q2 != .a 
+*TL: TECHNICALLY IPSOS SHOULD HAVE MARKED THESE AS REFUSED, RIGHT? WEIRD.
 
 * q7 
 recode q7 (. = .a) if q6 == 2 | q6 == .r 
 
 * q13 
-recode q13 (. = .a) if q12 == 2 | q12 == .r | q12 == .d 
+recode q13 (. = .a) if q12 == 2 | q12 == .r | q12 == .d  
+*TL: NO DONT KNOWS FOR Q12, RIGHT?
 
 * q15
-recode q15_new (. = .a) if q14_new == 3 | q14_new == 4 | q14_new == 5 | q14_new == .r
+recode q15_new (. = .a) if q14_new == 3 | q14_new == 4 | q14_new == 5 | q14_new == .r 
+*TL:  WE SHOULD HAVE ASKED Q15 IF Q14 WAS REFUSED TOO. NEXT WAVE!
 
 *q19-22
 recode q19 q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
 recode q20 (. = .a) if q19 == 4 | q19 == .r
 
-* NA's for q23-27 
+* NA's for q24-27 
 recode q24 (. = .a) if q23 != .d | q23 != .r
 recode q25_a (. = .a) if q23 != 1
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 != 2
-
+*TL: WILL NEED TO SLOT IN 28C FOR HICS.
 * q31 & q32
 recode q31 (. = .a) if q3 == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
 recode q32 (. = .a) if q3 == 1 | q1 == .r | q2 == .r
@@ -294,7 +282,7 @@ recode q57 ///
 gen recinterviewerid_recoded = interviewerid_recoded + 35
 
 *------------------------------------------------------------------------------*
-
+*TL: THIS IS FINE BUT I THINK IT WOULD HAVE BEEN FINE AND ALSO EASIER TO JUST RENAME THE VARIABLES WE HAD DIRECTLY.  
 * Renaming variables 
 * Rename variables to match question numbers in current survey 
 
@@ -336,7 +324,7 @@ lab val q1 q23 q25_b q27 q28_a q28_b q46 q46_min q47 q47_min q65 na_rf
 * options have value labels, but not labels for .a or .r.  I don't think it's 
 * worth the effort right now (e.g. Q20), but will have Ro help me with ths in future.
 * Hopefully Ipsos can send us a detailed codebook for country-specific value labels
-* and then it would be easy.   
+* and then it would be easy.   TL: DO YOU MEAN VALUE LABELS FOR .R LIKE "REFUSED?" DOESN'T SEEM HUGELY IMPORTANT BUT GOOD TO BE CONSISTENT.  
 
 *------------------------------------------------------------------------------*
 
@@ -969,7 +957,7 @@ recode q13b (. = .a) if q12 == 2 | q12 == .r | q12 == .d
 recode q13e (. = .a) if q13b == .a | q13b == 1 | q13b == .d | q13b == .r
 
 * NOTE: I think it's okay to keep Q13B Q13E Q13E_10 these in the final data
-* Just will change to .a for other countries after merge
+* Just will change to .a for other countries after merge TL: THAT WORKS
 
 * Q15
 recode q15_new (. = .a) if q14_new == 3 | q14_new == 4 | q14_new == 5 | q14_new == .r
@@ -985,7 +973,7 @@ recode q19_co (. = .a) if country != 2
 * NOTE: Todd, I realized that for Kenya/Ethiopia when other was selected in 
 * Q19, the programming directed to just Other, specify - but this appears to not 
 * be the case in LAC countries. Hopefully we get their final tools soon and this 
-* will be clearer. 
+* will be clearer. TL: DO YOU MEAN THEY WERENT GIVEN THE OPTION TO WRITE IN, OR DO YOU MEAN THAT THEY HAD OPTIONS FOR OHTER? OR SOMETHING ELSE?
 
 * NOTE: UY appears to have NGO when it should be other
 recode q19_uy (3 = 995)
@@ -1329,7 +1317,7 @@ append using "$data_mc/02 recoded data/pvs_et.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
 
 
-* NOTE: Is there a good way to confirm this append is working well in terms of values and value labels? 
+* NOTE: Is there a good way to confirm this append is working well in terms of values and value labels? TL: WE SHOULD CHECK THAT SAMPLE SIZE IS AS EXPECTED AND SPOT CHECK VALUES/LABELS.
 * NOTE: Fix Kenya date on append 
 
 * Kenya/Ethiopia variables 
@@ -1355,7 +1343,8 @@ recode q18a_la q1920a_la q18b_la q1920b_la q43_la q44_la ///
 		
 * Country-specific value labels 
 recode language (. = 0) if country == 10 | country == 7 | country == 2
-lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Kmong", modify
+lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Kmong", modify 
+*TL: HMONG?
 
 *Q4
 label define labels6 18 "City" 19 "Rural area"  20 "Suburb", modify
@@ -1401,7 +1390,7 @@ save "$data_mc/02 recoded data/pvs_appended.dta", replace
 * I feel like this .do file is already getting very long / hard to navigate
 * Wondering if we should consider country-specific cr01 files? 
 * Or, maybe we can create temporary country-specific ones until they are finalized 
-* and then compile here 	 
+* and then compile here 	TL: ILL LEAVE IT TO YOU TO DECIDE. ONLY DOWNSIDE OF SEPARATE FILES IS YOU CANT CTRL+F OR REPLACE AS EASILY IN SEPARATE FILES IF WE NEED TO MAKE DUPLICATE CHANGES ACROSS EVERY COUNTRY.  
 
 * NOTE: I think all of these checks are necessary for now. As we move forward
 * I will probably comment out this whole section so it does not get run each time, 
