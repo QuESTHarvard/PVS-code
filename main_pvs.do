@@ -1,12 +1,12 @@
 * People's Voice Survey main code file 
-* Date of last update: Jan 4, 2023
-* Last updated by: T Lewis
+* Date of last update: Jan 5, 2023
+* Last updated by: N Kapoor
 
 /* Purpose of code file: 
 	This file sets all macros and runs all cleaning and analysis files for the 
 	People's Voice Survey.
 	
-	Countries included: Colombia, Ethiopia, Kenya, Peru, Uruguay
+	Countries included: Colombia, Ethiopia, Kenya, Peru, Uruguay, Laos
 */
 
 * Setting up files and macros
@@ -19,8 +19,8 @@ set more off
 macro drop _all
 
 * Setting user globals 
-*global user "/Users/nek096"
-global user "/Users/tol145"
+global user "/Users/nek096"
+*global user "/Users/tol145"
 *global user "/Users/rodba"
 
 * Setting file path globals
