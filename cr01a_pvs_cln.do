@@ -58,6 +58,7 @@ list country int_length if int_length < 10
 drop if int_length < 9.7 & country == 5
 * NK Note: Merge on qc_short 
 
+
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
 recode q23_q24 (997 = 0) (996 = 0) if q24 == 1
@@ -814,15 +815,17 @@ drop intlength q46 q47 interviewerid_recoded
 * Labeling variables 
 
 lab var country "Country"
+lab var respondent_serial "Respondent Serial"
 lab var respondent_id "Respondent ID"
 lab var interviewer_id "Interviewer ID"
+lab var language "Language of interview"
 lab var int_length "Interview length (in minutes)"
 lab var interviewer_gender "Interviewer gender"
 lab var interviewer_gender "Interviewer gender"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
-lab var q3a "Q3A. Are you a man or a woman?"
+lab var q3a "Q3A. CO/PE/UY: Are you a man or a woman?"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
@@ -830,21 +833,21 @@ lab var q7 "Q7. What type of health insurance do you have?"
 lab var q7_other "Q7_other. Other type of health insurance"
 lab var q8 "Q8. Highest level of education completed by the respondent"
 lab var q9 "Q9. In general, would you say your health is:"
-lab var q10 "Q10. In general, would you say your mental health is?"
+lab var q10 "Q10. In general, would you say your mental health is:"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
-lab var q13b "Q13B. Did you seek health care for COVID-19? (LAC Countries)"
-lab var q13e "Q13E. Why didnt you receive health care for COVID-19? (LAC Countries)"
-lab var q13e_other "Q13E. Other"
+lab var q13b "Q13B. CO/PE/UY: Did you seek health care for COVID-19?"
+lab var q13e "Q13E. CO/PE/UY: Why didnt you receive health care for COVID-19?"
+lab var q13e_other "Q13E. CO/PE/UY: Other"
 lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_pe "Q19. Peru: Is this a public or private healthcare facility?"
-lab var q19_uy "Q19. Uruguay: Is this a public, private, or mutual healthcare facility?"
-lab var q19_co "Q19. Colombia: Is this a public or private healthcare facility?"
+lab var q19_pe "Q19. PE: Is this a public or private healthcare facility?"
+lab var q19_uy "Q19. UY: Is this a public, private, or mutual healthcare facility?"
+lab var q19_co "Q19. CO: Is this a public or private healthcare facility?"
 lab var q19_other "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q20_other "Q20. Other"
@@ -874,9 +877,9 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_pe "Q43. Peru: Is this a public or private healthcare facility?"
-lab var q43_uy "Q43. Uruguay: Is this a public, private, or mutual healthcare facility?"
-lab var q43_co "Q43. Colombia: Is this a public or private healthcare facility?"
+lab var q43_pe "Q43. PE: Is this a public or private healthcare facility?"
+lab var q43_uy "Q43. UY: Is this a public, private, or mutual healthcare facility?"
+lab var q43_co "Q43. CO: Is this a public or private healthcare facility?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
@@ -906,8 +909,8 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private for-profit healthcare?"
-lab var q56_pe "Q56. Peru: How would you rate the quality of the social security system?"
-lab var q56_uy "Q56. Uruguay: How would you rate the quality of the mutual healthcare system?"
+lab var q56_pe "Q56. PE: How would you rate the quality of the social security system?"
+lab var q56_uy "Q56. UY: How would you rate the quality of the mutual healthcare system?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -921,13 +924,13 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * NOTE: Variables not in these data: PSU_ID Interviewer_Language Language, and others 
 
-save "$data_mc/02 recoded data/pvs_lac.dta", replace
+save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
 
 *------------------------------------------------------------------------------*
 
 ********************************* Append data *********************************
 
-u "$data_mc/02 recoded data/pvs_lac.dta", clear
+u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
 append using "$data_mc/02 recoded data/pvs_et_ke.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
 
@@ -936,11 +939,11 @@ append using "$data_mc/02 recoded data/pvs_la.dta"
 
 * Kenya/Ethiopia variables 
 ren q19 q19_ke_et 
-lab var q19_ke_et "Q19. Kenya/Ethiopia: Is this a public, private, or NGO/faith-based facility?"
+lab var q19_ke_et "Q19. KE/ET: Is this a public, private, or NGO/faith-based facility?"
 ren q43 q43_ke_et 
-lab var q43_ke_et "Q43. Kenya/Ethiopia: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_ke_et "Q43. KE/ET: Is this a public, private, or NGO/faith-based facility?"
 ren q56 q56_ke_et 
-lab var q56_ke_et "Q56. Kenya/Ethiopia: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_ke_et "Q56. KE/ET: How would you rate quality of NGO/faith-based healthcare?"
 
 * Mode
 lab val mode mode
@@ -957,7 +960,8 @@ recode q18a_la q19_q20a_la q18b_la q19_q20b_la q43_la q44_la ///
 recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 		
 * Country-specific value labels 
-lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Hmong", modify 
+lab def lang 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Hmong", modify 
+lab val language lang
 lab def labels25 995 "Other", modify
 
 
@@ -995,6 +999,9 @@ lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" ///
 
 * weight
 replace weight_educ = weight if country == 3
+drop weight
+ren weight_educ weight
+lab var weight "Final weight gender age region education (except Ethiopia)"
  
 * Keep variables relevant for data sharing and analysis  
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
@@ -1005,7 +1012,7 @@ interviewer_language psu_id region_stratum kebele matrix sum_size_region total /
 
 order q*, sequential
 order respondent_serial respondent_id mode country language date time /// 
-int_length weight weight_educ 
+int_length weight
 
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace

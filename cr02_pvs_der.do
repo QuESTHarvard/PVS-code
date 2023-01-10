@@ -341,14 +341,13 @@ recode q20 (1 2 3 6 7 8 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96
 		   (4 5 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
 
-recode usual_type_lvl (. = 0) if q19_q20a_la == 2 | q19_q20a_la == 4 | q19_q20a_la == 6 | ///
+recode usual_type_lvl (.a = 0) if q19_q20a_la == 2 | q19_q20a_la == 4 | q19_q20a_la == 6 | ///
 								 q19_q20b_la == 2 | q19_q20b_la == 4 | q19_q20b_la == 6
-recode usual_type_lvl (. = 1) if q19_q20a_la == 1 | q19_q20a_la == 3 | q19_q20b_la == 1 | q19_q20b_la == 3
-recode usual_type_lvl (. = .a) if q19_q20a_la == .a | q19_q20b_la == .a
+recode usual_type_lvl (.a = 1) if q19_q20a_la == 1 | q19_q20a_la == 3 | q19_q20b_la == 1 | q19_q20b_la == 3
 
 * NOTE: check this! TL: Is this a note to me? Something in particular you want me to check?
 
-* NOTE: Maybe add an other for Lao? also for last visit level? But we will see with other, specify data
+* NOTE: Maybe add an other for Laos? also for last visit level? But we will see with other, specify data
 
 		   
 * usual_type_own_lvl
@@ -380,8 +379,8 @@ recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r
 recode q44 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
 		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
-recode last_type_lvl (. = 0) if q44_la == 2 | q44_la == 3
-recode last_type_lvl (. = 1) if q44_la == 1 
+recode last_type_lvl (.a = 0) if q44_la == 2 | q44_la == 3
+recode last_type_lvl (.a = 1) if q44_la == 1 
 recode last_type_lvl (. = .a) if q44_la == .a
 
 * last_type_own_lvl
@@ -437,12 +436,12 @@ recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest income") ///
 **** Order Variables ****
 		   
 order respondent_serial respondent_id mode country language date time /// 
-	  int_length weight weight_educ q1 q2 q3 q3a q4 q5 q6 q7 ///
+	  int_length weight q1 q2 q3 q3a q4 q5 q6 q7 ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b q13e q13e_other q14 q15 q16 q17 q18 ///
 	  q18a_la q18b_la ///
 	  q19_ke_et q19_co q19_pe q19_uy q19_other q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
-	  q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 ///
+	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 ///
 	  q38 q39 q40 q41 q42 q42_other q43_ke_et q43_co q43_pe q43_uy q43_la q43_other /// 
 	  q44 q44_la ///
 	  q44_other q45 q45_other q46_min q46_refused q47_min q47_refused ///

@@ -522,11 +522,13 @@ ren rec* *
 
 * Check for other implausible values 
 
-list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
+list q23 q24 q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
 * Two potentially implausible values, where visits for COVID is higher than visits 
+* Was your total number of visits (q23/q24) inclusive of covid or additional?
 
 list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
 * One potentially implausible value, where number of facilities is higher than number of visits
+* Potentially make q27 8
 
 list q26 q27 country if q27 == 0 | q27 == 1
 * This is okay 
