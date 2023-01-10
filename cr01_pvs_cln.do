@@ -487,6 +487,7 @@ gen q47_min = (hh(q47)*3600 + mm(q47)*60 + ss(q47)) / 60
 drop if q2 == 1 | q1 < 18
 
 gen mode = 1	
+gen language = 0 
 
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
@@ -992,14 +993,19 @@ lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" ///
  104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" ///
  106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip", modify
 
-
+* weight
+replace weight_educ = weight if country == 3
+ 
 * Keep variables relevant for data sharing and analysis  
-keep respondent_id respondent_serial country date time int_length mode
+drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
+interviewer_language psu_id region_stratum kebele matrix sum_size_region total ///
+ dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et ///
+ rim_age province county sublocation rim_region_ke rim_educ interviewer_gender ///
+ q1_codes interviewer_id
 
 order q*, sequential
-order respondent_serial respondent_id psu_id interviewer_id /// 
-interviewer_language interviewer_gender mode country language date time /// 
-int_length q1_codes
+order respondent_serial respondent_id mode country language date time /// 
+int_length weight weight_educ 
 
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace

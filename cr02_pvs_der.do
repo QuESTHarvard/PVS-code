@@ -436,9 +436,8 @@ recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest income") ///
 		   
 **** Order Variables ****
 		   
-order respondent_serial respondent_id psu_id interviewer_id /// 
-	  interviewer_language interviewer_gender mode country language date ///
-	  time int_length q1_codes q1 q2 q3 q3a q4 q5 q6 q7 ///
+order respondent_serial respondent_id mode country language date time /// 
+	  int_length weight weight_educ q1 q2 q3 q3a q4 q5 q6 q7 ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b q13e q13e_other q14 q15 q16 q17 q18 ///
 	  q18a_la q18b_la ///
 	  q19_ke_et q19_co q19_pe q19_uy q19_other q19_q20a_la q19_q20a_other q19_q20b_la ///
