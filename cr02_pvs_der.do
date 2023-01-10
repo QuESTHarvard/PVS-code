@@ -52,6 +52,9 @@ recode q14 ///
 gen covid_vax_intent = q15 
 lab val covid_vax_intent yes_no_doses
 
+* region
+gen region = q5
+
 * patient_activiation
 * NOTE: See if this code makes sense TL: WE NEED TO DECIDE ON THIS TOGETHER IN PERSON--MONDAY?
 gen patient_activation = 2 if q16 == 3 & q17 == 3	
@@ -73,15 +76,18 @@ recode q21 (2 = 1 "Convenience (short distance)") ///
 			(7 = 6 "Only facility available") ///
 			(.r 9 = .r "Other or Refused") ///
 			(.a = .a "NA") , gen(usual_reason)
-*TL: I think we may need a visits variable that is just continue, combining 23 and 24. Could we add here and the data dictionary?
+
 * visits
-gen visits = 0 if q23 == 0 | q24 == 0
-recode visits (. = 1) if q23 >=1 & q23 <= 4 | q24 == 1
-recode visits (. = 2) if q23 > 4 & q23 < . | q24 == 2 | q24 == 3
-recode visits (. = .r) if q23 == .r | q24 == .r
-lab def visits 0 "Non-user (0 visits)" 1 "Occasional usuer (1-4 visits)" ///
+gen visits = q23_q24
+
+* visits_cat
+gen visits_cat = 0 if q23 == 0 | q24 == 0
+recode visits_cat (. = 1) if q23 >=1 & q23 <= 4 | q24 == 1
+recode visits_cat (. = 2) if q23 > 4 & q23 < . | q24 == 2 | q24 == 3
+recode visits_cat (. = .r) if q23 == .r | q24 == .r
+lab def visits_cat 0 "Non-user (0 visits)" 1 "Occasional usuer (1-4 visits)" ///
 			   2 "Frequent user (more than 4)" .r "Refused"
-lab val visits visits	
+lab val visits_cat visits_cat
 
 * visits_covid
 gen visits_covid = q25_b
@@ -436,7 +442,21 @@ recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest income") ///
 **** Order Variables ****
 		   
 order respondent_serial respondent_id mode country language date time /// 
-	  int_length weight q1 q2 q3 q3a q4 q5 q6 q7 ///
+	  int_length weight age_calc age_cat gender ///
+	  urban insured insur_type education health health_mental health_chronic ///
+	  ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation ///
+	  usual_source usual_type_own usual_type_lvl usual_type_own_lvl ///
+	  usual_reason usual_quality visits visits_cat visits_covid ///
+	  fac_number visits_total inpatient blood_pressure mammogram ///
+	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
+	  system_fail unmet_need unmet_reason last_type_own last_type_lvl ///
+	  last_type_own_lvl last_reason last_wait_time ///
+	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
+	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
+	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
+	  conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
+	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
+	  vignette_good native_lang income q1 q2 q3 q3a q4 q5 q6 q7 ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b q13e q13e_other q14 q15 q16 q17 q18 ///
 	  q18a_la q18b_la ///
 	  q19_ke_et q19_co q19_pe q19_uy q19_other q19_q20a_la q19_q20a_other q19_q20b_la ///
@@ -447,21 +467,7 @@ order respondent_serial respondent_id mode country language date time ///
 	  q44_other q45 q45_other q46_min q46_refused q47_min q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ke_et q56_pe q56_uy q57 q58 q59 ///
-	  q60 q61 q62 q62_other q63 q64 q65 age_calc age_cat gender ///
-	  urban insured insur_type education health health_mental health_chronic ///
-	  ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation ///
-	  usual_source usual_type_own usual_type_lvl usual_type_own_lvl ///
-	  usual_reason usual_quality visits visits_covid ///
-	  fac_number visits_total inpatient blood_pressure mammogram ///
-	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
-	  system_fail unmet_need unmet_reason last_type_own last_type_lvl ///
-	  last_type_own_lvl last_reason last_wait_time ///
-	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
-	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
-	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
-	  conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
-	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good native_lang income 
+	  q60 q61 q62 q62_other q63 q64 q65 
 
 ***************************** Labeling variables ***************************** 
  
@@ -469,6 +475,7 @@ lab var age_calc "Exact respondent age or middle number of age range (Q1/Q2)"
 lab var age_cat "Age (categorical) (Q1/Q2)"
 lab var gender "Gender (Q3)" 
 lab var urban "Type of region respondent lives in (Q4)"
+lab var region "County, state, region where respondent lives (Q5)"
 lab var insured "Insurance status (Q6)"
 lab var insur_type "Type of insurance (for those who have insurance) (Q7)" 
 lab var education "Highest level of education completed (Q8)"
@@ -486,7 +493,8 @@ lab var	usual_type_lvl "Facility level for usual source of care (Q20)"
 lab var	usual_type_own_lvl "Facility ownership and level for usual source of care (Q19/Q20)"
 lab var	usual_reason "Main reason for choosing usual source of care facility (Q21)"
 lab var	usual_quality "Overall quality rating of usual source of care (Q22)"
-lab var	visits "Visits made in-person to a facility in past 12 months (Q23/Q24)"
+lab var	visits "Visits (continuous) made in-person to a facility in past 12 months (Q23/Q24)"
+lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (Q23/Q24)"
 lab var	visits_covid "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
 lab var	fac_number "Number of facilities visited during the past 12 months (Q26/Q27)"
 lab var	visits_total "Total number of healthcare contacts: facility, home, and tele (Q23/Q28A/Q28B)"

@@ -786,6 +786,7 @@ drop interviewer_gender q2 q3 q3a q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 ///
 ren rec* *
  
 ren q7_995 q7_other
+ren (q13b q13b q13e) (q13b_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy)
 ren q13e_10 q13e_other
 ren q14_new q14
 ren q15_new q15
@@ -947,7 +948,9 @@ lab var q56_ke_et "Q56. KE/ET: How would you rate quality of NGO/faith-based hea
 
 * Mode
 lab val mode mode
+recode mode (3 = 1) 
 lab var mode "Mode of interview"
+
 
 * Country-specific skip patterns
 recode q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
