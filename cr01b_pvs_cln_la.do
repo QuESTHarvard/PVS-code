@@ -518,8 +518,7 @@ ren rec* *
 	 }
 	
 
-* All count values in Laos look plausible, some time spent with provider (q47_min) seems high
-* We are actually seeing even higher values in some countries, still deciding if we will remove outliers here
+* All count values in Laos look plausible, time values seem plausible too 
 
 * Check for other implausible values 
 
@@ -561,11 +560,11 @@ lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
-lab var q18a_la "Q18a. Laos: Is there one healthcare facility or provider's group you usually...?"
-lab var q19_q20a_la "Q19a. Laos: What type of place is this?"
+lab var q18a_la "Q18a. LA: Is there one healthcare facility or provider's group you usually...?"
+lab var q19_q20a_la "Q19a. LA: What type of place is this?"
 lab var q19_q20a_other "Q19a. Other"
-lab var q18b_la "Q18b. Laos: Is there one healthcare facility or provider's group you usually...?"
-lab var q19_q20b_la "Q19b. Laos: What type of place is this?"
+lab var q18b_la "Q18b. LA: Is there one healthcare facility or provider's group you usually...?"
+lab var q19_q20b_la "Q19b. LA: What type of place is this?"
 lab var q19_q20b_other "Q19b. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
@@ -593,9 +592,9 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_la "Q43. Laos: Last healthcare visit in a public, private, or NGO/faith-based facility?"
+lab var q43_la "Q43. LA: Last healthcare visit in a public, private, or NGO/faith-based facility?"
 *lab var q43_other "Q43. Other"
-lab var q44_la "Q44. Laos: What type of healthcare facility is this?"
+lab var q44_la "Q44. LA: What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
