@@ -29,8 +29,8 @@ summtab2 , by(country) vars(int_length mode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q
 * Add back language or other interview characteristics if interested
 		  
 * Part 2: Utilization of care and system competence Q18-42
-summtab2 , by(country) vars(q18 q19_ke_et q19_co q19_pe q19_uy q18a_la q1920a_la ///
-		   q18b_la q1920b_la /// 
+summtab2 , by(country) vars(q18 q19_ke_et q19_co q19_pe q19_uy q18a_la q19_q20a_la ///
+		   q18b_la q19_q20b_la /// 
 		   q20 q21 q22 q23 ///
 		   q24 q25_a q25_b q26 q27 q28_a q28_b /// 
 		   q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42) /// 
@@ -109,7 +109,6 @@ set more off
  * Import clean data with derived variables 
 
 use "$data_mc/02 recoded data/pvs_all_countries.dta", replace
-drop if country == 3
 
  *========================= Descriptive Analysis ============================* 
 
@@ -128,8 +127,8 @@ summtab2 , by(country) vars(int_length mode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q
 * Add back language or other interview characteristics once they are accurate
 		  
 * Part 2: Utilization of care and system competence Q18-42
-summtab2 , by(country) vars(q18 q19_ke_et q19_co q19_pe q19_uy q18a_la q1920a_la ///
-		   q18b_la q1920b_la /// 
+summtab2 , by(country) vars(q18 q19_ke_et q19_co q19_pe q19_uy q18a_la q19_q20a_la ///
+		   q18b_la q19_q20b_la /// 
 		   q20 q21 q22 q23 ///
 		   q24 q25_a q25_b q26 q27 q28_a q28_b /// 
 		   q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42) /// 

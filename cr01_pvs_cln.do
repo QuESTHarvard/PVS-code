@@ -55,7 +55,8 @@ drop if q2 == 1 | q1 < 18
 * When I run the command below instead it drops more than 165 
 
 list country int_length if int_length < 10
-drop if int_length < 10 & country == 5
+drop if int_length < 9.7 & country == 5
+* NK Note: Merge on qc_short 
 
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
@@ -102,15 +103,11 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 * Ethiopia: 92 visits for q28 
 recode q28 (92 = .)
 
-* q46_min, above 1440 minutes (24 hours) seems implausible 
-replace q46_min = . if q46_min > 1440 & q46_min < .
-* One implausible value recoded in Kenya, two in Ethiopia 
+* q46_min, highest value is 4320 minutes (72 hours), seems plausible for Ethiopia
 
-* q47_min, above 120 minutes (2 hours) seems implausible 
-replace q47_min = . if q47_min > 120 & q47_min < .
-* 9 values recoded in Kenya, 38 recoded in Ethiopia
-* NK Note: This seems like a high number in Ethiopia. Should we do above 180 minutes?
-* 19 people said 180 minutes, 5 people said 240 minutes, 7 said 300 minutes 
+* q47_min, above 300 minutes (5 hours) seems implausible 
+replace q47_min = . if q47_min > 300 & q47_min < .
+* 3 values recoded in Kenya, 7 recoded in Ethiopia
 
 * Check for other implausible values 
 
@@ -121,15 +118,19 @@ list q23_q24 q27 country if q27 > q23_q24 & q27 < .
 * Note: okay in Kenya and Ethiopia data (2.5 is mid-point value)
 
 list q26 q27 country if q27 == 0 | q27 == 1
-* NK Note: I suggest recoding these to missing or refused, see command below
-* recode q27 (0 = .) (1 = .) if q27 <= 1
+* Some implasuible values of 0 and 1
+* Recode 0 values for q27 to .a for q27 and "No" for q26
+* Recode 1 values to 2, because respondent likely meant 1 additional facility 
+recode q26 (2 = 1) if q27 == 0
+recode q27 (0 = .a) 
+recode q27 (1 = 2) 
 
 list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
 							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .
-* NK Note: I suggest recoding Q39 and Q40 to refused for these respondents 
-* recode q40 (2 = .r) if q39 == 3
-* recode q39 q40 (3 = .r) if q23_q24 > 0 & q23_q24 < .
-
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
+recode q40 (2 = .r) if q39 == 3
+recode q39 q40 (3 = .r) if q23_q24 > 0 & q23_q24 < .
 
 *------------------------------------------------------------------------------*
 
@@ -147,7 +148,6 @@ recode q7 (. = .a) if q6 == 2 | q6 == .r
 * q13 
 recode q13 (. = .a) if q12 == 2 | q12 == .r 
 * Note: Removed don't know here
-* I think maybe in one country don't know was an option here. Will check
 
 * q15
 recode q15_new (. = .a) if q14_new == 3 | q14_new == 4 | q14_new == 5 | q14_new == .r 
@@ -532,8 +532,9 @@ recode q23 (200 = .) (156 = .)
 * Colombia q28_new values seem implausible 
 recode q28_new (80 = .)
 * q46_min seems okay for all (no more than 12 hours)
-* q47_min 31 values over 120 minutes, 25 values over 180 minutes 
-* NK Note: Thoughts on these values? 
+
+* q47_min, above 300 minutes (5 hours) seems implausible 
+replace q47_min = . if q47_min > 300 & q47_min < .
 			
 * Check for other implausible values 
 
@@ -549,8 +550,8 @@ list q26 q27 country if q27 == 0 | q27 == 1
 list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
 							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .
 * NK Note: I suggest recoding Q39 and Q40 to refused for these respondents 
-* recode q40 (2 = .r) if q39 == 3
-* recode q39 q40 (3 = .r) if q23_q24 > 0 & q23_q24 < .
+recode q40 (2 = .r) if q39 == 3
+recode q39 q40 (3 = .r) if q23_q24 > 0 & q23_q24 < .
 
 
 *------------------------------------------------------------------------------*
@@ -586,6 +587,7 @@ recode q19_co (. = .a) if country != 2
 
 * NOTE: UY appears to have NGO when it should be other
 recode q19_uy (3 = 995)
+label define labels23 995 "Other", modify
 
 
 recode q20 (. = .a) if q19_pe == .r | q19_uy == .r | q19_co  == .r
@@ -782,6 +784,7 @@ drop interviewer_gender q2 q3 q3a q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 ///
 ren rec* *
  
 ren q7_995 q7_other
+ren q13e_10 q13e_other
 ren q14_new q14
 ren q15_new q15
 ren q19_4 q19_other
@@ -832,7 +835,7 @@ lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
 lab var q13b "Q13B. Did you seek health care for COVID-19? (LAC Countries)"
 lab var q13e "Q13E. Why didnt you receive health care for COVID-19? (LAC Countries)"
-lab var q13e_10 "Q13E. Other"
+lab var q13e_other "Q13E. Other"
 lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
@@ -921,18 +924,14 @@ save "$data_mc/02 recoded data/pvs_lac.dta", replace
 
 *------------------------------------------------------------------------------*
 
-* NK Note: Left off here, still updating
-
 ********************************* Append data *********************************
 
 u "$data_mc/02 recoded data/pvs_lac.dta", clear
 append using "$data_mc/02 recoded data/pvs_et_ke.dta"
-
-*append using "$data_mc/02 recoded data/pvs_la.dta"
-
+append using "$data_mc/02 recoded data/pvs_la.dta"
 
 * NOTE: Rodrigo to check append 
-* NOTE: Fix Kenya date on append 
+* NOTE: Fix Kenya/Ethiopia date for append, and Laos date 
 
 * Kenya/Ethiopia variables 
 ren q19 q19_ke_et 
@@ -952,41 +951,56 @@ recode q3a q13b q13e (. = .a) if country == 5 | country == 3 | country == 11
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q19_pe q43_pe q56_pe (. = .a) if country != 7
 recode q19_co q43_co (. = .a) if country != 2
-recode q18a_la q1920a_la q18b_la q1920b_la q43_la q44_la ///		
+recode q18a_la q19_q20a_la q18b_la q19_q20b_la q43_la q44_la ///		
 		(. = .a) if country != 11
+recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 		
 * Country-specific value labels 
-recode language (. = 0) if country == 10 | country == 7 | country == 2
 lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Hmong", modify 
+lab def labels25 995 "Other", modify
+
+
+* country
+lab def labels0 11 "Lao PDR", modify
 
 *Q4
-label define labels6 18 "City" 19 "Rural area"  20 "Suburb", modify
+lab def labels6 18 "City" 19 "Rural area"  20 "Suburb", modify
 
 *Q5
-label define labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang", modify
+lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang", modify
 
 *Q7
-label define labels9 29 "Public" 30 "Private", modify
+lab def labels9 29 "Public" 30 "Private", modify
 
 *Q8
-label define labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
+lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
 					  47 "Lower secondary (1-4 years)" /// 
 					  48 "Upper secondary (5-7 years)" ///
 					  49 "Post-secondary and non-tertiary (13-15 years)" ///
 					  50 "Tertiary (Associates or higher)", modify
 
 *Q62
-label define labels51 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other", modify
+lab def labels51 21 "Oromiffa" 22 "Amharegna" 23 "Somaligna" 24 "Tigrigna" 25 "Sidamigna" ///
+				 26 "Wolaytigna" 27 "Gurage" 28 "Afar" 29 "Hadiyya" 30 "Gamogna" ///
+				 31 "Gedeo" 32 "Kafa" 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other", modify
 
 *Q63
-label define labels52 101 "Range A (Less than 1,000,000) Kip" 102 "Range B (1,000,000 to 1,500,000) Kip" 103 "Range C (1,500,001 to 2,000,000) Kip" 104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip", replace
+lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" ///
+ 11 "3001 – 5000 Eth.Birr" 12 "5001 – 10000 Eth.Birr" 13 "10001 - 20000 Eth.Birr" ///
+ 14 "Greater than 20000 Eth.Birr" 101 "Range A (Less than 1,000,000) Kip" ///
+ 102 "Range B (1,000,000 to 1,500,000) Kip" 103 "Range C (1,500,001 to 2,000,000) Kip" ///
+ 104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" ///
+ 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip", modify
+
+
+* Keep variables relevant for data sharing and analysis  
+keep respondent_id respondent_serial country date time int_length mode
 
 order q*, sequential
-order respondent_serial respondent_id unique_id psu_id interviewerid_recoded /// 
+order respondent_serial respondent_id psu_id interviewer_id /// 
 interviewer_language interviewer_gender mode country language date time /// 
-intlength int_length q1_codes
+int_length q1_codes
 
-* NOTE: What variables to keep/drop? 
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
 

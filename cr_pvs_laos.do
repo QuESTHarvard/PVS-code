@@ -28,7 +28,7 @@ ren bd1103 q3
 ren bd1104A q4 
 ren bd1105 q5
 lab val q5 province 
-* Q: Is bd1105 or bd1105A q5? I chose bd1105 because less missing 
+* NOTE: bd1105 is province, ignore b1105a
 ren bd1106 q7
 ren bd1108 q8
 ren hs1209 q9
@@ -42,11 +42,11 @@ ren pa1316 q16
 ren pa1317 q17
 
 ren usc2118 q18a_la
-ren usc2119 q1920a_la
-ren usc2119a q1920a_other
+ren usc2119 q19_q20a_la
+ren usc2119a q19_q20a_other
 ren usc2120a q18b_la
-ren usc2120b q1920b_la
-ren usc2120a1 q1920b_other
+ren usc2120b q19_q20b_la
+ren usc2120a1 q19_q20b_other
 ren usc2121 q21
 ren usc2121_oth q21_other
 ren usc2122 q22
@@ -129,16 +129,53 @@ ren ig4474 q62
 ren ig4474_oth q62_other
 ren ig4475 q63
 ren wgt weight
+gen weight_educ = weight
 
 * Q. Why is education and rural asked twice and in the data twice? Which is correct?
+/*Amit: We asked education, urban/rural and language twice once at the beginning
+and once at the very end. We wanted to measure if people were alert at the
+end of the survey and we found that they were. We used the bd1104 (urban/rural),
+bd1108 (education), bd1102 (ethnicity/language).<*/
+
+* NOTE: Education, urban/rural, and native language were asked twice.
+*		bd1104A is urban/rural, bd1108 is education, bd1102b is native language?
+
+* NK Note: Come back to native language 
+
 * Q. Q56 appears to be missing. Was that question asked? 
+/*Amit: Yes, it was asked. Look up ue2456. */
+
+* NK Note: Not in current data - different numbering 
+*------------------------------------------------------------------------------*
+
+* Interview length
+
+* Q. Which variable is interview length? A lot of different time variables.
+/*Amit: We measured interview lengths for each section. For the full interview,
+you can measure difference between timestamp_start and timestamp_finalsec. You
+will see outliers because we allowed people to save their files when
+someone asked to call back later before completing the interview or when
+the line was disconnected. In such cases, they were requested to continue to 
+try to contact the individual until a total of 5 attempts were completed.*/
+
+format timestamp_start %tcHH:MM:SS
+gen start_min = (hh(timestamp_start)*3600 + mm(timestamp_start)*60 + ss(timestamp_start)) / 3600
+gen end_min = (hh(timestamp_finalsec)*3600 + mm(timestamp_finalsec)*60 + ss(timestamp_finalsec)) / 3600
+gen int_length = (end_min - start_min)*60
+replace int_length = . if int_length < 0 | int_length > 90
+
+* NK Note: Is there a better way to do this? 
 
 *------------------------------------------------------------------------------*
 
 * Drop unused variables 
 
-* Q. Why one missing value for consent? Should that respondent be dropped? 
-* Q. Which variable is interview length? A lot of different time variables
+* Q. Why one missing value for consent? Should that respondent be dropped?
+/*Amit: Thanks for catching it. It looks like study ID 10089 was mislabeled 
+as being completed when it was someone that was screened out. There are 
+no responses filled in. We will correct this on our end as well. */
+
+drop if consent == .
 
 drop cal_int SubmissionDate today deviceid o_lang new_lang consent ///
 hs1211a bd1102b bd1102btext bd1105A hs1211b usc2120c1 usc2120d1 usc2120e1 up2223 /// 
@@ -159,7 +196,7 @@ time_consent time_Part1 time_Sec21 time_Sec22 time_Sec2324 time_Sec3132 ///
 time_Sec41 time_Sec42 time_Sec4344 time_finalsec time_submission time_total ///
 time_withrespondent time_unexplained visitsyr placesyr telmedyr outreachyr ///
 age_cat malefemale region urbanrural edu_cat urbanrural_ed urbanrural_age ///
-timestamp_Part1 
+timestamp_Part1 start_min end_min
 
 * NOTE to self: need to fix date variable in correct date/time format 
 
@@ -173,6 +210,12 @@ gen q6 = .a
 gen q56 = .a
 
 
+* Q23/Q24 mid-point var 
+gen q23_q24 = q23 
+recode q23_q24 (.r = 2.5) if q24 == 1
+recode q23_q24 (.r = 7) if q24 == 2
+recode q23_q24 (.r = 10) if q24 == 3
+
 *------------------------------------------------------------------------------*
 
 * Refused values 
@@ -183,6 +226,11 @@ recode q7 q63 (99 = .r)
 *	 Or occasionally 99 or 90 
 *    Is there a standard value for refused and don't know in the raw data? Or is it a category?
 * 	 I may consider starting from the raw data if so. 
+
+/*Amit: Sorry, this is my bad. It was my first time coding in ODK and I 
+thought I could only use 99 once so I used different values. But all the 
+"don't know" or "refuse" values are between 99 to 83. You can disregard
+all values greater than 82. */
 
 *------------------------------------------------------------------------------*
 
@@ -202,22 +250,35 @@ recode q15 (. = .a) if q14 != 1
 * NOTE: ONLY ASKED TO PEOPLE WHO SAID 0 DOSES 
 * Q: Is that correct? Q15 was only asked to people who said 0 doses?
 * 	 For other countries, we asked if people said 0 or 1 doses. 
+/*Amit: Yes, only asked to people who said zero doses. You can also refer to the 
+column labeled "relevant" in the excel form and it gives you the conditional, 
+if any, for that specific question. The question is asked only when the 
+condition is satisfied, else it is skipped. */
 
 *q19-22
-recode q1920a_la q18b_la q1920b_la q21 q22 (. = .a) if q18a_la == 2 
-recode q18b_la q1920b_la (. = .a) if q1920a_la == 1 | q1920a_la == 2 | q1920a_la == 3 | ///
-									 q1920a_la == 4 | q1920a_la == 6 | q1920a_la == 9
+recode q19_q20a_la q18b_la q19_q20b_la q21 q22 (. = .a) if q18a_la == 2 
+recode q18b_la q19_q20b_la (. = .a) if q19_q20a_la == 1 | q19_q20a_la == 2 | q19_q20a_la == 3 | ///
+									 q19_q20a_la == 4 | q19_q20a_la == 6 | q19_q20a_la == 9
 recode q21 q22 (. = .a) if q18b_la == 2
 
-* Q. I thought those who responded pharmacy or traditional healer in q1920a were asked 
+* Q. I thought those who responded pharmacy or traditional healer in q19_q20a were asked 
 *	 about q18b?
 *	If that is correct, I don't think this skip pattern worked for ~16 of the 76 
 *   people who said pharmacy or traditional healer 
 * 	There are ~16 poeple who say private pharmacy or traditional healer but were not asked q18b
 * 	Or is that all refusal? 
 
+/*Amit: People who answered pharmacy, traditional healer, or OTH to usc2119
+were asked usc2120a. Those with empty usc2120a means that the person either
+refused or did not answer the question.*/
+
+
 * Q. It appears a lot to be missing for Q22? Did I miss something in the skip pattern? 
 * Or just refusal? 
+
+/*Amit: Only people that answered with a health facility (clinic, hospital or
+health center) either in usc2119 or answered with affirmative on usc2120a were 
+asked q22. It looks like 167 people refused, which is quite a lot.*/
 
 * NA's for q23-27 
 recode q24 (. = .a) if q23 != .
@@ -245,6 +306,16 @@ recode q43_la (. = .a) if q44_la != 1
 * NOTE: There appears to be a high amount of missing values (> 10%) for a few 
 * questions. I know some missing may be due to refused or don't know. 
 * Q. Why else might this be? 
+
+/* Amit: I can imagine that there are a lot of reasons and may be 
+specific question related. Some may have low response rates because they were 
+difficult to understand for their particular situation. Our interviewers
+also said that some hesitated if they had not used a particular health 
+service or did not have personal experience or did not really
+have an opinion about the topic. Some were skeptical about how the data 
+would be used, which may have led to them refusing to answer 
+specific questions that may put someone or authorities in a difficult 
+situation.*/
 
 * Q50a - Q50c refusal was common in other countries as well 
 
@@ -278,6 +349,14 @@ recode q39 q40 ///
 * NOTE: High missing for Q39 and Q40? 
 * No "I did not get healthcare in past 12 months" in the data could be the reason
 * But still, more than 10% missing  
+
+
+/*Amit: This came up in our debriefing, too. Interviewers commented that
+some were not sure if a medical error was made and did not feel right to say 
+despite our urging the respondents to tell us what they felt.
+
+Amit: Interestingly, there is no word for discrimination in Lao but we did 
+ask if they felt unfairly treated.*/
 	   
 * All Excellent to Poor scales
 
@@ -376,7 +455,7 @@ recode q57 ///
 
 * Interviewer ID - Other country data is anonomized interview ID from 1 through 57
 * Added Laos above 100 because India and SA interviewers to be added 
-gen interviewerid_recoded = interviewerid + 100
+gen interviewer_id = interviewerid + 100
 
 * Language - available after 5 
 recode language (1 = 6 Lao) (2 = 7 Khmou) (3 = 8 Kmong), pre(rec) label(language)
@@ -432,19 +511,30 @@ ren rec* *
 
 * Check for implausible values
 * q23 q25_b q27 q28_a q28_b q46_min q47_min
-* NOTE: For all visit counts we are reviewing values and recoding implausible values
-* to missing (~visits > 50) 
-* We are still deciding what to do for q46_min and q47_min (may recode 3 SD from the mean)
 
-* All count values in Laos look plausible, some time spent with provider (q47_min) seems high 
 
- 
-list q23 q25_b if q25_b > q23 & q25_b < . 
+ foreach var in q23 q25_b q27 q28_a q28_b q46_min q47_min {
+		extremes `var', high 
+	 }
+	
+
+* All count values in Laos look plausible, some time spent with provider (q47_min) seems high
+* We are actually seeing even higher values in some countries, still deciding if we will remove outliers here
+
+* Check for other implausible values 
+
+list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
 * Two potentially implausible values, where visits for COVID is higher than visits 
-list q23 q27 if q27 > q23 & q27 < . 
+
+list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
 * One potentially implausible value, where number of facilities is higher than number of visits
-list q23 q27 if q27 == 0 | q27 == 1
+
+list q26 q27 country if q27 == 0 | q27 == 1
 * This is okay 
+
+list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
+							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .
+* This is okay
 
 
 *------------------------------------------------------------------------------*
@@ -472,15 +562,16 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18a_la "Q18a. Laos: Is there one healthcare facility or provider's group you usually...?"
-lab var q1920a_la "Q19a. Laos: What type of place is this?"
-lab var q1920a_other "Q19a. Other"
+lab var q19_q20a_la "Q19a. Laos: What type of place is this?"
+lab var q19_q20a_other "Q19a. Other"
 lab var q18b_la "Q18b. Laos: Is there one healthcare facility or provider's group you usually...?"
-lab var q1920b_la "Q19b. Laos: What type of place is this?"
-lab var q1920b_other "Q19b. Other"
+lab var q19_q20b_la "Q19b. Laos: What type of place is this?"
+lab var q19_q20b_other "Q19b. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
 lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
 lab var q23 "Q23. How many healthcare visits in total have you made in the past 12 months?"
+lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q24 mid-point)"
 lab var q24 "Q24. Total number of healthcare visits in the past 12 months (range)"
 lab var q25_a "Q25_A. Was this visit for COVID-19?"
 lab var q25_b "Q25_B. How many of these visits were for COVID-19? "
@@ -546,7 +637,7 @@ lab var q63 "Q63. Total monthly household income"
 *lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 *lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
-order respondent_serial language interviewerid_recoded weight q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q1920a_la q1920a_other q18b_la q1920b_la q1920b_other q21 q21_other q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43_la q44_la q44_other q45 q45_other q46_min q47_min q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q63 
+order respondent_serial language interviewer_id weight q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43_la q44_la q44_other q45 q45_other q46_min q47_min q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q63 
 
 
 save "$data_mc/02 recoded data/pvs_la.dta", replace

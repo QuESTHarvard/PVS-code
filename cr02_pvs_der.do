@@ -24,7 +24,7 @@ recode age_calc (.r = 54.5) if q2 == 3
 recode age_calc (.r = 64.5) if q2 == 4
 recode age_calc (.r = 74.5) if q2 == 5
 recode age_calc (.r = 80) if q2 == 6
-lab def ref .r "refused"
+lab def ref .r "Refused"
 lab val age_calc ref
 
 * age_cat: categorical age 
@@ -41,9 +41,6 @@ lab val age_cat age_cat
 * female: gender 	   
 gen gender = q3
 lab val gender gender
-
-* NOTE: I renamed this from female to gender because 'another gender' 
-* 		Let me know if you disagree  TL: Agree
 
 * covid_vax
 recode q14 ///
@@ -92,27 +89,22 @@ recode visits_covid (.a = 1) if q25_a == 1
 
 *fac_number
 * NOTE: what to do with people who say 0 or 1 for Q27? It's 24 people - for now put them in 0 group TL: I assume if you say 0 to q27, you mean 0 additional doctors, so those people would have 1 facility. I assume if you say 1, you mean "1 additional/different doctor" for a total of 2 different facilities. If you agree with my logic, let's code that way and please include a note to that effect explaining what we did for those 24 people right here in the file. 
-gen fac_number = 0 if q26 == 1 | q27 == 0 | q27 == 1
-recode fac_number (. = 1) if q27 == 2 | q27 == 3
-recode fac_number (. = 2) if q23 > 3
+gen fac_number = 1 if q26 == 1 | q27 == 0 | q27 == 1
+recode fac_number (. = 2) if q27 == 2 | q27 == 3
+recode fac_number (. = 3) if q23 > 3
 recode fac_number (. = .a) if q26 == .a | q27 == .a
 recode fac_number (. = .r) if q26 == .r | q27 == .r
-lab def fn 0 "1 facility (Q26 is yes)" 1 "2-3 facilities (Q27 is 2 or 3)" ///
-		   2 "More than 3 facilities (Q27 is 4 or more)" .a "NA" .r "Refused"
+lab def fn 1 "1 facility (Q26 is yes)" 2 "2-3 facilities (Q27 is 2 or 3)" ///
+		   3 "More than 3 facilities (Q27 is 4 or more)" .a "NA" .r "Refused"
 lab val fac_number fn 
-*TL: could we make this 1, 2, 3, instead of starting at 0? Easier to process.
 
 * visits_total
-gen visits_total = q23 + q28_a + q28_b
-*TL: Your code is making the new var missing if any of the three is missing. But if any of the three variables
-*has a number, we want to capture it. Try this below--it treats missing as zero:
-egen visits_total2 = rowtotal(q23 q28_a q28_b)
-* NOTE: 
-* something strange may be happening with Q28_A refuse 
-* ^ future NRK does not remember why past NRK wrote that TL: LOL
-recode visits_total (. = .r) if q23 == .d | q23 == .r | q28_a == .d | q28_a == .r ///
-								| q28_b == .d | q28_b == .r
-* ^just changing them all to refuse for now
+egen visits_total = rowtotal(q23 q28_a q28_b)
+
+*recode visits_total (. = .r) if q23 == .d | q23 == .r | q28_a == .d | q28_a == .r ///
+*								| q28_b == .d | q28_b == .r
+* NK Note: not sure if this above line is needed now 
+* Thanks for the pro tip on egen! 
 
 * systems_fail 
 * NOTE: see if systems_fail code makes sense
@@ -124,8 +116,11 @@ lab val system_fail yes_no_na
 
 *TL: I would typically use replace here--gen var = ., then replace 1 if, replace 0 if, etc. so you can see what values haven't been recoded. particulalry valuable for variables with many values.
 *For this var in particular, I would do this:
-egen system_fail2 = rowmax(q39 q40) 
+* egen system_fail2 = rowmax(q39 q40) 
 *We should just note that if you said no or yes to one of them, we considered that your answer if your other response was missing or "i did not get health care". This code gives you a 0 even if you have a refused or missing in just one, which is what we want. There's a lot of true missings here also--what's up with that?
+
+* NK Note: review this 
+
 
 * unmet_reason 
 recode q42 (1 = 1 "Cost (High cost)") ///
@@ -191,9 +186,9 @@ gen health_chronic = q11
 gen ever_covid = q12
 gen covid_confirmed = q13 
 gen usual_source = q18
-recode usual_source (. = 1) if q18a_la == 1 & q1920a_la == 1 | q18a_la == 1 & q1920a_la == 2 | ///
-							   q18a_la == 1 & q1920a_la == 3 | q18a_la == 1 & q1920a_la == 4 | ///
-							   q18a_la == 1 & q1920a_la == 6 | q18b_la == 1
+recode usual_source (. = 1) if q18a_la == 1 & q19_q20a_la == 1 | q18a_la == 1 & q19_q20a_la == 2 | ///
+							   q18a_la == 1 & q19_q20a_la == 3 | q18a_la == 1 & q19_q20a_la == 4 | ///
+							   q18a_la == 1 & q19_q20a_la == 6 | q18b_la == 1
 recode usual_source (. = 0) if q18a_la == 0 | q18a_la == 1 & q18b_la == 0
 
 * NOTE: check Laos addition 
@@ -319,7 +314,7 @@ recode q4 (6 7 9 10 12 13 18 20 = 1 "Urban") (8 11 14 19 = 0 "Rural") ///
 
 recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 = 0 Public) (2 4 5 6 7 28 13 21 30 = 1 Private) /// 
 		  (995 = 3 Other) ///
-		  (.r = .r "Refused") (.a = .a NA), gen(insur_type)
+		  (.r = .r "Refused") (14 .a = .a NA), gen(insur_type)
 
 * education 
 recode q8 (1 2 7 25 26 18 19 32 33 45 = 0 "None") /// 
@@ -333,11 +328,11 @@ recode q19_ke_et (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) ///
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
 recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1 | q19_uy == 5 | ///
-								  q1920a_la == 1 | q1920a_la == 2 | q1920b_la == 1 | q1920b_la == 2
-recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | q1920a_la == 1 | ///
-								  q1920a_la == 3 | q1920a_la == 4 | q1920b_la == 3 | q1920b_la == 4 | ///
-								  q1920a_la == 6 | q1920b_la == 6
-recode usual_type_own (.a = 2) if q19_uy == 3 | q19_uy == 995 | q1920a_la == 9 | q1920b_la == 7
+								  q19_q20a_la == 1 | q19_q20a_la == 2 | q19_q20b_la == 1 | q19_q20b_la == 2
+recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | q19_q20a_la == 1 | ///
+								  q19_q20a_la == 3 | q19_q20a_la == 4 | q19_q20b_la == 3 | q19_q20b_la == 4 | ///
+								  q19_q20a_la == 6 | q19_q20b_la == 6
+recode usual_type_own (.a = 2) if q19_uy == 3 | q19_uy == 995 | q19_q20a_la == 9 | q19_q20b_la == 7
 recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r 
 
 * usual_type_lvl 
@@ -346,10 +341,10 @@ recode q20 (1 2 3 6 7 8 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96
 		   (4 5 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
 
-recode usual_type_lvl (. = 0) if q1920a_la == 2 | q1920a_la == 4 | q1920a_la == 6 | ///
-								 q1920b_la == 2 | q1920b_la == 4 | q1920b_la == 6
-recode usual_type_lvl (. = 1) if q1920a_la == 1 | q1920a_la == 3 | q1920b_la == 1 | q1920b_la == 3
-recode usual_type_lvl (. = .a) if q1920a_la == .a | q1920b_la == .a
+recode usual_type_lvl (. = 0) if q19_q20a_la == 2 | q19_q20a_la == 4 | q19_q20a_la == 6 | ///
+								 q19_q20b_la == 2 | q19_q20b_la == 4 | q19_q20b_la == 6
+recode usual_type_lvl (. = 1) if q19_q20a_la == 1 | q19_q20a_la == 3 | q19_q20b_la == 1 | q19_q20b_la == 3
+recode usual_type_lvl (. = .a) if q19_q20a_la == .a | q19_q20b_la == .a
 
 * NOTE: check this! TL: Is this a note to me? Something in particular you want me to check?
 
@@ -441,13 +436,13 @@ recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest income") ///
 		   
 **** Order Variables ****
 		   
-order respondent_serial respondent_id psu_id interviewerid /// 
+order respondent_serial respondent_id psu_id interviewer_id /// 
 	  interviewer_language interviewer_gender mode country language date ///
 	  time int_length q1_codes q1 q2 q3 q3a q4 q5 q6 q7 ///
-	  q7_other q8 q9 q10 q11 q12 q13 q13b q13e q13e_10 q14 q15 q16 q17 q18 ///
+	  q7_other q8 q9 q10 q11 q12 q13 q13b q13e q13e_other q14 q15 q16 q17 q18 ///
 	  q18a_la q18b_la ///
-	  q19_ke_et q19_co q19_pe q19_uy q19_other q1920a_la q1920a_other q1920b_la ///
-	  q1920b_other q20 q20_other q21 q21_other q22 ///
+	  q19_ke_et q19_co q19_pe q19_uy q19_other q19_q20a_la q19_q20a_other q19_q20b_la ///
+	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 ///
 	  q38 q39 q40 q41 q42 q42_other q43_ke_et q43_co q43_pe q43_uy q43_la q43_other /// 
 	  q44 q44_la ///
