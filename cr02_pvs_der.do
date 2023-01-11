@@ -51,17 +51,20 @@ recode q14 ///
 * covid_vax_intent 
 gen covid_vax_intent = q15 
 lab val covid_vax_intent yes_no_doses
+* Note: In Laos, q15 was only asked to those who said 0 doses 
 
 * region
 gen region = q5
+lab val region labels7
 
 * patient_activiation
 gen patient_activation = 1 if q16 == 3 & q17 == 3
-recode patient_activation (. = 1) if q16 == 3 & q17 == 3 | 	q16 == 3 & q17 == .r | q16 == .r & q17 == 3 
+recode patient_activation (. = 1) if q16 == 3 & q17 == .r | q16 == .r & q17 == 3 
 recode patient_activation (. = 0) if q16 < 3 | q17 < 3 
 recode patient_activation (. = .r) if q16 == .r & q17 == .r
 lab def pa 0 "Not activated" ///
-			1 "Activated (Very confident on Q16 and Q17)", replace
+			1 "Activated (Very confident on Q16 and Q17)" ///
+			.r "Refused", replace
 lab val patient_activation pa
 
 * usual_reason
@@ -89,34 +92,26 @@ lab val visits_cat visits_cat
 * visits_covid
 gen visits_covid = q25_b
 recode visits_covid (.a = 1) if q25_a == 1
+recode visits_covid (.a = 0) if q25_a == 0
 
 *fac_number
-* NOTE: what to do with people who say 0 or 1 for Q27? It's 24 people - for now put them in 0 group TL: I assume if you say 0 to q27, you mean 0 additional doctors, so those people would have 1 facility. I assume if you say 1, you mean "1 additional/different doctor" for a total of 2 different facilities. If you agree with my logic, let's code that way and please include a note to that effect explaining what we did for those 24 people right here in the file. 
-gen fac_number = 1 if q26 == 1 | q27 == 0 | q27 == 1
+* Note: recoded 0's and 1's in q27 during cleaning 
+gen fac_number = 1 if q26 == 1 
 recode fac_number (. = 2) if q27 == 2 | q27 == 3
-recode fac_number (. = 3) if q23 > 3
-recode fac_number (. = .a) if q26 == .a | q27 == .a
+recode fac_number (. = 3) if q27 > 3 & q27 < . 
+recode fac_number (. = .a) if q26 == .a & q27 == .a
+recode fac_number (. = .d) if q27 == .d
 recode fac_number (. = .r) if q26 == .r | q27 == .r
 lab def fn 1 "1 facility (Q26 is yes)" 2 "2-3 facilities (Q27 is 2 or 3)" ///
-		   3 "More than 3 facilities (Q27 is 4 or more)" .a "NA" .r "Refused"
+		   3 "More than 3 facilities (Q27 is 4 or more)" .a "NA" .r "Refused" ///
+		   .d "Don't know"
 lab val fac_number fn 
 
 * visits_total
-egen visits_total = rowtotal(q23 q28_a q28_b)
+egen visits_total = rowtotal(q23_q24 q28_a q28_b)
 
-*recode visits_total (. = .r) if q23 == .d | q23 == .r | q28_a == .d | q28_a == .r ///
-*								| q28_b == .d | q28_b == .r
-* NK Note: not sure if this above line is needed now 
-* Thanks for the pro tip on egen! 
-
-
-*TL: I would typically use replace here--gen var = ., then replace 1 if, replace 0 if, etc. so you can see what values haven't been recoded. particulalry valuable for variables with many values.
-*For this var in particular, I would do this:
-* egen system_fail2 = rowmax(q39 q40) 
-*We should just note that if you said no or yes to one of them, we considered that your answer if your other response was missing or "i did not get health care". This code gives you a 0 even if you have a refused or missing in just one, which is what we want. There's a lot of true missings here also--what's up with that?
-
-* NK Note: review this 
-
+* value label for all numeric var
+lab val visits visits_covid visits_total na_rf
 
 * unmet_reason 
 recode q42 (1 = 1 "Cost (High cost)") ///
@@ -190,10 +185,10 @@ gen health_chronic = q11
 gen ever_covid = q12
 gen covid_confirmed = q13 
 gen usual_source = q18
-recode usual_source (. = 1) if q18a_la == 1 & q19_q20a_la == 1 | q18a_la == 1 & q19_q20a_la == 2 | ///
+recode usual_source (.a = 1) if q18a_la == 1 & q19_q20a_la == 1 | q18a_la == 1 & q19_q20a_la == 2 | ///
 							   q18a_la == 1 & q19_q20a_la == 3 | q18a_la == 1 & q19_q20a_la == 4 | ///
 							   q18a_la == 1 & q19_q20a_la == 6 | q18b_la == 1
-recode usual_source (. = 0) if q18a_la == 0 | q18a_la == 1 & q18b_la == 0
+recode usual_source (.a = 0) if q18a_la == 0 | q18a_la == 1 & q18b_la == 0
 
 * NOTE: check Laos addition 
 
@@ -234,32 +229,7 @@ gen vignette_good = q61
 lab val health health_mental last_qual last_skills last_supplies last_respect /// 
 last_explain last_decisions last_visit_rate last_wait_rate vignette_poor /// 
 vignette_good exc_poor
-
-* usual_quality,last_know, last_courtesy 
-
-*recode Q22 (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-*	   (.a = .a "I did not receive healthcare form this provider in the past 12 months"), /// 
-*	   pre(der)label(exc_pr_hlthcare_der)
-
-*recode Q48_E (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-*	   (.a = .a "I have not had prior visits or tests"), /// 
-*	   pre(der)label(exc_pr_visits_der)
-
-*recode Q48_J (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-*	   (.a = .a "The clinic had no other staff"), /// 
-*	   pre(der)label(exc_pr_staff_der)
-
-* phc_women phc_child phc_chronic phc_mental
-
-* recode Q50_A Q50_B Q50_C Q50_D ///
-*	   (0 1 = 0 "Fair/Poor") (2 3 4 = 1 "Excellent/Very Good/Good") (.r = .r "Refused") /// 
-*	   (.d = .d "The clinic had no other staff"), /// 
-*	   pre(der) label(exc_pr_judge_der)
-
-* ren (derQ50_A derQ50_B derQ50_C derQ50_D) ///
-*	(phc_women phc_child phc_chronic phc_mental)
 	   
-
 gen usual_quality =q22
 gen last_know = q48_e
 gen last_courtesy = q48_j
@@ -272,15 +242,6 @@ gen phc_child = q50_b
 gen phc_chronic = q50_c
 gen phc_mental = q50_d
 lab val phc_women phc_child phc_chronic phc_mental exc_poor_judge
-
-* qual_public qual_private qual_ngo covid_manage
-
-* recode q54 q55 q56_ke_et q56_pe q56_uy q59 /// 
-*	   (0 1 = 0 "fair/poor") (2 = 1 "good") ( 3 4 = 2 "excellent/very good") /// 
-*	   (.r = .r "refused") (.a = .a na), pre(der) label(exc_poor_der3)
-
-*ren (derq54 derq55 derq56_ke_et derq56_pe derq56_uy derq59) ///
-*    (qual_public qual_private qual_ngo_ke qual_ss_pe qual_mut_uy covid_manage)
 	
 gen qual_public = q54
 gen qual_private = q55 
@@ -303,13 +264,6 @@ recode q51 q52 q53 ///
 ren (derq51 derq52 derq53) (conf_sick conf_afford conf_opinion)
 
 **** COUNTRY SPECIFIC ****
-* NOTE to Rodrigo: 
-* An important thing to review with these items will be that there is no overlap 
-* in numbers between two categories - that will results in error in the recode
-* Browsing var # by derived variable will be a good way to review work as well as 
-* two-way tab 
-* Another thing you could do is look at the megatables to see if the percents
-* are what is expected between the Q# and derived variable (same idea as two-way tab)
 
 * urban: type of region respondent lives in 
 recode q4 (6 7 9 10 12 13 18 20 = 1 "Urban") (8 11 14 19 = 0 "Rural") ///
@@ -404,24 +358,6 @@ lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Priva
 					.a NA .r Refused, replace
 lab val last_type_own_lvl fac_own_lvl
 
-* Previous code for facility type
-
-* usual_type 
-* recode Q20 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
-*		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
-*		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
-*		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
-*		   (90 104 51 105 995 = 4 "Other") ///
-*		   (.a = .a "NA") ( .r = .r "Refused"), gen(usual_type)
-		   
-* last_type 
-* recode Q44 (1 2 12 14 15 16 23 80 82 83 40 43 92 94 = 0 "Public primary") /// 
-*		   (3 4 5 13 81 84 41 42 44 93 = 1 "Public Secondary") ///
-*		   (6 7 11 17 18 20 85 87 88 45 46 47 48 96 97 98 100 101 102 = 2 "Private primary") /// 
-*		   (8 9 19 21 86 89 49 99 103 = 3 "Private secondary") ///
-*		   (90 104 51 50 91 105 995 = 4 "Other") ///
-*		   (.a = .a "NA") (.r = .r "Refused"), gen(last_type)
-
 * native language
 recode q62 (1 5 8 9 10 11 12 13 14 15 23 24 25 26 27 28 29 30 31 32 ///
 			44 45 49 81 102 103 = 0 "Minority group languages") /// 
@@ -434,7 +370,8 @@ recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest income") ///
 		   (3 4 5 11 12 41 42 43 33 34 35 51 52 53 103 104 105 = 1 "Middle income") /// 
 		   (6 7 13 14 44 45 36 37 54 55 106 107 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
-		   
+		  
+
 
 * NOTE: Ignored country-specific questions Q13B and Q13E
 

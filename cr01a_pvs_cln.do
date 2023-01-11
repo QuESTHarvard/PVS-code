@@ -36,7 +36,6 @@ rename *, lower
 *------------------------------------------------------------------------------*
 
 * Fix interview length variable and other time variables 
-* Edit this section to include other date and time variables as needed 
 
 * Converting interview length to minutes so it can be summarized
 gen int_length = intlength / 60
@@ -69,7 +68,7 @@ recode q23_q24 (997 = 996) if q24 == 996
 
 *------------------------------------------------------------------------------*
 
-*NK Note: May update in the future  
+*NK Note: May update and remove this code in the future  
 
 * Recode all Refused and Don't know responses
 
@@ -122,7 +121,7 @@ list q26 q27 country if q27 == 0 | q27 == 1
 * Recode 0 values for q27 to .a for q27 and "No" for q26
 * Recode 1 values to 2, because respondent likely meant 1 additional facility 
 recode q26 (2 = 1) if q27 == 0
-recode q27 (0 = .a) 
+recode q27 (0 = .a)  
 recode q27 (1 = 2) 
 
 list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
@@ -147,7 +146,6 @@ recode q7 (. = .a) if q6 == 2 | q6 == .r
 
 * q13 
 recode q13 (. = .a) if q12 == 2 | q12 == .r 
-* Note: Removed don't know here
 
 * q15
 recode q15_new (. = .a) if q14_new == 3 | q14_new == 4 | q14_new == 5 | q14_new == .r 
@@ -161,7 +159,8 @@ recode q24 (. = .a) if q23 != .d | q23 != .r
 recode q25_a (. = .a) if q23 != 1
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q27 (. = .a) if q26 != 2
+recode q27 (. = .a) if q26 == 1 | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+
 * Note: for other data add q28c 
 
 * q31 & q32
@@ -291,10 +290,10 @@ recode q57 ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 
 * Numeric questions needing NA and Refused value labels 
-lab def na_rf .a "NA" .r "Refused"
-lab val q1 q23 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
+lab def na_rf .a "NA" .r "Refused" .d "Don't know"
+lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 
-* NOTE:
+* Note:
 * Some country-specific questions or questions with 8+ options (e.g., q20) have 
 * value labels, but not labels for .a or .r. Will edit this in future. 
 
@@ -465,8 +464,6 @@ rename *, lower
 *------------------------------------------------------------------------------*
 
 * Fix interview length variable and other time variables 
-* Edit this section to include other date and time variables as needed 
-
 * Converting interview length to minutes so it can be summarized
 
 gen int_length = (hh(intlength)*3600 + mm(intlength)*60 + ss(intlength)) / 60
@@ -485,7 +482,6 @@ gen q47_min = (hh(q47)*3600 + mm(q47)*60 + ss(q47)) / 60
 drop if q2 == 1 | q1 < 18
 
 gen mode = 1	
-gen language = 0 
 
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
@@ -548,7 +544,8 @@ list q26 q27 country if q27 == 0 | q27 == 1
 
 list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
 							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .
-* NK Note: I suggest recoding Q39 and Q40 to refused for these respondents 
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
 recode q40 (2 = .r) if q39 == 3
 recode q39 q40 (3 = .r) if q23_q24 > 0 & q23_q24 < .
 
@@ -563,13 +560,12 @@ recode q1 (. = .r) if q2 > 1 & q2 <= 8 | q2 == .r
 
 * q6 was not asked, all respondents were asked q7
 recode q6 (. = .a)
-* NOTE: q7, none is 14 
 
 * q13 
 recode q13 (. = .a) if q12 == 2 | q12 == .r 
 recode q13b (. = .a) if q12 == 2 | q12 == .r 
 recode q13e (. = .a) if q13b == .a | q13b == 1 | q13b == .d | q13b == .r
-* NOTE: Changed these to .a for all other countries after merge
+* Note: Changed these to .a for all other countries after merge
 
 * q15
 recode q15_new (. = .a) if q14_new == 3 | q14_new == 4 | q14_new == 5 | q14_new == .r
@@ -580,11 +576,9 @@ recode q19_pe q19_uy q19_co q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r
 recode q19_pe (. = .a) if country != 7
 recode q19_uy (. = .a) if country != 10
 recode q19_co (. = .a) if country != 2
-* recode Q20 (. = .a) if Q19_PE == 4 | Q19_UY == 4 | Q19_CO  == 4
+* Note: Other, specify functioning differently here than other data 
 
-* NOTE: Other, specify functioning differently here than other data 
-
-* NOTE: UY appears to have NGO when it should be other
+* Note: UY appears to have NGO when it should be other
 recode q19_uy (3 = 995)
 label define labels23 995 "Other", modify
 
@@ -596,7 +590,7 @@ recode q24 (. = .a) if q23 != .d | q23 != .r
 recode q25_a (. = .a) if q23 != 1
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q27 (. = .a) if q26 != 2
+recode q27 (. = .a) if q26 == 1 | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 
 * q31 & q32
 recode q31 (. = .a) if q3a == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
@@ -616,7 +610,6 @@ recode q43_pe (. = .a) if country != 7
 recode q43_uy (. = .a) if country != 10
 recode q43_co (. = .a) if country != 2
 recode q44 (. = .a) if q43_pe == .r | q43_uy == .r | q43_co  == .r
-* recode q44 (. = .a) if q43 == 4 
 
 
 *q46/q47 refused
@@ -655,11 +648,11 @@ lab var q53
 
 * All Yes/No questions
 
-recode q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 ///
+recode q6 q11 q12 q13 q18 q25_a q26 q29 q41 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 
-recode q30 q31 q32 q33 q34 q35 q36 q38 q66 ///
+recode q13b q30 q31 q32 q33 q34 q35 q36 q38 q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know") /// 
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk) 
@@ -760,12 +753,12 @@ recode q57 ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 
 * Numeric questions needing NA and Refused value labels 
-lab def na_rf .a "NA" .r "Refused"
-lab val q1 q23 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
+lab def na_rf .a "NA" .r "Refused" .d "Don't know"
+lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 
 * Kenya/Ethiopia data uses interviewer_id values 1 - 22 
 gen interviewer_id = interviewerid_recoded + 22
-* NOTE: 16 seems like a low number of interviewers across all three countries
+* Note: 16 seems like a low number of interviewers across all three countries
 
 
 *------------------------------------------------------------------------------*
@@ -816,7 +809,6 @@ lab var country "Country"
 lab var respondent_serial "Respondent Serial"
 lab var respondent_id "Respondent ID"
 lab var interviewer_id "Interviewer ID"
-lab var language "Language of interview"
 lab var int_length "Interview length (in minutes)"
 lab var interviewer_gender "Interviewer gender"
 lab var interviewer_gender "Interviewer gender"
@@ -920,7 +912,7 @@ lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
-* NOTE: Variables not in these data: PSU_ID Interviewer_Language Language, and others 
+* Note: Variables not in these data: PSU_ID Interviewer_Language Language, and others 
 
 save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
 
@@ -932,8 +924,8 @@ u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
 append using "$data_mc/02 recoded data/pvs_et_ke.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
 
-* NOTE: Rodrigo to check append 
-* NOTE: Fix Kenya/Ethiopia date for append, and Laos date 
+* Note: Rodrigo to check append 
+* Note: Fix Kenya/Ethiopia date for append, and Laos date 
 
 * Kenya/Ethiopia variables 
 ren q19 q19_ke_et 
@@ -948,7 +940,6 @@ lab val mode mode
 recode mode (3 = 1) 
 lab var mode "Mode of interview"
 
-
 * Country-specific skip patterns
 recode q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
 recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country == 5 | country == 3 | country == 11 
@@ -960,33 +951,34 @@ recode q18a_la q19_q20a_la q18b_la q19_q20b_la q43_la q44_la ///
 recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 		
 * Country-specific value labels 
-lab def lang 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Hmong", modify 
-lab val language lang
+recode language (. = 0) if country == 2 | country == 7 | country == 10 
+lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Hmong", modify 
 lab def labels25 995 "Other", modify
 
 * country
 lab def labels0 11 "Lao PDR", modify
 
 *Q4
-lab def labels6 18 "City" 19 "Rural area"  20 "Suburb", modify
+lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused", modify
 
 *Q5
-lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang", modify
+lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang" .r "Refused", modify
 
 *Q7
-lab def labels9 29 "Only public" 30 "Additional private insurance", modify
+lab def labels9 29 "Only public" 30 "Additional private insurance" .a "NA" .r "Refused", modify
 
 *Q8
 lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
 					  47 "Lower secondary (1-4 years)" /// 
 					  48 "Upper secondary (5-7 years)" ///
 					  49 "Post-secondary and non-tertiary (13-15 years)" ///
-					  50 "Tertiary (Associates or higher)", modify
+					  50 "Tertiary (Associates or higher)" .r "Refused", modify
 
 *Q62
 lab def labels51 21 "Oromiffa" 22 "Amharegna" 23 "Somaligna" 24 "Tigrigna" 25 "Sidamigna" ///
 				 26 "Wolaytigna" 27 "Gurage" 28 "Afar" 29 "Hadiyya" 30 "Gamogna" ///
-				 31 "Gedeo" 32 "Kafa" 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other", modify
+				 31 "Gedeo" 32 "Kafa" 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other" ///
+				 .a "NA" .r "Refused", modify
 
 *Q63
 lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" ///
@@ -994,8 +986,28 @@ lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" ///
  14 "Greater than 20000 Eth.Birr" 101 "Range A (Less than 1,000,000) Kip" ///
  102 "Range B (1,000,000 to 1,500,000) Kip" 103 "Range C (1,500,001 to 2,000,000) Kip" ///
  104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" ///
- 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip", modify
+ 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip" ///
+ .d "Don't know" .r "Refused", modify
 
+* Other value label modifcations
+lab def labels16 .a "NA" .r "Refused", modify
+lab def labels24 .a "NA" .r "Refused", modify
+lab def labels22 .a "NA" .r "Refused", modify
+lab def labels23 .a "NA" .r "Refused", modify
+lab def labels25 .a "NA" .r "Refused", modify
+lab def labels26 .a "NA" .r "Refused", modify
+lab def labels37 .a "NA" .r "Refused", modify
+lab def labels39 .a "NA" .r "Refused", modify
+lab def labels40 .a "NA" .r "Refused", modify
+lab def labels50 .r "Refused", modify
+lab def Q19 .a "NA" .r "Refused", modify
+lab def Q43 .a "NA" .r "Refused", modify
+lab def place_type .a "NA" .r "Refused", modify
+lab def fac_owner .a "NA" .r "Refused", modify
+lab def fac_type1 .a "NA" .r "Refused", modify
+lab def fac_type3 .a "NA" .r "Refused", modify
+
+ 
 * weight
 replace weight_educ = weight if country == 3
 drop weight

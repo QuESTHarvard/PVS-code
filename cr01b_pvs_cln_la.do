@@ -128,8 +128,7 @@ lab val q61 qlty_rate
 ren ig4474 q62
 ren ig4474_oth q62_other
 ren ig4475 q63
-ren wgt weight
-gen weight_educ = weight
+ren wgt weight_educ
 
 * Q. Why is education and rural asked twice and in the data twice? Which is correct?
 /*Amit: We asked education, urban/rural and language twice once at the beginning
@@ -139,13 +138,13 @@ bd1108 (education), bd1102 (ethnicity/language).<*/
 
 * NOTE: Education, urban/rural, and native language were asked twice.
 *		bd1104A is urban/rural, bd1108 is education, bd1102b is native language?
-
 * NK Note: Come back to native language 
 
 * Q. Q56 appears to be missing. Was that question asked? 
 /*Amit: Yes, it was asked. Look up ue2456. */
-
 * NK Note: Not in current data - different numbering 
+
+
 *------------------------------------------------------------------------------*
 
 * Interview length
@@ -286,7 +285,7 @@ recode q25_a (. = .a) if q23 != 1
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 
 * No 0 for q24  
 recode q26 (. = .a) if q23 == 0 | q23 == 1 
-recode q27 (. = .a) if q26 != 2
+recode q27 (. = .a) if q26 == 1 | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 
 * q31 & q32
 recode q31 (. = .a) if q3 == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
