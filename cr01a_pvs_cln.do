@@ -24,6 +24,9 @@ set more off
 * Import raw data 
 use "$data_mc/01 raw data/PVS_ET and KE weighted_22.12.22.dta", clear
 
+* QC short variable missing, so merge previous data and only keep QC short
+merge 1:1 Respondent_Serial using "$data_mc/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
+
 *------------------------------------------------------------------------------*
 
 *Change all variable names to lower case
@@ -51,13 +54,10 @@ gen q47_min = q47 / 60
 drop if q2 == 1 | q1 < 18
 
 * Drop interviews that are short and could be low-quality 
-* NK Note: Ipsos previously provided qc_short var (<10 min; previously dopped 165 interviews)
-* When I run the command below instead it drops more than 165 
-
-list country int_length if int_length < 10
-drop if int_length < 9.7 & country == 5
-* NK Note: Merge on qc_short 
-
+* Ipsos provided qc_short var that identifies short interviews that might be low-quality 
+* for Kenya data (drops 165 interviews)
+drop if qc_short == 2
+drop qc_short _merge
 
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
@@ -69,8 +69,7 @@ recode q23_q24 (997 = 996) if q24 == 996
 
 *------------------------------------------------------------------------------*
 
-*TL: PREFER TO DO THIS WITH THE VARIABLES BELOW SINCE THAT STEP HAS TO HAPPEN ANYWAY
-*NK: Noted for future. This will require updating all implausible value and skip pattern code  
+*NK Note: May update in the future  
 
 * Recode all Refused and Don't know responses
 
@@ -300,8 +299,6 @@ lab val q1 q23 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 * value labels, but not labels for .a or .r. Will edit this in future. 
 
 *------------------------------------------------------------------------------*
-*TL: THIS IS FINE BUT I THINK IT WOULD HAVE BEEN FINE AND ALSO EASIER TO JUST RENAME THE VARIABLES WE HAD DIRECTLY.
-*NK: Not sure what this means   
 
 * Renaming variables 
 * Rename variables to match question numbers in current survey 
@@ -530,7 +527,7 @@ recode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q13b q13e q14_new ///
 	 }
 
 * Uruguay: q23 values seem implausible 
-recode q23 (200 = .) (156 = .)	 
+recode q23 q23_q24 (200 = .) (156 = .)	 
 * Colombia q28_new values seem implausible 
 recode q28_new (80 = .)
 * q46_min seems okay for all (no more than 12 hours)
@@ -786,7 +783,7 @@ drop interviewer_gender q2 q3 q3a q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 ///
 ren rec* *
  
 ren q7_995 q7_other
-ren (q13b q13b q13e) (q13b_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy)
+ren (q3a q13b q13b q13e) (q3a_co_pe_uy q13b_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy)
 ren q13e_10 q13e_other
 ren q14_new q14
 ren q15_new q15
@@ -826,7 +823,7 @@ lab var interviewer_gender "Interviewer gender"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
-lab var q3a "Q3A. CO/PE/UY: Are you a man or a woman?"
+lab var q3a_co_pe_uy "Q3A. CO/PE/UY only: Are you a man or a woman?"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
@@ -838,17 +835,17 @@ lab var q10 "Q10. In general, would you say your mental health is:"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
-lab var q13b "Q13B. CO/PE/UY: Did you seek health care for COVID-19?"
-lab var q13e "Q13E. CO/PE/UY: Why didnt you receive health care for COVID-19?"
-lab var q13e_other "Q13E. CO/PE/UY: Other"
+lab var q13b_co_pe_uy "Q13B. CO/PE/UY only: Did you seek health care for COVID-19?"
+lab var q13e_co_pe_uy "Q13E. CO/PE/UY only: Why didnt you receive health care for COVID-19?"
+lab var q13e_other "Q13E. CO/PE/UY only: Other"
 lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_pe "Q19. PE: Is this a public or private healthcare facility?"
-lab var q19_uy "Q19. UY: Is this a public, private, or mutual healthcare facility?"
-lab var q19_co "Q19. CO: Is this a public or private healthcare facility?"
+lab var q19_pe "Q19. PE only: Is this a public or private healthcare facility?"
+lab var q19_uy "Q19. UY only: Is this a public, private, or mutual healthcare facility?"
+lab var q19_co "Q19. CO only: Is this a public or private healthcare facility?"
 lab var q19_other "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q20_other "Q20. Other"
@@ -878,9 +875,9 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_pe "Q43. PE: Is this a public or private healthcare facility?"
-lab var q43_uy "Q43. UY: Is this a public, private, or mutual healthcare facility?"
-lab var q43_co "Q43. CO: Is this a public or private healthcare facility?"
+lab var q43_pe "Q43. PE only: Is this a public or private healthcare facility?"
+lab var q43_uy "Q43. UY only: Is this a public, private, or mutual healthcare facility?"
+lab var q43_co "Q43. CO only: Is this a public or private healthcare facility?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
@@ -910,8 +907,8 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private for-profit healthcare?"
-lab var q56_pe "Q56. PE: How would you rate the quality of the social security system?"
-lab var q56_uy "Q56. UY: How would you rate the quality of the mutual healthcare system?"
+lab var q56_pe "Q56. PE only: How would you rate the quality of the social security system?"
+lab var q56_uy "Q56. UY only: How would you rate the quality of the mutual healthcare system?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -940,11 +937,11 @@ append using "$data_mc/02 recoded data/pvs_la.dta"
 
 * Kenya/Ethiopia variables 
 ren q19 q19_ke_et 
-lab var q19_ke_et "Q19. KE/ET: Is this a public, private, or NGO/faith-based facility?"
+lab var q19_ke_et "Q19. KE/ET only: Is this a public, private, or NGO/faith-based facility?"
 ren q43 q43_ke_et 
-lab var q43_ke_et "Q43. KE/ET: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_ke_et "Q43. KE/ET only: Is this a public, private, or NGO/faith-based facility?"
 ren q56 q56_ke_et 
-lab var q56_ke_et "Q56. KE/ET: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_ke_et "Q56. KE/ET only: How would you rate quality of NGO/faith-based healthcare?"
 
 * Mode
 lab val mode mode
@@ -954,7 +951,7 @@ lab var mode "Mode of interview"
 
 * Country-specific skip patterns
 recode q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
-recode q3a q13b q13e (. = .a) if country == 5 | country == 3 | country == 11 
+recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country == 5 | country == 3 | country == 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q19_pe q43_pe q56_pe (. = .a) if country != 7
 recode q19_co q43_co (. = .a) if country != 2
@@ -967,7 +964,6 @@ lab def lang 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Hmong", modify
 lab val language lang
 lab def labels25 995 "Other", modify
 
-
 * country
 lab def labels0 11 "Lao PDR", modify
 
@@ -978,7 +974,7 @@ lab def labels6 18 "City" 19 "Rural area"  20 "Suburb", modify
 lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang", modify
 
 *Q7
-lab def labels9 29 "Public" 30 "Private", modify
+lab def labels9 29 "Only public" 30 "Additional private insurance", modify
 
 *Q8
 lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
@@ -1020,8 +1016,6 @@ int_length weight
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
-* NOTE: 
-* Ethiopia data missing value labels on Q63 and Q62, it's fine for now 
 
 *------------------------------------------------------------------------------*
 

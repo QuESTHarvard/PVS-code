@@ -10,9 +10,6 @@ set more off
 use "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 
-* NOTE: Some of these take a while to run. Is there a faster way to do this? 
-
-
  *========================= Descriptive Analysis ============================* 
 
 
@@ -197,3 +194,16 @@ summtab2 , by(country) vars(age_calc age_cat gender urban insured insur_type edu
 		  mean median range pmiss total replace excel /// 
 		  excelname(pvs_interim_results_wt) sheetname(derived variables) directory("$output") /// 
 		  title(Derived Variables) 
+
+ *========================= Additional Tables ============================* 
+
+ summtab2 , by(country) vars(gender urban education health age_cat discrim visits) /// 
+		   type(2 2 2 2 2 2 1) wts(weight) wtfreq(ceiling) /// 
+		  catmisstype(missnoperc) /// 
+		  mean median range pmiss total replace excel /// 
+		  excelname(sample_char_table) sheetname(Sample Characteristics Table) directory("$output") /// 
+		  title(Sample Characteristics Table) 
+		  
+		  
+		  
+		  

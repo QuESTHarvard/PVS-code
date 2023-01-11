@@ -15,17 +15,17 @@ u "$data_mc/02 recoded data/pvs_appended.dta", clear
 
 *------------------------------------------------------------------------------*
 
-* age_calc: exact respondent age or middle of age range 
-gen age_calc = q1 
-recode age_calc (.r = 23.5) if q2 == 0
-recode age_calc (.r = 34.5) if q2 == 1
-recode age_calc (.r = 44.5) if q2 == 2
-recode age_calc (.r = 54.5) if q2 == 3
-recode age_calc (.r = 64.5) if q2 == 4
-recode age_calc (.r = 74.5) if q2 == 5
-recode age_calc (.r = 80) if q2 == 6
+* age: exact respondent age or middle of age range 
+gen age = q1 
+recode age (.r = 23.5) if q2 == 0
+recode age (.r = 34.5) if q2 == 1
+recode age (.r = 44.5) if q2 == 2
+recode age (.r = 54.5) if q2 == 3
+recode age (.r = 64.5) if q2 == 4
+recode age (.r = 74.5) if q2 == 5
+recode age (.r = 80) if q2 == 6
 lab def ref .r "Refused"
-lab val age_calc ref
+lab val age ref
 
 * age_cat: categorical age 
 gen age_cat = q2
@@ -56,15 +56,12 @@ lab val covid_vax_intent yes_no_doses
 gen region = q5
 
 * patient_activiation
-* NOTE: See if this code makes sense TL: WE NEED TO DECIDE ON THIS TOGETHER IN PERSON--MONDAY?
-gen patient_activation = 2 if q16 == 3 & q17 == 3	
-recode patient_activation (. = 1) if q16 == 3 & q17 == 2 | q16 == 2 & q17 == 3 | /// 
-						  q16 == 2 & q17 == 2	
-recode patient_activation (. = .r) if q16 == .r | q17 == .r
-recode patient_activation (. = 0) if q16 == 0 | q16 == 1 | q17 == 0 | q17 == 1
-lab def pa 0 "Not activated (Not too confident and Not at all confident for either category)" ///
-			1 "Somewhat activated (Very or somewhat confident on Q16 and Q17)" /// 
-			2 "Activated (Very confident on Q16 and Q17)" .r "Refused", replace
+gen patient_activation = 1 if q16 == 3 & q17 == 3
+recode patient_activation (. = 1) if q16 == 3 & q17 == 3 | 	q16 == 3 & q17 == .r | q16 == .r & q17 == 3 
+recode patient_activation (. = 0) if q16 < 3 | q17 < 3 
+recode patient_activation (. = .r) if q16 == .r & q17 == .r
+lab def pa 0 "Not activated" ///
+			1 "Activated (Very confident on Q16 and Q17)", replace
 lab val patient_activation pa
 
 * usual_reason
@@ -112,13 +109,6 @@ egen visits_total = rowtotal(q23 q28_a q28_b)
 * NK Note: not sure if this above line is needed now 
 * Thanks for the pro tip on egen! 
 
-* systems_fail 
-* NOTE: see if systems_fail code makes sense
-gen system_fail = 1 if q39 == 1 | q40 == 1	   
-recode system_fail (. = 0) if q39 == 0 & q40 == 0	
-recode system_fail (. = .r) if q39 == .r | q40 == .r	      
-recode system_fail (. = .a) (0 = .a) (1 = .a) if q39 == .a | q40 == .a	   
-lab val system_fail yes_no_na
 
 *TL: I would typically use replace here--gen var = ., then replace 1 if, replace 0 if, etc. so you can see what values haven't been recoded. particulalry valuable for variables with many values.
 *For this var in particular, I would do this:
@@ -187,7 +177,15 @@ lab val system_reform sr
 * insured, health_chronic, ever_covid, covid_confirmed, usual_source, inpatient
 * unmet_need 
 * Yes/No/Refused -Q6 Q11 Q12 Q13 Q18 Q29 Q41 
+
 gen insured = q6 
+recode insured (.a = 0) if q7 == 14
+recode insured (.a = 1) if q7 == 10 | q7 == 11 | q7 == 12 | q7 == 13 | ///
+						q7 == 15 | q7 == 16 | q7 == 17 | q7 == 18 | q7 == 19 | ///
+						q7 == 20 | q7 == 21 | q7 == 22 | q7 == 28 | q7 == 29 | ///
+						q7 == 30
+recode insured (.a = .r) if q7 == .r | q7 == 995 | q7 == .
+
 gen health_chronic = q11
 gen ever_covid = q12
 gen covid_confirmed = q13 
@@ -205,7 +203,7 @@ lab val insured health_chronic ever_covid covid_confirmed usual_source ///
 		inpatient unmet_need yes_no	
 * blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
 * blood_chol care_mental 
-* Yes/No/Don't Know/Refused - Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q66 
+* Yes/No/Don't Know/Refused - Q30 Q31 Q32 Q33 Q34 Q35 Q36 Q38 Q30 Q40 Q66 
 gen blood_pressure = q30 
 gen mammogram = q31
 gen cervical_cancer = q32
@@ -214,8 +212,10 @@ gen teeth_exam = q34
 gen blood_sugar = q35 
 gen blood_chol = q36
 gen care_mental = q38 
+gen mistake = q39
+gen discrim = q40
 lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
-	blood_sugar blood_chol care_mental yes_no_dk
+	blood_sugar blood_chol care_mental mistake discrim yes_no_dk
 	
 **** Excellent to Poor scales *****	   
 
@@ -442,14 +442,14 @@ recode q63 (1 2 9 10 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest income") ///
 **** Order Variables ****
 		   
 order respondent_serial respondent_id mode country language date time /// 
-	  int_length weight age_calc age_cat gender ///
-	  urban insured insur_type education health health_mental health_chronic ///
+	  int_length weight age age_cat gender urban region ///
+	  insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type_own_lvl ///
 	  usual_reason usual_quality visits visits_cat visits_covid ///
 	  fac_number visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
-	  system_fail unmet_need unmet_reason last_type_own last_type_lvl ///
+	  mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
 	  last_type_own_lvl last_reason last_wait_time ///
 	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
@@ -457,7 +457,7 @@ order respondent_serial respondent_id mode country language date time ///
 	  conf_afford conf_opinion qual_public qual_private qual_ngo_ke qual_ss_pe ///
 	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
 	  vignette_good native_lang income q1 q2 q3 q3a q4 q5 q6 q7 ///
-	  q7_other q8 q9 q10 q11 q12 q13 q13b q13e q13e_other q14 q15 q16 q17 q18 ///
+	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q15 q16 q17 q18 ///
 	  q18a_la q18b_la ///
 	  q19_ke_et q19_co q19_pe q19_uy q19_other q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
@@ -471,7 +471,7 @@ order respondent_serial respondent_id mode country language date time ///
 
 ***************************** Labeling variables ***************************** 
  
-lab var age_calc "Exact respondent age or middle number of age range (Q1/Q2)"
+lab var age "Exact respondent age or middle number of age range (Q1/Q2)"
 lab var age_cat "Age (categorical) (Q1/Q2)"
 lab var gender "Gender (Q3)" 
 lab var urban "Type of region respondent lives in (Q4)"
@@ -508,7 +508,8 @@ lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months
 lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (Q36)"		
 *lab var	hiv_test "HIV test done by healthcare provider in past 12 months (Q37_A)"
 lab var	care_mental	"Received care for depression, anxiety or another mental health condition (Q38)"
-lab var	system_fail	"Failed by the health system: mistake made or discriminated against (Q39/Q40)"	
+lab var	mistake	"A medical mistake was made in treatment or care in the past 12 months (Q39)"	
+lab var	discrim	"You were treated unfairly or discriminated against in the past 12 months (Q40)"	
 lab var	unmet_need "Needed medical attention but did not get healthcare (Q41)"
 lab var	unmet_reason "Reason for not getting healthcare when needed medical attention (Q42)"
 lab var	last_type_own "Facility ownership for last visit to a healthcare provider (Q43)"
@@ -540,9 +541,9 @@ lab var	conf_afford	"Confidence in ability to afford care healthcare if became v
 lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q53)"
 lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (Q54)"
 lab var	qual_private "Overall quality rating of private healthcare system in country (Q55)"
-lab var qual_ss_pe "Peru: Overall quality rating of social security system in country (Q56)"
-lab var qual_mut_uy "Uruguay: Overall quality rating of mutual healthcare system in country (Q56)"
-lab var qual_ngo "Kenya/Ethiopia: Overall quality rating of NGO healthcare system in country (Q56)"  
+lab var qual_ss_pe "PE only: Overall quality rating of social security system in country (Q56)"
+lab var qual_mut_uy "UY only: Overall quality rating of mutual healthcare system in country (Q56)"
+lab var qual_ngo "KE/ET only: Overall quality rating of NGO healthcare system in country (Q56)"  
 lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q57)"
 lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q58)" 
 lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q59)" 
