@@ -245,7 +245,7 @@ lab val phc_women phc_child phc_chronic phc_mental exc_poor_judge
 	
 gen qual_public = q54
 gen qual_private = q55 
-gen qual_ngo_ke = q56_ke_et
+gen qual_ngo_ke_et = q56_ke_et
 gen qual_ss_pe = q56_pe
 gen qual_mut_uy = q56_uy
 gen covid_manage = q59

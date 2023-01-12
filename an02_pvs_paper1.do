@@ -112,6 +112,24 @@ recode system_reform ///
 	(1 2 = 0 "Major changes/Rebuilt") (3 = 1 "Minor changes") ///
 	(.r = .r "Refused") , gen(system_reform_minor) label(system_reform2)
 
+* gender
+gen gender2 = gender
+recode gender2 (2 = .)
+lab var gender2 "Gender (binary)"
+
+* health
+recode health (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(health_vge) label(health2)
+
+* health_mental
+recode health_mental (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(health_mental_vge) label(health_mental2)
+
 	
 save "$data_mc/02 recoded data/pvs_all_countries_p1.dta", replace
+
+
+
 	
