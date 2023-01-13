@@ -3,13 +3,33 @@
 clear all
 set more off 
 
- * Import clean data with derived variables 
+*------------------------------------------------------------------------------*
+
+* Macros from main file
+
+* Dropping existing macros
+macro drop _all
+
+* Setting user globals 
+global user "/Users/nek096"
+
+* Setting file path globals
+global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
+
+* Path to multi-country data folder 
+global data_mc "$data/Multi-country"
+
+*------------------------------------------------------------------------------*
+
+* Import clean data with derived variables 
 
 u "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
+*------------------------------------------------------------------------------*
+* Derive additional variables for Paper 1 analysis 
 
-* usual_quality last_promote last_qual phc_women phc_child phc_chronic phc_mental qual_private qual_public conf_sick system_outlook system_reform covid_manage
-
+* usual_quality last_qual phc_women phc_child phc_chronic phc_mental qual_private 
+* qual_public system_outlook system_reform covid_manage gender health health_mental
 
 * usual_qual
 recode usual_quality (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
@@ -111,7 +131,7 @@ recode system_outlook ///
 recode system_reform ///
 	(1 2 = 0 "Major changes/Rebuilt") (3 = 1 "Minor changes") ///
 	(.r = .r "Refused") , gen(system_reform_minor) label(system_reform2)
-
+	
 * gender
 gen gender2 = gender
 recode gender2 (2 = .)
@@ -127,7 +147,11 @@ recode health_mental (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent"
 	   (.a = .a "NA"), /// 
 	   gen(health_mental_vge) label(health_mental2)
 
-	
+
+*------------------------------------------------------------------------------*
+
+* Save new dataset for paper 1 	   
+	   
 save "$data_mc/02 recoded data/pvs_all_countries_p1.dta", replace
 
 

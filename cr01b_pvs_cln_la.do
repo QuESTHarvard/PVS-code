@@ -511,6 +511,8 @@ ren rec* *
 * Check for implausible values
 * q23 q25_b q27 q28_a q28_b q46_min q47_min
 
+list q1 q2 if q2 == 0 | q1 < 18
+
 
  foreach var in q23 q25_b q27 q28_a q28_b q46_min q47_min {
 		extremes `var', high 
