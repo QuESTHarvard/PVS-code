@@ -6,7 +6,7 @@
 ************************************* Laos ************************************
 
 * Import data 
-use "$data/Laos/02 recoded data/pvs_clean_weighted.dta", clear
+use "$data/Laos/02 recoded data/pvs_clean_weighted_v2.dta", clear
 
 
 * Note: For other data, .a means NA, .r means refused, .d is don't know, . is missing 
@@ -188,14 +188,14 @@ ohsa4263b6 ohsa4263b7 ohsa4263b8 ohsa4263b9 ohsa4263b99 ohsa4263b_oth ig4476 ///
 ig4477 ig4478 ig4479 ig4480 ig4481 ig4481A ig4481B rand_name ohsa4372_m ///
 ohsa4373_m ohsa4373_f ohsa4372_f ig4482 ig4483 outcome1 outcome2 instanceID ///
 instanceName rand_22util KEY FormVersion duplicated_id duplicated_id_2 start ///
-end timestamp_start timestamp_consent timestamp_consent timestamp_Sec21 /// 
+ue2446 ue2447 end timestamp_start timestamp_consent timestamp_consent timestamp_Sec21 /// 
 timestamp_Sec22 timestamp_Sec2324 timestamp_Sec3132 timestamp_Sec41 ///
 timestamp_Sec4142 timestamp_Sec4344 timestamp_finalsec time_beforestart ///
 time_consent time_Part1 time_Sec21 time_Sec22 time_Sec2324 time_Sec3132 ///
 time_Sec41 time_Sec42 time_Sec4344 time_finalsec time_submission time_total ///
 time_withrespondent time_unexplained visitsyr placesyr telmedyr outreachyr ///
 age_cat malefemale region urbanrural edu_cat urbanrural_ed urbanrural_age ///
-timestamp_Part1 start_min end_min
+timestamp_Part1 start_min end_min 
 
 * NOTE to self: need to fix date variable in correct date/time format 
 
@@ -219,7 +219,7 @@ recode q23_q24 (.r = 10) if q24 == 3
 
 * Refused values 
 
-recode q7 q63 (99 = .r)
+recode q7 (99 = .r)
 
 * Q. Refusal and Don't know values appear to be all missing throughout the data 
 *	 Or occasionally 99 or 90 
@@ -295,7 +295,7 @@ recode q32 (. = .a) if q3 == 1 | q1 == .r | q2 == .r
 recode q42 (. = .a) if q41 == 2 
 
 * q43-49 na's
-recode q43_la q44_la q45 q46 q46_min q47 q47_min q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_la q44_la q45 q46_min q47_min q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 
 
 *Q43/Q44
@@ -644,6 +644,27 @@ order respondent_serial language interviewer_id weight q1 q2 q3 q4 q5 q6 q7 q8 q
 
 save "$data_mc/02 recoded data/pvs_la.dta", replace
 
+*------------------------------------------------------------------------------*
+
+* Missing data check 
+
+* Below I summarize NA (.a), Don't know (.d), Refused (.r) and true Missing (.) 
+* across the numeric variables(only questions) in the dataset by country
+
+global all_dk 	"q23 q25_a q25_b q27 q28_a q28_b q30 q31 q32 q33 q34 q35 q36 q38 q50_a q50_b q50_c q50_d q63"
+global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_la q44_la q45 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q63"
+   
+* Count number of NA, Don't know, and refused across the row 
+ipaanycount $all_num, gen(na_count) numval(.a)
+ipaanycount $all_dk, gen(dk_count) numval(.d)
+ipaanycount $all_num, gen(rf_count) numval(.r)
+
+* Count of total true missing 
+egen all_missing_count = rowmiss($all_num)
+gen missing_count = all_missing_count  - (na_count + dk_count + rf_count)
+
+
+
 /*
 * NOTE to Emma/Amit: 
 * Here is my code for appending all the datasets if you want to see how I added 
@@ -653,68 +674,112 @@ save "$data_mc/02 recoded data/pvs_la.dta", replace
 
 ********************************* Append data *********************************
 
-u "$data_mc/02 recoded data/pvs_lac.dta", clear
-append using "$data_mc/02 recoded data/pvs_ke.dta"
-append using "$data_mc/02 recoded data/pvs_et.dta"
+u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
+append using "$data_mc/02 recoded data/pvs_et_ke.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
 
-* NOTE: Fix Kenya date on append 
+* Note: Rodrigo to check append 
+* Note: Fix Kenya/Ethiopia date for append, and Laos date 
 
 * Kenya/Ethiopia variables 
 ren q19 q19_ke_et 
-lab var q19_ke_et "Q19. Kenya/Ethiopia: Is this a public, private, or NGO/faith-based facility?"
+lab var q19_ke_et "Q19. KE/ET only: Is this a public, private, or NGO/faith-based facility?"
 ren q43 q43_ke_et 
-lab var q43_ke_et "Q43. Kenya/Ethiopia: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_ke_et "Q43. KE/ET only: Is this a public, private, or NGO/faith-based facility?"
 ren q56 q56_ke_et 
-lab var q56_ke_et "Q56. Kenya/Ethiopia: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_ke_et "Q56. KE/ET only: How would you rate quality of NGO/faith-based healthcare?"
 
 * Mode
 lab val mode mode
-lab var mode "Mode of interview"
+recode mode (3 = 1) 
+lab var mode "Mode of interview (CATI or F2F)"
 
 * Country-specific skip patterns
-recode q6 q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
-recode q3a q13b q13e (. = .a) if country == 5 | country == 3 | country == 11 
+recode q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
+recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country == 5 | country == 3 | country == 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q19_pe q43_pe q56_pe (. = .a) if country != 7
 recode q19_co q43_co (. = .a) if country != 2
-recode q18a_la q1920a_la q18b_la q1920b_la q43_la q44_la ///		
+recode q18a_la q19_q20a_la q18b_la q19_q20b_la q43_la q44_la ///		
 		(. = .a) if country != 11
+recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 		
 * Country-specific value labels 
+recode language (. = 0) if country == 2 | country == 7 | country == 10 
+lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Hmong", modify 
+lab def labels25 995 "Other", modify
 
-recode language (. = 0) if country == 10 | country == 7 | country == 2
-lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Kmong", modify
+* country
+lab def labels0 11 "Lao PDR", modify
 
 *Q4
-label define labels6 18 "City" 19 "Rural area"  20 "Suburb", modify
+lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused", modify
 
 *Q5
-label define labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang", modify
+lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang" .r "Refused", modify
 
 *Q7
-label define labels9 29 "Public" 30 "Private", modify
+lab def labels9 29 "Only public" 30 "Additional private insurance" .a "NA" .r "Refused", modify
 
 *Q8
-label define labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
+lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
 					  47 "Lower secondary (1-4 years)" /// 
 					  48 "Upper secondary (5-7 years)" ///
 					  49 "Post-secondary and non-tertiary (13-15 years)" ///
-					  50 "Tertiary (Associates or higher)", modify
+					  50 "Tertiary (Associates or higher)" .r "Refused", modify
 
 *Q62
-label define labels51 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other", modify
+lab def labels51 21 "Oromiffa" 22 "Amharegna" 23 "Somaligna" 24 "Tigrigna" 25 "Sidamigna" ///
+				 26 "Wolaytigna" 27 "Gurage" 28 "Afar" 29 "Hadiyya" 30 "Gamogna" ///
+				 31 "Gedeo" 32 "Kafa" 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other" ///
+				 .a "NA" .r "Refused", modify
 
 *Q63
-label define labels52 101 "Range A (Less than 1,000,000) Kip" 102 "Range B (1,000,000 to 1,500,000) Kip" 103 "Range C (1,500,001 to 2,000,000) Kip" 104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip", replace
+lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" ///
+ 11 "3001 – 5000 Eth.Birr" 12 "5001 – 10000 Eth.Birr" 13 "10001 - 20000 Eth.Birr" ///
+ 14 "Greater than 20000 Eth.Birr" 101 "Range A (Less than 1,000,000) Kip" ///
+ 102 "Range B (1,000,000 to 1,500,000) Kip" 103 "Range C (1,500,001 to 2,000,000) Kip" ///
+ 104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" ///
+ 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip" ///
+ .d "Don't know" .r "Refused", modify
+
+* Other value label modifcations
+lab def labels16 .a "NA" .r "Refused", modify
+lab def labels24 .a "NA" .r "Refused", modify
+lab def labels22 .a "NA" .r "Refused", modify
+lab def labels23 .a "NA" .r "Refused", modify
+lab def labels25 .a "NA" .r "Refused", modify
+lab def labels26 .a "NA" .r "Refused", modify
+lab def labels37 .a "NA" .r "Refused", modify
+lab def labels39 .a "NA" .r "Refused", modify
+lab def labels40 .a "NA" .r "Refused", modify
+lab def labels50 .r "Refused", modify
+lab def Q19 .a "NA" .r "Refused", modify
+lab def Q43 .a "NA" .r "Refused", modify
+lab def place_type .a "NA" .r "Refused", modify
+lab def fac_owner .a "NA" .r "Refused", modify
+lab def fac_type1 .a "NA" .r "Refused", modify
+lab def fac_type3 .a "NA" .r "Refused", modify
+
+ 
+* weight
+replace weight_educ = weight if country == 3
+drop weight
+ren weight_educ weight
+lab var weight "Final weight (based on gender, age, region, education) (no edu in Ethiopia)"
+ 
+* Keep variables relevant for data sharing and analysis  
+drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
+interviewer_language psu_id region_stratum kebele matrix sum_size_region total ///
+ dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et ///
+ rim_age province county sublocation rim_region_ke rim_educ interviewer_gender ///
+ q1_codes interviewer_id
 
 order q*, sequential
-order respondent_serial respondent_id unique_id psu_id interviewerid_recoded /// 
-interviewer_language interviewer_gender mode country language date time /// 
-intlength int_length q1_codes
+order respondent_serial respondent_id mode country language date time /// 
+int_length weight
 
-drop intlength unique_id q46 q47 
-ren interviewerid_recoded interviewerid
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
+
 

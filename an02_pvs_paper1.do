@@ -19,6 +19,9 @@ global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core
 * Path to multi-country data folder 
 global data_mc "$data/Multi-country"
 
+* Path to data check output folders (TBD)
+global output "$data_mc/03 test output/Output"
+
 *------------------------------------------------------------------------------*
 
 * Import clean data with derived variables 
@@ -154,6 +157,15 @@ recode health_mental (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent"
 	   
 save "$data_mc/02 recoded data/pvs_all_countries_p1.dta", replace
 
+*------------------------------------------------------------------------------*
 
+* Descriptive Tables  
+
+summtab2 , by(country) vars(gender urban education health age_cat discrim visits) /// 
+		   type(2 2 2 2 2 2 1) wts(weight) wtfreq(ceiling) /// 
+		   catmisstype(missnoperc) /// 
+		   mean median range pmiss total replace excel /// 
+		   excelname(sample_char_table) sheetname(Sample Characteristics Table) directory("$output") /// 
+		   title(Sample Characteristics Table) 
 
 	
