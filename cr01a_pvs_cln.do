@@ -938,7 +938,7 @@ lab var q56_ke_et "Q56. KE/ET only: How would you rate quality of NGO/faith-base
 * Mode
 lab val mode mode
 recode mode (3 = 1) 
-lab var mode "Mode of interview"
+lab var mode "Mode of interview (CATI or F2F)"
 
 * Country-specific skip patterns
 recode q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
@@ -1012,7 +1012,7 @@ lab def fac_type3 .a "NA" .r "Refused", modify
 replace weight_educ = weight if country == 3
 drop weight
 ren weight_educ weight
-lab var weight "Final weight gender age region education (except Ethiopia)"
+lab var weight "Final weight (based on gender, age, region, education) (no edu in Ethiopia)"
  
 * Keep variables relevant for data sharing and analysis  
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
