@@ -14,11 +14,10 @@ use "$data/Laos/02 recoded data/pvs_clean_weighted_v2.dta", clear
 
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 
-* NOTE: Could be more efficiently renamed, just doing this now as it's probably easier to review
 
 ren study_id respondent_serial
 * NOTE: No way to really know if this is unique or not once merged (could be overlap)
-* NOTE: Consider creating new serial per country data 
+* NOTE to self: Consider creating new serial per country data 
 encode cal_int, gen(interviewerid)
 ren lang language
 
@@ -136,13 +135,13 @@ and once at the very end. We wanted to measure if people were alert at the
 end of the survey and we found that they were. We used the bd1104 (urban/rural),
 bd1108 (education), bd1102 (ethnicity/language).<*/
 
-* NOTE: Education, urban/rural, and native language were asked twice.
+* NK Note: Education, urban/rural, and native language were asked twice.
 *		bd1104A is urban/rural, bd1108 is education, bd1102b is native language?
-* NK Note: Come back to native language 
 
 * Q. Q56 appears to be missing. Was that question asked? 
 /*Amit: Yes, it was asked. Look up ue2456. */
-* NK Note: Not in current data - different numbering 
+
+* NK Note: Q56 not in current data? Different numbering, see data dictionary or tool.  
 
 
 *------------------------------------------------------------------------------*
@@ -197,7 +196,7 @@ time_withrespondent time_unexplained visitsyr placesyr telmedyr outreachyr ///
 age_cat malefemale region urbanrural edu_cat urbanrural_ed urbanrural_age ///
 timestamp_Part1 start_min end_min 
 
-* NOTE to self: need to fix date variable in correct date/time format 
+* NOTE to self: need to fix date variable in correct date/time format for merge
 
 *------------------------------------------------------------------------------*
 
@@ -322,8 +321,7 @@ situation.*/
 
 * Recode value labels:
 * Recode values and value labels so that their values and direction make sense
-* NOTE: Much of this code is borrowed from other data cleaning. That's why .a 
-*		.r are there even if not in the data. 
+* NOTE: Much of this code is borrowed from other data cleaning, which is why you see .d
 
 
 * All Yes/No questions
@@ -651,8 +649,11 @@ save "$data_mc/02 recoded data/pvs_la.dta", replace
 * Below I summarize NA (.a), Don't know (.d), Refused (.r) and true Missing (.) 
 * across the numeric variables(only questions) in the dataset by country
 
+* NOTE: This is borrowed from my other code, which is why .d is here 
+
 global all_dk 	"q23 q25_a q25_b q27 q28_a q28_b q30 q31 q32 q33 q34 q35 q36 q38 q50_a q50_b q50_c q50_d q63"
 global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_la q44_la q45 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q63"
+gl dq_output	"$output/dq_output_la.xlsx"
    
 * Count number of NA, Don't know, and refused across the row 
 ipaanycount $all_num, gen(na_count) numval(.a)
@@ -663,6 +664,35 @@ ipaanycount $all_num, gen(rf_count) numval(.r)
 egen all_missing_count = rowmiss($all_num)
 gen missing_count = all_missing_count  - (na_count + dk_count + rf_count)
 
+
+* Denominator for percent of NA and Refused 
+egen nonmissing_count = rownonmiss($all_num)
+gen total_miss = all_missing_count + nonmissing_count
+
+* Denominator for percent of Don't know 
+egen dk_nonmiss_count = rownonmiss($all_dk) 
+egen dk_miss_count = rowmiss($all_dk) 
+gen total_dk = dk_nonmiss_count + dk_miss_count 
+
+
+preserve
+
+collapse (sum) na_count dk_count rf_count missing_count total_miss total_dk, by(country)
+gen na_perc = na_count/total_miss
+gen dk_perc = dk_count/total_dk
+gen rf_perc = rf_count/total_miss
+gen miss_perc = missing_count/total_miss 
+lab var na_perc "NA (%)" 
+lab var dk_perc "Don't know (%)"
+lab var rf_perc "Refused (%)"
+lab var miss_perc "Missing (%)"
+export exc country na_perc dk_perc rf_perc miss_perc using "$dq_output", sh(missing, replace) first(varl)
+
+restore 
+
+* NK Note: These missing rates seem slightly higher than other countries, but not that high overall. 
+* What do you think Emma?
+* Any true missing remaining could be due to errors in my recoding as I did this quite rapidly 
 
 
 /*
@@ -678,8 +708,7 @@ u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
 append using "$data_mc/02 recoded data/pvs_et_ke.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
 
-* Note: Rodrigo to check append 
-* Note: Fix Kenya/Ethiopia date for append, and Laos date 
+* Note to self: Fix Kenya/Ethiopia date for append, and Laos date 
 
 * Kenya/Ethiopia variables 
 ren q19 q19_ke_et 
