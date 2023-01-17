@@ -20,6 +20,7 @@ macro drop _all
 
 * Setting user globals 
 global user "/Users/nek096"
+*global user "/Users/priya"
 *global user "/Users/tol145"
 *global user "/Users/rodba"
 
