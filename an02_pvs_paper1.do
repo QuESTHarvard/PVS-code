@@ -11,7 +11,9 @@ set more off
 macro drop _all
 
 * Setting user globals 
-global user "/Users/nek096"
+*global user "/Users/nek096"
+global user "/Users/tol145"
+
 
 * Setting file path globals
 global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
@@ -211,7 +213,7 @@ recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 
 * Add weight for ZA so commands will run 
 recode weight (. = 1) if country == 9
 
-* Descriptive Tables  
+*Descriptive Tables  
 
 summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge ///
 		   phc_mental_vge qual_public_vge qual_private_vge) /// 
@@ -239,15 +241,62 @@ summtab2 , by(urban) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chro
 		   excelname(p1_exhib) sheetname(Exhibit 3 data) directory("$output") /// 
 		   title(Data for Paper 1, Exhibit 3) 
 		   
-restore		   
+restore	
+	   
 
 * Correct command 
+svy: tab urban if country == 2 & usual_quality_vge==1, col
 
-svy: tab usual_quality_vge urban if country == 2, col
+*Excellent and very good responses for key variables by demographic stratifiers
+recode country (2=4 "Colombia") (3=1 "Ethiopia") (5=2 "Kenya") (7=5 "Peru") (9=3 "South Africa") (10=6 "Uruguay") (11=7 "Laos"), gen(c)
 
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' c if usual_quality_vge==1, col
+}
 
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' c if phc_women_vge==1, col
+}
 
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' c if phc_child_vge==1, col
+}
 
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' c if phc_chronic_vge==1, col
+}
+
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' c if phc_mental_vge==1, col
+}
+
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' c if system_out_getbetter==1, col
+}
+
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' c if system_reform_minor==1, col
+}
+
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' c if conf_getafford==1, col
+}
+
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' c if qual_public_vge==1, col
+}
+
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' if qual_private_vge==1, col
+}
+
+*ALTERNATIVE*
+ssc install tabout
+
+foreach x of varlist usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge system_outlook_getbet system_reform_minor conf_getafford qual_public_vge qual_private_vge {
+tabout gender2 over50 edu_secon urban nonpoor health_chronic c if `x'==1 using toddtest_append.csv, append c(col) f(1 1) svy stats(chi2) percent ///
+style(tab)
+}
 		   
 /*
 summtab2 , by(country) vars(gender urban education health age_cat discrim visits) /// 
