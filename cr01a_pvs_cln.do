@@ -19,13 +19,10 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 clear all
 set more off 
 
-******************************* ETHIOPIA & KENYA *******************************
+******************* ETHIOPIA, KENYA & SOUTH AFRICA (interim) *******************
 
 * Import raw data 
-use "$data_mc/01 raw data/PVS_ET and KE weighted_22.12.22.dta", clear
-
-* QC short variable missing, so merge previous data and only keep QC short
-merge 1:1 Respondent_Serial using "$data_mc/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
+use "$data_mc/01 raw data/HARVARD(ET_Main,Ke_Main,Ke_F2F,ET_F2F,SA)_17.01.23.dta", clear
 
 *------------------------------------------------------------------------------*
 
@@ -54,9 +51,9 @@ drop if q2 == 1 | q1 < 18
 
 * Drop interviews that are short and could be low-quality 
 * Ipsos provided qc_short var that identifies short interviews that might be low-quality 
-* for Kenya data (drops 165 interviews)
-drop if qc_short == 2
-drop qc_short _merge
+* for Kenya data (dropped 165 interviews previously, now 195)
+drop if qc_short == 1
+drop qc_short 
 
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
@@ -75,11 +72,13 @@ recode q23_q24 (997 = 996) if q24 == 996
 * In raw data, 997 = "don't know" 
 recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 q63 ///
 	   q66 q67 (997 = .d)
+	   
+* NOTE: currently in data q37_za "don't know" is category 3  
 
 * In raw data, 996 = "refused" 
 recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
 	   q18 q19 q20 q21 q22 q23 q23_q24 q24 q25_a q25_b q26 q27 q28 q28_new q29 q30 /// 
-	   q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46 q47 ///
+	   q31 q32 q33 q34 q35 q36 q37_za q38 q39 q40 q41 q42 q43 q44 q45 q46 q47 ///
 	   q46_refused q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
 	   q56 q57 q58 q59 q60 q61 q62 q63 q66 q67 (996 = .r)	
@@ -92,29 +91,31 @@ recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 ///
 * q23, q25_b, q27, q28, q28_new, q46_min, q47_min   
  
  foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
-	foreach i in 3 5 {
+	foreach i in 3 5 9 {
 		extremes `var' country if country == `i', high 
 		
 	}				
 	 }
 	
 * Most visit values seem plausible, most 50 and below 
-* Ethiopia: 92 visits for q28 
-recode q28 (92 = .)
+* South Africa; 144 visits for q23
+recode q23 q23_q24 (144 = .)
+* Ethiopia: 92 visits for q28, South Africa: 120 visits for q28
+recode q28 (92 = .) (120 = .)
 
 * q46_min, highest value is 4320 minutes (72 hours), seems plausible for Ethiopia
 
 * q47_min, above 300 minutes (5 hours) seems implausible 
 replace q47_min = . if q47_min > 300 & q47_min < .
-* 3 values recoded in Kenya, 7 recoded in Ethiopia
+* 3 values recoded in Kenya, 7 recoded in Ethiopia, 4 in South Africa 
 
 * Check for other implausible values 
 
 list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
-* Note: okay in Kenya and Ethiopia data
+* Note: okay in these data
 
 list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
-* Note: okay in Kenya and Ethiopia data (2.5 is mid-point value)
+* Note: okay in these data (2.5 is mid-point value)
 
 list q26 q27 country if q27 == 0 | q27 == 1
 * Some implasuible values of 0 and 1
@@ -195,14 +196,14 @@ recode q6 q11 q12 q13 q18 q25_a q26 q29 q41 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 
-recode q30 q31 q32 q33 q34 q35 q36 q38 q66 ///
-	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know") /// 
+recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q66 ///
+	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (3 .d = .d "Don't know") /// 
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk)
+	   
+* Note: Added "3" for q37_za 
 
 lab val q46_refused q47_refused yes_no
-
-* Note: for other data add q37_b
 
 recode q39 q40 /// 
 	   (1 = 1 Yes) (2 = 0 No) ///
@@ -278,6 +279,7 @@ recode q24 ///
 	(1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") ///
 	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(number_visits)
+
 	
 recode q49 ///
 	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
@@ -304,7 +306,7 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
 drop interviewer_gender q2 q3 q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
-	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q48_a q48_b q48_c q48_d ///
+	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
 	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57
 
@@ -321,7 +323,6 @@ ren q43_4 q43_other
 ren q66 q64
 ren q67 q65
 ren time_new time
-drop respondent_id
 ren ecs_id respondent_id
 ren interviewerid_recoded interviewer_id
 * Check ID variable and interviewer ID variable in other data 
@@ -329,11 +330,11 @@ ren interviewerid_recoded interviewer_id
 
 *Reorder variables
 order q*, sequential
-order q*, after(interviewer_id)
+order q*, after(interviewer_gender)
 
 
 * Drop other unecessary variables 
-drop intlength q46 q47 mode2
+drop intlength q46 q47 
 * Note: mode2 seems to be missing for Kenya data, but there is mode var 
 
 
@@ -389,7 +390,7 @@ lab var q33 "Q33. Had your eyes or vision checked in the past 12 months"
 lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
-*lab var q37 "Q37_B. Had a test for HIV in the past 12 months"
+lab var q37_za "Q37. ZA only: Had a test for HIV in the past 12 months"
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
@@ -442,7 +443,7 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Save data
 
-save "$data_mc/02 recoded data/pvs_et_ke.dta", replace
+save "$data_mc/02 recoded data/pvs_et_ke_za.dta", replace
 
 
 *------------------------------------------------------------------------------*
@@ -921,19 +922,20 @@ save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
 ********************************* Append data *********************************
 
 u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
-append using "$data_mc/02 recoded data/pvs_et_ke.dta"
+append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
 
 * Note: Rodrigo to check append 
 * Note: Fix Kenya/Ethiopia date for append, and Laos date 
+* Note: Fix respondent_serial 
 
 * Kenya/Ethiopia variables 
-ren q19 q19_ke_et 
-lab var q19_ke_et "Q19. KE/ET only: Is this a public, private, or NGO/faith-based facility?"
-ren q43 q43_ke_et 
-lab var q43_ke_et "Q43. KE/ET only: Is this a public, private, or NGO/faith-based facility?"
-ren q56 q56_ke_et 
-lab var q56_ke_et "Q56. KE/ET only: How would you rate quality of NGO/faith-based healthcare?"
+ren q19 q19_et_ke_za
+lab var q19_et_ke_za "Q19. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
+ren q43 q43_et_ke_za
+lab var q43_et_ke_za "Q43. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
+ren q56 q56_et_ke_za 
+lab var q56_et_ke_za "Q56. ET/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 
 * Mode
 lab val mode mode
@@ -941,18 +943,19 @@ recode mode (3 = 1)
 lab var mode "Mode of interview (CATI or F2F)"
 
 * Country-specific skip patterns
-recode q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
-recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country == 5 | country == 3 | country == 11 
+recode q19_et_ke_za q43_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
+recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country == 5 | country == 3 | country == 9 | country == 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q19_pe q43_pe q56_pe (. = .a) if country != 7
 recode q19_co q43_co (. = .a) if country != 2
+recode q37_za (. = .a) if country != 9
 recode q18a_la q19_q20a_la q18b_la q19_q20b_la q43_la q44_la ///		
 		(. = .a) if country != 11
 recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 		
 * Country-specific value labels 
 recode language (. = 0) if country == 2 | country == 7 | country == 10 
-lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Hmong", modify 
+lab def Language 0 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong", modify 
 lab def labels25 995 "Other", modify
 
 * country
@@ -1008,22 +1011,45 @@ lab def fac_type1 .a "NA" .r "Refused", modify
 lab def fac_type3 .a "NA" .r "Refused", modify
 
  
-* weight
+*** weights ***
 replace weight_educ = weight if country == 3
 drop weight
 ren weight_educ weight
 lab var weight "Final weight (based on gender, age, region, education) (no edu in Ethiopia)"
+
+*** Code suggested by Dale ***
+gen respondent_num = _n 
+lab var respondent_num "Unique respondent number"
+sort mode psu_id respondent_num
+gen short_id = _n if mode == 1
+encode psu_id, gen(psu_id_numeric) // this makes a numeric version of psu_id; an integer with a value label 
+gen long psu_id_for_svy_cmds = cond(mode==1, 1e5+short_id, 2e5+psu_id_numeric) 
+drop short_id psu_id_numeric
+label variable psu_id_for_svy_cmds "PSU ID for every respondent.  100k prefix for CATI and 200k prefix for F2F"
+ 
+* This will have values 100001 up to 102006 for the Kenya data CATI folks and (if there were 20 PSUs) 200002 to 200021 for F2F  (200001 is skipped because Stata thinks of psu_id_numeric == 1 as being the CATI respondents.
+* Each person will have their own PSU ID for CATI and each sampled cluster will have a unique ID for the F2F.
+ 
+* Now the svyset syntax will simply be:
+* svyset psu_id_for_svy_cmds [pw=weight], strata(mode)
+* or equivalently
+* svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
+ 
+* svy, subpop(if q1_codes == 1):  <command>
+* syntax and can use:
+* svy: <command> if q1_codes == 1
+
  
 * Keep variables relevant for data sharing and analysis  
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
 interviewer_language psu_id region_stratum kebele matrix sum_size_region total ///
  dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et ///
  rim_age province county sublocation rim_region_ke rim_educ interviewer_gender ///
- q1_codes interviewer_id
+  interviewer_id
 
 order q*, sequential
-order respondent_serial respondent_id mode country language date time /// 
-int_length weight
+order respondent_num respondent_serial respondent_id mode country language date time /// 
+q1_codes int_length weight
 
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
