@@ -24,6 +24,9 @@ set more off
 * Import raw data 
 use "$data_mc/01 raw data/HARVARD(ET_Main,Ke_Main,Ke_F2F,ET_F2F,SA)_17.01.23.dta", clear
 
+merge 1:1 ECS_ID Country using "$data_mc/01 raw data/PVS_ET and KE weighted_22.12.22.dta", keepusing(PSU_ID weight weight_educ)
+drop _merge
+
 *------------------------------------------------------------------------------*
 
 *Change all variable names to lower case
@@ -1042,14 +1045,12 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent.  100k prefix fo
  
 * Keep variables relevant for data sharing and analysis  
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
-interviewer_language psu_id region_stratum kebele matrix sum_size_region total ///
- dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et ///
- rim_age province county sublocation rim_region_ke rim_educ interviewer_gender ///
+interviewer_language psu_id interviewer_gender ///
   interviewer_id
 
 order q*, sequential
 order respondent_num respondent_serial respondent_id mode country language date time /// 
-q1_codes int_length weight
+q1_codes int_length psu_id_for_svy_cmds weight 
 
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
