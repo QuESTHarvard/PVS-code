@@ -1025,6 +1025,7 @@ gen respondent_num = _n
 lab var respondent_num "Unique respondent number"
 sort mode psu_id respondent_num
 gen short_id = _n if mode == 1
+replace psu_id = subinstr(psu_id, " ", "", .) if mode == 1
 encode psu_id, gen(psu_id_numeric) // this makes a numeric version of psu_id; an integer with a value label 
 gen long psu_id_for_svy_cmds = cond(mode==1, 1e5+short_id, 2e5+psu_id_numeric) 
 drop short_id psu_id_numeric
