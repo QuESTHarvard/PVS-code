@@ -455,7 +455,7 @@ recode q57 ///
 gen interviewer_id = interviewerid + 100
 
 * Language - available after 5 
-recode language (1 = 6 Lao) (2 = 7 Khmou) (3 = 8 Kmong), pre(rec) label(language)
+recode language (1 = 15 Lao) (2 = 16 Khmou) (3 = 17 Kmong), pre(rec) label(language)
 
 * Q4 values available - after 17
 recode q4 (1 = 18 "City") (2 = 19 "Rural area") (3 = 20 "Suburb"), pre(rec) label(residence)
