@@ -153,14 +153,103 @@ recode health_mental (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent"
 
 *------------------------------------------------------------------------------*
 
+* MEK's additional variables
+
+
+
+*add new confidence variable conf_both if people can get care AND can afford it
+
+gen conf_getafford =.
+replace conf_getafford=1 if conf_sick==1 & conf_afford==1
+replace conf_getafford=0 if conf_sick==0 | conf_afford==0
+tab conf_getafford
+
+*split education into below and above secondary
+recode education 0/1=0 2/3=1, gen (edu_secon)
+
+*split income into lowest v other
+recode income 0=0 1/2=1, gen (nonpoor)
+
+*age over 50
+centile age,  centile(10(10)90)
+**over 50 is 80th percentile
+gen over50=.
+replace over50=1 if age>50
+replace over50=0 if age<50
+
+*younger adults
+gen under30=.
+replace under30=1 if age<30
+replace under30=0 if age>30
+
+*gen wealthy
+recode income 0/1=0 2=1, gen (wealthy)
+
+*gen most_educ
+recode education 0/2=0 3=1, gen (most_educ)
+
+***Neena: make continuous score for 4 public health services (total points out of 20)--strength of primary care system
+**Neena: difference between rating of public v private health system (private - public number of steps)
+
+
+*------------------------------------------------------------------------------*
+
+
 * Save new dataset for paper 1 	   
 	   
 save "$data_mc/02 recoded data/pvs_all_countries_p1.dta", replace
 
 *------------------------------------------------------------------------------*
+* Survey set
+
+svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
+
+* Recode country 
+recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
+				(2 = 5 "Colombia") (10 = 6 "Uruguay") (11 = 7 "Lao PDR"), gen(country2)
+
+* Add weight for ZA so commands will run 
+recode weight (. = 1) if country == 9
 
 * Descriptive Tables  
 
+summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge ///
+		   phc_mental_vge qual_public_vge qual_private_vge) /// 
+		   type(2 2 2 2 2 2 2)  wts(weight) /// 
+		   catmisstype(none) catrow /// 
+		   total replace excel /// 
+		   excelname(p1_exhib) sheetname(Exhibit 1 data) directory("$output") /// 
+		   title(Data for Paper 1, Exhibit 1) 
+
+summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor conf_getafford ) /// 
+		   type(2 2 2)  wts(weight) /// 
+		   catmisstype(none) catrow /// 
+		   total replace excel /// 
+		   excelname(p1_exhib) sheetname(Exhibit 2 data) directory("$output") /// 
+		   title(Data for Paper 1, Exhibit 2) 		   
+
+preserve 
+keep if country == 2
+
+summtab2 , by(urban) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge ///
+		   phc_mental_vge qual_public_vge qual_private_vge) /// 
+		   type(2 2 2 2 2 2 2)  wts(weight) /// 
+		   catmisstype(none) catptype(1) catrow /// 
+		   pval replace excel /// 
+		   excelname(p1_exhib) sheetname(Exhibit 3 data) directory("$output") /// 
+		   title(Data for Paper 1, Exhibit 3) 
+		   
+restore		   
+
+* Correct command 
+
+svy: tab usual_quality_vge urban if country == 2, col
+
+
+
+
+		   
+/*
 summtab2 , by(country) vars(gender urban education health age_cat discrim visits) /// 
 		   type(2 2 2 2 2 2 1) wts(weight) wtfreq(ceiling) /// 
 		   catmisstype(missnoperc) /// 
