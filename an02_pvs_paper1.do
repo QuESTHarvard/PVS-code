@@ -241,8 +241,22 @@ svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
 				(2 = 5 "Colombia") (10 = 6 "Uruguay") (11 = 7 "Lao PDR"), gen(country2)
 
+* Recode age
+recode age (18/20 = 0 "<20") (20/29 = 1 "20-29") (30/39 = 2 "30-39") (40/49 = 3 "40-49") ///
+		   (50/59 = 4 "50-59") (60/69 = 5 "60-69") (70/100 = 6 "> 70"), gen(age_cat2)
+
+
 * Add weight for ZA so commands will run 
 recode weight (. = 1) if country == 9
+
+
+* Sample characteristics table
+summtab2 , by(country) vars(gender2 urban education health_vge age_cat2 visits q28_b inpatient) /// 
+		   type(2 2 2 2 2 1 1 2) wts(weight) wtfreq(ceiling) /// 
+		   catmisstype(none) /// 
+		   median total replace word landscape /// 
+		   wordname(sample_char_table) directory("$output/Paper 1") /// 
+		   title(Sample Characteristics Table)
 
 * Data for histograms  
 
@@ -251,14 +265,14 @@ summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_c
 		   type(2 2 2 2 2 2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
-		   excelname(p1_exhib) sheetname(Exhibit 1 data) directory("$output") /// 
+		   excelname(p1_exhib) sheetname(Exhibit 1 data) directory("$output/Paper 1") /// 
 		   title(Data for Paper 1, Exhibit 1) 
 
 summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor conf_getafford ) /// 
 		   type(2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
-		   excelname(p1_exhib) sheetname(Exhibit 2 data) directory("$output") /// 
+		   excelname(p1_exhib) sheetname(Exhibit 2 data) directory("$output/Paper 1") /// 
 		   title(Data for Paper 1, Exhibit 2) 		   
 	   
 
@@ -267,6 +281,8 @@ summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor conf_geta
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
 svy: tab `x' country2 if usual_quality_vge==1, col
 }
+
+* by sort country: tab 'x' 
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
 svy: tab `x' country2 if phc_women_vge==1, col
@@ -308,6 +324,108 @@ foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic {
 svy: tab `x' country2 if covid_manage_vge==1, col
 }
 
+
+* Data for forest plot 
+
+***country regressions for future payer support for hs
+**show on forest plot
+
+****Outcome 1: overall public quality (logistic)***use this version
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: logistic qual_public wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.1_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
+	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.1 data") 
+
+eststo clear
+
+***Outcome 2: total phc score (linear)
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: reg phc_score wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.2_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
+	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.2 data") 
+
+eststo clear
+
+***Outcome 3: diff between private and public
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: reg qual_priv_publ_diff wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.3_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
+	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.3 data") 
+
+eststo clear
+	
+**Outcome 4: try security in getting good care (not afford, since will use wealth as predictor)
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: logit conf_sick wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.4_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
+	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.4 data") 
+
+eststo clear
+
+**Outcome 5: minor changes needed
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: logit system_reform_minor wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.5_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
+	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.5 data") 
+	
+eststo clear
+
+**Outcome 6: system getting better
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: logit system_outlook_getbet wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.6_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
+	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.6 data")
+
+eststo clear
+	
 /*
 
 *ALTERNATIVE*
@@ -318,11 +436,6 @@ tabout gender2 over50 edu_secon urban nonpoor health_chronic c if `x'==1 using t
 style(tab)
 }
 		   
-summtab2 , by(country) vars(gender urban education health age_cat discrim visits) /// 
-		   type(2 2 2 2 2 2 1) wts(weight) wtfreq(ceiling) /// 
-		   catmisstype(missnoperc) /// 
-		   mean median range pmiss total replace excel /// 
-		   excelname(sample_char_table) sheetname(Sample Characteristics Table) directory("$output") /// 
-		   title(Sample Characteristics Table) 
+ 
 
 	
