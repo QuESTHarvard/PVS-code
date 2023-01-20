@@ -11,8 +11,8 @@ set more off
 macro drop _all
 
 * Setting user globals 
-*global user "/Users/nek096"
-global user "/Users/tol145"
+global user "/Users/nek096"
+*global user "/Users/tol145"
 
 
 * Setting file path globals
@@ -157,8 +157,6 @@ recode health_mental (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent"
 
 * MEK's additional variables
 
-
-
 *add new confidence variable conf_both if people can get care AND can afford it
 
 gen conf_getafford =.
@@ -190,20 +188,53 @@ recode income 0/1=0 2=1, gen (wealthy)
 *gen most_educ
 recode education 0/2=0 3=1, gen (most_educ)
 
-***Neena: make continuous score for 4 public health services (total points out of 20)--strength of primary care system
-**Neena: difference between rating of public v private health system (private - public number of steps)
+*gen total score for PHC services
+gen phc_score=.
+replace phc_score=phc_women+phc_child+phc_chronic+phc_mental
 
+*gen diff between private and public
+gen qual_diff=.
+replace qual_diff=qual_private-qual_public
+
+*gen getting better AND only small changes needed**did not use this in regs
+gen bett_minor=.
+replace bett_minor=1 if system_outlook_getbet==1 & system_reform_minor==1
+replace bett_minor=0 if system_outlook_getbet==0 | system_reform_minor==0
+
+
+*** continuous score for 4 public health services (total points out of 20)--strength of primary care system
+egen phc_cont = rowtotal(phc_women phc_child phc_chronic phc_mental)
+* note: treats refusal (missing) as 0, a lot of refusal for these vars
+* other option: gen phc_cont = phc_women + phc_child + phc_chronic + phc_mental
+*				this results in 19% missing 
+
+
+* difference between rating of public v private health system (private - public number of steps)
+gen qual_priv_publ_diff = qual_private - qual_public
+* note: only 2% missing due to reufusal
+* other option, if want to treat refusal as 0 
+*    gen qual_public_neg = qual_public * -1
+*    egen qual_priv_publ_diff = rowtotal(qual_public_neg qual_private)
+
+
+gen mdp=.
+replace mdp=1 if income==0 & (education==0 | education==1) & health_vge==0
+replace mdp=0 if income>0 | education>1 | health_vge==1
+*mdp is 1 for 11% of sample (1100 people)
 
 *------------------------------------------------------------------------------*
-
 
 * Save new dataset for paper 1 	   
 	   
 save "$data_mc/02 recoded data/pvs_all_countries_p1.dta", replace
 
 *------------------------------------------------------------------------------*
-* Survey set
 
+* Descriptive analysis 
+
+u "$data_mc/02 recoded data/pvs_all_countries_p1.dta", replace
+
+* Survey set
 svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
 
 * Recode country 
@@ -213,11 +244,11 @@ recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 
 * Add weight for ZA so commands will run 
 recode weight (. = 1) if country == 9
 
-*Descriptive Tables  
+* Data for histograms  
 
 summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge ///
-		   phc_mental_vge qual_public_vge qual_private_vge) /// 
-		   type(2 2 2 2 2 2 2)  wts(weight) /// 
+		   phc_mental_vge qual_public_vge qual_private_vge covid_manage_vge) /// 
+		   type(2 2 2 2 2 2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
 		   excelname(p1_exhib) sheetname(Exhibit 1 data) directory("$output") /// 
@@ -229,66 +260,55 @@ summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor conf_geta
 		   total replace excel /// 
 		   excelname(p1_exhib) sheetname(Exhibit 2 data) directory("$output") /// 
 		   title(Data for Paper 1, Exhibit 2) 		   
-
-preserve 
-keep if country == 2
-
-summtab2 , by(urban) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge ///
-		   phc_mental_vge qual_public_vge qual_private_vge) /// 
-		   type(2 2 2 2 2 2 2)  wts(weight) /// 
-		   catmisstype(none) catptype(1) catrow /// 
-		   pval replace excel /// 
-		   excelname(p1_exhib) sheetname(Exhibit 3 data) directory("$output") /// 
-		   title(Data for Paper 1, Exhibit 3) 
-		   
-restore	
 	   
 
-* Correct command 
-svy: tab urban if country == 2 & usual_quality_vge==1, col
-
 *Excellent and very good responses for key variables by demographic stratifiers
-recode country (2=4 "Colombia") (3=1 "Ethiopia") (5=2 "Kenya") (7=5 "Peru") (9=3 "South Africa") (10=6 "Uruguay") (11=7 "Laos"), gen(c)
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' c if usual_quality_vge==1, col
+svy: tab `x' country2 if usual_quality_vge==1, col
 }
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' c if phc_women_vge==1, col
+svy: tab `x' country2 if phc_women_vge==1, col
 }
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' c if phc_child_vge==1, col
+svy: tab `x' country2 if phc_child_vge==1, col
 }
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' c if phc_chronic_vge==1, col
+svy: tab `x' country2 if phc_chronic_vge==1, col
 }
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' c if phc_mental_vge==1, col
+svy: tab `x' country2 if phc_mental_vge==1, col
 }
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' c if system_out_getbetter==1, col
+svy: tab `x' country2 if system_outlook_getbet==1, col
 }
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' c if system_reform_minor==1, col
+svy: tab `x' country2 if system_reform_minor==1, col
 }
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' c if conf_getafford==1, col
+svy: tab `x' country2 if conf_getafford==1, col
 }
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' c if qual_public_vge==1, col
+svy: tab `x' country2 if qual_public_vge==1, col
 }
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' if qual_private_vge==1, col
+svy: tab `x' country2 if qual_private_vge==1, col
 }
+
+foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
+svy: tab `x' country2 if covid_manage_vge==1, col
+}
+
+/*
 
 *ALTERNATIVE*
 ssc install tabout
@@ -298,7 +318,6 @@ tabout gender2 over50 edu_secon urban nonpoor health_chronic c if `x'==1 using t
 style(tab)
 }
 		   
-/*
 summtab2 , by(country) vars(gender urban education health age_cat discrim visits) /// 
 		   type(2 2 2 2 2 2 1) wts(weight) wtfreq(ceiling) /// 
 		   catmisstype(missnoperc) /// 
