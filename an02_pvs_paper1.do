@@ -44,6 +44,7 @@ recode usual_quality (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent"
 recode usual_quality (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "I did not receive healthcare form this provider in the past 12 months"), /// 
 	   gen(usual_quality_vge) label(exc_pr_hlthcare_2)
+lab var usual_quality_vge "VGE: Overall quality rating of usual source of care (Q22)"
 
 * last_qual	   
 recode last_qual (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
@@ -115,6 +116,8 @@ recode qual_public (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") 
 recode qual_public (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(qual_public_vge) label(exc_pr_2)
+	   
+lab var qual_public_vge "VGE: Overall quality rating of gov or public healthcare system in country (Q54)"
 
 * covid_manage
 recode covid_manage (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
@@ -165,7 +168,8 @@ replace conf_getafford=0 if conf_sick==0 | conf_afford==0
 tab conf_getafford
 
 *split education into below and above secondary
-recode education 0/1=0 2/3=1, gen (edu_secon)
+recode education (0/1=0 "None or primary") (2/3=1 "Secondary or post-secondary") , gen (edu_secon)
+lab var edu_secon "Education: above or below secondary education "
 
 *split income into lowest v other
 recode income 0=0 1/2=1, gen (nonpoor)
@@ -189,12 +193,15 @@ recode income 0/1=0 2=1, gen (wealthy)
 recode education 0/2=0 3=1, gen (most_educ)
 
 *gen total score for PHC services
-gen phc_score=.
-replace phc_score=phc_women+phc_child+phc_chronic+phc_mental
+gen phc_score = phc_women+phc_child+phc_chronic+phc_mental
+
+* gen phc_score_cat, score above 12 is 1
+recode phc_score (0/11 = 0 "Good/Fair/Poor on all PHC services") (12/16 = 1 "Very good/Excellent on all PHC services"), gen(phc_score_cat)
+lab var phc_score_cat "Public primary care score (cateogircal) (> 12)"
 
 *gen diff between private and public
 gen qual_diff=.
-replace qual_diff=qual_private-qual_public
+replace qual_diff=qual_public-qual_private
 
 *gen getting better AND only small changes needed**did not use this in regs
 gen bett_minor=.
@@ -202,25 +209,23 @@ replace bett_minor=1 if system_outlook_getbet==1 & system_reform_minor==1
 replace bett_minor=0 if system_outlook_getbet==0 | system_reform_minor==0
 
 
-*** continuous score for 4 public health services (total points out of 20)--strength of primary care system
-egen phc_cont = rowtotal(phc_women phc_child phc_chronic phc_mental)
-* note: treats refusal (missing) as 0, a lot of refusal for these vars
-* other option: gen phc_cont = phc_women + phc_child + phc_chronic + phc_mental
-*				this results in 19% missing 
-
-
-* difference between rating of public v private health system (private - public number of steps)
-gen qual_priv_publ_diff = qual_private - qual_public
-* note: only 2% missing due to reufusal
-* other option, if want to treat refusal as 0 
-*    gen qual_public_neg = qual_public * -1
-*    egen qual_priv_publ_diff = rowtotal(qual_public_neg qual_private)
-
-
 gen mdp=.
 replace mdp=1 if income==0 & (education==0 | education==1) & health_vge==0
 replace mdp=0 if income>0 | education>1 | health_vge==1
 *mdp is 1 for 11% of sample (1100 people)
+
+
+* Recode country 
+recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
+				(2 = 5 "Colombia") (10 = 6 "Uruguay") (11 = 7 "Lao PDR"), gen(country2)
+
+* Recode age
+recode age (18/20 = 0 "<20") (20/29 = 1 "20-29") (30/39 = 2 "30-39") (40/49 = 3 "40-49") ///
+		   (50/59 = 4 "50-59") (60/69 = 5 "60-69") (70/100 = 6 "> 70"), gen(age_cat2)
+
+
+* Add weight for ZA so commands will run 
+recode weight (. = 1) if country == 9
 
 *------------------------------------------------------------------------------*
 
@@ -235,19 +240,7 @@ save "$data_mc/02 recoded data/pvs_all_countries_p1.dta", replace
 u "$data_mc/02 recoded data/pvs_all_countries_p1.dta", replace
 
 * Survey set
-svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
-
-* Recode country 
-recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
-				(2 = 5 "Colombia") (10 = 6 "Uruguay") (11 = 7 "Lao PDR"), gen(country2)
-
-* Recode age
-recode age (18/20 = 0 "<20") (20/29 = 1 "20-29") (30/39 = 2 "30-39") (40/49 = 3 "40-49") ///
-		   (50/59 = 4 "50-59") (60/69 = 5 "60-69") (70/100 = 6 "> 70"), gen(age_cat2)
-
-
-* Add weight for ZA so commands will run 
-recode weight (. = 1) if country == 9
+svyset psu_id_for_svy_cmds, strata(mode) weight(weight)
 
 
 * Sample characteristics table
@@ -258,7 +251,7 @@ summtab2 , by(country) vars(gender2 urban education health_vge age_cat2 visits q
 		   wordname(sample_char_table) directory("$output/Paper 1") /// 
 		   title(Sample Characteristics Table)
 
-* Data for histograms  
+* Data for histograms (Exhibit 1 & 2)
 
 summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge ///
 		   phc_mental_vge qual_public_vge qual_private_vge covid_manage_vge) /// 
@@ -268,13 +261,145 @@ summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_c
 		   excelname(p1_exhib) sheetname(Exhibit 1 data) directory("$output/Paper 1") /// 
 		   title(Data for Paper 1, Exhibit 1) 
 
-summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor conf_getafford ) /// 
-		   type(2 2 2)  wts(weight) /// 
+summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor ///
+							conf_sick conf_afford conf_getafford) /// 
+		   type(2 2 2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
 		   excelname(p1_exhib) sheetname(Exhibit 2 data) directory("$output/Paper 1") /// 
 		   title(Data for Paper 1, Exhibit 2) 		   
 	   
+* Data for Exhibit 3, table 
+* Key variables by demographic stratifiers
+
+
+foreach i in 1 2 3 4 5 6 7 {
+	
+		rm "$output/Paper 1/exhib_3_ctry`i'.csv"
+
+	foreach var of varlist conf_sick conf_afford phc_score_cat qual_public_vge usual_quality_vge { 
+	
+		tabout urban edu_secon health_chronic `var' if country2 == `i' ///
+		using "$output/Paper 1/exhib_3_ctry`i'.csv", ///
+		append c(row) f(3 3 3) svy stats(chi2) 
+	
+}
+
+}
+
+* Check commands
+* svy: tab conf_sick urban if country2 == 1, col
+* svy: tab conf_sick urban if country2 == 7, col
+
+
+* Data for forest plot 
+
+****Outcome 1: overall public quality (logistic)***use this version
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: logistic qual_public_vge wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.1_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
+	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.1 data") 
+
+eststo clear
+
+***Outcome 2: diff between private and public
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: reg qual_diff wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.2_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
+	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.2 data") 
+
+eststo clear
+
+***Outcome 3: total phc score (linear)
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: reg phc_score wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	
+}
+
+
+esttab using "$output/Paper 1/exhibit_4.3_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
+	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.3 data") 
+
+eststo clear
+	
+**Outcome 4: try security in getting good care (not afford, since will use wealth as predictor)
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: logistic conf_sick wealthy most_educ urban under30  health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.4_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
+	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.4 data") 
+
+eststo clear
+
+**Outcome 5: minor changes needed
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: logistic system_reform_minor wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.5_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
+	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.5 data") 
+	
+eststo clear
+
+**Outcome 6: system getting better
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: logistic system_outlook_getbet wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_4.6_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
+	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 4.6 data")
+
+eststo clear
+	
+/*
+
+*ALTERNATIVE*
+ssc install tabout
+
+foreach x of varlist usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge system_outlook_getbet system_reform_minor conf_getafford qual_public_vge qual_private_vge {
+tabout gender2 over50 edu_secon urban nonpoor health_chronic c if `x'==1 using toddtest_append.csv, append c(col) f(1 1) svy stats(chi2) percent ///
+style(tab)
+}
 
 *Excellent and very good responses for key variables by demographic stratifiers
 
@@ -322,120 +447,7 @@ svy: tab `x' country2 if qual_private_vge==1, col
 
 foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
 svy: tab `x' country2 if covid_manage_vge==1, col
-}
-
-
-* Data for forest plot 
-
-***country regressions for future payer support for hs
-**show on forest plot
-
-****Outcome 1: overall public quality (logistic)***use this version
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: logistic qual_public wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
-	
-}
-
-esttab using "$output/Paper 1/exhibit_4.1_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
-	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.1 data") 
-
-eststo clear
-
-***Outcome 2: total phc score (linear)
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: reg phc_score wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
-	
-}
-
-esttab using "$output/Paper 1/exhibit_4.2_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
-	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.2 data") 
-
-eststo clear
-
-***Outcome 3: diff between private and public
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: reg qual_priv_publ_diff wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
-	
-}
-
-esttab using "$output/Paper 1/exhibit_4.3_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
-	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.3 data") 
-
-eststo clear
-	
-**Outcome 4: try security in getting good care (not afford, since will use wealth as predictor)
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: logit conf_sick wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
-	
-}
-
-esttab using "$output/Paper 1/exhibit_4.4_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
-	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.4 data") 
-
-eststo clear
-
-**Outcome 5: minor changes needed
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: logit system_reform_minor wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
-	
-}
-
-esttab using "$output/Paper 1/exhibit_4.5_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
-	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.5 data") 
-	
-eststo clear
-
-**Outcome 6: system getting better
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: logit system_outlook_getbet wealthy under30 most_educ urban health_vge gender2 if country2 == `i' 
-	
-}
-
-esttab using "$output/Paper 1/exhibit_4.6_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
-	rename(wealthy "Non-poor" under30 "Under 30 years" most_educ "More highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.6 data")
-
-eststo clear
-	
-/*
-
-*ALTERNATIVE*
-ssc install tabout
-
-foreach x of varlist usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge system_outlook_getbet system_reform_minor conf_getafford qual_public_vge qual_private_vge {
-tabout gender2 over50 edu_secon urban nonpoor health_chronic c if `x'==1 using toddtest_append.csv, append c(col) f(1 1) svy stats(chi2) percent ///
-style(tab)
-}
-		   
+}		   
  
 
 	
