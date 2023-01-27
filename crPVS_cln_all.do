@@ -928,7 +928,7 @@ u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
 append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
 
-* Note: Rodrigo to check append 
+* Note: need to check append 
 * Note: Fix Kenya/Ethiopia date for append, and Laos date 
 * Note: Fix respondent_serial 
 
@@ -1020,7 +1020,7 @@ drop weight
 ren weight_educ weight
 lab var weight "Final weight (based on gender, age, region, education) (no edu in Ethiopia)"
 
-*** Code suggested by Dale ***
+*** Code for survey set ***
 gen respondent_num = _n 
 lab var respondent_num "Unique respondent number"
 sort mode psu_id respondent_num
@@ -1038,12 +1038,7 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent.  100k prefix fo
 * svyset psu_id_for_svy_cmds [pw=weight], strata(mode)
 * or equivalently
 * svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
- 
-* svy, subpop(if q1_codes == 1):  <command>
-* syntax and can use:
-* svy: <command> if q1_codes == 1
 
- 
 * Keep variables relevant for data sharing and analysis  
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
 interviewer_language psu_id interviewer_gender ///
@@ -1064,7 +1059,7 @@ save "$data_mc/02 recoded data/pvs_appended.dta", replace
 /*
 ***************************** Data quality checks *****************************
 
-u "$data_mc/02 recoded data/pvs_ke_et_lac_01.dta", replace
+u "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 * Macros for these commands
 gl inputfile	"$data_mc/03 test output/Input/dq_inputs.xlsm"	

@@ -1,6 +1,5 @@
-* PVS cleaning for appending datasets
-* December 2022
-* TEMP file for Laos 
+* People's Voice Survey data cleaning for Laos
+* Last updated: January 15, 2023
 * N. Kapoor 
 
 ************************************* Laos ************************************
@@ -8,9 +7,7 @@
 * Import data 
 use "$data/Laos/02 recoded data/pvs_clean_weighted_v2.dta", clear
 
-
 * Note: For other data, .a means NA, .r means refused, .d is don't know, . is missing 
-
 
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 

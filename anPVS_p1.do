@@ -1,30 +1,10 @@
-
+* PVS Analysis for Paper 1
+* Last updated: January 2023
+* N. Kapoor 
 
 clear all
 set more off 
 
-*------------------------------------------------------------------------------*
-
-* Macros from main file
-
-* Dropping existing macros
-macro drop _all
-
-* Setting user globals 
-global user "/Users/nek096"
-*global user "/Users/tol145"
-
-
-* Setting file path globals
-global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
-
-* Path to multi-country data folder 
-global data_mc "$data/Multi-country"
-
-* Path to data check output folders (TBD)
-global output "$data_mc/03 test output/Output"
-
-*------------------------------------------------------------------------------*
 
 * Import clean data with derived variables 
 
@@ -390,64 +370,4 @@ esttab using "$output/Paper 1/exhibit_4.6_data.rtf", ///
 	title( "Exhibit 4.6 data")
 
 eststo clear
-	
-/*
-
-*ALTERNATIVE*
-ssc install tabout
-
-foreach x of varlist usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge system_outlook_getbet system_reform_minor conf_getafford qual_public_vge qual_private_vge {
-tabout gender2 over50 edu_secon urban nonpoor health_chronic c if `x'==1 using toddtest_append.csv, append c(col) f(1 1) svy stats(chi2) percent ///
-style(tab)
-}
-
-*Excellent and very good responses for key variables by demographic stratifiers
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if usual_quality_vge==1, col
-}
-
-* by sort country: tab 'x' 
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if phc_women_vge==1, col
-}
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if phc_child_vge==1, col
-}
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if phc_chronic_vge==1, col
-}
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if phc_mental_vge==1, col
-}
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if system_outlook_getbet==1, col
-}
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if system_reform_minor==1, col
-}
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if conf_getafford==1, col
-}
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if qual_public_vge==1, col
-}
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if qual_private_vge==1, col
-}
-
-foreach x of varlist gender2 over50 edu_secon urban nonpoor health_chronic { 
-svy: tab `x' country2 if covid_manage_vge==1, col
-}		   
- 
-
 	
