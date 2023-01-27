@@ -15,6 +15,14 @@ u "$data_mc/02 recoded data/pvs_appended.dta", clear
 
 *------------------------------------------------------------------------------*
 
+*Generate variables for political alignment of the local government with the national government. 1=alignment, 0=misalignment
+gen politic_al = .
+
+*Colombia
+replace politic_al = 0 if country == 2 & inlist(q5, 100, 101, 102, 106,107, 108, 109, 114, 115, 116, 117, 120, 122, 124, 125, 127, 129, 132)
+
+replace politic_al = 1 if country == 2 & inlist(q5, 103, 104, 105, 110, 111, 112, 113, 118, 119, 121, 123, 126,128, 130, 131)
+
 * age: exact respondent age or middle of age range 
 gen age = q1 
 recode age (.r = 23.5) if q2 == 0
