@@ -264,7 +264,6 @@ recode q51 q52 q53 ///
 ren (derq51 derq52 derq53) (conf_sick conf_afford conf_opinion)
 
 **** COUNTRY SPECIFIC ****
-* NK NOTE: Only updated SA for urban, education, and wealth 
 
 * urban: type of region respondent lives in 
 recode q4 (1 2 3 6 7 9 10 12 13 18 20 = 1 "Urban") (4 8 11 14 19 = 0 "Rural") ///
@@ -273,10 +272,10 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 = 1 "Urban") (4 8 11 14 19 = 0 "Rural") //
 * insur_type 
 * NOTE: check other, specify later
 
-recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 = 0 Public) (2 4 5 6 7 28 13 21 30 = 1 Private) /// 
+recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 = 0 Public) (2 4 5 6 7 8 9 28 13 21 30 = 1 Private) /// 
 		  (995 = 3 Other) ///
 		  (.r = .r "Refused") (14 .a = .a NA), gen(insur_type)
-
+ 
 
 * education 
 recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 = 0 "None") /// 
@@ -284,19 +283,25 @@ recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 = 0 "None") ///
 	      (5 10 11 17 29 30 31 22 23 24 36 37 38 49 50 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
 
+
 * usual_type_own
 		  
-recode q19_et_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
+recode q19_et_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
-recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1 | q19_uy == 5 | ///
-								  q19_q20a_la == 1 | q19_q20a_la == 2 | q19_q20b_la == 1 | q19_q20b_la == 2
-recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | q19_q20a_la == 1 | ///
-								  q19_q20a_la == 3 | q19_q20a_la == 4 | q19_q20b_la == 3 | q19_q20b_la == 4 | ///
+recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1 | ///
+								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
+								  q19_q20b_la == 1 | q19_q20b_la == 2
+recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | ///
+								  q19_q20a_la == 3 | q19_q20a_la == 4 | ///
+								  q19_q20b_la == 3 | q19_q20b_la == 4 | ///
 								  q19_q20a_la == 6 | q19_q20b_la == 6
-recode usual_type_own (.a = 2) if q19_uy == 3 | q19_uy == 995 | q19_q20a_la == 9 | q19_q20b_la == 7
-recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r 
+recode usual_type_own (.a = 2) if q19_uy == 5 | q19_uy == 995 | q19_q20a_la == 9 | q19_q20b_la == 7
+recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r | ///
+								   q19_q20a_la == .r | q19_q20b_la == .r 
 
+* NOTE: Check missing data for Laos 								   
+								   
 * usual_type_lvl 
 
 recode q20 (1 2 3 6 7 8 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
@@ -331,10 +336,13 @@ lab val usual_type_own_lvl fac_own_lvl
 recode q43_et_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
-recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1 | q43_uy == 5 | q43_la == 1
+recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1  | q43_la == 1
 recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 | q43_la == 2 | q43_la == 3
-recode last_type_own (.a = 2) if q43_uy == 3 | q43_uy == 995
-recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r 
+recode last_type_own (.a = 2) if q43_uy == 5 | q43_uy == 995 
+recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r | q43_la == .r
+
+* NOTE: Check missing for Laos 
+
 
 * last_type_lvl 
 recode q44 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 

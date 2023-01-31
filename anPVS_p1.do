@@ -5,7 +5,6 @@
 clear all
 set more off 
 
-
 * Import clean data with derived variables 
 
 u "$data_mc/02 recoded data/pvs_all_countries.dta", replace
@@ -136,10 +135,6 @@ recode health_mental (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent"
 	   gen(health_mental_vge) label(health_mental2)
 
 
-*------------------------------------------------------------------------------*
-
-* MEK's additional variables
-
 *add new confidence variable conf_both if people can get care AND can afford it
 
 gen conf_getafford =.
@@ -231,14 +226,14 @@ summtab2 , by(country) vars(gender2 urban education health_vge age_cat2 visits q
 		   wordname(sample_char_table) directory("$output/Paper 1") /// 
 		   title(Sample Characteristics Table)
 
-* Data for histograms (Exhibit 1 & 2)
+* Data for histograms - Exhibit 1 & 2
 
 summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge ///
 		   phc_mental_vge qual_public_vge qual_private_vge covid_manage_vge) /// 
 		   type(2 2 2 2 2 2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
-		   excelname(p1_exhib) sheetname(Exhibit 1 data) directory("$output/Paper 1") /// 
+		   excelname(p1_exhib1_2) sheetname(Exhibit 1 data) directory("$output/Paper 1") /// 
 		   title(Data for Paper 1, Exhibit 1) 
 
 summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor ///
@@ -246,10 +241,11 @@ summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor ///
 		   type(2 2 2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
-		   excelname(p1_exhib) sheetname(Exhibit 2 data) directory("$output/Paper 1") /// 
+		   excelname(p1_exhib1_2) sheetname(Exhibit 2 data) directory("$output/Paper 1") /// 
 		   title(Data for Paper 1, Exhibit 2) 		   
 	   
-* Data for Exhibit 3, table 
+/* Data for previous exhibit 3, table - no longer using 
+
 * Key variables by demographic stratifiers
 
 
@@ -267,12 +263,12 @@ foreach i in 1 2 3 4 5 6 7 {
 
 }
 
-* Check commands
+* Commands to check output 
 * svy: tab conf_sick urban if country2 == 1, col
 * svy: tab conf_sick urban if country2 == 7, col
+*/
 
-
-* Data for forest plot 
+* Data for forest plots - Exhibit 3 
 
 ****Outcome 1: overall public quality (logistic)***use this version
 
@@ -282,11 +278,11 @@ foreach i in 1 2 3 4 6 5 7 {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_4.1_data.rtf", ///
+esttab using "$output/Paper 1/exhibit_3.1_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
 	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
 	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.1 data") 
+	title( "Exhibit 3.1 data") 
 
 eststo clear
 
@@ -298,11 +294,11 @@ foreach i in 1 2 3 4 6 5 7 {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_4.2_data.rtf", ///
+esttab using "$output/Paper 1/exhibit_3.2_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
 	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
 	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.2 data") 
+	title( "Exhibit 3.2 data") 
 
 eststo clear
 
@@ -315,11 +311,11 @@ foreach i in 1 2 3 4 6 5 7 {
 }
 
 
-esttab using "$output/Paper 1/exhibit_4.3_data.rtf", ///
+esttab using "$output/Paper 1/exhibit_3.3_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
 	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
 	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.3 data") 
+	title( "Exhibit 3.3 data") 
 
 eststo clear
 	
@@ -331,11 +327,11 @@ foreach i in 1 2 3 4 6 5 7 {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_4.4_data.rtf", ///
+esttab using "$output/Paper 1/exhibit_3.4_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
 	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
 	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.4 data") 
+	title( "Exhibit 3.4 data") 
 
 eststo clear
 
@@ -347,11 +343,11 @@ foreach i in 1 2 3 4 6 5 7 {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_4.5_data.rtf", ///
+esttab using "$output/Paper 1/exhibit_3.5_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
 	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
 	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.5 data") 
+	title( "Exhibit 3.5 data") 
 	
 eststo clear
 
@@ -363,11 +359,122 @@ foreach i in 1 2 3 4 6 5 7 {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_4.6_data.rtf", ///
+esttab using "$output/Paper 1/exhibit_3.6_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
 	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
 	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 4.6 data")
+	title( "Exhibit 3.6 data")
 
 eststo clear
+
+*------------------------------------------------------------------------------*
+* Exhibit 4 & 5
+
+* Generate poor variable 
+recode income 0=1 1/2=0, gen (poor)
+
+eststo: logistic conf_getafford poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
+**government listens to opinions (q53) is strongest predictor of confidence OR 9.6, covid managment OR 1.6 inconsistent up the likert
+
+margins country2, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
+marginsplot
+graph export "$output/Paper 1/exhib_5_1.pdf", replace
+
+margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
+marginsplot
+graph export "$output/Paper 1/exhib_5_1_v2.pdf", replace
+
+margins country2, at(q53=0 q53=1 q53=2 q53=3) 	
+marginsplot 
+graph export "$output/Paper 1/exhib5_2.pdf", replace
+
+margins , at(q53=0 q53=1 q53=2 q53=3) 	
+marginsplot 
+graph export "$output/Paper 1/exhib5_2_v2.pdf", replace
 	
+margins country2, at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
+marginsplot 
+graph export "$output/Paper 1/exhib5_3.pdf", replace
+
+margins , at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
+marginsplot 
+graph export "$output/Paper 1/exhib5_3_v2.pdf", replace
+
+eststo: logistic system_outlook_getbet poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
+**qual_public big determinant (excellent OR 5.6, then opinion 2.9 then covid managment 2.5
+
+margins country2, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
+marginsplot 
+graph export "$output/Paper 1/exhib5_4.pdf", replace
+
+margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
+marginsplot
+graph export "$output/Paper 1/exhib5_4 v2.pdf", replace
+
+margins country2, at(q53=0 q53=1 q53=2 q53=3) 	
+marginsplot 
+graph export "$output/Paper 1/exhib5_5.pdf", replace
+
+margins , at(q53=0 q53=1 q53=2 q53=3) 	
+marginsplot 	
+graph export "$output/Paper 1/exhib5_5_v2.pdf", replace
+
+margins country2, at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
+marginsplot 
+graph export "$output/Paper 1/exhib5_6.pdf", replace
+
+margins , at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
+marginsplot 
+graph export "$output/Paper 1/exhib5_6_v2.pdf", replace
+
+eststo: logistic system_reform_minor poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
+**qual_public important (excellent OR 4.1)
+ 
+margins country2, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
+marginsplot 
+graph export "$output/Paper 1/exhib5_7.pdf", replace
+
+
+margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
+marginsplot
+graph export "$output/Paper 1/exhib5_7 v2.pdf", replace
+
+
+margins country2, at(q53=0 q53=1 q53=2 q53=3) 	
+marginsplot 
+graph export "$output/Paper 1/exhib5_8.pdf", replace
+
+margins , at(q53=0 q53=1 q53=2 q53=3) 	
+marginsplot 	
+graph export "$output/Paper 1/exhib5_8 v2.pdf", replace
+
+margins country2, at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
+marginsplot 
+graph export "$output/Paper 1/exhib5_9.pdf", replace
+
+margins , at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
+marginsplot 
+graph export "$output/Paper 1/exhib5_9 v2.pdf", replace
+
+
+esttab using "$output/Paper 1/exhibit_4.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform ///
+	rename(poor "Poor" under30 "Under 30 years" edu_secon "Secondary or higher education" ///
+	urban "Urban" health_vge "Self-rated health (vge)" ///
+	health_chronic "Chronic" gender2 "Gender" unmet_need "Unmet need for care" ///
+	1.last_qual "Last visit - Fair" 2.last_qual "Last visit - Good" ///
+	3.last_qual "Last visit - Very good" 4.last_qual "Last visit - Excellent" ///
+	1.qual_public "Public system - Fair" 2.qual_public "Public system - Good" ///
+	3.qual_public "Public system - Very good" 4.qual_public "Public system - Excellent" ///
+	1.qual_private "Private system - Fair" 2.qual_private "Private system - Good" ///
+	3.qual_private "Private system - Very good" 4.qual_private "Private system - Excellent" ///
+	1.covid_manage "COVID management - Fair" 2.covid_manage "COVID management - Good" ///
+	3.covid_manage "COVID management - Very good" 4.covid_manage "COVID management - Excellent" ///
+	1.q53 "Gov opinion - Not too confident" 2.q53 "Gov opinion - Somewhat confident" ///
+	3.q53 "Gov opinion - Very confident" 2.country2 "Kenya" ///
+	3.country2 "South Africa" 4.country2 "Peru" 5.country2 "Colombia" ///
+	6.country2 "Uruguay" 7.country2 "Lao PDR") mtitles("Confidence get and afford care" ///
+	"System outlook getting better" "System works well, only minor changes needed") ///
+	title("Exhibit data")
+
+eststo clear
