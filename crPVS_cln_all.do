@@ -19,13 +19,24 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 clear all
 set more off 
 
-******************* ETHIOPIA, KENYA & SOUTH AFRICA (interim) *******************
+*********************** ETHIOPIA, KENYA & SOUTH AFRICA ***********************
+
+* NOTE: Ipsos has been sharing combined data in different ways. These are interim 
+*		work-arounds to obtain complete data until we receive final data
 
 * Import raw data 
-use "$data_mc/01 raw data/HARVARD(ET_Main,Ke_Main,Ke_F2F,ET_F2F,SA)_17.01.23.dta", clear
+use "$data_mc/01 raw data/HARVARD(ET_Main,Ke_Main,Ke_F2F,ET_F2F,SA)_17.01.23.dta", clear 
 
 merge 1:1 ECS_ID Country using "$data_mc/01 raw data/PVS_ET and KE weighted_22.12.22.dta", keepusing(PSU_ID weight weight_educ)
 drop _merge
+
+ren ECS_ID Respondent_ID
+
+append using "$data/South Africa/01 raw data/PVS_South Africa Main Data_270123.dta"
+sort Respondent_ID
+by Respondent_ID:  gen dup = cond(_N==1,0,_n)
+drop if dup == 2
+drop dup ECS_ID
 
 *------------------------------------------------------------------------------*
 
@@ -326,7 +337,7 @@ ren q43_4 q43_other
 ren q66 q64
 ren q67 q65
 ren time_new time
-ren ecs_id respondent_id
+* ren ecs_id respondent_id
 ren interviewerid_recoded interviewer_id
 * Check ID variable and interviewer ID variable in other data 
 * Q37_B not currently in these data 
