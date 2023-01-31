@@ -1141,6 +1141,18 @@ ipacheckspecify using "${inputfile}",			///
 	sheetreplace
 	
 *	loc childvars "`r(childvarlist)'"
+*/
+*============================= Other Specify ===============================* 
+ 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+
+gl specifyrecode_inputs	"$data_mc/03 test output/Input/specifyrecode_inputs.xlsm"				
+gl id 			"respondent_id"	
+
+ipacheckspecifyrecode using "${specifyrecode_inputs}",	///
+	sheet(other_specify_recode)							///	
+	id(${id})	
 
 *========================= Summarizing All Missing ============================* 
 
