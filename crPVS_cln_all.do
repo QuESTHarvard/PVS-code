@@ -1152,7 +1152,7 @@ ipacheckspecify using "${inputfile}",			///
 	sheetreplace
 	
 *	loc childvars "`r(childvarlist)'"
-*/
+
 *============================= Other Specify ===============================* 
  
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet

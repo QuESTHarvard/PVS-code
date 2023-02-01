@@ -57,15 +57,15 @@ lab val covid_vax_intent yes_no_doses
 gen region = q5
 lab val region labels7
 
-* patient_activiation
-gen patient_activation = 1 if q16 == 3 & q17 == 3
-recode patient_activation (. = 1) if q16 == 3 & q17 == .r | q16 == .r & q17 == 3 
-recode patient_activation (. = 0) if q16 < 3 | q17 < 3 
-recode patient_activation (. = .r) if q16 == .r & q17 == .r
+* patient activiation
+gen activation = 1 if q16 == 3 & q17 == 3
+recode activation (. = 1) if q16 == 3 & q17 == .r | q16 == .r & q17 == 3 
+recode activation (. = 0) if q16 < 3 | q17 < 3 
+recode activation (. = .r) if q16 == .r & q17 == .r
 lab def pa 0 "Not activated" ///
 			1 "Activated (Very confident on Q16 and Q17)" ///
 			.r "Refused", replace
-lab val patient_activation pa
+lab val activation pa
 
 * usual_reason
 recode q21 (2 = 1 "Convenience (short distance)") /// 
@@ -316,20 +316,20 @@ recode usual_type_lvl (.a = 1) if q19_q20a_la == 1 | q19_q20a_la == 3 | q19_q20b
 * NOTE: Maybe add an other for Laos? also for last visit level? But we will see with other, specify data
 
 		   
-* usual_type_own_lvl
-gen usual_type_own_lvl = . 
-recode usual_type_own_lvl (. = 0) if usual_type_own == 0 & usual_type_lvl == 0
-recode usual_type_own_lvl (. = 1) if usual_type_own == 0 & usual_type_lvl == 1
-recode usual_type_own_lvl (. = 2) if usual_type_own == 1 & usual_type_lvl == 0
-recode usual_type_own_lvl (. = 3) if usual_type_own == 1 & usual_type_lvl == 1
-recode usual_type_own_lvl (. = 4) if usual_type_own == 2 & usual_type_lvl == 0
-recode usual_type_own_lvl (. = 5) if usual_type_own == 2 & usual_type_lvl == 1
-recode usual_type_own_lvl (. = .a) if usual_type_own == .a | usual_type_lvl == .a
-recode usual_type_own_lvl (. = .r) if usual_type_own == .r | usual_type_lvl == .r
+* usual_type - ownership and level 
+gen usual_type = . 
+recode usual_type (. = 0) if usual_type_own == 0 & usual_type_lvl == 0
+recode usual_type (. = 1) if usual_type_own == 0 & usual_type_lvl == 1
+recode usual_type (. = 2) if usual_type_own == 1 & usual_type_lvl == 0
+recode usual_type (. = 3) if usual_type_own == 1 & usual_type_lvl == 1
+recode usual_type (. = 4) if usual_type_own == 2 & usual_type_lvl == 0
+recode usual_type (. = 5) if usual_type_own == 2 & usual_type_lvl == 1
+recode usual_type (. = .a) if usual_type_own == .a | usual_type_lvl == .a
+recode usual_type (. = .r) if usual_type_own == .r | usual_type_lvl == .r
 lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Private primary" /// 
 					3 "Private secondary (or higher)" 4 "Other primary" 5 "Other secondary (or higher)" ///
 					.a NA .r Refused, replace
-lab val usual_type_own_lvl fac_own_lvl
+lab val usual_type fac_own_lvl
 
 
 * last_type_own
@@ -352,20 +352,20 @@ recode last_type_lvl (.a = 0) if q44_la == 2 | q44_la == 3
 recode last_type_lvl (.a = 1) if q44_la == 1 
 recode last_type_lvl (. = .a) if q44_la == .a
 
-* last_type_own_lvl
-gen last_type_own_lvl = . 
-recode last_type_own_lvl (. = 0) if last_type_own == 0 & last_type_lvl == 0
-recode last_type_own_lvl (. = 1) if last_type_own == 0 & last_type_lvl == 1
-recode last_type_own_lvl (. = 2) if last_type_own == 1 & last_type_lvl == 0
-recode last_type_own_lvl (. = 3) if last_type_own == 1 & last_type_lvl == 1
-recode last_type_own_lvl (. = 4) if last_type_own == 2 & last_type_lvl == 0
-recode last_type_own_lvl (. = 5) if last_type_own == 2 & last_type_lvl == 1
-recode last_type_own_lvl (. = .a) if last_type_own == .a | last_type_lvl == .a
-recode last_type_own_lvl (. = .r) if last_type_own == .r | last_type_lvl == .r
+* last_type - ownership and level
+gen last_type = . 
+recode last_type (. = 0) if last_type_own == 0 & last_type_lvl == 0
+recode last_type (. = 1) if last_type_own == 0 & last_type_lvl == 1
+recode last_type (. = 2) if last_type_own == 1 & last_type_lvl == 0
+recode last_type (. = 3) if last_type_own == 1 & last_type_lvl == 1
+recode last_type (. = 4) if last_type_own == 2 & last_type_lvl == 0
+recode last_type (. = 5) if last_type_own == 2 & last_type_lvl == 1
+recode last_type (. = .a) if last_type_own == .a | last_type_lvl == .a
+recode last_type (. = .r) if last_type_own == .r | last_type_lvl == .r
 lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Private primary" /// 
 					3 "Private secondary (or higher)" 4 "Other primary" 5 "Other secondary (or higher)" ///
 					.a NA .r Refused, replace
-lab val last_type_own_lvl fac_own_lvl
+lab val last_type fac_own_lvl
 
 * native language
 recode q62 (1 5 8 9 10 11 12 13 14 15 23 24 25 26 27 28 29 30 31 32 ///
@@ -390,13 +390,13 @@ recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest 
 order respondent_serial respondent_id mode country language date time /// 
 	  int_length weight age age_cat gender urban region ///
 	  insured insur_type education health health_mental health_chronic ///
-	  ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation ///
-	  usual_source usual_type_own usual_type_lvl usual_type_own_lvl ///
+	  ever_covid covid_confirmed covid_vax covid_vax_intent activation ///
+	  usual_source usual_type_own usual_type_lvl usual_type ///
 	  usual_reason usual_quality visits visits_cat visits_covid ///
 	  fac_number visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
 	  mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
-	  last_type_own_lvl last_reason last_wait_time ///
+	  last_type last_reason last_wait_time ///
 	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
@@ -432,11 +432,11 @@ lab var	ever_covid "Ever had COVID-19 or coronavirus (Q12)"
 lab var	covid_confirmed	"COVID-19 or coronavirus confirmed by a test (Q13)"
 lab var	covid_vax "COVID-19 vaccination status (Q14)"
 lab var	covid_vax_intent "Intent to receive all recommended COVID vaccine doses if available (Q15)"
-lab var	patient_activation "Patient activation: manage overall health and tell a provider concerns (Q16/Q17)"
+lab var	activation "Patient activation: manage overall health and tell a provider concerns (Q16/Q17)"
 lab var	usual_source "Whether respondent has a usual source of care (Q18)"
 lab var	usual_type_own "Facility ownership for usual source of care (Q19)"
 lab var	usual_type_lvl "Facility level for usual source of care (Q20)"
-lab var	usual_type_own_lvl "Facility ownership and level for usual source of care (Q19/Q20)"
+lab var	usual_type "Facility ownership and level for usual source of care (Q19/Q20)"
 lab var	usual_reason "Main reason for choosing usual source of care facility (Q21)"
 lab var	usual_quality "Overall quality rating of usual source of care (Q22)"
 lab var	visits "Visits (continuous) made in-person to a facility in past 12 months (Q23/Q24)"
@@ -460,7 +460,7 @@ lab var	unmet_need "Needed medical attention but did not get healthcare (Q41)"
 lab var	unmet_reason "Reason for not getting healthcare when needed medical attention (Q42)"
 lab var	last_type_own "Facility ownership for last visit to a healthcare provider (Q43)"
 lab var	last_type_lvl "Facility level for last visit to a healthcare provider (Q44)"
-lab var last_type_own_lvl "Facility ownership and level for last visit to a healthcare provider (Q43/Q44)"
+lab var last_type "Facility ownership and level for last visit to a healthcare provider (Q43/Q44)"
 lab var	last_reason	"Reason for last healthcare visit (Q45)" 
 lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (Q46)"
 lab var	last_visit_time "Length of time spent with the provider during last healthcare visit (Q47)"
