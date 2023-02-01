@@ -77,6 +77,10 @@ recode q23_q24 (997 = 7) (996 = 7) if q24 == 3
 recode q23_q24 (997 = 10) (996 = 10) if q24 == 4
 recode q23_q24 (997 = 996) if q24 == 996
 
+* Generate new var for insurance in ZA since question asked differently
+gen q6_za = q6 if country == 9
+replace q6 = .a if country == 9
+
 *------------------------------------------------------------------------------*
 
 *NK Note: May update and remove this code in the future  
@@ -90,7 +94,7 @@ recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 q63 ///
 * NOTE: currently in data q37_za "don't know" is category 3  
 
 * In raw data, 996 = "refused" 
-recode q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
+recode q1 q2 q3 q4 q5 q6 q6_za q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
 	   q18 q19 q20 q21 q22 q23 q23_q24 q24 q25_a q25_b q26 q27 q28 q28_new q29 q30 /// 
 	   q31 q32 q33 q34 q35 q36 q37_za q38 q39 q40 q41 q42 q43 q44 q45 q46 q47 ///
 	   q46_refused q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
@@ -155,9 +159,8 @@ recode q2 (. = .a) if q1 != .r
 recode q1 (. = .r) if q2 > 1 & q2 <= 8 | q2 == .r 
 * Note: Some missing values in q1 that should be refused 
 
-
 * q7 
-recode q7 (. = .a) if q6 == 2 | q6 == .r 
+recode q7 (. = .a) if q6 == 2 | q6 == .r | q6_za == 2 | q6_za == .r
 
 * q13 
 recode q13 (. = .a) if q12 == 2 | q12 == .r 
@@ -206,9 +209,10 @@ recode q66 q67 (. = .a) if mode == 2
 
 * All Yes/No questions
 
-recode q6 q11 q12 q13 q18 q25_a q26 q29 q41 ///
+recode q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
+	   
 
 recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (3 .d = .d "Don't know") /// 
@@ -319,7 +323,7 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-drop interviewer_gender q2 q3 q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
+drop interviewer_gender q2 q3 q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
 	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
 	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57
@@ -367,6 +371,7 @@ lab var q3 "Q3. Respondent gender"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
+lab var q6_za "Q6. ZA only: Do you have medical aid?"
 lab var q7 "Q7. What type of health insurance do you have?"
 lab var q7_other "Q7_other. Other type of health insurance"
 lab var q8 "Q8. Highest level of education completed by the respondent"
@@ -821,8 +826,8 @@ drop intlength q46 q47 interviewerid_recoded
 * Labeling variables 
 
 lab var country "Country"
-lab var respondent_serial "Respondent Serial"
-lab var respondent_id "Respondent ID"
+lab var respondent_serial "Respondent Serial (unique within country)"
+lab var respondent_id "Respondent ID (unique ID)"
 lab var interviewer_id "Interviewer ID"
 lab var int_length "Interview length (in minutes)"
 lab var interviewer_gender "Interviewer gender"
@@ -946,8 +951,9 @@ append using "$data_mc/02 recoded data/pvs_la.dta"
 * Kenya/Ethiopia variables 
 ren q19 q19_et_ke_za
 lab var q19_et_ke_za "Q19. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
-ren q43 q43_et_ke_za
-lab var q43_et_ke_za "Q43. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
+ren q43 q43_et_ke_za_la
+lab var q43_et_ke_za_la "Q43. ET/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
+* NOTE: Q43 also asked like this in Laos
 ren q56 q56_et_ke_za 
 lab var q56_et_ke_za "Q56. ET/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 
@@ -957,13 +963,14 @@ recode mode (3 = 1)
 lab var mode "Mode of interview (CATI or F2F)"
 
 * Country-specific skip patterns
-recode q19_et_ke_za q43_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
+recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
+recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
 recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country == 5 | country == 3 | country == 9 | country == 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q19_pe q43_pe q56_pe (. = .a) if country != 7
 recode q19_co q43_co (. = .a) if country != 2
-recode q37_za (. = .a) if country != 9
-recode q18a_la q19_q20a_la q18b_la q19_q20b_la q43_la q44_la ///		
+recode q6_za q37_za (. = .a) if country != 9
+recode q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
 		(. = .a) if country != 11
 recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 		
@@ -990,7 +997,11 @@ lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" ///
 					  48 "Upper secondary (5-7 years)" ///
 					  49 "Post-secondary and non-tertiary (13-15 years)" ///
 					  50 "Tertiary (Associates or higher)" .r "Refused", modify
+					  
+*Q44 
+lab def labels25 201 "Hospital" 202 "Health center" 203 "Clinic" .a "NA" .r "Refused", modify
 
+					  
 *Q62
 lab def labels51 21 "Oromiffa" 22 "Amharegna" 23 "Somaligna" 24 "Tigrigna" 25 "Sidamigna" ///
 				 26 "Wolaytigna" 27 "Gurage" 28 "Afar" 29 "Hadiyya" 30 "Gamogna" ///
@@ -1011,7 +1022,6 @@ lab def labels16 .a "NA" .r "Refused", modify
 lab def labels24 .a "NA" .r "Refused", modify
 lab def labels22 .a "NA" .r "Refused", modify
 lab def labels23 .a "NA" .r "Refused", modify
-lab def labels25 .a "NA" .r "Refused", modify
 lab def labels26 .a "NA" .r "Refused", modify
 lab def labels37 .a "NA" .r "Refused", modify
 lab def labels39 .a "NA" .r "Refused", modify
@@ -1051,13 +1061,14 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent.  100k prefix fo
 * svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
 
 * Keep variables relevant for data sharing and analysis  
+* Dropping q37_in for now 
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
 interviewer_language psu_id interviewer_gender ///
-  interviewer_id
+  interviewer_id q37_in respondent_num q1_codes
 
 order q*, sequential
-order respondent_num respondent_serial respondent_id mode country language date time /// 
-q1_codes int_length psu_id_for_svy_cmds weight 
+order respondent_serial respondent_id mode country language date time ///
+	  int_length psu_id_for_svy_cmds weight 
 
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace

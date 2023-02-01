@@ -107,11 +107,15 @@ lab def fn 1 "1 facility (Q26 is yes)" 2 "2-3 facilities (Q27 is 2 or 3)" ///
 		   .d "Don't know"
 lab val fac_number fn 
 
+* visits_home
+gen visits_home = q28_a
+gen visits_tele = q28_b
+
 * visits_total
 egen visits_total = rowtotal(q23_q24 q28_a q28_b)
 
 * value label for all numeric var
-lab val visits visits_covid visits_total na_rf
+lab val visits visits_covid visits_total visits_home visits_tele na_rf
 
 * unmet_reason 
 recode q42 (1 = 1 "Cost (High cost)") ///
@@ -169,17 +173,9 @@ lab val system_reform sr
 
 **** Yes/No Questions ****
 
-* insured, health_chronic, ever_covid, covid_confirmed, usual_source, inpatient
+* health_chronic, ever_covid, covid_confirmed, usual_source, inpatient
 * unmet_need 
 * Yes/No/Refused -Q6 Q11 Q12 Q13 Q18 Q29 Q41 
-
-gen insured = q6 
-recode insured (.a = 0) if q7 == 14
-recode insured (.a = 1) if q7 == 10 | q7 == 11 | q7 == 12 | q7 == 13 | ///
-						q7 == 15 | q7 == 16 | q7 == 17 | q7 == 18 | q7 == 19 | ///
-						q7 == 20 | q7 == 21 | q7 == 22 | q7 == 28 | q7 == 29 | ///
-						q7 == 30
-recode insured (.a = .r) if q7 == .r | q7 == 995 | q7 == .
 
 gen health_chronic = q11
 gen ever_covid = q12
@@ -194,7 +190,7 @@ recode usual_source (.a = 0) if q18a_la == 0 | q18a_la == 1 & q18b_la == 0
 
 gen inpatient = q29 
 gen unmet_need = q41 
-lab val insured health_chronic ever_covid covid_confirmed usual_source ///
+lab val health_chronic ever_covid covid_confirmed usual_source ///
 		inpatient unmet_need yes_no	
 * blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
 * blood_chol care_mental 
@@ -206,6 +202,7 @@ gen eyes_exam = q33
 gen teeth_exam = q34
 gen blood_sugar = q35 
 gen blood_chol = q36
+gen hiv_test = q37_za
 gen care_mental = q38 
 gen mistake = q39
 gen discrim = q40
@@ -268,6 +265,16 @@ ren (derq51 derq52 derq53) (conf_sick conf_afford conf_opinion)
 * urban: type of region respondent lives in 
 recode q4 (1 2 3 6 7 9 10 12 13 18 20 = 1 "Urban") (4 8 11 14 19 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
+		  
+gen insured = q6 
+recode insured (.a = 0) if q7 == 14
+recode insured (.a = 1) if country == 9 | country == 11
+recode insured (.a = 1) if q7 == 10 | q7 == 11 | q7 == 12 | q7 == 13 | ///
+						q7 == 15 | q7 == 16 | q7 == 17 | q7 == 18 | q7 == 19 | ///
+						q7 == 20 | q7 == 21 | q7 == 22 | q7 == 28 
+recode insured (.a = .r) if q7 == .r | q7 == 995 | q7 == .  
+lab val insured yes_no
+
 
 * insur_type 
 * NOTE: check other, specify later
@@ -275,14 +282,13 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 = 1 "Urban") (4 8 11 14 19 = 0 "Rural") //
 recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 = 0 Public) (2 4 5 6 7 8 9 28 13 21 30 = 1 Private) /// 
 		  (995 = 3 Other) ///
 		  (.r = .r "Refused") (14 .a = .a NA), gen(insur_type)
- 
 
+ 
 * education 
 recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 = 0 "None") /// 
 		  (3 8 14 15 27 20 34 46 = 1 "Primary") (4 9 16 28 21 35 47 48 = 2 "Secondary") /// 
 	      (5 10 11 17 29 30 31 22 23 24 36 37 38 49 50 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
-
 
 * usual_type_own
 		  
@@ -300,12 +306,13 @@ recode usual_type_own (.a = 2) if q19_uy == 5 | q19_uy == 995 | q19_q20a_la == 9
 recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r | ///
 								   q19_q20a_la == .r | q19_q20b_la == .r 
 
-* NOTE: Check missing data for Laos 								   
 								   
 * usual_type_lvl 
 
-recode q20 (1 2 3 6 7 8 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
-		   (4 5 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
+recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 ///
+			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
+		   (4 5 8 9 13 19 21 29 30 34 35 37 81 82 86 87 41 42 44 46 49 93 97 ///
+		   101 103 105 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if q19_q20a_la == 2 | q19_q20a_la == 4 | q19_q20a_la == 6 | ///
@@ -333,24 +340,22 @@ lab val usual_type fac_own_lvl
 
 
 * last_type_own
-recode q43_et_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
+recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
-recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1  | q43_la == 1
-recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 | q43_la == 2 | q43_la == 3
+recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1  
+recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 
 recode last_type_own (.a = 2) if q43_uy == 5 | q43_uy == 995 
-recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r | q43_la == .r
-
-* NOTE: Check missing for Laos 
+recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r 
 
 
 * last_type_lvl 
-recode q44 (1 2 6 7 11 23 12 14 15 17 18 20 80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
-		   (3 4 5 8 9 13 19 21 81 82 86 87 41 42 44 46 49 93 97 101 103 105 = 1 "Secondary (or higher)") ///
+recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 ///
+			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 202 203 = 0 "Primary") /// 
+		   (4 5 8 9 13 19 21 29 30 34 35 37 81 82 86 87 41 42 44 46 49 93 97 ///
+		   101 103 105 201 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
-recode last_type_lvl (.a = 0) if q44_la == 2 | q44_la == 3
-recode last_type_lvl (.a = 1) if q44_la == 1 
-recode last_type_lvl (. = .a) if q44_la == .a
+
 
 * last_type - ownership and level
 gen last_type = . 
@@ -388,13 +393,13 @@ recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest 
 **** Order Variables ****
 		   
 order respondent_serial respondent_id mode country language date time /// 
-	  int_length weight age age_cat gender urban region ///
+	  int_length psu_id_for_svy_cmds weight age age_cat gender urban region ///
 	  insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
 	  usual_reason usual_quality visits visits_cat visits_covid ///
-	  fac_number visits_total inpatient blood_pressure mammogram ///
-	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
+	  fac_number visits_home visits_tele visits_total inpatient blood_pressure mammogram ///
+	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_mental /// 
 	  mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
 	  last_type last_reason last_wait_time ///
 	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
@@ -402,14 +407,14 @@ order respondent_serial respondent_id mode country language date time ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_opinion qual_public qual_private qual_ngo_et_ke_za qual_ss_pe ///
 	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good native_lang income q1 q2 q3 q3a q4 q5 q6 q7 ///
+	  vignette_good native_lang income q1 q2 q3 q3a q4 q5 q6 q6_za q7 ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q15 q16 q17 q18 ///
 	  q18a_la q18b_la ///
 	  q19_et_ke_za q19_co q19_pe q19_uy q19_other q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q38 q39 q40 q41 q42 q42_other q43_et_ke_za q43_co q43_pe q43_uy q43_la q43_other /// 
-	  q44 q44_la ///
+	  q37_za q38 q39 q40 q41 q42 q42_other q43_et_ke_za_la q43_co q43_pe q43_uy q43_other /// 
+	  q44 ///
 	  q44_other q45 q45_other q46_min q46_refused q47_min q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q57 q58 q59 ///
@@ -443,6 +448,8 @@ lab var	visits "Visits (continuous) made in-person to a facility in past 12 mont
 lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (Q23/Q24)"
 lab var	visits_covid "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
 lab var	fac_number "Number of facilities visited during the past 12 months (Q26/Q27)"
+lab var visits_home "Number of home visits (Q28A)"
+lab var visits_tele "Number of virtual or telemedicine visits (Q28B)"
 lab var	visits_total "Total number of healthcare contacts: facility, home, and tele (Q23/Q28A/Q28B)"
 lab var	inpatient "Stayed overnight at a facility in past 12 months (inpatient care) (Q29)"
 lab var	blood_pressure "Blood pressure checked by healthcare provider in past 12 months (Q30)"
@@ -452,7 +459,7 @@ lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (Q33)"
 lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (Q34)"
 lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (Q35)"
 lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (Q36)"		
-*lab var	hiv_test "HIV test conducted by healthcare provider in past 12 months (Q37_A)"
+lab var	hiv_test "HIV test conducted by healthcare provider in past 12 months (Q37_ZA)"
 lab var	care_mental	"Received care for depression, anxiety, or another mental health condition (Q38)"
 lab var	mistake	"A medical mistake was made in treatment or care in the past 12 months (Q39)"	
 lab var	discrim	"You were treated unfairly or discriminated against in the past 12 months (Q40)"	
@@ -474,14 +481,11 @@ lab var	last_decisions "Last visit rating: involved you in decisions about your 
 lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (Q48H)"
 lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q48I)"
 lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (Q48J)"
-*lab var	last_comp_index "System competence composite index (average of X items)"
-*lab var	last_user_index "User experience composite index (average of X items)"
 lab var	last_promote "Net promoter score for facility visited for last visit (Q49)"
 lab var	phc_women "Public primary care system rating for: pregnant women (Q50A)"
 lab var	phc_child "Public primary care system rating for: children (Q50B)"
 lab var	phc_chronic "Public primary care system rating for: chronic conditions (Q50C)"
 lab var	phc_mental "Public primary care system rating for: mental health (Q50D)"
-*lab var	phc_index "Public primary care system composite index"
 lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick (Q51)"
 lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (Q52)"
 lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q53)"
