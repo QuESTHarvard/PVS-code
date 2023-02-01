@@ -326,7 +326,7 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 drop interviewer_gender q2 q3 q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
 	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
-	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57
+	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57 q46 q47
 
 ren rec* *
  
@@ -341,6 +341,7 @@ ren q43_4 q43_other
 ren q66 q64
 ren q67 q65
 ren time_new time
+ren (q46_min q47_min) (q46 q47)
 * ren ecs_id respondent_id
 ren interviewerid_recoded interviewer_id
 * Check ID variable and interviewer ID variable in other data 
@@ -352,7 +353,7 @@ order q*, after(interviewer_gender)
 
 
 * Drop other unecessary variables 
-drop intlength q46 q47 
+drop intlength 
 * Note: mode2 seems to be missing for Kenya data, but there is mode var 
 
 
@@ -423,9 +424,9 @@ lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 lab var q46_refused "Q46. Refused"
-lab var q46_min "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
+lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var q47_refused "Q47. Refused"
-lab var q47_min "Q47. In minutes: Approximately how much time did the provider spend with you?"
+lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
 lab var q48_c "Q48_C. How would you rate the equipment and supplies that the provider had?"
@@ -791,6 +792,7 @@ drop interviewer_gender q2 q3 q3a q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 ///
 	 q30 q31 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q45 q48_a q48_b q48_c ///
 	 q48_d q48_f q48_g q48_h q48_i q54 q55 q56_pe q56_uy q59 q60 q61 q48_e /// 
 	 q48_j q50_a q50_b q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57 ///
+	 q46 q47
 	 
 
 ren rec* *
@@ -813,13 +815,14 @@ ren q66 q64
 ren q67 q65
 ren time_new time
 ren (q46_996 q47_996) (q46_refused q47_refused)
+ren (q46_min q47_min) (q46 q47)
 
 * Reorder variables
 order q*, sequential
 order q*, after(interviewer_id)
 
 * Drop other unecessary variables 
-drop intlength q46 q47 interviewerid_recoded
+drop intlength interviewerid_recoded
 
 *------------------------------------------------------------------------------*
 
@@ -895,8 +898,8 @@ lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
-lab var q46_min "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
-lab var q47_min "Q47. In minutes: Approximately how much time did the provider spend with you?"
+lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
+lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q46_refused "Q46. Refused"
 lab var q47_refused "Q47. Refused"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
@@ -1043,14 +1046,13 @@ lab var weight "Final weight (based on gender, age, region, education) (no edu i
 
 *** Code for survey set ***
 gen respondent_num = _n 
-lab var respondent_num "Unique respondent number"
 sort mode psu_id respondent_num
 gen short_id = _n if mode == 1
 replace psu_id = subinstr(psu_id, " ", "", .) if mode == 1
 encode psu_id, gen(psu_id_numeric) // this makes a numeric version of psu_id; an integer with a value label 
 gen long psu_id_for_svy_cmds = cond(mode==1, 1e5+short_id, 2e5+psu_id_numeric) 
 drop short_id psu_id_numeric
-label variable psu_id_for_svy_cmds "PSU ID for every respondent.  100k prefix for CATI and 200k prefix for F2F"
+label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for CATI and 200 prefix for F2F)"
  
 * This will have values 100001 up to 102006 for the Kenya data CATI folks and (if there were 20 PSUs) 200002 to 200021 for F2F  (200001 is skipped because Stata thinks of psu_id_numeric == 1 as being the CATI respondents.
 * Each person will have their own PSU ID for CATI and each sampled cluster will have a unique ID for the F2F.
@@ -1061,13 +1063,13 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent.  100k prefix fo
 * svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
 
 * Keep variables relevant for data sharing and analysis  
-* Dropping q37_in for now 
+* Dropping q37_in and time for now 
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
-interviewer_language psu_id interviewer_gender ///
-  interviewer_id q37_in respondent_num q1_codes
+interviewer_language psu_id interviewer_gender interviewer_id q37_in ///
+time respondent_num q1_codes
 
 order q*, sequential
-order respondent_serial respondent_id mode country language date time ///
+order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 
 
 

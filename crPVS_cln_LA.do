@@ -76,8 +76,8 @@ ren ue2444 q44
 ren OTH_factype3 q44_other 
 ren ue2445 q45
 ren ue24451 q45_other
-ren ue24462 q46_min
-ren ue24471 q47_min
+ren ue24462 q46
+ren ue24471 q47
 ren ue2448 q48_a
 ren ue2449 q48_b
 ren ue2450 q48_c
@@ -142,6 +142,7 @@ gen end_min = (hh(timestamp_finalsec)*3600 + mm(timestamp_finalsec)*60 + ss(time
 gen int_length = (end_min - start_min)*60
 replace int_length = . if int_length < 0 | int_length > 90
 
+ren timestamp_start date
 
 *------------------------------------------------------------------------------*
 
@@ -161,7 +162,7 @@ ohsa4263b6 ohsa4263b7 ohsa4263b8 ohsa4263b9 ohsa4263b99 ohsa4263b_oth ig4476 ///
 ig4477 ig4478 ig4479 ig4480 ig4481 ig4481A ig4481B rand_name ohsa4372_m ///
 ohsa4373_m ohsa4373_f ohsa4372_f ig4482 ig4483 outcome1 outcome2 instanceID ///
 instanceName rand_22util KEY FormVersion duplicated_id duplicated_id_2 start ///
-ue2446 ue2447 end timestamp_start timestamp_consent timestamp_consent timestamp_Sec21 /// 
+ue2446 ue2447 end timestamp_consent timestamp_consent timestamp_Sec21 /// 
 timestamp_Sec22 timestamp_Sec2324 timestamp_Sec3132 timestamp_Sec41 ///
 timestamp_Sec4142 timestamp_Sec4344 timestamp_finalsec time_beforestart ///
 time_consent time_Part1 time_Sec21 time_Sec22 time_Sec2324 time_Sec3132 ///
@@ -246,11 +247,11 @@ recode q42 (. = .a) if q41 == 2 | q41==.r
 * EC note: changed q42 to .a if q41 is .r
 
 * q43-49 na's
-recode q43 q44 q45 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43 q44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == .r 
-recode q46_min (. = .r) if q46_refused==1 
-recode q47_min (. = .r) if q47_refused==1
-* EC note: changed q46_min and q47_min to .r if q46_refused and q47_refused were positive, respectively
+recode q46 (. = .r) if q46_refused==1 
+recode q47 (. = .r) if q47_refused==1
+* EC note: changed q46 and q47 to .r if q46_refused and q47_refused were positive, respectively
 
 *Q43/Q44
 recode q43 (. = .a) if q44 != 1
@@ -444,12 +445,12 @@ ren rec* *
 *------------------------------------------------------------------------------*
 
 * Check for implausible values
-* q23 q25_b q27 q28_a q28_b q46_min q47_min
+* q23 q25_b q27 q28_a q28_b q46 q47
 
 list q1 q2 if q2 == 0 | q1 < 18
 
 
- foreach var in q23 q25_b q27 q28_a q28_b q46_min q47_min {
+ foreach var in q23 q25_b q27 q28_a q28_b q46 q47 {
 		extremes `var', high 
 	 }
 	
@@ -500,10 +501,10 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18a_la "Q18a. LA only: Is there one place you usually...? (incl pharm, traditional)"
-lab var q19_q20a_la "Q19a. LA only: What type of place is this?"
+lab var q19_q20a_la "Q19a. LA only: What type of healthcare facility is this?"
 lab var q19_q20a_other "Q19a. LA only: Other"
-lab var q18b_la "Q18b. LA only: Is there one hospital, healht center, or clinic you usually...?"
-lab var q19_q20b_la "Q19b. LA only: What type of place is this?"
+lab var q18b_la "Q18b. LA only: Is there one hospital, health center, or clinic you usually...?"
+lab var q19_q20b_la "Q19b. LA only: What type of healthcare facility is this?"
 lab var q19_q20b_other "Q19b. LA only: Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
@@ -539,10 +540,10 @@ lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 *lab var q46_refused "Q46. Refused"
 *lab var q46 "Q46. Approximately how long did you wait before seeing the provider?"
-lab var q46_min "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
+lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 *lab var q47_refused "Q47. Refused"
 *lab var q47 "Q47. Approximately how much time did the provider spend with you?"
-lab var q47_min "Q47. In minutes: Approximately how much time did the provider spend with you?"
+lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
 lab var q48_c "Q48_C. How would you rate the equipment and supplies that the provider had?"
@@ -575,7 +576,7 @@ lab var q63 "Q63. Total monthly household income"
 *lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 *lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
-order respondent_id respondent_serial language interviewer_id weight q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43 q44 q44_other q45 q45_other q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q63 
+order respondent_id respondent_serial language interviewer_id weight q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43 q44 q44_other q45 q45_other q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q63 
 
 save "$data_mc/02 recoded data/pvs_la.dta", replace
 save "$data/Laos/02 recoded data/pvs_harmonized_la.dta", replace
@@ -591,7 +592,7 @@ save "$data/Laos/02 recoded data/pvs_harmonized_la.dta", replace
 * across the numeric variables(only questions) in the dataset by country
 
 global all_dk 	"q23 q25_a q25_b q27 q28_a q28_b q30 q31 q32 q33 q34 q35 q36 q38 q50_a q50_b q50_c q50_d q63"
-global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q63"
+global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q63"
 gl dq_output	"$output/dq_output_la.xlsx"
    
 * Count number of NA, Don't know, and refused across the row 
@@ -630,7 +631,7 @@ export exc country na_perc dk_perc rf_perc miss_perc using "$dq_output", sh(miss
 restore 
 
 * EC note: reviewing which variables have unexplained missings:
-foreach var in q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la  q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46_min q47_min q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q63 {
+foreach var in q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la  q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q63 {
 	egen `var'_missing =  total(`var'==.)
 }
 

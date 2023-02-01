@@ -135,20 +135,20 @@ lab def lr 1 "Urgent or new problem" 2 "Follow-up for chronic disease" ///
 lab val last_reason lr
 
 *last_wait_time
-gen last_wait_time = 0 if q46_min <= 15
-recode last_wait_time (. = 1) if q46_min >= 15 & q46_min < 60
-recode last_wait_time (. = 2) if q46_min >= 60 & q46_min < .
-recode last_wait_time (. = .a) if q46_min == .a
-recode last_wait_time (. = .r) if q46_min == .r
+gen last_wait_time = 0 if q46 <= 15
+recode last_wait_time (. = 1) if q46 >= 15 & q46 < 60
+recode last_wait_time (. = 2) if q46 >= 60 & q46 < .
+recode last_wait_time (. = .a) if q46 == .a
+recode last_wait_time (. = .r) if q46 == .r
 lab def lwt 0 "Short (15 minutes)" 1 "Moderate (< 1 hour)" 2 "Long (> 1 hour)" ///
 			.r "Refused" .a "NA"
 lab val last_wait_time lwt
 
 *last_visit_time
-gen last_visit_time = 0 if q47_min <= 15
-recode last_visit_time (. = 1) if q47_min > 15 & q47_min < .
-recode last_visit_time (. = .a) if q47_min == .a
-recode last_visit_time (. = .r) if q47_min == .r
+gen last_visit_time = 0 if q47 <= 15
+recode last_visit_time (. = 1) if q47 > 15 & q47 < .
+recode last_visit_time (. = .a) if q47 == .a
+recode last_visit_time (. = .r) if q47 == .r
 lab def lvt 0 "<= 15 minutes" 1 "> 15 minutes " ///
 			.r "Refused" .a "NA"
 lab val last_visit_time lvt
@@ -207,7 +207,7 @@ gen care_mental = q38
 gen mistake = q39
 gen discrim = q40
 lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
-	blood_sugar blood_chol care_mental mistake discrim yes_no_dk
+	blood_sugar blood_chol hiv_test care_mental mistake discrim yes_no_dk
 	
 **** Excellent to Poor scales *****	   
 
@@ -392,7 +392,7 @@ recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest 
 		   
 **** Order Variables ****
 		   
-order respondent_serial respondent_id mode country language date time /// 
+order respondent_serial respondent_id mode country language date /// 
 	  int_length psu_id_for_svy_cmds weight age age_cat gender urban region ///
 	  insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent activation ///
@@ -415,7 +415,7 @@ order respondent_serial respondent_id mode country language date time ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 ///
 	  q37_za q38 q39 q40 q41 q42 q42_other q43_et_ke_za_la q43_co q43_pe q43_uy q43_other /// 
 	  q44 ///
-	  q44_other q45 q45_other q46_min q46_refused q47_min q47_refused ///
+	  q44_other q45 q45_other q46 q46_refused q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q57 q58 q59 ///
 	  q60 q61 q62 q62_other q63 q64 q65 
@@ -448,7 +448,7 @@ lab var	visits "Visits (continuous) made in-person to a facility in past 12 mont
 lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (Q23/Q24)"
 lab var	visits_covid "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
 lab var	fac_number "Number of facilities visited during the past 12 months (Q26/Q27)"
-lab var visits_home "Number of home visits (Q28A)"
+lab var visits_home "Number of visits made by healthcare provider at home (Q28A)"
 lab var visits_tele "Number of virtual or telemedicine visits (Q28B)"
 lab var	visits_total "Total number of healthcare contacts: facility, home, and tele (Q23/Q28A/Q28B)"
 lab var	inpatient "Stayed overnight at a facility in past 12 months (inpatient care) (Q29)"
@@ -459,7 +459,7 @@ lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (Q33)"
 lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (Q34)"
 lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (Q35)"
 lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (Q36)"		
-lab var	hiv_test "HIV test conducted by healthcare provider in past 12 months (Q37_ZA)"
+lab var	hiv_test "ZA only: HIV test conducted by healthcare provider in past 12 months (Q37_ZA)"
 lab var	care_mental	"Received care for depression, anxiety, or another mental health condition (Q38)"
 lab var	mistake	"A medical mistake was made in treatment or care in the past 12 months (Q39)"	
 lab var	discrim	"You were treated unfairly or discriminated against in the past 12 months (Q40)"	
@@ -493,7 +493,7 @@ lab var	qual_public	"Overall quality rating of gov or public healthcare system i
 lab var	qual_private "Overall quality rating of private healthcare system in country (Q55)"
 lab var qual_ss_pe "PE only: Overall quality rating of social security system in country (Q56)"
 lab var qual_mut_uy "UY only: Overall quality rating of mutual healthcare system in country (Q56)"
-lab var qual_ngo "KE/ET only: Overall quality rating of NGO healthcare system in country (Q56)"  
+lab var qual_ngo_et_ke_za "KE/ET/ZA only: Overall quality rating of NGO healthcare system in country (Q56)"  
 lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q57)"
 lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q58)" 
 lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q59)" 
