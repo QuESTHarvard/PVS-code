@@ -1,20 +1,22 @@
 * People's Voice Survey data cleaning for Laos
-* Last updated: January 15, 2023
-* N. Kapoor 
+* Last updated: January 31, 2023
+* N. Kapoor, E. Clarke-Deelder & A. Aryal 
 
 ************************************* Laos ************************************
 
 * Import data 
-use "$data/Laos/02 recoded data/pvs_clean_weighted_v2.dta", clear
+use "$data/Laos/02 recoded data/pvs_clean_weighted_la.dta", clear
+* use "J:\HEHS\HE\QuEST Laos\Data\Lao PVS\Clean data\Harmonized version\pvs_clean_weighted_v2.dta"
+* global output "J:\HEHS\HE\QuEST Laos\PVS analysis\Output"
 
-* Note: For other data, .a means NA, .r means refused, .d is don't know, . is missing 
+* Note: .a means NA, .r means refused, .d is don't know, . is missing 
 
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 
 
 ren study_id respondent_serial
-* NOTE: No way to really know if this is unique or not once merged (could be overlap)
-* NOTE to self: Consider creating new serial per country data 
+* NOTE: will create unique study ID upon merge 
+
 encode cal_int, gen(interviewerid)
 ren lang language
 
@@ -47,17 +49,13 @@ ren usc2121 q21
 ren usc2121_oth q21_other
 ren usc2122 q22
 ren up22231 q23
-recode q23 (. = 0) if up2223 == 1
-recode q23 (. = .r) if up2223 == 3
 ren up2224 q24
 ren up2225a q25_a
 ren up2225b1 q25_b
-recode q25_b (. = .r) if up2225b == 99
 ren up2226 q26
 ren up22271 q27
 ren up2228A q28_a
 ren up22281 q28_b
-recode q28_b (. = 0) if up2228 == 1
 ren up2229 q29
 ren sc2330 q30
 ren sc2331 q31
@@ -73,8 +71,8 @@ ren sc2441 q41
 ren sc2442 q42
 ren sc2442_1 q42_other 
 
-ren ue2443 q43_la
-ren ue2444 q44_la 
+ren ue2443 q43
+ren ue2444 q44
 ren OTH_factype3 q44_other 
 ren ue2445 q45
 ren ue24451 q45_other
@@ -126,32 +124,17 @@ ren ig4474_oth q62_other
 ren ig4475 q63
 ren wgt weight_educ
 
-* Q. Why is education and rural asked twice and in the data twice? Which is correct?
-/*Amit: We asked education, urban/rural and language twice once at the beginning
-and once at the very end. We wanted to measure if people were alert at the
-end of the survey and we found that they were. We used the bd1104 (urban/rural),
-bd1108 (education), bd1102 (ethnicity/language).<*/
-
-* NK Note: Education, urban/rural, and native language were asked twice.
-*		bd1104A is urban/rural, bd1108 is education, bd1102b is native language?
-
-* Q. Q56 appears to be missing. Was that question asked? 
-/*Amit: Yes, it was asked. Look up ue2456. */
-
-* NK Note: Q56 not in current data? Different numbering, see data dictionary or tool.  
+* NOTE: Education, urban/rural, and native language were asked twice to measure 
+*		if people were alert 
+*		bd1104A is urban/rural, bd1108 is education, bd1102b is native language
 
 
 *------------------------------------------------------------------------------*
 
 * Interview length
 
-* Q. Which variable is interview length? A lot of different time variables.
-/*Amit: We measured interview lengths for each section. For the full interview,
-you can measure difference between timestamp_start and timestamp_finalsec. You
-will see outliers because we allowed people to save their files when
-someone asked to call back later before completing the interview or when
-the line was disconnected. In such cases, they were requested to continue to 
-try to contact the individual until a total of 5 attempts were completed.*/
+* Interview length is  difference between timestamp_start and timestamp_finalsec
+* Outliers are because of call backs  
 
 format timestamp_start %tcHH:MM:SS
 gen start_min = (hh(timestamp_start)*3600 + mm(timestamp_start)*60 + ss(timestamp_start)) / 3600
@@ -159,16 +142,10 @@ gen end_min = (hh(timestamp_finalsec)*3600 + mm(timestamp_finalsec)*60 + ss(time
 gen int_length = (end_min - start_min)*60
 replace int_length = . if int_length < 0 | int_length > 90
 
-* NK Note: Is there a better way to do this? 
 
 *------------------------------------------------------------------------------*
 
 * Drop unused variables 
-
-* Q. Why one missing value for consent? Should that respondent be dropped?
-/*Amit: Thanks for catching it. It looks like study ID 10089 was mislabeled 
-as being completed when it was someone that was screened out. There are 
-no responses filled in. We will correct this on our end as well. */
 
 drop if consent == .
 
@@ -191,9 +168,9 @@ time_consent time_Part1 time_Sec21 time_Sec22 time_Sec2324 time_Sec3132 ///
 time_Sec41 time_Sec42 time_Sec4344 time_finalsec time_submission time_total ///
 time_withrespondent time_unexplained visitsyr placesyr telmedyr outreachyr ///
 age_cat malefemale region urbanrural edu_cat urbanrural_ed urbanrural_age ///
-timestamp_Part1 start_min end_min 
+timestamp_Part1 start_min end_min usc2120d
 
-* NOTE to self: need to fix date variable in correct date/time format for merge
+* NOTE: need to fix date variable in correct date/time format for merge
 
 *------------------------------------------------------------------------------*
 
@@ -207,25 +184,13 @@ gen q56 = .a
 
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
-recode q23_q24 (.r = 2.5) if q24 == 1
-recode q23_q24 (.r = 7) if q24 == 2
-recode q23_q24 (.r = 10) if q24 == 3
+recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 1
+recode q23_q24 (.r = 7) (.d = 7) if q24 == 2
+recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
 
 *------------------------------------------------------------------------------*
 
-* Refused values 
-
-recode q7 (99 = .r)
-
-* Q. Refusal and Don't know values appear to be all missing throughout the data 
-*	 Or occasionally 99 or 90 
-*    Is there a standard value for refused and don't know in the raw data? Or is it a category?
-* 	 I may consider starting from the raw data if so. 
-
-/*Amit: Sorry, this is my bad. It was my first time coding in ODK and I 
-thought I could only use 99 once so I used different values. But all the 
-"don't know" or "refuse" values are between 99 to 83. You can disregard
-all values greater than 82. */
+* Refused values :recoded refusal and don't know values from raw data in different file 
 
 *------------------------------------------------------------------------------*
 
@@ -238,88 +203,62 @@ recode q1 (. = .r) if q2 == 2 | q2 == 3 | q2 == 4 | q2 == 5 | q2 == 6 | q2 == 7 
 recode q2 (. = .a) if q1 != .r 
 
 * q13 
-recode q13 (. = .a) if q12 == 2  
+recode q13 (. = .a) if q12 == 2  | q12==.r
 
 * q15
 recode q15 (. = .a) if q14 != 1
 * NOTE: ONLY ASKED TO PEOPLE WHO SAID 0 DOSES 
-* Q: Is that correct? Q15 was only asked to people who said 0 doses?
-* 	 For other countries, we asked if people said 0 or 1 doses. 
-/*Amit: Yes, only asked to people who said zero doses. You can also refer to the 
-column labeled "relevant" in the excel form and it gives you the conditional, 
-if any, for that specific question. The question is asked only when the 
-condition is satisfied, else it is skipped. */
 
 *q19-22
-recode q19_q20a_la q18b_la q19_q20b_la q21 q22 (. = .a) if q18a_la == 2 
+recode q19_q20a_la q18b_la (.=.r) if q18a_la==.r // refused to answer this sequence of questions
+recode q19_q20a_la q18b_la q19_q20b_la q21 q22 (. = .a) if q18a_la == 2 // no usual source of care
 recode q18b_la q19_q20b_la (. = .a) if q19_q20a_la == 1 | q19_q20a_la == 2 | q19_q20a_la == 3 | ///
-									 q19_q20a_la == 4 | q19_q20a_la == 6 | q19_q20a_la == 9
-recode q21 q22 (. = .a) if q18b_la == 2
+									 q19_q20a_la == 4 | q19_q20a_la == 6  // questions about a second usual source of care were only asked if the first usual source of care was a pharmacy, traditional healer, or other
 
-* Q. I thought those who responded pharmacy or traditional healer in q19_q20a were asked 
-*	 about q18b?
-*	If that is correct, I don't think this skip pattern worked for ~16 of the 76 
-*   people who said pharmacy or traditional healer 
-* 	There are ~16 poeple who say private pharmacy or traditional healer but were not asked q18b
-* 	Or is that all refusal? 
+recode q21 q22 q19_q20b_la (. = .a) if q18b_la == 2 // no usual source of care other than pharmacy or traditional healer 
+recode q21 q22 q19_q20b_la (. = .a) if q18a_la==.r | q18b_la == .r // refused to answer about usual source of care, so not eligible for this sequence of questions (EC added this on 26 Jan)
 
-/*Amit: People who answered pharmacy, traditional healer, or OTH to usc2119
-were asked usc2120a. Those with empty usc2120a means that the person either
-refused or did not answer the question.*/
+* NOTE: People who answered pharmacy, traditional healer, or OTH to usc2119
+*		were asked usc2120a. Those with empty usc2120a means that the person either
+*		refused or did not answer the question.*/
 
-
-* Q. It appears a lot to be missing for Q22? Did I miss something in the skip pattern? 
-* Or just refusal? 
-
-/*Amit: Only people that answered with a health facility (clinic, hospital or
-health center) either in usc2119 or answered with affirmative on usc2120a were 
-asked q22. It looks like 167 people refused, which is quite a lot.*/
 
 * NA's for q23-27 
 recode q24 (. = .a) if q23 != .
 recode q25_a (. = .a) if q23 != 1
-recode q25_b (. = .a) if q23 == 0 | q23 == 1 
+recode q25_b (. = .a) if q23 == 0 | q23 == 1
+recode q25_b q26 (. = .a) if q23==.r // refused to answer q23 --> did not answer this sequence of questions
+ 
 * No 0 for q24  
 recode q26 (. = .a) if q23 == 0 | q23 == 1 
 recode q27 (. = .a) if q26 == 1 | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 
+* EC Note: We are missing 11 responses for q23, q24, q25_b, q26, q27, q28b, and q29 because people were randomized not to answer this section. (We meant to turn this off after the pilot, but made a mistake when we first started full data collection)
+
+
 * q31 & q32
-recode q31 (. = .a) if q3 == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
-recode q32 (. = .a) if q3 == 1 | q1 == .r | q2 == .r
+recode q31 (. = .a) if q3 == 1 | q3 == 3 | q3==.r | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
+recode q32 (. = .a) if q3 == 1 | q3 == 3 | q3==.r | q1 == .r | q2 == .r
+* EC Note: changed q31 and q32 to .a if gender is "another gender" or "refused"
 
 * q42
-recode q42 (. = .a) if q41 == 2 
+recode q42 (. = .a) if q41 == 2 | q41==.r
+* EC note: changed q42 to .a if q41 is .r
 
 * q43-49 na's
-recode q43_la q44_la q45 q46_min q47_min q48_a q48_b q48_c q48_d q48_e q48_f /// 
-	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 
+recode q43 q44 q45 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == .r 
+recode q46_min (. = .r) if q46_refused==1 
+recode q47_min (. = .r) if q47_refused==1
+* EC note: changed q46_min and q47_min to .r if q46_refused and q47_refused were positive, respectively
 
 *Q43/Q44
-recode q43_la (. = .a) if q44_la != 1
-
-
-* NOTE: There appears to be a high amount of missing values (> 10%) for a few 
-* questions. I know some missing may be due to refused or don't know. 
-* Q. Why else might this be? 
-
-/* Amit: I can imagine that there are a lot of reasons and may be 
-specific question related. Some may have low response rates because they were 
-difficult to understand for their particular situation. Our interviewers
-also said that some hesitated if they had not used a particular health 
-service or did not have personal experience or did not really
-have an opinion about the topic. Some were skeptical about how the data 
-would be used, which may have led to them refusing to answer 
-specific questions that may put someone or authorities in a difficult 
-situation.*/
-
-* Q50a - Q50c refusal was common in other countries as well 
+recode q43 (. = .a) if q44 != 1
 
 *------------------------------------------------------------------------------*
 
 * Recode value labels:
 * Recode values and value labels so that their values and direction make sense
-* NOTE: Much of this code is borrowed from other data cleaning, which is why you see .d
-
 
 * All Yes/No questions
 
@@ -336,21 +275,12 @@ recode q30 q31 q32 q33 q34 q35 q36 q38 ///
 
 recode q39 q40 /// 
 	   (1 = 1 Yes) (2 = 0 No) ///
-	   (3 = .a "I did not get healthcare in past 12 months") ///
+	   (.a = .a "I did not get healthcare in past 12 months") ///
 	   (.r = .r Refused), ///
 	   pre(rec) label(yes_no_na)
 	   
-* NOTE: High missing for Q39 and Q40? 
-* No "I did not get healthcare in past 12 months" in the data could be the reason
-* But still, more than 10% missing  
-
-
-/*Amit: This came up in our debriefing, too. Interviewers commented that
-some were not sure if a medical error was made and did not feel right to say 
-despite our urging the respondents to tell us what they felt.
-
-Amit: Interestingly, there is no word for discrimination in Lao but we did 
-ask if they felt unfairly treated.*/
+* EC Note: I'm confused by why we see a lot of "I did not get healthcare in past 12 months" for ppl who had healthcare visits. (e.g., if you enter "tab q23 if q39==.a")
+* NK Note: recoded these to refused 
 	   
 * All Excellent to Poor scales
 
@@ -361,7 +291,7 @@ recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q54 q55 q56 q59 q6
 	   
 recode q22  ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
-	   (6 = .a "I did not receive healthcare form this provider in the past 12 months") /// 
+	   (.a = .a "I did not receive healthcare form this provider in the past 12 months") /// 
 	   (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_hlthcare)
 	   
@@ -412,6 +342,7 @@ recode q14 ///
 	pre(rec) label(covid_vacc)
 	
 * NOTE: This was potentially only asked to people with 0 doses - other countries asked for 0 or 1 
+
 recode q15 /// 
 	   (1 = 1 "Yes, I plan to receive all required doses") ///
 	   (2 = 0 "No, don't plan to receive all required doses") ///
@@ -439,27 +370,25 @@ recode q49 ///
 recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
-
+	
 * COUNTRY-SPECIFIC items for append
 * NOTE: We have only received data from Ipsos so far, so the value labels are programmed
 * to include all of countries being fielded by Ipsos 
-* For Laos, for now, I'll recode the values to start after Ipsos countries and then 
+* For Laos, for now, recoded the values to start after Ipsos countries and then 
 * re-label the values on append (see append code at end)
-* Not sure if there is a better way to do this? but this seems to work for now 
 
 * Interviewer ID - Other country data is anonomized interview ID from 1 through 57
 * Added Laos above 100 because India and SA interviewers to be added 
 gen interviewer_id = interviewerid + 100
 
 * Language - available after 5 
-recode language (1 = 15 Lao) (2 = 16 Khmou) (3 = 17 Kmong), pre(rec) label(language)
+recode language (1 = 6 Lao) (2 = 7 Khmou) (3 = 8 Kmong), pre(rec) label(language)
 
 * Q4 values available - after 17
 recode q4 (1 = 18 "City") (2 = 19 "Rural area") (3 = 20 "Suburb"), pre(rec) label(residence)
 
 * Q5 values available after 187
 gen recq5 = q5 + 200
-
 
 * Q7 values available - after 28, other is 995 
 recode q7 (1 = 30 "Additional private insurance") (2 = 29 "Only Public") (99 = .r "Refused"), pre(rec) label(insur)
@@ -470,22 +399,33 @@ recode q7 (1 = 30 "Additional private insurance") (2 = 29 "Only Public") (99 = .
 
 * Q8 values after 44 are available 
 gen recq8 = q8 + 44
+replace recq8 = .r if q8==.r
+* EC note: added the refusals to the recode version
 
 * Q21
 recode q21 (10 = 9) (90 = .r)
 label define fac_choose 9 "Other", modify
 
 * Q42 values appears to be the same as other countries 
+
+* Q44, values go above 100 in ipsos data 
+gen recq44 = q44 + 200
+replace recq44 = 995 if q44== 4
+replace recq44 = .r if q44==.r
+
 	
 * Q62 values after 89 are available
 gen recq62 = q62 + 100 
+replace recq62 = .r if q62==.r
+* EC note: added the refusals to the recode version
 
 * Q63 values after 61 are available 
 gen recq63 = q63 + 100 
+replace recq63 = .r if q63==.r
+* EC note: added the refusals to the recode version
 
-* High amount of missing: Q22, Q39, Q40, q50_c, q50_d
-
-
+* Respondent ID
+gen respondent_id = "LA" + string(respondent_serial)
 
 *------------------------------------------------------------------------------*
 
@@ -494,7 +434,7 @@ gen recq63 = q63 + 100
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
 drop q2 q3 q4 q5 q7 q8 q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 q45 q30 q31 /// 
-	 q32 q33 q34 q35 q36 q38 q39 q40 q9 q10 q22 q48_a q48_b q48_c q48_d ///
+	 q32 q33 q34 q35 q36 q38 q39 q40 q44 q9 q10 q22 q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
 	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14 q15 q24 q49 q57 language q62 q63 ///
 	 interviewerid
@@ -519,20 +459,21 @@ list q1 q2 if q2 == 0 | q1 < 18
 * Check for other implausible values 
 
 list q23 q24 q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
-* Two potentially implausible values, where visits for COVID is higher than visits 
-* Was your total number of visits (q23/q24) inclusive of covid or additional?
+replace q25_b = . if q25_b > q23_q24 & q25_b < .
+* Note: q23/q24 was supposed to be inclusive of COVID, so these are errors.
 
 list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
 * One potentially implausible value, where number of facilities is higher than number of visits
-* Potentially make q27 8
+recode q27 (9 = 8) if q23_q24 == 8 & q27 == 9
 
 list q26 q27 country if q27 == 0 | q27 == 1
 * This is okay 
 
-list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
-							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .
-* This is okay
-
+list q23_q24 q39 q40 country if q39 == .a & q23_q24 > 0 & q23_q24 < . /// 
+							  | q40 == .a & q23_q24 > 0 & q23_q24 < .
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
+recode q39 q40 (.a = .r) if q23_q24 > 0 & q23_q24 < .
 
 *------------------------------------------------------------------------------*
 
@@ -558,10 +499,10 @@ lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
-lab var q18a_la "Q18a. LA only: Is there one healthcare facility or provider's group you usually...?"
+lab var q18a_la "Q18a. LA only: Is there one place you usually...? (incl pharm, traditional)"
 lab var q19_q20a_la "Q19a. LA only: What type of place is this?"
 lab var q19_q20a_other "Q19a. LA only: Other"
-lab var q18b_la "Q18b. LA only: Is there one healthcare facility or provider's group you usually...?"
+lab var q18b_la "Q18b. LA only: Is there one hospital, healht center, or clinic you usually...?"
 lab var q19_q20b_la "Q19b. LA only: What type of place is this?"
 lab var q19_q20b_other "Q19b. LA only: Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
@@ -590,9 +531,9 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_la "Q43. LA only: Last healthcare visit in a public, private, or NGO/faith-based facility?"
+lab var q43 "Q43. Last healthcare visit in a public, private, or NGO/faith-based facility?"
 *lab var q43_other "Q43. Other"
-lab var q44_la "Q44. LA only: What type of healthcare facility is this?"
+lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
@@ -634,11 +575,14 @@ lab var q63 "Q63. Total monthly household income"
 *lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 *lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
-order respondent_serial language interviewer_id weight q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43_la q44_la q44_other q45 q45_other q46_min q47_min q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q63 
-
+order respondent_id respondent_serial language interviewer_id weight q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43 q44 q44_other q45 q45_other q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q63 
 
 save "$data_mc/02 recoded data/pvs_la.dta", replace
+save "$data/Laos/02 recoded data/pvs_harmonized_la.dta", replace
+*save "J:\HEHS\HE\QuEST Laos\Data\Lao PVS\Clean data\Harmonized version\pvs_laos_harmonized.dta", replace 
 
+
+/*
 *------------------------------------------------------------------------------*
 
 * Missing data check 
@@ -646,10 +590,8 @@ save "$data_mc/02 recoded data/pvs_la.dta", replace
 * Below I summarize NA (.a), Don't know (.d), Refused (.r) and true Missing (.) 
 * across the numeric variables(only questions) in the dataset by country
 
-* NOTE: This is borrowed from my other code, which is why .d is here 
-
 global all_dk 	"q23 q25_a q25_b q27 q28_a q28_b q30 q31 q32 q33 q34 q35 q36 q38 q50_a q50_b q50_c q50_d q63"
-global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_la q44_la q45 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q63"
+global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q63"
 gl dq_output	"$output/dq_output_la.xlsx"
    
 * Count number of NA, Don't know, and refused across the row 
@@ -687,125 +629,13 @@ export exc country na_perc dk_perc rf_perc miss_perc using "$dq_output", sh(miss
 
 restore 
 
-* NK Note: These missing rates seem slightly higher than other countries, but not that high overall. 
-* What do you think Emma?
-* Any true missing remaining could be due to errors in my recoding as I did this quite rapidly 
+* EC note: reviewing which variables have unexplained missings:
+foreach var in q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la  q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46_min q47_min q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q63 {
+	egen `var'_missing =  total(`var'==.)
+}
 
+tab1 *_missing
+drop *_missing
 
-/*
-* NOTE to Emma/Amit: 
-* Here is my code for appending all the datasets if you want to see how I added 
-* the value labels for Laos
-
-*------------------------------------------------------------------------------*
-
-********************************* Append data *********************************
-
-u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
-append using "$data_mc/02 recoded data/pvs_et_ke.dta"
-append using "$data_mc/02 recoded data/pvs_la.dta"
-
-* Note to self: Fix Kenya/Ethiopia date for append, and Laos date 
-
-* Kenya/Ethiopia variables 
-ren q19 q19_ke_et 
-lab var q19_ke_et "Q19. KE/ET only: Is this a public, private, or NGO/faith-based facility?"
-ren q43 q43_ke_et 
-lab var q43_ke_et "Q43. KE/ET only: Is this a public, private, or NGO/faith-based facility?"
-ren q56 q56_ke_et 
-lab var q56_ke_et "Q56. KE/ET only: How would you rate quality of NGO/faith-based healthcare?"
-
-* Mode
-lab val mode mode
-recode mode (3 = 1) 
-lab var mode "Mode of interview (CATI or F2F)"
-
-* Country-specific skip patterns
-recode q19_ke_et q43_ke_et q56_ke_et (. = .a) if country != 5 | country != 3  
-recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country == 5 | country == 3 | country == 11 
-recode q19_uy q43_uy q56_uy (. = .a) if country != 10
-recode q19_pe q43_pe q56_pe (. = .a) if country != 7
-recode q19_co q43_co (. = .a) if country != 2
-recode q18a_la q19_q20a_la q18b_la q19_q20b_la q43_la q44_la ///		
-		(. = .a) if country != 11
-recode q18 q20 q44 q64 q65 (. = .a) if country == 11
-		
-* Country-specific value labels 
-recode language (. = 0) if country == 2 | country == 7 | country == 10 
-lab def Language 0 "Spanish" 6 "Lao" 7 "Khmou" 8 "Hmong", modify 
-lab def labels25 995 "Other", modify
-
-* country
-lab def labels0 11 "Lao PDR", modify
-
-*Q4
-lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused", modify
-
-*Q5
-lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang" .r "Refused", modify
-
-*Q7
-lab def labels9 29 "Only public" 30 "Additional private insurance" .a "NA" .r "Refused", modify
-
-*Q8
-lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
-					  47 "Lower secondary (1-4 years)" /// 
-					  48 "Upper secondary (5-7 years)" ///
-					  49 "Post-secondary and non-tertiary (13-15 years)" ///
-					  50 "Tertiary (Associates or higher)" .r "Refused", modify
-
-*Q62
-lab def labels51 21 "Oromiffa" 22 "Amharegna" 23 "Somaligna" 24 "Tigrigna" 25 "Sidamigna" ///
-				 26 "Wolaytigna" 27 "Gurage" 28 "Afar" 29 "Hadiyya" 30 "Gamogna" ///
-				 31 "Gedeo" 32 "Kafa" 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other" ///
-				 .a "NA" .r "Refused", modify
-
-*Q63
-lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" ///
- 11 "3001 – 5000 Eth.Birr" 12 "5001 – 10000 Eth.Birr" 13 "10001 - 20000 Eth.Birr" ///
- 14 "Greater than 20000 Eth.Birr" 101 "Range A (Less than 1,000,000) Kip" ///
- 102 "Range B (1,000,000 to 1,500,000) Kip" 103 "Range C (1,500,001 to 2,000,000) Kip" ///
- 104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" ///
- 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip" ///
- .d "Don't know" .r "Refused", modify
-
-* Other value label modifcations
-lab def labels16 .a "NA" .r "Refused", modify
-lab def labels24 .a "NA" .r "Refused", modify
-lab def labels22 .a "NA" .r "Refused", modify
-lab def labels23 .a "NA" .r "Refused", modify
-lab def labels25 .a "NA" .r "Refused", modify
-lab def labels26 .a "NA" .r "Refused", modify
-lab def labels37 .a "NA" .r "Refused", modify
-lab def labels39 .a "NA" .r "Refused", modify
-lab def labels40 .a "NA" .r "Refused", modify
-lab def labels50 .r "Refused", modify
-lab def Q19 .a "NA" .r "Refused", modify
-lab def Q43 .a "NA" .r "Refused", modify
-lab def place_type .a "NA" .r "Refused", modify
-lab def fac_owner .a "NA" .r "Refused", modify
-lab def fac_type1 .a "NA" .r "Refused", modify
-lab def fac_type3 .a "NA" .r "Refused", modify
-
- 
-* weight
-replace weight_educ = weight if country == 3
-drop weight
-ren weight_educ weight
-lab var weight "Final weight (based on gender, age, region, education) (no edu in Ethiopia)"
- 
-* Keep variables relevant for data sharing and analysis  
-drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
-interviewer_language psu_id region_stratum kebele matrix sum_size_region total ///
- dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et ///
- rim_age province county sublocation rim_region_ke rim_educ interviewer_gender ///
- q1_codes interviewer_id
-
-order q*, sequential
-order respondent_serial respondent_id mode country language date time /// 
-int_length weight
-
-
-save "$data_mc/02 recoded data/pvs_appended.dta", replace
-
+* EC note: the remaining unexplained missings almost all have to do with the randomization error (affecting 11 observations for q23, q24, q25_b, q26, q27, q28a, q28b, and q29). I'm not sure how to explain the unexplained missings for q7 and q16, but there are very few of them (between 1 and 3 per variable).
 
