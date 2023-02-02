@@ -55,6 +55,8 @@ gen int_length = intlength / 60
 gen q46_min = q46 / 60
 gen q47_min = q47 / 60
 
+format date %tdD_M_CY
+
 *------------------------------------------------------------------------------*
 
 * Drop any unwanted/empty variables
@@ -194,6 +196,8 @@ recode q43 q44 q45 q46 q46_min q46_refused q47 q47_min q47_refused q48_a q48_b q
 	   
 recode q44 (. = .a) if q43 == 4 | q43 == .r
 
+recode q45 (995 = 4)
+
 *q46/q47 refused
 recode q46 q46_min (. = .r) if q46_refused == 1
 recode q47 q47_min (. = .r) if q47_refused == 1
@@ -238,18 +242,18 @@ recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q54 q55 q56 q59 q6
 	   
 recode q22  ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
-	   (6 = .a "I did not receive healthcare form this provider in the past 12 months") /// 
+	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") /// 
 	   (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_hlthcare)
 	   
 recode q48_e ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (6 = .a "I have not had prior visits or tests") (.r = .r Refused), /// 
+	   (5 = 0 Poor) (6 = .a "NA or I have not had prior visits or tests") (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_visits)
 	 
 recode q48_j ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (6 = .a "The clinic had no other staff") (.r = .r Refused), /// 
+	   (5 = 0 Poor) (6 = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor_staff)
 	   
 recode q50_a q50_b q50_c q50_d ///
@@ -495,6 +499,9 @@ gen q46_min = (hh(q46)*3600 + mm(q46)*60 + ss(q46)) / 60
 
 gen q47_min = (hh(q47)*3600 + mm(q47)*60 + ss(q47)) / 60
 
+gen recdate = dofc(date)
+format recdate %tdD_M_CY
+
 *------------------------------------------------------------------------------*
 
 * Drop any unwanted/empty variables
@@ -693,18 +700,18 @@ recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q54 q55 q56_pe q56
 	   
 recode q22  ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
-	   (6 = .a "I did not receive healthcare form this provider in the past 12 months") /// 
+	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") /// 
 	   (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_hlthcare)
 	   
 recode q48_e ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (6 = .a "I have not had prior visits or tests") (.r = .r Refused), /// 
+	   (5 = 0 Poor) (6 = .a "NA or I have not had prior visits or tests") (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_visits)
 	 
 recode q48_j ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (6 = .a "The clinic had no other staff") (.r = .r Refused), /// 
+	   (5 = 0 Poor) (6 = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor_staff)
 	   
 recode q50_a q50_b q50_c q50_d ///
@@ -759,7 +766,7 @@ recode q45 ///
 	(13 = 1 "Care for an urgent or acute health problem (accident or injury, fever, diarrhea, or a new pain or symptom)" ) ///
 	(14 = 2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes; mental health conditions") ///
 	(15 = 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)") ///
-	(.a = .a "NA") (995 = 995 "Other, specify") (.r = .r "Refused"), ///
+	(.a = .a "NA") (995 = 4 "Other, specify") (.r = .r "Refused"), ///
 	pre(rec) label(main_reason)
 	
 	
@@ -792,7 +799,7 @@ drop interviewer_gender q2 q3 q3a q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 ///
 	 q30 q31 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q45 q48_a q48_b q48_c ///
 	 q48_d q48_f q48_g q48_h q48_i q54 q55 q56_pe q56_uy q59 q60 q61 q48_e /// 
 	 q48_j q50_a q50_b q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57 ///
-	 q46 q47
+	 q46 q47 date
 	 
 
 ren rec* *
@@ -832,6 +839,7 @@ lab var country "Country"
 lab var respondent_serial "Respondent Serial (unique within country)"
 lab var respondent_id "Respondent ID (unique ID)"
 lab var interviewer_id "Interviewer ID"
+lab var date "Date of interview"
 lab var int_length "Interview length (in minutes)"
 lab var interviewer_gender "Interviewer gender"
 lab var interviewer_gender "Interviewer gender"
@@ -979,8 +987,9 @@ recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 		
 * Country-specific value labels 
 recode language (. = 0) if country == 2 | country == 7 | country == 10 
-lab def Language 0 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong", modify 
+lab def Language 0 "Spanish" 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali" 15 "Lao" 16 "Khmou" 17 "Hmong", modify 
 lab def labels25 995 "Other", modify
+* NOTE: Edit this for future Ipsos data 
 
 * country
 lab def labels0 11 "Lao PDR", modify
@@ -1006,9 +1015,10 @@ lab def labels25 201 "Hospital" 202 "Health center" 203 "Clinic" .a "NA" .r "Ref
 
 					  
 *Q62
+recode q62 (998 = 995)
 lab def labels51 21 "Oromiffa" 22 "Amharegna" 23 "Somaligna" 24 "Tigrigna" 25 "Sidamigna" ///
 				 26 "Wolaytigna" 27 "Gurage" 28 "Afar" 29 "Hadiyya" 30 "Gamogna" ///
-				 31 "Gedeo" 32 "Kafa" 101 "Lao" 102 "Hmong" 103 "Kmou" 104 "Other" ///
+				 31 "Gedeo" 32 "Kafa" 101 "Lao" 102 "Hmong" 103 "Kmou"  ///
 				 .a "NA" .r "Refused", modify
 
 *Q63

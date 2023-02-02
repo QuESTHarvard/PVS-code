@@ -131,7 +131,7 @@ recode q42 (1 = 1 "Cost (High cost)") ///
 * last_reason
 gen last_reason = q45
 lab def lr 1 "Urgent or new problem" 2 "Follow-up for chronic disease" ///
-		   3 "Preventative or health check" 995 "Other" .a "NA" .r "Refused"
+		   3 "Preventative or health check" 4 "Other" .a "NA" .r "Refused"
 lab val last_reason lr
 
 *last_wait_time
@@ -185,6 +185,7 @@ recode usual_source (.a = 1) if q18a_la == 1 & q19_q20a_la == 1 | q18a_la == 1 &
 							   q18a_la == 1 & q19_q20a_la == 3 | q18a_la == 1 & q19_q20a_la == 4 | ///
 							   q18a_la == 1 & q19_q20a_la == 6 | q18b_la == 1
 recode usual_source (.a = 0) if q18a_la == 0 | q18a_la == 1 & q18b_la == 0
+recode usual_source (.a = .r) if q18b_la == .r
 
 * NOTE: check Laos addition 
 
@@ -208,6 +209,7 @@ gen mistake = q39
 gen discrim = q40
 lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
 	blood_sugar blood_chol hiv_test care_mental mistake discrim yes_no_dk
+lab val mistake discrim yes_no_na
 	
 **** Excellent to Poor scales *****	   
 
@@ -265,7 +267,8 @@ ren (derq51 derq52 derq53) (conf_sick conf_afford conf_opinion)
 * urban: type of region respondent lives in 
 recode q4 (1 2 3 6 7 9 10 12 13 18 20 = 1 "Urban") (4 8 11 14 19 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
-		  
+
+* insurance status
 gen insured = q6 
 recode insured (.a = 0) if q7 == 14
 recode insured (.a = 1) if country == 9 | country == 11
@@ -280,12 +283,12 @@ lab val insured yes_no
 * NOTE: check other, specify later
 
 recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 = 0 Public) (2 4 5 6 7 8 9 28 13 21 30 = 1 Private) /// 
-		  (995 = 3 Other) ///
+		  (995 = 2 Other) ///
 		  (.r = .r "Refused") (14 .a = .a NA), gen(insur_type)
 
  
 * education 
-recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 = 0 "None") /// 
+recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 = 0 "None (or no formal education)") /// 
 		  (3 8 14 15 27 20 34 46 = 1 "Primary") (4 9 16 28 21 35 47 48 = 2 "Secondary") /// 
 	      (5 10 11 17 29 30 31 22 23 24 36 37 38 49 50 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
@@ -340,7 +343,7 @@ lab val usual_type fac_own_lvl
 
 
 * last_type_own
-recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 other) /// 
+recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
 recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1  
@@ -392,8 +395,8 @@ recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest 
 		   
 **** Order Variables ****
 		   
-order respondent_serial respondent_id mode country language date /// 
-	  int_length psu_id_for_svy_cmds weight age age_cat gender urban region ///
+order respondent_serial respondent_id country language date /// 
+	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
 	  insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
@@ -514,6 +517,7 @@ save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 *rm "$data_mc/02 recoded data/pvs_lac.dta"
 *rm "$data_mc/02 recoded data/pvs_la.dta"
 
-
+* ONLY RUN COMMAND BELOW WHEN SHARING TO ALL
+* save "$data/Multi-country (shared)/pvs_all_countries.dta", replace 
 
 

@@ -142,7 +142,8 @@ gen end_min = (hh(timestamp_finalsec)*3600 + mm(timestamp_finalsec)*60 + ss(time
 gen int_length = (end_min - start_min)*60
 replace int_length = . if int_length < 0 | int_length > 90
 
-ren timestamp_start date
+gen date = dofc(timestamp_start)
+format date %tdD_M_CY
 
 *------------------------------------------------------------------------------*
 
@@ -169,7 +170,7 @@ time_consent time_Part1 time_Sec21 time_Sec22 time_Sec2324 time_Sec3132 ///
 time_Sec41 time_Sec42 time_Sec4344 time_finalsec time_submission time_total ///
 time_withrespondent time_unexplained visitsyr placesyr telmedyr outreachyr ///
 age_cat malefemale region urbanrural edu_cat urbanrural_ed urbanrural_age ///
-timestamp_Part1 start_min end_min usc2120d
+timestamp_Part1 start_min end_min usc2120d timestamp_start
 
 * NOTE: need to fix date variable in correct date/time format for merge
 
@@ -263,7 +264,7 @@ recode q43 (. = .a) if q44 != 1
 
 * All Yes/No questions
 
-recode q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 ///
+recode q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 q46_refused q47_refused ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 
@@ -292,18 +293,18 @@ recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q54 q55 q56 q59 q6
 	   
 recode q22  ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
-	   (.a = .a "I did not receive healthcare form this provider in the past 12 months") /// 
+	   (.a = .a "NA or I did not receive healthcare form this provider in the past 12 months") /// 
 	   (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_hlthcare)
 	   
 recode q48_e ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (6 = .a "I have not had prior visits or tests") (.r = .r Refused), /// 
+	   (5 = 0 Poor) (6 = .a "NA or I have not had prior visits or tests") (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_visits)
 	 
 recode q48_j ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (6 = .a "The clinic had no other staff") (.r = .r Refused), /// 
+	   (5 = 0 Poor) (6 = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor_staff)
 	   
 recode q50_a q50_b q50_c q50_d ///
@@ -359,7 +360,7 @@ recode q45 ///
 	(1 = 1 "Care for an urgent or acute health problem (accident or injury, fever, diarrhea, or a new pain or symptom)" ) ///
 	(2 = 2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes; mental health conditions") ///
 	(3 = 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)") ///
-	(.a = .a "NA") (4 = 995 "Other, specify") (.r = .r "Refused"), ///
+	(.a = .a "NA") (4 = 4 "Other, specify") (.r = .r "Refused"), ///
 	pre(rec) label(main_reason)
 	
 recode q49 ///
@@ -382,8 +383,8 @@ recode q57 ///
 * Added Laos above 100 because India and SA interviewers to be added 
 gen interviewer_id = interviewerid + 100
 
-* Language - available after 5 
-recode language (1 = 6 Lao) (2 = 7 Khmou) (3 = 8 Kmong), pre(rec) label(language)
+* Language - available after 15 
+recode language (1 = 15 Lao) (2 = 16 Khmou) (3 = 17 Hmong), pre(rec) label(language)
 
 * Q4 values available - after 17
 recode q4 (1 = 18 "City") (2 = 19 "Rural area") (3 = 20 "Suburb"), pre(rec) label(residence)
@@ -414,10 +415,10 @@ gen recq44 = q44 + 200
 replace recq44 = 995 if q44== 4
 replace recq44 = .r if q44==.r
 
-	
 * Q62 values after 89 are available
 gen recq62 = q62 + 100 
 replace recq62 = .r if q62==.r
+replace recq62 = 995 if q62 == 4
 * EC note: added the refusals to the recode version
 
 * Q63 values after 61 are available 
@@ -438,7 +439,7 @@ drop q2 q3 q4 q5 q7 q8 q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 q45 q30 q31
 	 q32 q33 q34 q35 q36 q38 q39 q40 q44 q9 q10 q22 q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
 	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14 q15 q24 q49 q57 language q62 q63 ///
-	 interviewerid
+	 interviewerid q46_refused q47_refused
 
 ren rec* *
 
@@ -501,7 +502,7 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18a_la "Q18a. LA only: Is there one place you usually...? (incl pharm, traditional)"
-lab var q19_q20a_la "Q19a. LA only: What type of healthcare facility is this?"
+lab var q19_q20a_la "Q19a. LA only: What type of place is this?"
 lab var q19_q20a_other "Q19a. LA only: Other"
 lab var q18b_la "Q18b. LA only: Is there one hospital, health center, or clinic you usually...?"
 lab var q19_q20b_la "Q19b. LA only: What type of healthcare facility is this?"
@@ -538,11 +539,11 @@ lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
-*lab var q46_refused "Q46. Refused"
-*lab var q46 "Q46. Approximately how long did you wait before seeing the provider?"
+lab var q46_refused "Q46. Refused"
+lab var q46 "Q46. Approximately how long did you wait before seeing the provider?"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
-*lab var q47_refused "Q47. Refused"
-*lab var q47 "Q47. Approximately how much time did the provider spend with you?"
+lab var q47_refused "Q47. Refused"
+lab var q47 "Q47. Approximately how much time did the provider spend with you?"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
