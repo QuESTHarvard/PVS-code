@@ -943,6 +943,38 @@ save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
 
 ********************************* Append data *********************************
 
+*Change date format for all datasets to include only date
+*Laos
+use "$data_mc/02 recoded data/pvs_la.dta", clear
+gen date2 = dofc(date)
+format date2 %tdD_M_CY
+drop date
+gen date = date2
+format date %tdD_M_CY
+drop date2
+order date, after(country)
+
+save "$data_mc/02 recoded data/pvs_la.dta", replace
+
+*LAC
+use "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
+gen date2 = dofc(date)
+format date2 %tdD_M_CY
+drop date
+gen date = date2
+format date %tdD_M_CY
+drop date2
+order date, after(country)
+
+save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
+
+*Ethiopia, Kenya, South Africa
+use "$data_mc/02 recoded data/pvs_et_ke_za.dta", clear
+format date %tdD_M_CY
+
+save "$data_mc/02 recoded data/pvs_et_ke_za.dta", replace
+
+*Append
 u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
 append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
