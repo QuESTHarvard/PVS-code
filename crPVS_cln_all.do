@@ -27,6 +27,10 @@ set more off
 * Import raw data 
 use "$data_mc/01 raw data/HARVARD(ET_Main,Ke_Main,Ke_F2F,ET_F2F,SA)_17.01.23.dta", clear 
 
+ren qc_short qc_short2
+merge 1:1 ECS_ID Country using "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
+gen qc_diff = 1 if qc_short2 == 1 & QC_short == 0
+
 merge 1:1 ECS_ID Country using "$data_mc/01 raw data/PVS_ET and KE weighted_22.12.22.dta", keepusing(PSU_ID weight weight_educ)
 drop _merge
 
