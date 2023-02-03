@@ -27,12 +27,26 @@ set more off
 * Import raw data 
 use "$data_mc/01 raw data/HARVARD(ET_Main,Ke_Main,Ke_F2F,ET_F2F,SA)_17.01.23.dta", clear 
 
-ren qc_short qc_short2
-merge 1:1 ECS_ID Country using "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
-gen qc_diff = 1 if qc_short2 == 1 & QC_short == 0
-
+* Add back weight vars from previous data 
 merge 1:1 ECS_ID Country using "$data_mc/01 raw data/PVS_ET and KE weighted_22.12.22.dta", keepusing(PSU_ID weight weight_educ)
+* tab Country if _merge == 1
+* br if _merge == 1 & Country == 5
+* NOTE: there is one respondent without a weight from Kenya 
 drop _merge
+
+* Add back QC_short from previous data 
+merge 1:1 ECS_ID Country using "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
+tab Country if _merge == 1
+* br if _merge == 1 & Country == 5
+* NOTE: There is one respondent in Kenya that was in the master data but not in the using data. 
+*		There seems to be one extra Kenyan respondent in this newest data. 
+
+* Drop interviews that are short and could be low-quality 
+* Ipsos provided qc_short var that identifies short interviews that might be low-quality 
+* for Kenya data (dropped 165 interviews previously with QC_short, 197 with qc_short2)
+drop if QC_short == 2
+drop qc_short QC_short _merge 
+
 
 ren ECS_ID Respondent_ID
 
@@ -69,11 +83,6 @@ format date %tdD_M_CY
 * Drop respondents under 18 
 drop if q2 == 1 | q1 < 18
 
-* Drop interviews that are short and could be low-quality 
-* Ipsos provided qc_short var that identifies short interviews that might be low-quality 
-* for Kenya data (dropped 165 interviews previously, now 195)
-drop if qc_short == 1
-drop qc_short 
 
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
