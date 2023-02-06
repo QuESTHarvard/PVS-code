@@ -98,6 +98,18 @@ recode qual_public (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") 
 	   
 lab var qual_public_vge "VGE: Overall quality rating of gov or public healthcare system in country (Q54)"
 
+* qual_ss_pe - just vge for now 
+	   
+recode qual_ss_pe (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(qual_ss_pe_vge) label(exc_pr_2)
+
+* qual_mut_uy - just vge for now 
+	   
+recode qual_mut_uy (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(qual_mut_uy_vge) label(exc_pr_2)
+
 * covid_manage
 recode covid_manage (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
@@ -229,8 +241,8 @@ summtab2 , by(country) vars(gender2 urban education health_vge age_cat2 visits q
 * Data for histograms - Exhibit 1 & 2
 
 summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge ///
-		   phc_mental_vge qual_public_vge qual_private_vge covid_manage_vge) /// 
-		   type(2 2 2 2 2 2 2 2)  wts(weight) /// 
+		   phc_mental_vge qual_public_vge qual_private_vge qual_ss_pe_vge qual_mut_uy_vge) /// 
+		   type(2 2 2 2 2 2 2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
 		   excelname(p1_exhib1_2) sheetname(Exhibit 1 data) directory("$output/Paper 1") /// 
@@ -367,6 +379,24 @@ esttab using "$output/Paper 1/exhibit_3.6_data.rtf", ///
 
 eststo clear
 
+**Outcome 7: confidence get and afford 
+
+
+foreach i in 1 2 3 4 6 5 7 {
+	
+	eststo: logistic conf_getafford wealthy most_educ urban under30  health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_3.7_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
+	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
+	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
+	title( "Exhibit 3.7 data") 
+
+eststo clear
+
+
 *------------------------------------------------------------------------------*
 * Exhibit 4 & 5
 
@@ -376,85 +406,38 @@ recode income 0=1 1/2=0, gen (poor)
 eststo: logistic conf_getafford poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **government listens to opinions (q53) is strongest predictor of confidence OR 9.6, covid managment OR 1.6 inconsistent up the likert
 
-margins country2, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot
+margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
+marginsplot, ylabel(0(0.25)0.75) xtitle("Quality of public system")
+
 graph export "$output/Paper 1/exhib_5_1.pdf", replace
 
-margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot
-graph export "$output/Paper 1/exhib_5_1_v2.pdf", replace
-
-margins country2, at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot 
-graph export "$output/Paper 1/exhib5_2.pdf", replace
-
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot 
-graph export "$output/Paper 1/exhib5_2_v2.pdf", replace
-	
-margins country2, at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
-marginsplot 
-graph export "$output/Paper 1/exhib5_3.pdf", replace
-
-margins , at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
-marginsplot 
-graph export "$output/Paper 1/exhib5_3_v2.pdf", replace
+marginsplot, ylabel(0(0.25)0.75) xtitle("Government considers public opinion")
+graph export "$output/Paper 1/exhib5_2.pdf", replace
 
 eststo: logistic system_outlook_getbet poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **qual_public big determinant (excellent OR 5.6, then opinion 2.9 then covid managment 2.5
 
-margins country2, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot 
+margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
+marginsplot, ylabel(0(0.25)0.75) xtitle("Quality of public system")
 graph export "$output/Paper 1/exhib5_4.pdf", replace
 
-margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot
-graph export "$output/Paper 1/exhib5_4 v2.pdf", replace
-
-margins country2, at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot 
+margins , at(q53=0 q53=1 q53=2 q53=3) 	
+marginsplot, ylabel(0(0.25)0.75) xtitle("Government considers public opinion")	
 graph export "$output/Paper 1/exhib5_5.pdf", replace
 
-margins , at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot 	
-graph export "$output/Paper 1/exhib5_5_v2.pdf", replace
-
-margins country2, at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
-marginsplot 
-graph export "$output/Paper 1/exhib5_6.pdf", replace
-
-margins , at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
-marginsplot 
-graph export "$output/Paper 1/exhib5_6_v2.pdf", replace
 
 eststo: logistic system_reform_minor poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **qual_public important (excellent OR 4.1)
- 
-margins country2, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot 
-graph export "$output/Paper 1/exhib5_7.pdf", replace
 
 
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot
-graph export "$output/Paper 1/exhib5_7 v2.pdf", replace
-
-
-margins country2, at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot 
-graph export "$output/Paper 1/exhib5_8.pdf", replace
+marginsplot, ylabel(0(0.25)0.75) xtitle("Quality of public system")
+graph export "$output/Paper 1/exhib5_7.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot 	
-graph export "$output/Paper 1/exhib5_8 v2.pdf", replace
-
-margins country2, at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
-marginsplot 
-graph export "$output/Paper 1/exhib5_9.pdf", replace
-
-margins , at(covid_manage=0 covid_manag=1 covid_manag=2 covid_manag=3 covid_manag=4) 			
-marginsplot 
-graph export "$output/Paper 1/exhib5_9 v2.pdf", replace
+marginsplot, ylabel(0(0.25)0.75) xtitle("Government considers public opinion")	
+graph export "$output/Paper 1/exhib5_8.pdf", replace
 
 
 esttab using "$output/Paper 1/exhibit_4.rtf", ///

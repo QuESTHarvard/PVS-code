@@ -25,36 +25,28 @@ set more off
 *		work-arounds to obtain complete data until we receive final data
 
 * Import raw data 
-use "$data_mc/01 raw data/HARVARD(ET_Main,Ke_Main,Ke_F2F,ET_F2F,SA)_17.01.23.dta", clear 
 
-* Add back weight vars from previous data 
-merge 1:1 ECS_ID Country using "$data_mc/01 raw data/PVS_ET and KE weighted_22.12.22.dta", keepusing(PSU_ID weight weight_educ)
-* tab Country if _merge == 1
-* br if _merge == 1 & Country == 5
-* NOTE: there is one respondent without a weight from Kenya 
-drop _merge
+* Kenya: import latest data / weight 
+u "$data_mc/01 raw data/PVS_ET and KE weighted_22.12.22.dta"
+keep if Country == 5
 
 * Add back QC_short from previous data 
 merge 1:1 ECS_ID Country using "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
-tab Country if _merge == 1
-* br if _merge == 1 & Country == 5
-* NOTE: There is one respondent in Kenya that was in the master data but not in the using data. 
-*		There seems to be one extra Kenyan respondent in this newest data. 
 
 * Drop interviews that are short and could be low-quality 
 * Ipsos provided qc_short var that identifies short interviews that might be low-quality 
 * for Kenya data (dropped 165 interviews previously with QC_short, 197 with qc_short2)
 drop if QC_short == 2
-drop qc_short QC_short _merge 
+drop QC_short _merge  
 
+* Ethiopia: import latest data / weight
+append using "$data_mc/01 raw data/PVS_ET weighted_03.02.23.dta"
+drop Respondent_ID mode2
+ren ECS_ID Respondent_ID 
 
-ren ECS_ID Respondent_ID
+* South Africa 
+append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
 
-append using "$data/South Africa/01 raw data/PVS_South Africa Main Data_270123.dta"
-sort Respondent_ID
-by Respondent_ID:  gen dup = cond(_N==1,0,_n)
-drop if dup == 2
-drop dup ECS_ID
 
 *------------------------------------------------------------------------------*
 
@@ -1088,13 +1080,13 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 * Keep variables relevant for data sharing and analysis  
 * Dropping q37_in and time for now 
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
-interviewer_language psu_id interviewer_gender interviewer_id q37_in ///
+interviewer_language psu_id interviewer_gender interviewer_id ///
 time respondent_num q1_codes
 
 order q*, sequential
 order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 
-
+drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit mode2 n_elig dw_ind dw_overall dw_overall_relative rim_region_et rim_age province county sublocation rim_region_ke rim_educ ecs_id rim_gender rim_region rim_eduction
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
