@@ -265,7 +265,7 @@ ren (derq51 derq52 derq53) (conf_sick conf_afford conf_opinion)
 **** COUNTRY SPECIFIC ****
 
 * urban: type of region respondent lives in 
-recode q4 (1 2 3 6 7 9 10 12 13 18 20 = 1 "Urban") (4 8 11 14 19 = 0 "Rural") ///
+recode q4 (1 2 3 6 7 9 10 12 13 18 20 31 32 33 = 1 "Urban") (4 8 11 14 19 34 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
@@ -288,9 +288,10 @@ recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 = 0 Public) (2 4 5 6 7 8 9 28 13
 
  
 * education 
-recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 = 0 "None (or no formal education)") /// 
-		  (3 8 14 15 27 20 34 46 = 1 "Primary") (4 9 16 28 21 35 47 48 = 2 "Secondary") /// 
-	      (5 10 11 17 29 30 31 22 23 24 36 37 38 49 50 = 3 "Post-secondary") ///
+recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal education)") /// 
+		  (3 8 14 15 27 20 34 46 52 53 59 66 67 = 1 "Primary") ///
+		  (4 9 16 28 21 35 47 48 54 55 60 61 62 68 = 2 "Secondary") /// 
+	      (5 10 11 17 29 30 31 22 23 24 36 37 38 49 50 56 57 63 64 69 70 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
 
 * usual_type_own
@@ -383,9 +384,9 @@ recode q62 (1 5 8 9 10 11 12 13 14 15 23 24 25 26 27 28 29 30 31 32 ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(native_lang)
 
 * income
-recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 = 0 "Lowest income") /// 
-		   (3 4 5 11 12 18 19 20 41 42 43 33 34 35 51 52 53 103 104 105 = 1 "Middle income") /// 
-		   (6 7 13 14 21 22 44 45 36 37 54 55 106 107 = 2 "Highest income") ///
+recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 151 152 158 159 163 164 = 0 "Lowest income") /// 
+		   (3 4 5 11 12 18 19 20 41 42 43 33 34 35 51 52 53 103 104 105 153 154 155 160 165 = 1 "Middle income") /// 
+		   (6 7 13 14 21 22 44 45 36 37 54 55 106 107 156 157 161 162 166 167 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
 
