@@ -132,12 +132,14 @@ lab def q4 31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area" .r "Ref
 lab val recq4 q4 
 
 * Q8: Values above 50 available 
-recode q8_it (2 = 52 "Scuola primaria") (3 = 53 "Scuola secondaria di primo grado") ///
-		  (4 = 54 "Scuola secondaria di secondo grado") ///
-		  (5 = 55 "Liceo, Instituto tecnico o Instituto professionale") ///
-		  (6 = 56 "Universita Laurea triennale (compreso alta formazione artistica)") ///
-		  (7 = 57 "Universita Laurea Magistrale o ciclo unico o Dottorato") ///
-		  (.r = .r "Refused"), pre(rec) label(q8)
+recode q8_it (1 = 51 "Mai frequentato la scuola o solo Nido e Scuola dell'infanzia") ///
+		(2 = 52 "Scuola primaria") ///
+		(3 = 53 "Scuola secondaria di primo grado") ///
+		(4 = 54 "Scuola secondaria di secondo grado") ///
+		(5 = 55 "Liceo, Instituto tecnico o Instituto professionale") ///
+		(6 = 56 "Universita Laurea triennale (compreso alta formazione artistica)") ///
+		(7 = 57 "Universita Laurea Magistrale o ciclo unico o Dottorato") ///
+		(.r = .r "Refused"), pre(rec) label(q8)
 
 recode q8_mx (1 = 58 "Ninguno") (2 = 59 "Primaria") ///
 		  (3 = 60 "Secundaria") ///
@@ -203,5 +205,5 @@ ren rec* *
  
 * Save data
 
-save "$data_mc/02 recoded data/pvs_it_mx_us.dta"
+save "$data_mc/02 recoded data/pvs_it_mx_us.dta", replace
  
