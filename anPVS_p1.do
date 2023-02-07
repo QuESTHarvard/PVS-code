@@ -214,6 +214,9 @@ recode age (18/20 = 0 "<20") (20/29 = 1 "20-29") (30/39 = 2 "30-39") (40/49 = 3 
 * Add weight for ZA so commands will run 
 recode weight (. = 1) if country == 9
 
+* Generate poor variable 
+recode income 0=1 1/2=0, gen (poor)
+
 *------------------------------------------------------------------------------*
 
 * Save new dataset for paper 1 	   
@@ -401,7 +404,6 @@ eststo clear
 * Exhibit 4 & 5
 
 * Generate poor variable 
-recode income 0=1 1/2=0, gen (poor)
 
 eststo: logistic conf_getafford poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **government listens to opinions (q53) is strongest predictor of confidence OR 9.6, covid managment OR 1.6 inconsistent up the likert
