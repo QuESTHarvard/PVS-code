@@ -47,6 +47,11 @@ ren ECS_ID Respondent_ID
 * South Africa 
 append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
 
+* Fix append issues
+recode Q20 Q44 (23 = 38) if Country == 9 
+* fixed this label on append below 
+lab def Language 6 "Sesotho" 7 "isiZulu" 8 "Afrikaans" 9 "Sepedi" 10 "isiXhosa", modify
+
 
 *------------------------------------------------------------------------------*
 
@@ -993,7 +998,6 @@ recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 * Country-specific value labels 
 recode language (. = 0) if country == 2 | country == 7 | country == 10 
 lab def Language 0 "Spanish" 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali" 15 "Lao" 16 "Khmou" 17 "Hmong", modify 
-lab def labels25 995 "Other", modify
 * NOTE: Edit this for future Ipsos data 
 
 * country
@@ -1016,7 +1020,10 @@ lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" ///
 					  50 "Tertiary (Associates or higher)" .r "Refused", modify
 					  
 *Q44 
-lab def labels25 201 "Hospital" 202 "Health center" 203 "Clinic" .a "NA" .r "Refused", modify
+* Add Laos and fix label issues on append
+lab def labels25 23 "NGO/Faith-based hospital" 38 "Mobile clinic" ///
+				 201 "Hospital" 202 "Health center" 203 "Clinic" .a "NA" .r "Refused" ///
+				 995 "Other", modify
 
 					  
 *Q62
@@ -1054,10 +1061,9 @@ lab def fac_type3 .a "NA" .r "Refused", modify
 
  
 *** weights ***
-replace weight_educ = weight if country == 3
 drop weight
 ren weight_educ weight
-lab var weight "Final weight (based on gender, age, region, education) (no edu in Ethiopia)"
+lab var weight "Final weight (based on gender, age, region, education)"
 
 *** Code for survey set ***
 gen respondent_num = _n 
@@ -1083,10 +1089,12 @@ drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
 interviewer_language psu_id interviewer_gender interviewer_id ///
 time respondent_num q1_codes
 
+drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et rim_age province county sublocation rim_region_ke rim_educ ecs_id rim_gender rim_region rim_education rim_eduction
+
 order q*, sequential
 order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 
-drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit mode2 n_elig dw_ind dw_overall dw_overall_relative rim_region_et rim_age province county sublocation rim_region_ke rim_educ ecs_id rim_gender rim_region rim_eduction
+
 
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
