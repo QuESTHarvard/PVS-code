@@ -229,7 +229,7 @@ recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7 q7_mx q8* q9 q10 q11 q12 q13 q1
 	   q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_it q43_mx q44_it q44_mx q44_us ///
 	   q45 q46* q47* q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54* q55 /// 
-	    q57 q58 q59 q60 q61 q63* (999 = .r)	
+	   q56_mx q57 q58 q59 q60 q61 q63* (999 = .r)	
 	  
 
 *------------------------------------------------------------------------------*
@@ -318,7 +318,7 @@ recode q39 q40 ///
 * All Excellent to Poor scales
 
 recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54_it ///
-	   q54_mx_a q54_mx_b q54_us q55 q56 q59 q60 q61 ///
+	   q54_mx_a q54_mx_b q54_us q55 q56_mx q59 q60 q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(exc_poor)
