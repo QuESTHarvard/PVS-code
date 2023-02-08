@@ -421,7 +421,7 @@ order respondent_serial respondent_id country language date ///
 	  q44 ///
 	  q44_other q45 q45_other q46 q46_refused q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a ///
-	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q57 q58 q59 ///
+	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q56_mx_a q56_mx_b q57 q58 q59 ///
 	  q60 q61 q62 q62_other q63 q64 q65 
 
 ***************************** Labeling variables ***************************** 

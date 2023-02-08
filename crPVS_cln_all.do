@@ -999,7 +999,7 @@ recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 
 * Addition for SSRS - may change  
 recode q5_it q6_it q19_it q20_it q43_it q44_it q48_k (. = .a) if country != 14
-recode q5_mx q7_mx q19_mx q20_mx q43_mx q44_mx q48_k q56_mx_a q56_mx_b q54_mx (. = .a) if country != 13
+recode q5_mx q7_mx q19_mx q20_mx q43_mx q44_mx q48_k q56_mx_a q56_mx_b (. = .a) if country != 13
 recode q5_us q6 q7 q20_us q44_us q48_k (. = .a) if country != 12
 
 *Italy, Mexico, and US variable country-specific variable labels*

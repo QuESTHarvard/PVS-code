@@ -192,7 +192,7 @@ drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 	 HID_LOI BLANDCELL BSSRS_MATCH_CODE CATICALLTIME DIALTYPE DTYPE EMAIL ///
 	 RECORDTYPE BIDENT2 BSTRATA BREGION1 BREGION2 BREGION3 BREGION4 BLOCALITY ///
 	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE q46_min q46_hrs q47_min q47_hrs ///
-	 q54_it q54_us
+	 q54_it q54_us q54_mx
 	 
 * Add back these variables later
 
@@ -295,7 +295,7 @@ recode q44_mx (. = .a) if q43_mx == 7
 
 * Country-specific skip pattern - may change 
 recode q5_it q6_it q8_it q19_it q20_it q43_it q44_it q63_it (. = .a) if country != 3
-recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q56_mx_a q56_mx_b q54_mx q63_mx (. = .a) if country != 2
+recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q56_mx_a q56_mx_b q63_mx (. = .a) if country != 2
 recode q5_us q6 q7 q8_us q20_us q44_us q63_us (. = .a) if country != 1
 
 *------------------------------------------------------------------------------*
@@ -323,7 +323,7 @@ recode q39 q40 ///
 
 * All Excellent to Poor scales
 
-recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 q54_mx ///
+recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 ///
 	   q56_mx_a q56_mx_b q55 q59 q60 q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
@@ -477,7 +477,7 @@ drop q4 country recq8_it recq8_mx recq8_us recq63_it recq63_mx recq63_us ///
 		q8_it q8_mx q8_us q63_it q63_mx q63_us ///
      q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
 	 q40 q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
-	 q54 q54_mx q56_mx_a q56_mx_b q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
+	 q54 q56_mx_a q56_mx_b q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57
 
 ren rec* *
@@ -553,6 +553,7 @@ lab var q48_g "Q48_G. How would you rate whether you were involved in your care 
 lab var q48_h "Q48_H. How would you rate the amount of time your provider spent with you?"
 lab var q48_i "Q48_I. How would you rate the amount of time you waited before being seen?"
 lab var q48_j "Q48_J. How would you rate the courtesy and helpfulness at the facility?"
+lab var q48_k "Q48_K. How would you rate how long it took for you to get this appointment?"
 lab var q49 "Q49. How likely would recommend this facility to a friend or family member?"
 lab var q50_a "Q50_A. How would you rate the quality of care provided for care for pregnancy?"
 lab var q50_b "Q50_B. How would you rate the quality of care provided for children?"
