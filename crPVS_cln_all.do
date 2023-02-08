@@ -965,7 +965,7 @@ u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
 append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
 append using "$data_mc/02 recoded data/pvs_it_mx_us.dta"
-
+stop
 * Note: need to check append 
 * Note: Fix Kenya/Ethiopia date for append, and Laos date 
 * Note: Fix respondent_serial 
@@ -1110,7 +1110,10 @@ lab def fac_owner .a "NA" .r "Refused", modify
 lab def fac_type1 .a "NA" .r "Refused", modify
 lab def fac_type3 .a "NA" .r "Refused", modify
 
- 
+*Italy, Mexico, and US variable country-specific variable labels*
+lab var q56_mx_a "Q56. MX only: How would you rate the quality of services provided by IMSS?"
+lab var q56_mx_b "Q56. MX only: How would you rate the quality of services provded by IMSS BIENESTAR?"
+
 *** weights ***
 drop weight
 ren weight_educ weight
