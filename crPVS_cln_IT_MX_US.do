@@ -297,6 +297,57 @@ recode q5_us q6 q7 q8_us q20_us q44_us q54_us q63_us (. = .a) if country != 1
 * Recode value labels:
 * Recode values and value labels so that their values and direction make sense
 
+* All Yes/No questions
+
+recode q6 q11 q12 q13 q18 q25_a q26 q29 q41 ///
+	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
+	   pre(rec) label(yes_no)
+	   
+
+recode q30 q31 q32 q33 q34 q35 q36 q38 ///
+	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (3 .d = .d "Don't know") /// 
+	   (.a = .a NA), ///
+	   pre(rec) label(yes_no_dk)
+
+recode q39 q40 /// 
+	   (1 = 1 Yes) (2 = 0 No) ///
+	   (3 = .a "I did not get healthcare in past 12 months") ///
+	   (.r = .r Refused), ///
+	   pre(rec) label(yes_no_na)
+
+* All Excellent to Poor scales
+
+recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54_it ///
+	   q54_mx_a q54_mx_b q54_us q55 q56 q59 q60 q61 ///
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
+	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
+	   pre(rec) label(exc_poor)
+	   
+recode q22  ///
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
+	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") /// 
+	   (.r = .r Refused), /// 
+	   pre(rec) label(exc_pr_hlthcare)
+	   
+recode q48_e ///
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
+	   (5 = 0 Poor) (6 = .a "NA") (.r = .r Refused), /// 
+	   pre(rec) label(exc_pr_visits)
+* NOTE: "I had no prior tests or visits" was not an option - was the skip pattern fixed? 
+* 		Can move this above if so
+	 
+recode q48_j ///
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
+	   (5 = 0 Poor) (6 = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
+	   pre(rec) label(exc_poor_staff)
+	   
+recode q50_a q50_b q50_c q50_d ///
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
+	   (5 = 0 Poor) (6 = .d "I am unable to judge") (.r = .r Refused) ///
+	   (.a = .a NA), /// 
+	   pre(rec) label(exc_poor_judge)	   
+	   
+	   
 * Country-specific 
 * Mode 
 recode mode (2 = 1) (1 = 4)
