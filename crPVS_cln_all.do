@@ -964,12 +964,13 @@ save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
 u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
 append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
 append using "$data_mc/02 recoded data/pvs_la.dta"
+append using "$data_mc/02 recoded data/pvs_it_mx_us.dta"
 
 * Note: need to check append 
 * Note: Fix Kenya/Ethiopia date for append, and Laos date 
 * Note: Fix respondent_serial 
 
-* Kenya/Ethiopia variables 
+* Kenya/Ethiopia variables  -edit for ssrs-
 ren q19 q19_et_ke_za
 lab var q19_et_ke_za "Q19. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
 ren q43 q43_et_ke_za_la
@@ -979,11 +980,12 @@ ren q56 q56_et_ke_za
 lab var q56_et_ke_za "Q56. ET/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 
 * Mode
-lab val mode mode
-recode mode (3 = 1) 
-lab var mode "Mode of interview (CATI or F2F)"
+recode mode (3 = 1) (4 = 3)
+lab def mode 1 "CATI" 2 "F2F" 3 "CAWI", replace
+label val mode mode
+lab var mode "Mode of interview (CATI, CAWI, or F2F)"
 
-* Country-specific skip patterns
+* Country-specific skip patterns -edit for ssrs-
 recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
 recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
 recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country == 5 | country == 3 | country == 9 | country == 11 
@@ -995,38 +997,64 @@ recode q18a_la q19_q20a_la q18b_la q19_q20b_la ///
 		(. = .a) if country != 11
 recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 		
-* Country-specific value labels 
+* Country-specific value labels -edit for ssrs-
 recode language (. = 0) if country == 2 | country == 7 | country == 10 
 lab def Language 0 "Spanish" 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali" 15 "Lao" 16 "Khmou" 17 "Hmong", modify 
 * NOTE: Edit this for future Ipsos data 
 
 * country
-lab def labels0 11 "Lao PDR", modify
+lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy", modify
 
 *Q4
-lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused", modify
+lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused", modify //Laos?
+lab def labels6 31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area", modify //mx it us
 
-*Q5
+*Q5 -edit for ssrs-
 lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang" .r "Refused", modify
 
-*Q7
+*Q7 -edit for ssrs-
 lab def labels9 29 "Only public" 30 "Additional private insurance" .a "NA" .r "Refused", modify
-
-*Q8
+stop
+*Q8 
 lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
 					  47 "Lower secondary (1-4 years)" /// 
 					  48 "Upper secondary (5-7 years)" ///
 					  49 "Post-secondary and non-tertiary (13-15 years)" ///
 					  50 "Tertiary (Associates or higher)" .r "Refused", modify
+	*Italy
+lab def labels10 51 "Mai frequentato la scuola o solo Nido e Scuola dell'infanzia" ///
+		52 "Scuola primaria" ///
+		53 "Scuola secondaria di primo grado" ///
+		54 "Scuola secondaria di secondo grado" ///
+		55 "Liceo, Instituto tecnico o Instituto professionale" ///
+		56 "Universita Laurea triennale (compreso alta formazione artistica)" ///
+		57 "Universita Laurea Magistrale o ciclo unico o Dottorato", modify
+
+	*Mexico
+lab def labels10 58 "Ninguno" ///
+		59 "Primaria" ///
+		60 "Secundaria" ///
+		61 "Preparatoria o Bachillerato" ///
+		62 "Carrera técnica" ///
+		63 "Licenciatura" ///
+		64 "Postgrado", modify
+
+	*US
+lab def labels10 65 "Never attended school or only kindergarten" ///
+		66 "Grades 1 through 8 (elementary)" ///
+		67 "Grades 9 through 11 (some high school)" ///
+		68 "Grade 12 or GED (high school graduate)" ///
+		69 "College 1 year to 3 years (some college or technical school)" ///
+		70 "College 4 years or more (college graduate)", modify
 					  
-*Q44 
+*Q44  -edit for ssrs-
 * Add Laos and fix label issues on append
 lab def labels25 23 "NGO/Faith-based hospital" 38 "Mobile clinic" ///
 				 201 "Hospital" 202 "Health center" 203 "Clinic" .a "NA" .r "Refused" ///
 				 995 "Other", modify
 
 					  
-*Q62
+*Q62 -edit for ssrs-
 recode q62 (998 = 995)
 lab def labels51 21 "Oromiffa" 22 "Amharegna" 23 "Somaligna" 24 "Tigrigna" 25 "Sidamigna" ///
 				 26 "Wolaytigna" 27 "Gurage" 28 "Afar" 29 "Hadiyya" 30 "Gamogna" ///
@@ -1041,6 +1069,29 @@ lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" ///
  104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" ///
  106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip" ///
  .d "Don't know" .r "Refused", modify
+ 
+	*Italy
+lab def labels52 151 "Less than 10,000 euros" ///
+		152 "10,000-15,000 euros" ///
+		153 "15,000-26,000 euros" ///
+		154 "26,000-55,000 euros" ///
+		155 "55,000-75,000 euros" ///
+		156 "75,000-120,000 euros" ///
+		157 "More than 120,000 euros", modify
+		
+	*Mexico
+lab def labels52 158 "Less than 6,500 pesos" ///
+		159 "6,500-10,000 pesos" ///
+		160 "10,000-15,000 pesos" ///
+		161 "15,000-25,000 pesos" ///
+		162 "More than 25,000 pesos", modify
+		 
+	*US
+lab def labels52 163 "Less than $26,000" ///
+		164 "$26,000 to less than $36,000" ///
+		165 "$36,000 to less than $65,000" ///
+		166 "$65,000 to less than $100,000" ///
+		167 "$100,000 or more", modify 
 
 * Other value label modifcations
 lab def labels16 .a "NA" .r "Refused", modify
@@ -1068,12 +1119,12 @@ lab var weight "Final weight (based on gender, age, region, education)"
 *** Code for survey set ***
 gen respondent_num = _n 
 sort mode psu_id respondent_num
-gen short_id = _n if mode == 1
-replace psu_id = subinstr(psu_id, " ", "", .) if mode == 1
+gen short_id = _n if mode == 1 | mode == 3
+replace psu_id = subinstr(psu_id, " ", "", .) if mode == 1 | mode == 3
 encode psu_id, gen(psu_id_numeric) // this makes a numeric version of psu_id; an integer with a value label 
-gen long psu_id_for_svy_cmds = cond(mode==1, 1e5+short_id, 2e5+psu_id_numeric) 
+gen long psu_id_for_svy_cmds = cond(mode==1 | mode==3, 1e5+short_id, 2e5+psu_id_numeric) 
 drop short_id psu_id_numeric
-label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for CATI and 200 prefix for F2F)"
+label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for CATI/CAWI and 200 prefix for F2F)"
  
 * This will have values 100001 up to 102006 for the Kenya data CATI folks and (if there were 20 PSUs) 200002 to 200021 for F2F  (200001 is skipped because Stata thinks of psu_id_numeric == 1 as being the CATI respondents.
 * Each person will have their own PSU ID for CATI and each sampled cluster will have a unique ID for the F2F.

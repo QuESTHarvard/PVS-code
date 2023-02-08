@@ -299,8 +299,8 @@ recode q66 q67 (. = .a) if mode == 2
 * Country-specific 
 RESTARTED HERE
 * Mode 
-recode mode (2 = 1) (1 = 3)
-lab def mode 1 "CATI" 3 "CAWI"
+recode mode (2 = 1) (1 = 4)
+lab def mode 1 "CATI" 4 "CAWI"
 lab val mode mode
 
 * Country
