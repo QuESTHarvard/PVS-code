@@ -127,14 +127,19 @@ ren Q4_1_D q50_d
 ren Q4_2_A q51
 ren Q4_2_B q52
 ren Q4_2_C q53
-ren Q4_5MX_A q56_mx
-ren Q4_5MX_B q54_mx_a
-ren Q4_5MX_C q54_mx_b
+ren Q4_5MX_B q54_mx // secretaria de salud (public)
+ren Q4_5MX_A q56_mx_a //IMSS (third system)
+ren Q4_5MX_C q56_mx_b //IMSS bienestar (check)
 
 * FLAG check q54 versus q56
 
 ren Q4_5IT q54_it
 ren Q4_5US q54_us
+
+egen q54 = rowmax(q54_mx q54_it q54_us)
+lab def scale 1 "Excellent" 2 "Very good" 3 "Good" 4 "Fair" 5 "Poor" 999 "Refused", replace
+lab val q54 scale
+
 ren Q4_6 q55
 ren Q4_8 q57
 ren Q4_9 q58
@@ -186,7 +191,8 @@ drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 	 HID_SECTIONTIME_1 HID_SECTIONTIME_2 HID_SECTIONTIME_3 HID_SECTIONTIME_4 ///
 	 HID_LOI BLANDCELL BSSRS_MATCH_CODE CATICALLTIME DIALTYPE DTYPE EMAIL ///
 	 RECORDTYPE BIDENT2 BSTRATA BREGION1 BREGION2 BREGION3 BREGION4 BLOCALITY ///
-	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE q46_min q46_hrs q47_min q47_hrs
+	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE q46_min q46_hrs q47_min q47_hrs ///
+	 q54_it q54_us
 	 
 * Add back these variables later
 
@@ -229,7 +235,7 @@ recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7 q7_mx q8* q9 q10 q11 q12 q13 q1
 	   q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_it q43_mx q44_it q44_mx q44_us ///
 	   q45 q46* q47* q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54* q55 /// 
-	   q56_mx q57 q58 q59 q60 q61 q63* (999 = .r)	
+	   q56_mx* q57 q58 q59 q60 q61 q63* (999 = .r)	
 	  
 
 *------------------------------------------------------------------------------*
@@ -288,9 +294,9 @@ recode q44_mx (. = .a) if q43_mx == 7
 *q64/q65 - are there vars on number of phone numbers? 
 
 * Country-specific skip pattern - may change 
-recode q5_it q6_it q8_it q19_it q20_it q43_it q44_it q54_it q63_it (. = .a) if country != 3
-recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q54_mx_a q54_mx_b q56_mx q63_mx (. = .a) if country != 2
-recode q5_us q6 q7 q8_us q20_us q44_us q54_us q63_us (. = .a) if country != 1
+recode q5_it q6_it q8_it q19_it q20_it q43_it q44_it q63_it (. = .a) if country != 3
+recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q56_mx_a q56_mx_b q54_mx q63_mx (. = .a) if country != 2
+recode q5_us q6 q7 q8_us q20_us q44_us q63_us (. = .a) if country != 1
 
 *------------------------------------------------------------------------------*
 
@@ -317,8 +323,8 @@ recode q39 q40 ///
 
 * All Excellent to Poor scales
 
-recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54_it ///
-	   q54_mx_a q54_mx_b q54_us q55 q56_mx q59 q60 q61 ///
+recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 q54_mx ///
+	   q56_mx_a q56_mx_b q55 q59 q60 q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(exc_poor)
@@ -470,8 +476,8 @@ lab val q63 q63
 drop q4 country recq8_it recq8_mx recq8_us recq63_it recq63_mx recq63_us ///
 		q8_it q8_mx q8_us q63_it q63_mx q63_us ///
      q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
-	 q40 q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54_it ///
-	 q54_mx_a q54_mx_b q54_us q55 q56_mx q59 q60 q61 q22 q48_e q48_j q50_a ///
+	 q40 q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
+	 q54 q54_mx q56_mx_a q56_mx_b q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57
 
 ren rec* *
@@ -484,6 +490,87 @@ ren rec* *
 *------------------------------------------------------------------------------*
 
 * Label variables 
+lab var q1 "Q1. Respondent еxact age"
+lab var q2 "Q2. Respondent's age group"
+lab var q3 "Q3. Respondent gender"
+lab var q4 "Q4. Type of area where respondent lives"
+* lab var q5 "Q5. County, state, region where respondent lives"
+lab var q6 "Q6. Do you have health insurance?"
+lab var q7 "Q7. What type of health insurance do you have?"
+* lab var q7_other "Q7_other. Other type of health insurance"
+lab var q8 "Q8. Highest level of education completed by the respondent"
+lab var q9 "Q9. In general, would you say your health is:"
+lab var q10 "Q10. In general, would you say your mental health is?"
+lab var q11 "Q11. Do you have any longstanding illness or health problem?"
+lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
+lab var q13 "Q13. Was it confirmed by a test?"
+lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
+lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
+lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
+lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
+
+lab var q21 "Q21. Why did you choose this healthcare facility?"
+lab var q21_other "Q21. Other"
+lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
+lab var q23 "Q23. How many healthcare visits in total have you made in the past 12 months?"
+lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q24 mid-point)"
+lab var q24 "Q24. Total number of healthcare visits in the past 12 months (range)"
+lab var q25_a "Q25_A. Was this visit for COVID-19?"
+lab var q25_b "Q25_B. How many of these visits were for COVID-19? "
+lab var q26 "Q26. Were all of the visits you made to the same healthcare facility?"
+lab var q27 "Q27. How many different healthcare facilities did you go to?"
+lab var q28_a "Q28_A. How many visits did you have with a healthcare provider at your home?"
+lab var q28_b "Q28_B. How many virtual or telemedicine visits did you have?"
+lab var q29 "Q29. Did you stay overnight at a healthcare facility as a patient?"
+lab var q30 "Q30. Blood pressure tested in the past 12 months"
+lab var q31 "Q31. Received a mammogram in the past 12 months"
+lab var q32 "Q32. Received cervical cancer screening, like a pap test or visual inspection"
+lab var q33 "Q33. Had your eyes or vision checked in the past 12 months"
+lab var q34 "Q34. Had your teeth checked in the past 12 months"
+lab var q35 "Q35. Had a blood sugar test in the past 12 months"
+lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
+lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
+lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
+lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
+lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
+lab var q42 "Q42. The last time this happened, what was the main reason?"
+lab var q42_other "Q42. Other"
+* lab var q43 "Q43. Last healthcare visit in a public, private, or NGO/faith-based facility?"
+*lab var q43_other "Q43. Other"
+* lab var q44 "Q44. What type of healthcare facility is this?"
+* lab var q44_other "Q44. Other"
+lab var q45 "Q45. What was the main reason you went?"
+lab var q45_other "Q45. Other"
+lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
+lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
+lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
+lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
+lab var q48_c "Q48_C. How would you rate the equipment and supplies that the provider had?"
+lab var q48_d "Q48_D. How would you rate the level of respect your provider showed you?"
+lab var q48_e "Q48_E. How would you rate your provider knowledge about your prior visits?"
+lab var q48_f "Q48_F. How would you rate whether your provider explained things clearly?"
+lab var q48_g "Q48_G. How would you rate whether you were involved in your care decisions?"
+lab var q48_h "Q48_H. How would you rate the amount of time your provider spent with you?"
+lab var q48_i "Q48_I. How would you rate the amount of time you waited before being seen?"
+lab var q48_j "Q48_J. How would you rate the courtesy and helpfulness at the facility?"
+lab var q49 "Q49. How likely would recommend this facility to a friend or family member?"
+lab var q50_a "Q50_A. How would you rate the quality of care provided for care for pregnancy?"
+lab var q50_b "Q50_B. How would you rate the quality of care provided for children?"
+lab var q50_c "Q50_C. How would you rate the quality of care provided for chronic conditions?"
+lab var q50_d "Q50_D. How would you rate the quality of care provided for the mental health?"
+lab var q51 "Q51. How confident are you that you'd get good healthcare if you were very sick?"
+lab var q52 "Q52. How confident are you that you'd be able to afford the care you requiered?"
+lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
+lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
+lab var q55 "Q55. How would you rate the quality of private for-profit healthcare?"
+* lab var q56 "Q56. How would you rate the quality of the NGO or faith-based healthcare?"
+lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
+lab var q58 "Q58. Which of these statements do you agree with the most?"
+lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
+lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
+lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
+lab var q62 "Q62. Respondent's mother tongue or native language"
+lab var q63 "Q63. Total monthly household income"
 
 *------------------------------------------------------------------------------*
  
