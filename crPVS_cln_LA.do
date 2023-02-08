@@ -178,6 +178,9 @@ timestamp_Part1 start_min end_min usc2120d timestamp_start
 
 * Generate variables 
 
+* Respondent ID
+gen respondent_id = "LA" + string(respondent_serial)
+
 gen country = 11 
 gen mode = 1
 gen q6 = .a 
@@ -189,6 +192,8 @@ gen q23_q24 = q23
 recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 1
 recode q23_q24 (.r = 7) (.d = 7) if q24 == 2
 recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
+
+
 
 *------------------------------------------------------------------------------*
 
@@ -426,8 +431,6 @@ gen recq63 = q63 + 100
 replace recq63 = .r if q63==.r
 * EC note: added the refusals to the recode version
 
-* Respondent ID
-gen respondent_id = "LA" + string(respondent_serial)
 
 *------------------------------------------------------------------------------*
 
