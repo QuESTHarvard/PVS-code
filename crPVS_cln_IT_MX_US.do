@@ -244,26 +244,27 @@ recode q13 (. = .a) if q12 == 2  | q12==.r
 
 * q15
 * recode q15 (. = .a) if q14 == 3 | q14 == 4 | q14 == 5 | q14 == .r 
-* NOTE: was Q15 asked to eveyone? 
+* FLAG: was Q15 asked to eveyone? 
 * 		Should I make it a new var? Or recode those who said 0, 1, 2 doess
 *		(This skip pattern was also different in Laos )
 
 
 *q19-22
 recode q19_it q19_mx q20_it q20_mx q20_us q21 q22 (. = .a) if q18 == 2 | q18 == .r 
+* Note: In Italy, SSRS asked q20 even if q19 was other or refused, but not the case in Mexico 
+recode q20_mx (. = .a) if q19_mx == 7 
 
-STOPPED HERE
-
-recode q20 (. = .a) if q19 == 4 | q19 == .r
+* will need to add country- specific skip pattern - could do this on merge or here 
+* recode q20_us (. = .a) if country == 2 | country == 3
 
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d | q23 != .r
 recode q25_a (. = .a) if q23 != 1
-recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q27 (. = .a) if q26 == 1 | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+recode q25_b q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+recode q27 (. = .a) if q26 == 1 | q26 == .r | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 
-* Note: for other data add q28c 
+* FLAG - some missing in q27 - maybe refusal? or skip pattern I missed?
+* br q23 q24 q23_q24 q26 q27 if q27 == .
 
 * q31 & q32
 recode q31 (. = .a) if q3 == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
