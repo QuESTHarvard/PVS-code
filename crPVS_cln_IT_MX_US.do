@@ -467,7 +467,8 @@ lab val q63 q63
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q4 recq8_it recq8_mx recq8_us recq63_it recq63_mx recq63_us country ///
+drop q4 country recq8_it recq8_mx recq8_us recq63_it recq63_mx recq63_us ///
+		q8_it q8_mx q8_us q63_it q63_mx q63_us ///
      q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
 	 q40 q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54_it ///
 	 q54_mx_a q54_mx_b q54_us q55 q56_mx q59 q60 q61 q22 q48_e q48_j q50_a ///

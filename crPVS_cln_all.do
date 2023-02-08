@@ -996,6 +996,11 @@ recode q6_za q37_za (. = .a) if country != 9
 recode q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
 		(. = .a) if country != 11
 recode q18 q20 q44 q64 q65 (. = .a) if country == 11
+
+* Addition for SSRS - may change  
+recode q5_it q6_it q8_it q19_it q20_it q43_it q44_it q54_it q63_it (. = .a) if country != 3
+recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q54_mx_a q54_mx_b q56_mx q63_mx (. = .a) if country != 2
+recode q5_us q6 q7 q8_us q20_us q44_us q54_us q63_us (. = .a) if country != 1
 		
 * Country-specific value labels -edit for ssrs-
 recode language (. = 0) if country == 2 | country == 7 | country == 10 
@@ -1014,7 +1019,7 @@ lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 
 
 *Q7 -edit for ssrs-
 lab def labels9 29 "Only public" 30 "Additional private insurance" .a "NA" .r "Refused", modify
-stop
+
 *Q8 
 lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
 					  47 "Lower secondary (1-4 years)" /// 
