@@ -127,9 +127,12 @@ ren Q4_1_D q50_d
 ren Q4_2_A q51
 ren Q4_2_B q52
 ren Q4_2_C q53
-ren Q4_5MX_A q54_mx_a
-ren Q4_5MX_B q54_mx_b
-ren Q4_5MX_C q54_mx_c
+ren Q4_5MX_A q56_mx
+ren Q4_5MX_B q54_mx_a
+ren Q4_5MX_C q54_mx_b
+
+* FLAG check q54 versus q56
+
 ren Q4_5IT q54_it
 ren Q4_5US q54_us
 ren Q4_6 q55
@@ -158,7 +161,11 @@ order respondent_serial mode language country weight_educ
 
 *------------------------------------------------------------------------------*
 
-* Time variables? 
+* Time variables - others to add? 
+
+recode q46_min q46_hrs q47_min q47_hrs (. = 0)
+gen q46 = q46_hrs*60 + q46_min
+gen q47 = q47_hrs*60 + q47_min
 
 
 *------------------------------------------------------------------------------*
@@ -179,7 +186,7 @@ drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 	 HID_SECTIONTIME_1 HID_SECTIONTIME_2 HID_SECTIONTIME_3 HID_SECTIONTIME_4 ///
 	 HID_LOI BLANDCELL BSSRS_MATCH_CODE CATICALLTIME DIALTYPE DTYPE EMAIL ///
 	 RECORDTYPE BIDENT2 BSTRATA BREGION1 BREGION2 BREGION3 BREGION4 BLOCALITY ///
-	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE
+	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE q46_min q46_hrs q47_min q47_hrs
 	 
 * Add back these variables later
 
@@ -223,9 +230,7 @@ recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7 q7_mx q8* q9 q10 q11 q12 q13 q1
 	   q45 q46* q47* q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54* q55 /// 
 	    q57 q58 q59 q60 q61 q63* (999 = .r)	
-	   
-
-* check q54 versus q56
+	  
 
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for questions respondents would not have been asked 
@@ -254,8 +259,6 @@ recode q19_it q19_mx q20_it q20_mx q20_us q21 q22 (. = .a) if q18 == 2 | q18 == 
 * Note: In Italy, SSRS asked q20 even if q19 was other or refused, but not the case in Mexico 
 recode q20_mx (. = .a) if q19_mx == 7 
 
-* will need to add country- specific skip pattern - could do this on merge or here 
-* recode q20_us (. = .a) if country == 2 | country == 3
 
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d | q23 != .r
@@ -269,36 +272,32 @@ recode q27 (. = .a) if q26 == 1 | q26 == .r | q23 == 0 | q23 == 1 | q24 == 1 | q
 * q31 & q32
 recode q31 (. = .a) if q3 == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
 recode q32 (. = .a) if q3 == 1 | q1 == .r | q2 == .r
+* FLAG - was the skip pattern for Q32 different? some missing 
 
 * q42
 recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
-recode q43 q44 q45 q46 q46_min q46_refused q47 q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
-	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
-	   
-recode q44 (. = .a) if q43 == 4 | q43 == .r
+recode q43_it q43_mx q44_it q44_mx q44_us q45 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
+	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r 
+recode q44_it (. = .a) if q43_it == 4 // different from above 
+recode q44_mx (. = .a) if q43_mx == 7 
 
-recode q45 (995 = 4)
+* FLAG add skip pattern for appointment once add back variables 
 
-*q46/q47 refused
-recode q46 q46_min (. = .r) if q46_refused == 1
-recode q47 q47_min (. = .r) if q47_refused == 1
+*q64/q65 - are there vars on number of phone numbers? 
 
-*q66/67
-recode q67 (. = .a) if q66 == 2 | q66 == .d | q66 == .r 
-recode q66 q67 (. = .a) if mode == 2
-
-
+* Country-specific skip pattern - may change 
+recode q5_it q6_it q8_it q19_it q20_it q43_it q44_it q54_it q63_it (. = .a) if country != 3
+recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q54_mx_a q54_mx_b q56_mx q63_mx (. = .a) if country != 2
+recode q5_us q6 q7 q8_us q20_us q44_us q54_us q63_us (. = .a) if country != 1
 
 *------------------------------------------------------------------------------*
 
 * Recode value labels:
 * Recode values and value labels so that their values and direction make sense
 
-
 * Country-specific 
-RESTARTED HERE
 * Mode 
 recode mode (2 = 1) (1 = 4)
 lab def mode 1 "CATI" 4 "CAWI"
