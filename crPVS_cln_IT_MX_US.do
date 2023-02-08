@@ -347,7 +347,53 @@ recode q50_a q50_b q50_c q50_d ///
 	   (.a = .a NA), /// 
 	   pre(rec) label(exc_poor_judge)	   
 	   
+* All Very Confident to Not at all Confident scales 
 	   
+recode q16 q17 q51 q52 q53 ///
+	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
+	   (3 = 1 "Not too confident") (4 = 0 "Not at all confident") /// 
+	   (.r = .r Refused) (.a = .a NA), /// 
+	   pre(rec) label(vc_nc)
+	   
+* Miscellaneous questions with unique answer options
+recode q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
+		  (6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") ///
+		  (.a = .a "NA"), pre(rec) label(age_cat)
+	   
+recode q3 ///
+	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
+	pre(rec) label(gender)
+
+recode q14 ///
+	(1 = 0 "0- no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
+	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused) (.a = .a NA), ///
+	pre(rec) label(covid_vacc)
+
+recode q15 /// 
+	   (1 = 1 "Yes, I plan to receive all required doses") ///
+	   (2 = 0 "No, don't plan to receive all required doses") ///
+	   (3 = .d "Not sure") ///
+	   (.r = .r Refused) (.a = .a NA), ///
+	   pre(rec) label(yes_no_doses)
+	   
+recode q24 ///
+	(1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") ///
+	(.r = .r Refused) (.a = .a NA), ///
+	pre(rec) label(number_visits)
+
+* recode q49 ///
+*	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
+*	(7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
+*	(.r = .r Refused) (.a = .a NA), ///
+*	pre(rec) label(prom_score)
+	
+recode q57 ///
+	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
+	(.r = .r "Refused") , pre(rec) label(system_outlook)
+	
+lab def na_rf .a "NA" .r "Refused" .d "Don't know"
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q47 na_rf	
+	
 * Country-specific 
 * Mode 
 recode mode (2 = 1) (1 = 4)
@@ -421,7 +467,11 @@ lab val q63 q63
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q4 recq8_it recq8_mx recq8_us recq63_it recq63_mx recq63_us country
+drop q4 recq8_it recq8_mx recq8_us recq63_it recq63_mx recq63_us country ///
+     q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
+	 q40 q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54_it ///
+	 q54_mx_a q54_mx_b q54_us q55 q56_mx q59 q60 q61 q22 q48_e q48_j q50_a ///
+	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57
 
 ren rec* *
 
