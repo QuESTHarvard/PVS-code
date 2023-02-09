@@ -20,52 +20,72 @@ recode usual_quality (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent"
 	   (.a = .a "I did not receive healthcare form this provider in the past 12 months"), /// 
 	   gen(usual_quality_e) label(exc_pr_hlthcare_1)
 
+lab var usual_quality_e "E: Overall quality rating of usual source of care (Q22)"
+
 recode usual_quality (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "I did not receive healthcare form this provider in the past 12 months"), /// 
 	   gen(usual_quality_vge) label(exc_pr_hlthcare_2)
+
 lab var usual_quality_vge "VGE: Overall quality rating of usual source of care (Q22)"
 
 * last_qual	   
 recode last_qual (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_qual_e) label(exc_pr_1)
+
+lab var last_qual_e "E: Last visit rating: overall quality (Q48A)"
+
 	   
 recode last_qual (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_qual_vge) label(exc_pr_2)
 
+lab var last_qual_vge "VGE: Last visit rating: overall quality (Q48A)"
+	   
 * phc_women
 
 recode phc_women (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_women_e) label(exc_pr_judge_1)
 	   
-
+lab var phc_women_e "E: Public primary care system rating for: pregnant women (Q50A)"
+	   
+	   
 recode phc_women (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_women_vge) label(exc_pr_judge_2)
 
+lab var phc_women_vge "VGE: Public primary care system rating for: pregnant women (Q50A)"   
+	   
 * phc_child 
 
 recode phc_child (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_child_e) label(exc_pr_judge_1)
 	   
+lab var phc_child_e "E: Public primary care system rating for: children (Q50B)"
 
+	   
 recode phc_child (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_child_vge) label(exc_pr_judge_2)	   
 
+lab var phc_child_vge "VGE: Public primary care system rating for: children (Q50B)"
+
+	   
 * phc_chronic
 
 recode phc_chronic (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_chronic_e) label(exc_pr_judge_1)
 	   
-
+lab var phc_chronic_e "E: Public primary care system rating for: chronic conditions (Q50C)"
+	   
 recode phc_chronic (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_chronic_vge) label(exc_pr_judge_2)	   	   
+
+lab var phc_chronic_vge "VGE: Public primary care system rating for: chronic conditions (Q50C)"
 	   
 * phc_mental
 
@@ -73,24 +93,33 @@ recode phc_mental (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_mental_e) label(exc_pr_judge_1)
 	   
+lab var phc_mental_e "E: Public primary care system rating for: mental health (Q50D)"
 
 recode phc_mental(0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_mental_vge) label(exc_pr_judge_2)	  
 
+lab var phc_mental_vge "VGE: Public primary care system rating for: mental health (Q50D)"
+	   
 * qual_private  
 recode qual_private (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(qual_private_e) label(exc_pr_1)
-	   
+
+lab var qual_private_e "E:  Overall quality rating of private healthcare system in country (Q55)"
+
 recode qual_private (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(qual_private_vge) label(exc_pr_2)
 
+lab var qual_private_vge "VGE:  Overall quality rating of private healthcare system in country (Q55)"	   
+	   
 * qual_public
 recode qual_public (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(qual_public_e) label(exc_pr_1)
+	   
+lab var qual_public_e "E:  Overall quality rating of public healthcare system in country (Q54)"
 	   
 recode qual_public (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
@@ -104,12 +133,32 @@ recode qual_ss_pe (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (
 	   (.a = .a "NA"), /// 
 	   gen(qual_ss_pe_vge) label(exc_pr_2)
 
-* qual_mut_uy - just vge for now 
+lab var qual_ss_pe_vge "VGE: PE only: Overall quality rating of social security system in country (Q56)"
+
+* qual_mut_uy- just vge for now 
 	   
 recode qual_mut_uy (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(qual_mut_uy_vge) label(exc_pr_2)
 
+lab var qual_mut_uy_vge "VGE: UY only: Overall quality rating of mutual healthcare system in country (Q56)"
+
+* q56_mx_a - just vge for now 
+	   
+recode q56_mx_a (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(q56_mx_a_vge) label(exc_pr_2)
+
+lab var q56_mx_a_vge "VGE: MX only: How would you rate the quality of services provided by IMSS? (Q56)"
+
+* q56_mx_b - just vge for now 
+	   
+recode q56_mx_b (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(q56_mx_b_vge) label(exc_pr_2)
+
+lab var q56_mx_b_vge "VGE:  MX only: How would you rate the quality of services...IMSS BIENESTAR? (Q56)"   
+	   
 * covid_manage
 recode covid_manage (0 1 2 3 = 0 "Poor/Fair/Good/Very Good") (4 = 1 "Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
@@ -125,11 +174,15 @@ recode system_outlook ///
 	(0 1 = 0 "Staying the same/Getting worse") (2 = 1 "Getting better") ///
 	(.r = .r "Refused") , gen(system_outlook_getbet) label(system_outlook2)
 
+lab var system_outlook_getbet "Health system getting better (Q57)"	
+	
 * system reform
 
 recode system_reform ///
 	(1 2 = 0 "Major changes/Rebuilt") (3 = 1 "Minor changes") ///
 	(.r = .r "Refused") , gen(system_reform_minor) label(system_reform2)
+
+lab var system_reform_minor "System works well, only minor changes needed (Q58)"		
 	
 * gender
 gen gender2 = gender
@@ -204,15 +257,13 @@ replace mdp=0 if income>0 | education>1 | health_vge==1
 
 * Recode country 
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
-				(2 = 5 "Colombia") (10 = 6 "Uruguay") (11 = 7 "Lao PDR"), gen(country2)
+				(2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (11 = 8 "Lao PDR") ///
+				(14 = 9 "Italy") (12 = 10 "United States"), gen(country2)
 
 * Recode age
 recode age (18/20 = 0 "<20") (20/29 = 1 "20-29") (30/39 = 2 "30-39") (40/49 = 3 "40-49") ///
 		   (50/59 = 4 "50-59") (60/69 = 5 "60-69") (70/100 = 6 "> 70"), gen(age_cat2)
 
-
-* Add weight for ZA so commands will run 
-recode weight (. = 1) if country == 9
 
 * Generate poor variable 
 recode income 0=1 1/2=0, gen (poor)
@@ -244,8 +295,9 @@ summtab2 , by(country) vars(gender2 urban education health_vge age_cat2 visits q
 * Data for histograms - Exhibit 1 & 2
 
 summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_chronic_vge ///
-		   phc_mental_vge qual_public_vge qual_private_vge qual_ss_pe_vge qual_mut_uy_vge) /// 
-		   type(2 2 2 2 2 2 2 2 2)  wts(weight) /// 
+		   phc_mental_vge qual_public_vge qual_private_vge qual_ss_pe_vge qual_mut_uy_vge ///
+		   q56_mx_a_vge q56_mx_b_vge) /// 
+		   type(2 2 2 2 2 2 2 2 2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
 		   excelname(p1_exhib1_2) sheetname(Exhibit 1 data) directory("$output/Paper 1") /// 
@@ -285,165 +337,176 @@ foreach i in 1 2 3 4 5 6 7 {
 
 * Data for forest plots - Exhibit 3 
 
-****Outcome 1: overall public quality (logistic)***use this version
 
-foreach i in 1 2 3 4 6 5 7 {
+****Outcome 3A: quality of usual source of care 
+
+foreach i in 1 2 3 4 6 5 7 8 9 10 {
+	
+	eststo: logistic usual_quality_vge wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_3A_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
+	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
+	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
+	"Mexico" "Uruguay" "Lao PDR" "Italy" "United States") ///
+	title( "Exhibit 3A data") 
+
+eststo clear
+
+****Outcome 3B: overall public quality (logistic)***use this version
+
+foreach i in 1 2 3 4 6 5 7 8 9 10 {
 	
 	eststo: logistic qual_public_vge wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3.1_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
-	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 3.1 data") 
+esttab using "$output/Paper 1/exhibit_3B_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
+	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
+	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
+	"Mexico" "Uruguay" "Lao PDR" "Italy" "United States") ///
+	title( "Exhibit 3B data")  
 
 eststo clear
 
-***Outcome 2: diff between private and public
 
-foreach i in 1 2 3 4 6 5 7 {
+***Outcome 3C: 
+
+foreach i in 1 2 3 4 6 5 7 8 9 10 {
 	
-	eststo: reg qual_diff wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	eststo: logistic qual_private wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3.2_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
-	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 3.2 data") 
+esttab using "$output/Paper 1/exhibit_3C_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
+	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
+	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
+	"Mexico" "Uruguay" "Lao PDR" "Italy" "United States") ///
+	title( "Exhibit 3C data")  
 
 eststo clear
 
-***Outcome 3: total phc score (linear)
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: reg phc_score wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
-	
-}
+**Outcome 3D: confidence get and afford 
 
 
-esttab using "$output/Paper 1/exhibit_3.3_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels drop(health_vge gender2 _cons) ///
-	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 3.3 data") 
-
-eststo clear
-	
-**Outcome 4: try security in getting good care (not afford, since will use wealth as predictor)
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: logistic conf_sick wealthy most_educ urban under30  health_vge gender2 if country2 == `i' 
-	
-}
-
-esttab using "$output/Paper 1/exhibit_3.4_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
-	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 3.4 data") 
-
-eststo clear
-
-**Outcome 5: minor changes needed
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: logistic system_reform_minor wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
-	
-}
-
-esttab using "$output/Paper 1/exhibit_3.5_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
-	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 3.5 data") 
-	
-eststo clear
-
-**Outcome 6: system getting better
-
-foreach i in 1 2 3 4 6 5 7 {
-	
-	eststo: logistic system_outlook_getbet wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
-	
-}
-
-esttab using "$output/Paper 1/exhibit_3.6_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
-	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 3.6 data")
-
-eststo clear
-
-**Outcome 7: confidence get and afford 
-
-
-foreach i in 1 2 3 4 6 5 7 {
+foreach i in 1 2 3 4 6 5 7 8 9 10  {
 	
 	eststo: logistic conf_getafford wealthy most_educ urban under30  health_vge gender2 if country2 == `i' 
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3.7_data.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge gender2 _cons) ///
-	rename(wealthy "Highest income" under30 "Under 30 years" most_educ "Highly educated" ///
-	urban "Urban") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" "Uruguay" "Lao PDR") ///
-	title( "Exhibit 3.7 data") 
+esttab using "$output/Paper 1/exhibit_3D_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
+	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
+	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
+	"Mexico" "Uruguay" "Lao PDR" "Italy" "United States") ///
+	title( "Exhibit 3D data")  
 
 eststo clear
+
+**Outcome 3E: system getting better
+
+foreach i in 1 2 3 4 6 5 7 8 9 10  {
+	
+	eststo: logistic system_outlook_getbet wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_3E_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
+	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
+	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
+	"Mexico" "Uruguay" "Lao PDR" "Italy" "United States") ///
+	title( "Exhibit 3E data")  
+
+eststo clear
+
+**Outcome 3F: minor changes needed
+
+foreach i in 1 2 3 4 6 5 7 8 9 10  {
+	
+	eststo: logistic system_reform_minor wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	
+}
+
+esttab using "$output/Paper 1/exhibit_3F_data.rtf", ///
+	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
+	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
+	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
+	"Mexico" "Uruguay" "Lao PDR" "Italy" "United States") ///
+	title( "Exhibit 3F data")  
+	
+eststo clear
+
 
 
 *------------------------------------------------------------------------------*
 * Exhibit 4 & 5
 
-* Generate poor variable 
+*** Confidence get and afford ***
 
 eststo: logistic conf_getafford poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **government listens to opinions (q53) is strongest predictor of confidence OR 9.6, covid managment OR 1.6 inconsistent up the likert
 
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot, ylabel(0(0.25)0.75) xtitle("Quality of public system")
+marginsplot, ylabel(0(0.1)0.35, labsize(small)) xtitle("Quality of public system") ///
+			 ytitle("Pr(very confident)") xlabel( , labsize(small)) graphregion(color(white)) ///
+			 title("A. Health security: confidence can get and afford care") 
 
-graph export "$output/Paper 1/exhib_5_1.pdf", replace
+graph export "$output/Paper 1/exhib5_1.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot, ylabel(0(0.25)0.75) xtitle("Government considers public opinion")
+marginsplot, ylabel(0(0.1)0.35, labsize(small)) xtitle("Government considers public opinion") ///
+			 ytitle("Pr(very confident)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			 title("B. Health security: confidence can get and afford care") 
+			 
 graph export "$output/Paper 1/exhib5_2.pdf", replace
+
+*** System outlook getting better ***
 
 eststo: logistic system_outlook_getbet poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **qual_public big determinant (excellent OR 5.6, then opinion 2.9 then covid managment 2.5
 
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot, ylabel(0(0.25)0.75) xtitle("Quality of public system")
-graph export "$output/Paper 1/exhib5_4.pdf", replace
+
+marginsplot, ylabel(.2(0.1)0.6, labsize(small)) xtitle("Quality of public system") ///
+			 ytitle("Pr(getting better)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			 title("C. Positive trajectory: health system getting better") 
+
+graph export "$output/Paper 1/exhib5_3.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot, ylabel(0(0.25)0.75) xtitle("Government considers public opinion")	
-graph export "$output/Paper 1/exhib5_5.pdf", replace
 
+marginsplot, ylabel(.2(0.1)0.6, labsize(small)) xtitle("Government considers public opinion") ///
+			 ytitle("Pr(getting better)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			 title("D. Positive trajectory: health system getting better") 
+
+graph export "$output/Paper 1/exhib5_4.pdf", replace
+
+*** System reform minor ***
 
 eststo: logistic system_reform_minor poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **qual_public important (excellent OR 4.1)
 
-
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot, ylabel(0(0.25)0.75) xtitle("Quality of public system")
-graph export "$output/Paper 1/exhib5_7.pdf", replace
+marginsplot, ylabel(0.1(0.1)0.4, labsize(small)) xtitle("Quality of public system") ///
+			 ytitle("Pr(works well, minor changes needed)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			 title("E. Endorsement: no major reform needed") 
+graph export "$output/Paper 1/exhib5_5.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot, ylabel(0(0.25)0.75) xtitle("Government considers public opinion")	
-graph export "$output/Paper 1/exhib5_8.pdf", replace
+marginsplot, ylabel(0.1(0.1)0.4, labsize(small)) xtitle("Government considers public opinion") ///
+		     ytitle("Pr(works well, minor changes needed)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			  title("F. Endorsement: no major reform needed")  
+graph export "$output/Paper 1/exhib5_6.pdf", replace
 
 
 esttab using "$output/Paper 1/exhibit_4.rtf", ///
-	replace wide b(2) ci(2) nostar compress nobaselevels eform ///
+	replace wide b(2) ci(2) compress nobaselevels eform ///
 	rename(poor "Poor" under30 "Under 30 years" edu_secon "Secondary or higher education" ///
 	urban "Urban" health_vge "Self-rated health (vge)" ///
 	health_chronic "Chronic" gender2 "Gender" unmet_need "Unmet need for care" ///
@@ -458,8 +521,9 @@ esttab using "$output/Paper 1/exhibit_4.rtf", ///
 	1.q53 "Gov opinion - Not too confident" 2.q53 "Gov opinion - Somewhat confident" ///
 	3.q53 "Gov opinion - Very confident" 2.country2 "Kenya" ///
 	3.country2 "South Africa" 4.country2 "Peru" 5.country2 "Colombia" ///
-	6.country2 "Uruguay" 7.country2 "Lao PDR") mtitles("Confidence get and afford care" ///
+	6.country2 "Mexico" 7.country2 "Uruguay" 8.country2 "Lao PDR" 9.country2 "Italy" ///
+	10.country2 "United States") mtitles("Confidence get and afford care" ///
 	"System outlook getting better" "System works well, only minor changes needed") ///
-	title("Exhibit data")
+	title("Exhibit 4 data")
 
 eststo clear
