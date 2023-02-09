@@ -1004,7 +1004,7 @@ recode q5_us q6 q7 q20_us q44_us q48_k (. = .a) if country != 12
 
 *Italy, Mexico, and US variable country-specific variable labels*
 lab var q56_mx_a "Q56. MX only: How would you rate the quality of services provided by IMSS?"
-lab var q56_mx_b "Q56. MX only: How would you rate the quality of services provded by IMSS BIENESTAR?"
+lab var q56_mx_b "Q56. MX only: How would you rate the quality of services...IMSS BIENESTAR?"
 		
 * Country-specific value labels -edit for ssrs-
 recode language (. = 0) if country == 2 | country == 7 | country == 10 
