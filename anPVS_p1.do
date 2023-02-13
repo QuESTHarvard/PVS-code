@@ -453,16 +453,16 @@ eststo: logistic conf_getafford poor under30 edu_secon urban health_vge health_c
 **government listens to opinions (q53) is strongest predictor of confidence OR 9.6, covid managment OR 1.6 inconsistent up the likert
 
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot, ylabel(0(0.1)0.35, labsize(small)) xtitle("Quality of public system") ///
-			 ytitle("Pr(very confident)") xlabel( , labsize(small)) graphregion(color(white)) ///
-			 title("A. Health security: confidence can get and afford care") 
+marginsplot, ylabel(0(0.1)0.35, labsize(small)) xtitle("Quality of public system", size(small)) ///
+			 ytitle("Pr(very confident)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			 title("A. Health security: confidence can get and afford care", size(small)) 
 
 graph export "$output/Paper 1/exhib5_1.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot, ylabel(0(0.1)0.35, labsize(small)) xtitle("Government considers public opinion") ///
-			 ytitle("Pr(very confident)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
-			 title("B. Health security: confidence can get and afford care") 
+marginsplot, ylabel(0(0.1)0.35, labsize(small)) xtitle("Government considers public opinion", size(small)) ///
+			 ytitle("Pr(very confident)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			 title("B. Health security: confidence can get and afford care", size(small)) 
 			 
 graph export "$output/Paper 1/exhib5_2.pdf", replace
 
@@ -473,17 +473,17 @@ eststo: logistic system_outlook_getbet poor under30 edu_secon urban health_vge h
 
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
 
-marginsplot, ylabel(.2(0.1)0.6, labsize(small)) xtitle("Quality of public system") ///
-			 ytitle("Pr(getting better)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
-			 title("C. Positive trajectory: health system getting better") 
+marginsplot, ylabel(.2(0.1)0.6, labsize(small)) xtitle("Quality of public system", size(small)) ///
+			 ytitle("Pr(getting better)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			 title("C. Endorsement: health system getting better in past two years", size(small)) 
 
 graph export "$output/Paper 1/exhib5_3.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
 
-marginsplot, ylabel(.2(0.1)0.6, labsize(small)) xtitle("Government considers public opinion") ///
-			 ytitle("Pr(getting better)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
-			 title("D. Positive trajectory: health system getting better") 
+marginsplot, ylabel(.2(0.1)0.6, labsize(small)) xtitle("Government considers public opinion", size(small)) ///
+			 ytitle("Pr(getting better)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			 title("D. Endorsement: health system getting better in past two years", size(small)) 
 
 graph export "$output/Paper 1/exhib5_4.pdf", replace
 
@@ -493,15 +493,15 @@ eststo: logistic system_reform_minor poor under30 edu_secon urban health_vge hea
 **qual_public important (excellent OR 4.1)
 
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
-marginsplot, ylabel(0.1(0.1)0.4, labsize(small)) xtitle("Quality of public system") ///
-			 ytitle("Pr(works well, minor changes needed)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
-			 title("E. Endorsement: no major reform needed") 
+marginsplot, ylabel(0.1(0.1)0.4, labsize(small)) xtitle("Quality of public system", size(small)) ///
+			 ytitle("Pr(works well, only minor changes needed)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			 title("E. Endorsement: health system works well, only minor changes needed", size(small)) 
 graph export "$output/Paper 1/exhib5_5.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
-marginsplot, ylabel(0.1(0.1)0.4, labsize(small)) xtitle("Government considers public opinion") ///
-		     ytitle("Pr(works well, minor changes needed)") xlabel( , labsize(vsmall)) graphregion(color(white)) ///
-			  title("F. Endorsement: no major reform needed")  
+marginsplot, ylabel(0.1(0.1)0.4, labsize(small)) xtitle("Government considers public opinion", size(small)) ///
+		     ytitle("Pr(works well, only minor changes needed)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
+			  title("F. Endorsement: health system works well, only minor changes needed", size(small))  
 graph export "$output/Paper 1/exhib5_6.pdf", replace
 
 
