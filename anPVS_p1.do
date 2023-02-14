@@ -168,6 +168,8 @@ recode covid_manage (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent")
 	   (.a = .a "NA"), /// 
 	   gen(covid_manage_vge) label(exc_pr_2)
 
+lab var covid_manage_vge "VGE: Rating of the government's management of the COVID-19 pandemic (Q59)"   
+	   
 * system outlook
 
 recode system_outlook ///
@@ -188,6 +190,7 @@ lab var system_reform_minor "System works well, only minor changes needed (Q58)"
 gen gender2 = gender
 recode gender2 (2 = .)
 lab var gender2 "Gender (binary)"
+lab val gender2 gender
 
 * health
 recode health (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
@@ -285,8 +288,13 @@ svyset psu_id_for_svy_cmds, strata(mode) weight(weight)
 
 
 * Sample characteristics table
-summtab2 , by(country) vars(gender2 urban education health_vge age_cat2 visits q28_b inpatient) /// 
-		   type(2 2 2 2 2 1 1 2) wts(weight) wtfreq(ceiling) /// 
+summtab2 , by(country2) vars(gender2 age education urban income health_vge health_chronic ///
+		   unmet_need usual_quality_vge last_qual_vge phc_women_vge phc_child_vge ///
+		   phc_chronic_vge phc_mental_vge qual_public_vge qual_private_vge qual_ss_pe_vge ///
+		   qual_mut_uy_vge q56_mx_a_vge q56_mx_b_vge conf_sick conf_afford conf_getafford ///
+		   system_outlook_getbet system_reform_minor conf_opinion covid_manage_vge) /// 
+		   type(2 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2) ///
+		   wts(weight) wtfreq(ceiling) /// 
 		   catmisstype(none) /// 
 		   median total replace word landscape /// 
 		   wordname(sample_char_table) directory("$output/Paper 1") /// 
