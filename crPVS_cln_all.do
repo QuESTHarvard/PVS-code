@@ -998,13 +998,10 @@ recode q18a_la q19_q20a_la q18b_la q19_q20b_la ///
 recode q18 q20 q44 q64 q65 (. = .a) if country == 11
 
 * Addition for SSRS - may change  
-recode q5_it q6_it q19_it q20_it q43_it q44_it q48_k (. = .a) if country != 14
-recode q5_mx q7_mx q19_mx q20_mx q43_mx q44_mx q48_k q56_mx_a q56_mx_b (. = .a) if country != 13
-recode q5_us q6 q7 q20_us q44_us q48_k (. = .a) if country != 12
-
-*Italy, Mexico, and US variable country-specific variable labels*
-lab var q56_mx_a "Q56. MX only: How would you rate the quality of services provided by IMSS?"
-lab var q56_mx_b "Q56. MX only: How would you rate the quality of services...IMSS BIENESTAR?"
+recode q5_it q6_it q19_it q43_it q48_k (. = .a) if country != 14
+recode q5_mx q7_mx q19_mx q43_mx q48_k q56_mx_a q56_mx_b (. = .a) if country != 13
+recode q5_us q48_k (. = .a) if country != 12
+* Check 48_k 
 		
 * Country-specific value labels -edit for ssrs-
 recode language (. = 0) if country == 2 | country == 7 | country == 10 
@@ -1015,51 +1012,85 @@ lab def Language 0 "Spanish" 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali" 15 "La
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy", modify
 
 *Q4
-lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused", modify //Laos?
-lab def labels6 31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area", modify //mx it us
+lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused" /// LA
+				31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area" /// IT, MX, US
+				, modify 
 
 *Q5 -edit for ssrs-
-lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" 205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" 209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" 213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" 216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang" .r "Refused", modify
+lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" ///
+				205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" ///
+				209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" ///
+				213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" ///
+				216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang" .r "Refused", modify
 
 *Q7 -edit for ssrs-
 lab def labels9 29 "Only public" 30 "Additional private insurance" .a "NA" .r "Refused", modify
 
 *Q8 
-lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// 
+lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// LA 
 					  47 "Lower secondary (1-4 years)" /// 
 					  48 "Upper secondary (5-7 years)" ///
 					  49 "Post-secondary and non-tertiary (13-15 years)" ///
-					  50 "Tertiary (Associates or higher)" .r "Refused", modify
-	*Italy
-lab def labels10 51 "Mai frequentato la scuola o solo Nido e Scuola dell'infanzia" ///
-		52 "Scuola primaria" ///
-		53 "Scuola secondaria di primo grado" ///
-		54 "Scuola secondaria di secondo grado" ///
-		55 "Liceo, Instituto tecnico o Instituto professionale" ///
-		56 "Universita Laurea triennale (compreso alta formazione artistica)" ///
-		57 "Universita Laurea Magistrale o ciclo unico o Dottorato", modify
-
-	*Mexico
-lab def labels10 58 "Ninguno" ///
-		59 "Primaria" ///
-		60 "Secundaria" ///
-		61 "Preparatoria o Bachillerato" ///
-		62 "Carrera técnica" ///
-		63 "Licenciatura" ///
-		64 "Postgrado", modify
-
-	*US
-lab def labels10 65 "Never attended school or only kindergarten" ///
-		66 "Grades 1 through 8 (elementary)" ///
-		67 "Grades 9 through 11 (some high school)" ///
-		68 "Grade 12 or GED (high school graduate)" ///
-		69 "College 1 year to 3 years (some college or technical school)" ///
-		70 "College 4 years or more (college graduate)", modify
+					  50 "Tertiary (Associates or higher)" ///
+					  51 "Mai frequentato la scuola o solo Nido e Scuola dell'infanzia" /// IT
+					  52 "Scuola primaria" ///
+					  53 "Scuola secondaria di primo grado" ///
+					  54 "Scuola secondaria di secondo grado" ///
+					  55 "Liceo, Instituto tecnico o Instituto professionale" ///
+					  56 "Universita Laurea triennale (compreso alta formazione artistica)" ///
+					  57 "Universita Laurea Magistrale o ciclo unico o Dottorato" ///
+					  58 "Ninguno" /// MX
+					  59 "Primaria" ///
+					  60 "Secundaria" ///
+					  61 "Preparatoria o Bachillerato" ///
+					  62 "Carrera técnica" ///
+					  63 "Licenciatura" ///
+					  64 "Postgrado" ///
+					  65 "Never attended school or only kindergarten" /// US 
+					  66 "Grades 1 through 8 (elementary)" ///
+					  67 "Grades 9 through 11 (some high school)" ///
+					  68 "Grade 12 or GED (high school graduate)" ///
+					  69 "College 1 year to 3 years (some college or technical school)" ///
+					  70 "College 4 years or more (college graduate)" ///
+					  .r "Refused" , modify
 					  
-*Q44  -edit for ssrs-
-* Add Laos and fix label issues on append
-lab def labels25 23 "NGO/Faith-based hospital" 38 "Mobile clinic" ///
-				 201 "Hospital" 202 "Health center" 203 "Clinic" .a "NA" .r "Refused" ///
+
+*Q20 / Q44 
+* Add LA, IT, US, MX and fix label issues on append
+lab def labels25 23 "NGO/Faith-based hospital" 38 "Mobile clinic" /// Issue on append 
+				 201 "Hospital" 202 "Health center" 203 "Clinic" /// LA
+				 501 "General practitioner's office" /// Italy 
+			     502 "Outpatient clinic" ///
+				 503 "Hospital outpatient department (doctor's office based in hospital)" ///
+				 504 "Hospital emergency room" ///
+				 801 "Puesto de salud" ///
+			     802 "Clinica o unidad de medicina familiar" ///
+			     803 "Hospital general" ///
+			     804 "Centro Médico Nacional o Hospitales de especialidades como hospital de ginecología y obstetricia, pediatría..." ///
+			     805 "Clínica o unidad de medicina familiar, clínica o unidad de consulta externa, módulo de medecina familiar o puesto..." ///
+			     806 "Hospital general o regional" ///
+			     807 "Centro médico Nacional o Hospital de especialidades" ///
+			     808 "Brigada móvil de salud" ///
+			     809 "Centros de salud o centro de primer contacto" ///
+			     810 "Hospital civil, municipal, general, o regional" ///
+			     811 "Institutos Nacionales con hospitales monotemáticos (por ejemplo, Instituto Nacional de salud mental" ///
+			     812 "Brigada móvil de salud o unidad médica móvil" ///
+			     813 " Unidad de salud o Unidad de Médica Rural" ///
+			     814 "Hospital general, hospital rural o centro de atención rural obstétrica" ///
+			     815 "Clínica o unidad de consulta externa" ///
+			     816 "Hospital de especialidades" ///
+			     817 "Consultorio anexo a farmacia" ///
+			     818 "Consultorio médico privado o grupos de consultorios de especialidades de atención ambulatoria" ///
+			     819 "Hospital general privado" ///
+			     820 "Hospital de especialidades privado" ///
+				 1401 "Doctor's office, clinic, or health center" ///
+			     1402 "Urgent care clinic" ///
+			     1403 "Free community clinic or health center (e.g., Planned Parenthood or other clinics that are free of charge..." ///
+			     1404 "Veteran's Affairs, Military, or Indian Health Service clinic or health center" ///
+			     1405 "Veteran's Affairs, Military, or Indian Health Service Hospital" ///
+			     1406 "Hospital emergency room" ///
+			     1407 "Hospital outpatient department (doctor's office based in hospital)" ///
+				 .a "NA" .r "Refused" ///
 				 995 "Other", modify
 
 					  
@@ -1071,37 +1102,35 @@ lab def labels51 21 "Oromiffa" 22 "Amharegna" 23 "Somaligna" 24 "Tigrigna" 25 "S
 				 .a "NA" .r "Refused", modify
 
 *Q63
-lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" ///
- 11 "3001 – 5000 Eth.Birr" 12 "5001 – 10000 Eth.Birr" 13 "10001 - 20000 Eth.Birr" ///
- 14 "Greater than 20000 Eth.Birr" 101 "Range A (Less than 1,000,000) Kip" ///
- 102 "Range B (1,000,000 to 1,500,000) Kip" 103 "Range C (1,500,001 to 2,000,000) Kip" ///
- 104 "Range D (2,000,001 to 2,500,000) Kip" 105 "Range E (2,500,001 to 3,000,000) Kip" ///
- 106 "Range F (3,000,001 to 3,500,000) Kip" 107 "Range G (More than 3,500,000) Kip" ///
- .d "Don't know" .r "Refused", modify
- 
-	*Italy
-lab def labels52 151 "Less than 10,000 euros" ///
-		152 "10,000-15,000 euros" ///
-		153 "15,000-26,000 euros" ///
-		154 "26,000-55,000 euros" ///
-		155 "55,000-75,000 euros" ///
-		156 "75,000-120,000 euros" ///
-		157 "More than 120,000 euros", modify
+lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" /// ET
+			     11 "3001 – 5000 Eth.Birr" 12 "5001 – 10000 Eth.Birr" ///
+				 13 "10001 - 20000 Eth.Birr" 14 "Greater than 20000 Eth.Birr" ///
+				 101 "Range A (Less than 1,000,000) Kip" /// LA
+				 102 "Range B (1,000,000 to 1,500,000) Kip" ///
+				 103 "Range C (1,500,001 to 2,000,000) Kip" ///
+				 104 "Range D (2,000,001 to 2,500,000) Kip" ///
+				 105 "Range E (2,500,001 to 3,000,000) Kip" ///
+				 106 "Range F (3,000,001 to 3,500,000) Kip" ///
+				 107 "Range G (More than 3,500,000) Kip" ///
+				 151 "Less than 10,000 euros" /// IT
+			     152 "10,000-15,000 euros" ///
+				 153 "15,000-26,000 euros" ///
+				 154 "26,000-55,000 euros" ///
+				 155 "55,000-75,000 euros" ///
+				 156 "75,000-120,000 euros" ///
+				 157 "More than 120,000 euros" /// 
+				 158 "Less than 6,500 pesos" /// MX
+				 159 "6,500-10,000 pesos" ///
+				 160 "10,000-15,000 pesos" ///
+				 161 "15,000-25,000 pesos" ///
+				 162 "More than 25,000 pesos" ///
+				 163 "Less than $26,000" /// US
+				 164 "$26,000 to less than $36,000" ///
+				 165 "$36,000 to less than $65,000" ///
+				 166 "$65,000 to less than $100,000" ///
+				 167 "$100,000 or more" ///
+				 .d "Don't know" .r "Refused", modify
 		
-	*Mexico
-lab def labels52 158 "Less than 6,500 pesos" ///
-		159 "6,500-10,000 pesos" ///
-		160 "10,000-15,000 pesos" ///
-		161 "15,000-25,000 pesos" ///
-		162 "More than 25,000 pesos", modify
-		 
-	*US
-lab def labels52 163 "Less than $26,000" ///
-		164 "$26,000 to less than $36,000" ///
-		165 "$36,000 to less than $65,000" ///
-		166 "$65,000 to less than $100,000" ///
-		167 "$100,000 or more", modify 
-
 * Other value label modifcations
 lab def labels16 .a "NA" .r "Refused", modify
 lab def labels24 .a "NA" .r "Refused", modify

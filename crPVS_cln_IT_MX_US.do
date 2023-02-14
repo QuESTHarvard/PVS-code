@@ -1,7 +1,7 @@
 * PVS cleaning for appending datasets
 * February 2023
 * File for Italy, Mexico and US
-* N. Kapoor, P. Sarma
+* N. Kapoor, P. Sarma, T. Lewis
 
 * Import data 
 import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_2.1.23_confidential.sav", clear
@@ -89,14 +89,14 @@ ren Q3_1MX_7_OTHER q43_other_mx
 ren Q3_2MX q44_mx
 ren Q3_2MX_21_OTHER q44_other_mx
 ren Q3_1IT q43_it
-ren Q3_1IT_4_OTHER q43_it_other
+ren Q3_1IT_4_OTHER q43_other_it
 ren Q3_2IT q44_it
 ren Q3_2IT_5_OTHER q44_other_it
 ren Q3_3 q45
 ren Q3_3_4_OTHER q45_other
 
-ren Q3_4A q46_a // add to data dictionary 
-ren Q3_4B_1 q46_b_hrs // add to data dictionary
+ren Q3_4A q46_a_it_mx_us // add to data dictionary 
+ren Q3_4B_1X q46_b_hrs // add to data dictionary
 ren Q3_4B_2X q46_b_dys // add to data dictionary
 ren Q3_4B_3X q46_b_wks // add to data dictionary
 ren Q3_4B_4X q46_b_mth // add to data dictionary
@@ -107,6 +107,9 @@ ren Q3_4_2X q46_min
 ren Q3_5_1X q47_hrs
 ren Q3_5_2X q47_min
 
+ren Q3_4B_999 q46_b_refused
+ren Q3_4_999 q46_refused 
+ren Q3_5_999 q47_refused 
 
 ren Q3_6_A q48_a
 ren Q3_6_B q48_b
@@ -168,10 +171,23 @@ order respondent_serial mode language country weight_educ
 
 * Time variables - others to add? 
 
-recode q46_min q46_hrs q47_min q47_hrs (. = 0)
+* Q46, Q47 
+recode q46_min q46_hrs (. = 0) if q46_min < . | ///
+								  q46_hrs < . 
+recode q47_min q47_hrs (. = 0) if q47_min < . | ///
+								  q47_hrs < . 
 gen q46 = q46_hrs*60 + q46_min
+recode q46 (. = .r) if q46_refused == 1
 gen q47 = q47_hrs*60 + q47_min
+recode q47 (. = .r) if q47_refused == 1
 
+* Q46a, Q46b 
+recode q46_b_dys q46_b_hrs q46_b_mth q46_b_wks (. = 0) if q46_b_dys < . | ///
+														  q46_b_hrs < . | ///
+														  q46_b_mth < . | ///
+														  q46_b_wks < . 
+gen q46_b_it_mx_us = (q46_b_hrs/24) + q46_b_dys + (q46_b_wks*7) + (q46_b_mth*30)
+recode q46_b_it_mx_us (. = .4) if q46_b_refused == 1 
 
 *------------------------------------------------------------------------------*
 
@@ -184,19 +200,19 @@ drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 	 CHILD9AGE CHILD10AGE Q1_8_1 Q1_8_2 Q1_8_3 Q1_8_4 Q1_8_5 Q1_8_6 Q1_8_7 Q1_8_8 Q1_8_9 ///
 	 Q1_8_10 ATLEASTONEGENDERFOUNDFORAGES13T AGEOFYOUNGESTFEMALE Q1_21_A Q1_21_B Q1_21_C ///
 	 Q2_25 Q2_28 Q2_27 Q2_26 Q2_26MX CHILD2_27 Q2_29 Q2_30_A Q2_30_B Q2_31 Q3_4B_2 Q3_4B_3 ///
-	 Q2_8B Q2_8B_1_OTHER Q3_4B_4 Q3_4B_999 CELL HHCELL LANDLINE IGENDER Q3_4B_1X Q3_4_1 ///
-	 Q3_4_2 Q3_4_999 Q3_5_1 Q3_5_1 Q3_5_2 Q3_5_999 Q3_7WB ILANGUAGE_1 ILANGUAGE_2 ///
+	 Q2_8B Q2_8B_1_OTHER Q3_4B_4 CELL HHCELL LANDLINE IGENDER Q3_4B_1 Q3_4_1 ///
+	 Q3_4_2 Q3_5_1 Q3_5_1 Q3_5_2 Q3_7WB ILANGUAGE_1 ILANGUAGE_2 ///
 	 ILANGUAGE_3 ILANGUAGE_4 ILANGUAGE_4_OTHER HRANDOM_Q1_21LOOPCHAR HRANDOM_Q3_6LOOPCHAR ///
 	 XCURRENTSECTION HID_SECTIONTIME_SB HID_SECTIONTIME_SC HID_SECTIONTIME_DE ///
 	 HID_SECTIONTIME_1 HID_SECTIONTIME_2 HID_SECTIONTIME_3 HID_SECTIONTIME_4 ///
 	 HID_LOI BLANDCELL BSSRS_MATCH_CODE CATICALLTIME DIALTYPE DTYPE EMAIL ///
 	 RECORDTYPE BIDENT2 BSTRATA BREGION1 BREGION2 BREGION3 BREGION4 BLOCALITY ///
 	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE q46_min q46_hrs q47_min q47_hrs ///
-	 q54_it q54_us q54_mx
+	 q54_it q54_us q54_mx q46_b_dys q46_b_hrs q46_b_mth q46_b_wks
 	 
 * Add back these variables later
 
-drop q28_c q46_a q46_b_dys q46_b_hrs q46_b_mth q46_b_wks q66_it q66_mx q66a_us q66b_us
+drop q28_c q66_it q66_mx q66a_us q66b_us
 
 *------------------------------------------------------------------------------*
 
@@ -256,7 +272,7 @@ recode q13 (. = .a) if q12 == 2  | q12==.r
 * q15
 * recode q15 (. = .a) if q14 == 3 | q14 == 4 | q14 == 5 | q14 == .r 
 * FLAG: was Q15 asked to eveyone? 
-* 		Should I make it a new var? Or recode those who said 0, 1, 2 doess
+* 		Should I make it a new var? Or recode those who said 0, 1, 2 doses
 *		(This skip pattern was also different in Laos )
 
 
@@ -284,12 +300,13 @@ recode q32 (. = .a) if q3 == 1 | q1 == .r | q2 == .r
 recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
-recode q43_it q43_mx q44_it q44_mx q44_us q45 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_it q43_mx q44_it q44_mx q44_us q45 q46 q46_refused q46_a_it_mx_us ///
+	   q46_b_it_mx_us q46_b_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r 
 recode q44_it (. = .a) if q43_it == 4 // different from above 
 recode q44_mx (. = .a) if q43_mx == 7 
+recode q46_b_it_mx_us q46_b_refused (. = .a) if q46_a_it_mx_us == 2
 
-* FLAG add skip pattern for appointment once add back variables 
 
 *q64/q65 - are there vars on number of phone numbers? 
 
@@ -444,6 +461,121 @@ recode q8_us (1 = 65 "Never attended school or only kindergarten") ///
 gen q8 = max(recq8_it, recq8_mx, recq8_us)
 lab val q8 q8
 
+* Q19
+* Only relevant for IT and MX
+* Keep IT and MX separate from other countries
+
+gen q19_other = q19_other_it + q19_other_mx
+
+* Q20 
+recode q20_it (1 = 501 "General practitioner's office") ///
+			  (2 = 502 "Outpatient clinic") ///
+			  (3 = 503 "Hospital outpatient department (doctor's office based in hospital)") ///
+			  (4 = 504 "Hospital emergency room") ///
+			  , pre(rec) label(q20) 
+
+recode q20_mx (1 = 801 "Puesto de salud") ///
+			  (2 = 802 "Clinica o unidad de medicina familiar") ///
+			  (3 = 803 "Hospital general") ///
+			  (4 = 804 "Centro Médico Nacional o Hospitales de especialidades como hospital de ginecología y obstetricia, pediatría...") ///
+			  (5 = 805 "Clínica o unidad de medicina familiar, clínica o unidad de consulta externa, módulo de medecina familiar o puesto...") ///
+			  (6 = 806 "Hospital general o regional") ///
+			  (7 = 807 "Centro médico Nacional o Hospital de especialidades") ///
+			  (8 = 808 "Brigada móvil de salud") ///
+			  (9 = 809 "Centros de salud o centro de primer contacto") ///
+			  (10 = 810 "Hospital civil, municipal, general, o regional") ///
+			  (11 = 811 "Institutos Nacionales con hospitales monotemáticos (por ejemplo, Instituto Nacional de salud mental") ///
+			  (12 = 812 "Brigada móvil de salud o unidad médica móvil") ///
+			  (13 = 813 " Unidad de salud o Unidad de Médica Rural") ///
+			  (14 = 814 "Hospital general, hospital rural o centro de atención rural obstétrica") ///
+			  (15 = 815 "Clínica o unidad de consulta externa") ///
+			  (16 = 816 "Hospital de especialidades") ///
+			  (17 = 817 "Consultorio anexo a farmacia") ///
+			  (18 = 818 "Consultorio médico privado o grupos de consultorios de especialidades de atención ambulatoria") ///
+			  (19 = 819 "Hospital general privado") ///
+			  (20 = 820 "Hospital de especialidades privado") ///
+			  (21 = 995 "Other") ///
+			  , pre(rec) label(q20) 
+
+recode q20_us (1 = 1401 "Doctor's office, clinic, or health center") ///
+			  (2 = 1402 "Urgent care clinic") ///
+			  (3 = 1403 "Free community clinic or health center (e.g., Planned Parenthood or other clinics that are free of charge...") ///
+			  (4 = 1404 "Veteran's Affairs, Military, or Indian Health Service clinic or health center") ///
+			  (5 = 1406 "Hospital emergency room") ///
+			  (6 = 1407 " Hospital outpatient department (doctor's office based in hospital)") ///
+			  (8 = 995 "Other") ///
+			  , pre(rec) label(q20) 			  
+
+* FLAG - value labels for US data change in q44_it
+*		 I recoded above and shifted numbers to make them match 			  
+			  
+gen q20 = max(recq20_it, recq20_mx, recq20_us)
+recode q20 (. = .r) if q20_it == .r | q20_mx == .r | q20_us == .r
+recode q20 (. = .a) if q20_it == .a | q20_mx == .a | q20_us == .a
+lab val q20 q20
+
+* Q20 Other
+
+gen q20_other = q20_other_it + q20_other_mx + q20_other_us
+
+
+* Q43
+* Only relevant for IT and MX
+* Keep IT and MX separate from other countries
+
+gen q43_other = q43_other_it + q43_other_mx
+
+
+* Q44
+recode q44_it (1 = 501 "General practitioner's office") ///
+			  (2 = 502 "Outpatient clinic") ///
+			  (3 = 503 "Hospital outpatient department (doctor's office based in hospital)") ///
+			  (4 = 504 "Hospital emergency room") ///
+			  , pre(rec) label(q44) 
+
+recode q44_mx (1 = 801 "Puesto de salud") ///
+			  (2 = 802 "Clinica o unidad de medicina familiar") ///
+			  (3 = 803 "Hospital general") ///
+			  (4 = 804 "Centro Médico Nacional o Hospitales de especialidades como hospital de ginecología y obstetricia, pediatría...") ///
+			  (5 = 805 "Clínica o unidad de medicina familiar, clínica o unidad de consulta externa, módulo de medecina familiar o puesto...") ///
+			  (6 = 806 "Hospital general o regional") ///
+			  (7 = 807 "Centro médico Nacional o Hospital de especialidades") ///
+			  (8 = 808 "Brigada móvil de salud") ///
+			  (9 = 809 "Centros de salud o centro de primer contacto") ///
+			  (10 = 810 "Hospital civil, municipal, general, o regional") ///
+			  (11 = 811 "Institutos Nacionales con hospitales monotemáticos (por ejemplo, Instituto Nacional de salud mental") ///
+			  (12 = 812 "Brigada móvil de salud o unidad médica móvil") ///
+			  (13 = 813 "Unidad de salud o Unidad de Médica Rural") ///
+			  (14 = 814 "Hospital general, hospital rural o centro de atención rural obstétrica") ///
+			  (15 = 815 "Clínica o unidad de consulta externa") ///
+			  (16 = 816 "Hospital de especialidades") ///
+			  (17 = 817 "Consultorio anexo a farmacia") ///
+			  (18 = 818 "Consultorio médico privado o grupos de consultorios de especialidades de atención ambulatoria") ///
+			  (19 = 819 "Hospital general privado") ///
+			  (20 = 820 "Hospital de especialidades privado") ///
+			  (21 = 995 "Other") ///
+			  , pre(rec) label(q44) 
+
+recode q44_us (1 = 1401 "Doctor's office, clinic, or health center") ///
+			  (2 = 1402 "Urgent care clinic") ///
+			  (3 = 1403 "Free community clinic or health center (e.g., Planned Parenthood or other clinics that are free of charge...") ///
+			  (4 = 1404 "Veteran's Affairs, Military, or Indian Health Service clinic or health center") ///
+			  (5 = 1405 "Veteran's Affairs, Military, or Indian Health Service Hospital") ///
+			  (6 = 1406 "Hospital emergency room") ///
+			  (7 = 1407 "Hospital outpatient department (doctor's office based in hospital)") ///
+			  (8 = 995 "Other") ///
+			  , pre(rec) label(q44) 			  
+			  
+gen q44 = max(recq44_it, recq44_mx, recq44_us)
+recode q44 (. = .r) if q44_it == .r | q44_mx == .r | q44_us == .r
+recode q44 (. = .a) if q44_it == .a | q44_mx == .a | q44_us == .a
+lab val q44 q44
+
+
+* Q44 Other
+
+gen q44_other = q44_other_it + q44_other_mx + q44_other_us
+
 * Q63: Values above 107 available
 
 recode q63_it (1 = 151 "Less than 10,000 euros") (2 = 152 "10,000-15,000 euros") ///
@@ -473,12 +605,14 @@ lab val q63 q63
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q4 country recq8_it recq8_mx recq8_us recq63_it recq63_mx recq63_us ///
-		q8_it q8_mx q8_us q63_it q63_mx q63_us ///
+drop q4 country q8_it q8_mx q8_us recq8_it recq8_mx recq8_us q19_other_it q19_other_mx ///
+	 q20_it q20_mx q20_us recq20_it recq20_mx recq20_us q20_other_it q20_other_mx q20_other_us ///
+	 q43_other_it q43_other_mx q44_it q44_mx q44_us recq44_it recq44_mx recq44_us q44_other_it q44_other_mx q44_other_us ///
+	 q63_it q63_mx q63_us recq63_it recq63_mx recq63_us ///
      q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
 	 q40 q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q56_mx_a q56_mx_b q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57
+	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57 
 
 ren rec* *
 
@@ -488,6 +622,8 @@ ren rec* *
 * q23 q25_b q27 q28_a q28_b q46 q47
  
 *------------------------------------------------------------------------------*
+order respondent_serial mode language weight_educ respondent_id country
+order q*, sequential
 
 * Label variables 
 lab var q1 "Q1. Respondent еxact age"
@@ -508,7 +644,11 @@ lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
-
+lab var q19_it "Q19. IT only: Is this facility... public, private SSN, or private not SSN?"
+lab var q19_mx "Q19. MX only: Who runs this healthcare facility?"
+lab var q19_other "Q19. Other"
+lab var q20 "Q20. What type of healthcare facility is this?"
+lab var q20_other "Q20. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
 lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
@@ -535,13 +675,16 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-* lab var q43 "Q43. Last healthcare visit in a public, private, or NGO/faith-based facility?"
-*lab var q43_other "Q43. Other"
-* lab var q44 "Q44. What type of healthcare facility is this?"
-* lab var q44_other "Q44. Other"
+lab var q43_it "Q43. IT only: Last healthcare visit... public, private SSN, or private not SSN?"
+lab var q43_mx "Q43. MX only: Who runs this healthcare facility?"
+lab var q43_other "Q43. Other"
+lab var q44 "Q44. What type of healthcare facility is this?"
+lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
+lab var q46_a_it_mx_us "Q46A IT/MX/US only: Was this a scheduled visit or did you go without an appt.?"
+lab var q46_b_it_mx_us "Q46B IT/MX/US only: In days: how long between scheduling and seeing provider?"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
@@ -564,7 +707,8 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private for-profit healthcare?"
-* lab var q56 "Q56. How would you rate the quality of the NGO or faith-based healthcare?"
+lab var q56_mx_a "Q56. MX only: How would you rate the quality of services provided by IMSS?"
+lab var q56_mx_b "Q56. MX only: How would you rate the quality of services...IMSS BIENESTAR?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
