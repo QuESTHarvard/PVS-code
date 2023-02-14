@@ -299,24 +299,42 @@ recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal edu
 recode q19_et_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
+
 recode usual_type_own (.a = 0) if q19_co == 1 | q19_pe == 1 | q19_uy == 1 | ///
 								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
-								  q19_q20b_la == 1 | q19_q20b_la == 2
+								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
+								  q19_it == 1 | q19_mx == 1 | q19_mx == 2 | ///
+								  q19_mx == 3 | q19_mx == 4 | q19_mx == 5 | ///
+								  q20 == 1403 | q20 == 1404 | q20 == 1405
+								  
 recode usual_type_own (.a = 1) if q19_co == 2 | q19_pe == 2 | q19_uy == 2 | ///
 								  q19_q20a_la == 3 | q19_q20a_la == 4 | ///
 								  q19_q20b_la == 3 | q19_q20b_la == 4 | ///
-								  q19_q20a_la == 6 | q19_q20b_la == 6
-recode usual_type_own (.a = 2) if q19_uy == 5 | q19_uy == 995 | q19_q20a_la == 9 | q19_q20b_la == 7
+								  q19_q20a_la == 6 | q19_q20b_la == 6 | ///
+								  q19_it == 2 | q19_it == 3 | q19_mx == 6 | ///
+								  q20 == 1401 | q20 == 1402 | q20 == 1406 | /// US
+								  q20 == 1407 
+								  
+recode usual_type_own (.a = 2) if q19_uy == 5 | q19_uy == 995 | ///
+								  q19_q20a_la == 9 | q19_q20b_la == 7 | ///
+								  q19_it == 4 | q19_mx == 7 | ///
+								  q20 == 995 & country == 12
+								  
 recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r | ///
-								   q19_q20a_la == .r | q19_q20b_la == .r 
+								   q19_q20a_la == .r | q19_q20b_la == .r | ///
+								   q19_it == .r | q19_mx == .r | ///
+								   q20 == .r & country == 12
 
+* NOTE: Check Laos
 								   
 * usual_type_lvl 
 
 recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 ///
-			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 = 0 "Primary") /// 
+			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 501 502 ///
+			801 802 805 808 809 812 813 815 817 818 1401 1402 1403 1404 = 0 "Primary") /// 
 		   (4 5 8 9 13 19 21 29 30 34 35 37 81 82 86 87 41 42 44 46 49 93 97 ///
-		   101 103 105 = 1 "Secondary (or higher)") ///
+		   101 103 105 503 504 803 804 806 807 810 811 814 816 819 820 ///
+		   1405 1406 1407 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if q19_q20a_la == 2 | q19_q20a_la == 4 | q19_q20a_la == 6 | ///
@@ -325,7 +343,6 @@ recode usual_type_lvl (.a = 1) if q19_q20a_la == 1 | q19_q20a_la == 3 | q19_q20b
 
 
 * NOTE: Maybe add an other for Laos? also for last visit level? But we will see with other, specify data
-
 		   
 * usual_type - ownership and level 
 gen usual_type = . 
@@ -347,20 +364,33 @@ lab val usual_type fac_own_lvl
 recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
-recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1  
-recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 
-recode last_type_own (.a = 2) if q43_uy == 5 | q43_uy == 995 
-recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r 
+recode last_type_own (.a = 0) if q43_co == 1 | q43_pe == 1 | q43_uy == 1 | ///
+								 q43_it == 1 | q43_mx == 1 | q43_mx == 2 | ///
+								 q43_mx == 3 | q43_mx == 4 | q43_mx == 5 | ///
+								 q44 == 1403 | q44 == 1404 | q44 == 1405
+								 
+recode last_type_own (.a = 1) if q43_co == 2 | q43_pe == 2 | q43_uy == 2 | ///
+								 q43_it == 2 | q43_it == 3 | q43_mx == 6 | ///
+								 q44 == 1401 | q44 == 1402 | q44 == 1406 | /// US
+								 q44 == 1407 
+
+recode last_type_own (.a = 2) if q43_uy == 5 | q43_uy == 995 | q43_it == 4 | q43_mx == 7 | ///
+								 q44 == 995 & country == 12
+								 
+recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r | ///
+								  q43_it == .r | q43_mx == .r | ///
+								  q44 == .r & country == 12
 
 
 * last_type_lvl 
 recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 ///
-			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 202 203 = 0 "Primary") /// 
+			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 202 203 ///
+			501 502 801 802 805 808 809 812 813 815 817 818 1401 1402 1403 1404 = 0 "Primary") /// 
 		   (4 5 8 9 13 19 21 29 30 34 35 37 81 82 86 87 41 42 44 46 49 93 97 ///
-		   101 103 105 201 = 1 "Secondary (or higher)") ///
+		   101 103 105 201 503 504 803 804 806 807 810 811 814 816 819 820 ///
+		   1405 1406 1407 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
-
-
+		      
 * last_type - ownership and level
 gen last_type = . 
 recode last_type (. = 0) if last_type_own == 0 & last_type_lvl == 0
