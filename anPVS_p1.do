@@ -1,5 +1,5 @@
 * PVS Analysis for Paper 1
-* Last updated: January 2023
+* Last updated: February 2023
 * N. Kapoor 
 
 clear all
@@ -221,13 +221,13 @@ recode income 0=0 1/2=1, gen (nonpoor)
 centile age,  centile(10(10)90)
 **over 50 is 80th percentile
 gen over50=.
-replace over50=1 if age>50
+replace over50=1 if age>50 & age< .
 replace over50=0 if age<50
 
 *younger adults
 gen under30=.
 replace under30=1 if age<30
-replace under30=0 if age>30
+replace under30=0 if age>30 & age< . 
 
 *gen wealthy
 recode income 0/1=0 2=1, gen (wealthy)
@@ -350,7 +350,7 @@ foreach i in 1 2 3 4 5 6 7 {
 
 foreach i in 1 2 3 4 6 5 7 8 9 10 {
 	
-	eststo: logistic usual_quality_vge wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	eststo: svy: logistic usual_quality_vge wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
 	
 }
 
@@ -367,7 +367,7 @@ eststo clear
 
 foreach i in 1 2 3 4 6 5 7 8 9 10 {
 	
-	eststo: logistic qual_public_vge wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	eststo: svy: logistic qual_public_vge wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
 	
 }
 
@@ -385,7 +385,7 @@ eststo clear
 
 foreach i in 1 2 3 4 6 5 7 8 9 10 {
 	
-	eststo: logistic qual_private wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	eststo: svy: logistic qual_private wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
 	
 }
 
@@ -403,7 +403,7 @@ eststo clear
 
 foreach i in 1 2 3 4 6 5 7 8 9 10  {
 	
-	eststo: logistic conf_getafford wealthy most_educ urban under30  health_vge gender2 if country2 == `i' 
+	eststo: svy: logistic conf_getafford wealthy most_educ urban under30  health_vge gender2 if country2 == `i' 
 	
 }
 
@@ -420,7 +420,7 @@ eststo clear
 
 foreach i in 1 2 3 4 6 5 7 8 9 10  {
 	
-	eststo: logistic system_outlook_getbet wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	eststo: svy: logistic system_outlook_getbet wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
 	
 }
 
@@ -437,7 +437,7 @@ eststo clear
 
 foreach i in 1 2 3 4 6 5 7 8 9 10  {
 	
-	eststo: logistic system_reform_minor wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
+	eststo: svy: logistic system_reform_minor wealthy most_educ urban under30 health_vge gender2 if country2 == `i' 
 	
 }
 
@@ -457,7 +457,7 @@ eststo clear
 
 *** Confidence get and afford ***
 
-eststo: logistic conf_getafford poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
+eststo: svy: logistic conf_getafford poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.usual_quality i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **government listens to opinions (q53) is strongest predictor of confidence OR 9.6, covid managment OR 1.6 inconsistent up the likert
 
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
@@ -476,7 +476,7 @@ graph export "$output/Paper 1/exhib5_2.pdf", replace
 
 *** System outlook getting better ***
 
-eststo: logistic system_outlook_getbet poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
+eststo: svy: logistic system_outlook_getbet poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.usual_quality i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **qual_public big determinant (excellent OR 5.6, then opinion 2.9 then covid managment 2.5
 
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
@@ -497,7 +497,7 @@ graph export "$output/Paper 1/exhib5_4.pdf", replace
 
 *** System reform minor ***
 
-eststo: logistic system_reform_minor poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.last_qual i.qual_public i.qual_private i.covid_manage i.q53 i.country2
+eststo: svy: logistic system_reform_minor poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.usual_quality i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **qual_public important (excellent OR 4.1)
 
 margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=4) 		
@@ -518,8 +518,8 @@ esttab using "$output/Paper 1/exhibit_4.rtf", ///
 	rename(poor "Poor" under30 "Under 30 years" edu_secon "Secondary or higher education" ///
 	urban "Urban" health_vge "Self-rated health (vge)" ///
 	health_chronic "Chronic" gender2 "Gender" unmet_need "Unmet need for care" ///
-	1.last_qual "Last visit - Fair" 2.last_qual "Last visit - Good" ///
-	3.last_qual "Last visit - Very good" 4.last_qual "Last visit - Excellent" ///
+	1.usual_quality "Usual source - Fair" 2.usual_quality "Usual source - Good" ///
+	3.usual_quality "Usual source - Very good" 4.usual_quality "Usual source - Excellent" ///
 	1.qual_public "Public system - Fair" 2.qual_public "Public system - Good" ///
 	3.qual_public "Public system - Very good" 4.qual_public "Public system - Excellent" ///
 	1.qual_private "Private system - Fair" 2.qual_private "Private system - Good" ///
