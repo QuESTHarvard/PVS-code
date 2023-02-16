@@ -25,8 +25,8 @@ ren Q1_5 q4
 
 ren Q1_9IT q6_it
 ren Q1_9US q6
-ren Q1_10US q7
-ren Q1_10US_7_OTHER q7_other
+ren Q1_10US q7_us
+ren Q1_10US_7_OTHER q7_other_us
 ren Q1_10MX q7_mx
 ren Q1_10MX_6_OTHER q7_other_mx
 
@@ -161,10 +161,10 @@ ren Q4_13MX q66_mx // add to data dictionary
 ren Q4_13IT q66_it // add to data dictionary
 
 ren WEIGHT weight_educ
-ren LANGUAGE language
+ren LANGUAGE lang
 
 order q*, sequential
-order respondent_serial mode language country weight_educ
+order respondent_serial mode lang country weight_educ
 
 
 *------------------------------------------------------------------------------*
@@ -246,7 +246,7 @@ recode q23 q25_a q25_b q27 q28_b q30 q31 q32 q33 q34 q35 q36 q38 q63* ///
 * Potentially no don't know in q25_a, q27, q63*
 
 * In raw data, 999 = "refused" 	   
-recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7 q7_mx q8* q9 q10 q11 q12 q13 q14 q15 q16 q17 /// 
+recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7_us q7_mx q8* q9 q10 q11 q12 q13 q14 q15 q16 q17 /// 
 	   q18 q19_it q19_mx q20_it q20_mx q20_us q21 q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_b q29 q30 /// 
 	   q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_it q43_mx q44_it q44_mx q44_us ///
 	   q45 q46* q47* q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
@@ -262,7 +262,7 @@ recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7 q7_mx q8* q9 q10 q11 q12 q13 q1
 recode q2 (. = .a) if q1 != .r 
 
 * q6/q7 - CHECK THIS
-recode q7 (. = .a) if q6 == 2 | q6 == .r 
+recode q7_us (. = .a) if q6 == 2 | q6 == .r 
 
 * Note - add country specific skip pattern later (q6, q8)
 
@@ -310,10 +310,10 @@ recode q46_b_it_mx_us q46_b_refused (. = .a) if q46_a_it_mx_us == 2
 
 *q64/q65 - are there vars on number of phone numbers? 
 
-* Country-specific skip pattern - may change 
+* Country-specific skip pattern - may not be needed as some of these are later merged 
 recode q5_it q6_it q8_it q19_it q20_it q43_it q44_it q63_it (. = .a) if country != 3
 recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q56_mx_a q56_mx_b q63_mx (. = .a) if country != 2
-recode q5_us q6 q7 q8_us q20_us q44_us q63_us (. = .a) if country != 1
+recode q5_us q6 q7_us q8_us q20_us q44_us q63_us (. = .a) if country != 1
 
 *------------------------------------------------------------------------------*
 
@@ -337,7 +337,19 @@ recode q39 q40 ///
 	   (3 = .a "I did not get healthcare in past 12 months") ///
 	   (.r = .r Refused), ///
 	   pre(rec) label(yes_no_na)
+	   
+recode q46_a_it_mx_us ///
+		(1 = 1 "Yes, the visit was scheduled, and I had an appointment") ///
+		(2 = 0 " No, I did not have an appointment") ///
+		(.a = .a "NA") ///
+		(.r = .r "Refused"), pre(rec) label(yes_no_appt)
 
+recode q6_it ///
+		(1 = 1 "Yes, have private insurance") ///
+		(2 = 0 "No, do not have private insurance") ///
+		(.a = .a "NA") ///
+		(.r = .r "Refused"), pre(rec) label(yes_no_ins)		
+		
 * All Excellent to Poor scales
 
 recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 ///
@@ -417,7 +429,7 @@ recode q57 ///
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q47 na_rf	
 	
-* Country-specific 
+**** Country-specific ****
 * Mode 
 recode mode (2 = 1) (1 = 4)
 lab def mode 1 "CATI" 4 "CAWI"
@@ -428,11 +440,164 @@ gen reccountry = country + 11
 lab def country 12 "US" 13 "Mexico" 14 "Italy"
 lab val reccountry country
 
+* Language
+recode lang (9 = 1 "English") (10 2058 = 11 "Spanish") (16 = 18 "Italian"), ///
+	   gen(language) label(language)
+
+
 * Q4: Values above 20 available 
 gen recq4 = q4 + 30
 lab def q4 31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area" .r "Refused"
-lab val recq4 q4 country
+lab val recq4 q4 
+recode recq4 (. = .r) if q4 == .r 
 
+* Q5
+recode q5_it (1 = 220 "Sicilia") ///
+			 (2 = 221 "Campania") ///
+			 (3 = 222 "Molise") ///
+			 (4 = 223 "Calabria") ///
+			 (5 = 224 "Basilicata") ///
+			 (6 = 225 "Puglia") ///
+			 (7 = 226 "Sardegna") ///
+			 (8 = 227 "Liguria") ///
+			 (10 = 229 "Lazio") ///
+			 (11 = 230 "Piemonte") ///
+			 (12 = 231 "Abruzzo") ///
+			 (13 = 232 "Toscana") ///
+			 (14 = 233 "Umbria") ///
+			 (15 = 234 "Marche") ///
+			 (16 = 235 "Friuli-Venezia Giulia") ///
+			 (17 = 236 "Provincia Autonoma Trento") ///
+			 (18 = 237 "Lombardia") ///
+			 (19 = 238 "Emilia-Romagna") ///
+			 (20 = 239 "Veneto") ///
+			 (21 = 240 "Provincia Autonoma Bolzano/Bozen") ///
+			 (997 = 995 "Other"), pre(rec) label(q5)
+			 
+recode q5_mx (1 = 241 "Chiapas") ///
+			 (2 = 242 "Guerrero") ///
+			 (3 = 243 "Veracruz de Ignacio de la Llave") ///
+			 (4 = 244 "Oaxaca") ///
+			 (5 = 245 "Tlaxcala") ///
+			 (6 = 246 "Puebla") ///
+			 (7 = 247 "Hidalgo") ///
+			 (8 = 248 "Tabasco") ///
+			 (9 = 249 "Morelos") ///
+			 (10 = 250 "Zacatecas") ///
+			 (11 = 251 "Quintana Roo") ///
+			 (12 = 252 "Michoacán de Ocampo") ///
+			 (13 = 253 "Yucatán") ///
+			 (14 = 254 "Campeche") ///
+			 (15 = 255 "San Luis Potosí") ///
+			 (16 = 256 "Guanajuato") ///
+			 (17 = 257 "México") ///
+			 (18 = 258 "Tamaulipas") ///
+			 (19 = 259 "Durango") ///
+			 (20 = 260 "Nayarit") ///
+			 (21 = 261 "Coahuila de Zaragoza") /// 
+			 (22 = 262 "Jalisco") ///
+			 (23 = 263 "Sinaloa") ///
+			 (24 = 264 "Colima") ///
+			 (25 = 265 "Aguascalientes") ///
+			 (26 = 266 "Chihuahua") ///
+			 (27 = 267 "Querétaro") ///
+			 (28 = 268 "Sonora") ///
+			 (29 = 269 "Baja California Sur") ///
+			 (30 = 270 "Ciudad de México") ///
+			 (31 = 271 "Baja California") ///
+			 (32 = 272 "Nuevo León"), pre(rec) label(q5)
+
+			 			 
+recode q5_us (1 = 273 "Alabama") ///
+			 (2 = 274 "Alaska") ///
+			 (3 = 275 "Arizona") ///
+			 (4 = 276 "Arkansas") ///
+			 (5 = 277 "California") ///
+			 (6 = 278 "Colorado") ///
+			 (7 = 279 "Connecticut") ///
+			 (8 = 280 "Delaware") ///
+			 (9 = 281 "District of Columbia") ///
+			 (10 = 282 "Florida") ///
+			 (11 = 283 "Georgia") ///
+			 (12 = 284 "Hawaii") ///
+			 (13 = 285 "Idaho") ///
+			 (14 = 286 "Illinois") ///
+			 (15 = 287 "Indiana") ///
+			 (16 = 288 "Iowa") ///
+			 (17 = 289 "Kansas") ///
+			 (18 = 290 "Kentucky") ///
+			 (19 = 291 "Louisiana") ///
+			 (20 = 292 "Maine") ///
+			 (21 = 293 "Maryland") /// 
+			 (22 = 294 "Massachusetts") ///
+			 (23 = 295 "Michigan") ///
+			 (24 = 296 "Minnesota") ///
+			 (25 = 297 "Mississippi") ///
+			 (26 = 298 "Missouri") ///
+			 (27 = 299 "Montana") ///
+			 (28 = 300 "Nebraska") ///
+			 (29 = 301 "Nevada") ///
+			 (30 = 302 "New Hampshire") ///
+			 (31 = 303 "New Jersey") ///
+			 (32 = 304 "New Mexico") ///
+			 (33 = 305 "New York") ///
+			 (34 = 306 "North Carolina") /// 
+			 (35 = 307 "North Dakota") ///
+			 (36 = 308 "Ohio") ///
+			 (37 = 309 "Oklahoma") ///
+			 (38 = 310 "Oregon") ///
+			 (39 = 311 "Pennsylvania") ///
+			 (40 = 312 "Rhode Island") ///
+			 (41 = 313 "South Carolina") ///
+			 (42 = 314 "South Dakota") ///
+			 (43 = 315 "Tennessee") ///
+			 (44 = 316 "Texas") ///
+			 (45 = 317 "Utah") ///
+			 (46 = 318 "Vermont") ///
+			 (47 = 319 "Virginia") ///
+			 (48 = 320 "Washington") ///
+			 (49 = 321 "West Virginia") ///
+			 (50 = 322 "Wisconsin") ///
+			 (51 = 323 "Wyoming"), pre(rec) label(q5)
+
+gen q5 = max(recq5_it, recq5_mx, recq5_us)
+lab val q5 q5
+recode q5 (. = .r) if q5_it == .r | q5_mx == .r | q5_us == .r
+
+* Q6 okay - q6 is US only, q6_it, is Italy specific 
+
+* Q7 - combine q7_us and q7_mx
+* create values for Italy
+
+recode q6_it (1 = 31 "Additional private insurance") ///
+			 (2 = 32 "Only public insurance") ///
+			 (.a = .a "NA") (.r = .r "Refused"), gen(q7_it) lab(q7)
+
+recode q7_mx (1 = 33 "Seguro Social (IMSS)") ///
+		(2 = 34 "ISSSTE/ISSSTE Estatal") ///
+		(3 = 35 "IMSS-Bienestar (antes Seguro Popular y INSABI)") ///
+		(4 = 36 "PEMEX, Defensa o Marina") ///
+		(5 = 37 "Seguro Médico Privado") ///
+		(6 = 995 " Otro") ///
+		(.r = .r "Refused"), pre(rec) label(q7)
+		
+recode q7_us (1 = 38 "Health insurance through your or someone else's employer or union") ///
+		(2 = 39 "Medicare, a government plan that pays health bills for people aged 65 or older and for some disabled people") ///
+		(3 = 40 "Medicaid or any other state medical assistance plan for those with lower incomes") ///
+		(4 = 41 "Health insurance plan that you or another family member bought on your own (including Obamacare)") ///
+		(5 = 42 " TRICARE (formerly CHAMPUS), VA, or military") ///
+		(7 = 995 "Other") ///
+		(.r = .r "Refused"), pre(rec) label(q7)		
+
+gen q7 = max(q7_it, recq7_mx, recq7_us)
+lab val q7 q7
+recode q7 (. = .r) if q7_it == .r | q7_mx == .r | q7_us == .r
+recode q7 (. = .a) if q7_us == .a
+		
+* Q7_other 
+gen q7_other = q7_other_mx + q7_other_us
+
+			 
 * Q8: Values above 50 available 
 recode q8_it (1 = 51 "Mai frequentato la scuola o solo Nido e Scuola dell'infanzia") ///
 		(2 = 52 "Scuola primaria") ///
@@ -460,6 +625,7 @@ recode q8_us (1 = 65 "Never attended school or only kindergarten") ///
 
 gen q8 = max(recq8_it, recq8_mx, recq8_us)
 lab val q8 q8
+recode q8 (. = .r) if q8_it == .r | q8_mx == .r | q8_us == .r
 
 * Q19
 * Only relevant for IT and MX
@@ -598,19 +764,23 @@ recode q63_us (1 = 163 "Less than $26,000") (2 = 164 "$26,000 to less than $36,0
 		  , pre(rec) label(q63)		  
 
 gen q63 = max(recq63_it, recq63_mx, recq63_us)
-lab val q63 q63		  
+lab val q63 q63		
+recode q63 (. = .r) if q63_it == .r | q63_mx == .r | q63_us == .r  
 		  
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q4 country q8_it q8_mx q8_us recq8_it recq8_mx recq8_us q19_other_it q19_other_mx ///
-	 q20_it q20_mx q20_us recq20_it recq20_mx recq20_us q20_other_it q20_other_mx q20_other_us ///
-	 q43_other_it q43_other_mx q44_it q44_mx q44_us recq44_it recq44_mx recq44_us q44_other_it q44_other_mx q44_other_us ///
+drop q4 country q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8_it ///
+     recq8_mx recq8_us q5_it q5_mx q5_us ///
+	 recq5_it recq5_mx recq5_us q7_other_mx q7_other_us q19_other_it q19_other_mx ///
+	 q20_it q20_mx q20_us recq20_it recq20_mx recq20_us q20_other_it q20_other_mx ///
+	 q20_other_us q43_other_it q43_other_mx q44_it q44_mx q44_us recq44_it ///
+	 recq44_mx recq44_us q44_other_it q44_other_mx q44_other_us ///
 	 q63_it q63_mx q63_us recq63_it recq63_mx recq63_us ///
-     q6 q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
-	 q40 q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
+     q6 q6_it q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
+	 q40 q46_a_it_mx_us q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q56_mx_a q56_mx_b q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57 
 
@@ -630,10 +800,13 @@ lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
 lab var q4 "Q4. Type of area where respondent lives"
-* lab var q5 "Q5. County, state, region where respondent lives"
+lab var q5 "Q5. County, state, region where respondent lives"
+lab var q5_other "Q5. Other"
+* Note this other variable is only in Italy/US/Mexico 
 lab var q6 "Q6. Do you have health insurance?"
+lab var q6_it "Q6. IT only: In addition to... are you covered by private health insurance...?"
 lab var q7 "Q7. What type of health insurance do you have?"
-* lab var q7_other "Q7_other. Other type of health insurance"
+lab var q7_other "Q7_other. Other type of health insurance"
 lab var q8 "Q8. Highest level of education completed by the respondent"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health is?"
@@ -644,6 +817,7 @@ lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
+lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
 lab var q19_it "Q19. IT only: Is this facility... public, private SSN, or private not SSN?"
 lab var q19_mx "Q19. MX only: Who runs this healthcare facility?"
 lab var q19_other "Q19. Other"
@@ -683,6 +857,9 @@ lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
+lab var q46_refused "Q46. Refused"
+lab var q46_b_refused "Q46b. Refused"
+lab var q47_refused "Q47. Refused"
 lab var q46_a_it_mx_us "Q46A IT/MX/US only: Was this a scheduled visit or did you go without an appt.?"
 lab var q46_b_it_mx_us "Q46B IT/MX/US only: In days: how long between scheduling and seeing provider?"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"

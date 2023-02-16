@@ -967,10 +967,12 @@ append using "$data_mc/02 recoded data/pvs_la.dta"
 append using "$data_mc/02 recoded data/pvs_it_mx_us.dta"
 
 * Note: need to check append 
-* Note: Fix Kenya/Ethiopia date for append, and Laos date 
 * Note: Fix respondent_serial 
 
-* Kenya/Ethiopia variables  -edit for ssrs-
+* Country
+lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy", modify
+
+* Kenya/Ethiopia variables 
 ren q19 q19_et_ke_za
 lab var q19_et_ke_za "Q19. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
 ren q43 q43_et_ke_za_la
@@ -985,43 +987,66 @@ lab def mode 1 "CATI" 2 "F2F" 3 "CAWI", replace
 label val mode mode
 lab var mode "Mode of interview (CATI, CAWI, or F2F)"
 
-* Country-specific skip patterns -edit for ssrs-
+* Country-specific skip patterns = check this 
 recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
 recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
-recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country == 5 | country == 3 | country == 9 | country == 11 
+recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q19_pe q43_pe q56_pe (. = .a) if country != 7
 recode q19_co q43_co (. = .a) if country != 2
 recode q6_za q37_za (. = .a) if country != 9
-recode q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
+recode q6_la q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
 		(. = .a) if country != 11
-recode q18 q20 q44 q64 q65 (. = .a) if country == 11
+recode q6 q18 q20 q44 q64 q65 (. = .a) if country == 11
+recode q6_it q19_it q43_it (. = .a) if country != 14
+recode q19_mx q43_mx q48_k q56_mx_a q56_mx_b (. = .a) if country != 13
+recode q20 q44 (. = .a) if country == 12
+recode q48_k (. = .a) if country != 12 | country != 13 | country != 14
 
-* Addition for SSRS - may change  
-recode q5_it q6_it q19_it q43_it q48_k (. = .a) if country != 14
-recode q5_mx q7_mx q19_mx q43_mx q48_k q56_mx_a q56_mx_b (. = .a) if country != 13
-recode q5_us q48_k (. = .a) if country != 12
-* Check 48_k 
 		
 * Country-specific value labels -edit for ssrs-
-recode language (. = 0) if country == 2 | country == 7 | country == 10 
-lab def Language 0 "Spanish" 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali" 15 "Lao" 16 "Khmou" 17 "Hmong", modify 
+recode language (. = 11) if country == 2 | country == 7 | country == 10 
+lab def Language 11 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong" 18 "Italian", modify 
 * NOTE: Edit this for future Ipsos data 
 
-* country
-lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy", modify
 
 *Q4
 lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused" /// LA
 				31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area" /// IT, MX, US
 				, modify 
 
-*Q5 -edit for ssrs-
-lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" ///
+*Q5 
+lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" /// LA
 				205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" ///
-				209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" ///
+				209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" /// IT
 				213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" ///
-				216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang" .r "Refused", modify
+				216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang" ///
+				220 "Sicilia" 221 "Campania" 222 "Molise" 223 "Calabria" 224 "Basilicata" ///
+			    225 "Puglia" 226 "Sardegna" 227 "Liguria" 229 "Lazio" 230 "Piemonte" ///
+			    231 "Abruzzo" 232 "Toscana" 233 "Umbria" 234 "Marche" 235 "Friuli-Venezia Giulia" ///
+			    236 "Provincia Autonoma Trento" 237 "Lombardia" 238 "Emilia-Romagna" ///
+			    239 "Veneto" 240 "Provincia Autonoma Bolzano/Bozen" ///
+				241 "Chiapas" 242 "Guerrero" 243 "Veracruz de Ignacio de la Llave" /// ME
+			    244 "Oaxaca" 245 "Tlaxcala" 246 "Puebla" 247 "Hidalgo" 248 "Tabasco" ///
+			    249 "Morelos" 250 "Zacatecas" 251 "Quintana Roo" 252 "Michoacán de Ocampo" ///
+			    253 "Yucatán" 254 "Campeche" 255 "San Luis Potosí" 256 "Guanajuato" ///
+			    257 "México" 258 "Tamaulipas" 259 "Durango" 260 "Nayarit" ///
+				261 "Coahuila de Zaragoza" 262 "Jalisco" 263 "Sinaloa" 264 "Colima" ///
+			    265 "Aguascalientes" 266 "Chihuahua" 267 "Querétaro" 268 "Sonora" ///
+			    269 "Baja California Sur" 270 "Ciudad de México" 271 "Baja California" ///
+			    272 "Nuevo León" 273 "Alabama" 274 "Alaska" 275 "Arizona" /// US
+				276 "Arkansas" 5 = 277 "California" 278 "Colorado" 279 "Connecticut" ///
+			    280 "Delaware" 281 "District of Columbia" 282 "Florida" 283 "Georgia" ///
+			    284 "Hawaii" 285 "Idaho" 286 "Illinois" 287 "Indiana" 288 "Iowa" ///
+			    289 "Kansas" 290 "Kentucky" 291 "Louisiana" 292 "Maine" 293 "Maryland" /// 
+			    294 "Massachusetts" 295 "Michigan" 296 "Minnesota" 297 "Mississippi" ///
+			    298 "Missouri" 299 "Montana" 300 "Nebraska" 301 "Nevada" 302 "New Hampshire" ///
+			    303 "New Jersey" 304 "New Mexico" 305 "New York" 306 "North Carolina" ///
+				307 "North Dakota" 308 "Ohio" 309 "Oklahoma" 310 "Oregon" 311 "Pennsylvania" ///
+			    312 "Rhode Island" 313 "South Carolina" 314 "South Dakota" 315 "Tennessee" ///
+			    316 "Texas" 317 "Utah" 318 "Vermont" 319 "Virginia" 320 "Washington" ///
+			    321 "West Virginia" 322 "Wisconsin" 323 "Wyoming" ///
+				995 "Other" .r "Refused", modify
 
 *Q7 -edit for ssrs-
 lab def labels9 29 "Only public" 30 "Additional private insurance" .a "NA" .r "Refused", modify
