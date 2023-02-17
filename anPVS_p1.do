@@ -221,13 +221,13 @@ recode income 0=0 1/2=1, gen (nonpoor)
 centile age,  centile(10(10)90)
 **over 50 is 80th percentile
 gen over50=.
-replace over50=1 if age>50 & age< .
+replace over50=1 if age>50 & age<.
 replace over50=0 if age<50
 
 *younger adults
 gen under30=.
-replace under30=1 if age<30
-replace under30=0 if age>30 & age< . 
+replace under30=1 if age<30 & age<.
+replace under30=0 if age>30 
 
 *gen wealthy
 recode income 0/1=0 2=1, gen (wealthy)
