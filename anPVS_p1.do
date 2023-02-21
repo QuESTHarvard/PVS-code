@@ -9,6 +9,8 @@ set more off
 
 u "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
+gl results "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/Internal HSPH/Analysis/Paper 1 - confidence/Results"
+
 *------------------------------------------------------------------------------*
 * Derive additional variables for Paper 1 analysis 
 
@@ -315,7 +317,7 @@ summtab2 , by(country2) vars(gender2 age education urban income health_vge healt
 		   wts(weight) wtfreq(ceiling) /// 
 		   catmisstype(none) /// 
 		   median total replace word landscape /// 
-		   wordname(sample_char_table) directory("$output/Paper 1") /// 
+		   wordname(sample_char_table) directory("$results") /// 
 		   title(Sample Characteristics Table)
 
 * Data for histograms - Exhibit 1 & 2
@@ -326,7 +328,7 @@ summtab2 , by(country2) vars(usual_quality_vge phc_women_vge phc_child_vge phc_c
 		   type(2 2 2 2 2 2 2 2 2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
-		   excelname(p1_exhib1_2) sheetname(Exhibit 1 data) directory("$output/Paper 1") /// 
+		   excelname(p1_exhib1_2) sheetname(Exhibit 1 data) directory("$results") /// 
 		   title(Data for Paper 1, Exhibit 1) 
 
 summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor ///
@@ -334,7 +336,7 @@ summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor ///
 		   type(2 2 2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
-		   excelname(p1_exhib1_2) sheetname(Exhibit 2 data) directory("$output/Paper 1") /// 
+		   excelname(p1_exhib1_2) sheetname(Exhibit 2 data) directory("$results") /// 
 		   title(Data for Paper 1, Exhibit 2) 		 
 		   
 		   
@@ -347,12 +349,12 @@ summtab2 , by(country2) vars(system_outlook_getbet system_reform_minor ///
 
 foreach i in 1 2 3 4 5 6 7 {
 	
-		rm "$output/Paper 1/exhib_3_ctry`i'.csv"
+		rm "$resultsxhib_3_ctry`i'.csv"
 
 	foreach var of varlist conf_sick conf_afford phc_score_cat qual_public_vge usual_quality_vge { 
 	
 		tabout urban edu_secon health_chronic `var' if country2 == `i' ///
-		using "$output/Paper 1/exhib_3_ctry`i'.csv", ///
+		using "$results/exhib_3_ctry`i'.csv", ///
 		append c(row) f(3 3 3) svy stats(chi2) 
 	
 }
@@ -374,7 +376,7 @@ foreach i in 1 2 3 4 6 5 7 8 9 10 {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3A_data.rtf", ///
+esttab using "$results/exhibit_3A_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
 	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
 	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
@@ -391,7 +393,7 @@ foreach i in 1 2 3 4 6 5 7 8 9 10 {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3B_data.rtf", ///
+esttab using "$results/exhibit_3B_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
 	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
 	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
@@ -409,7 +411,7 @@ foreach i in 1 2 3 4 6 5 7 8 9 10 {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3C_data.rtf", ///
+esttab using "$results/exhibit_3C_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
 	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
 	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
@@ -427,7 +429,7 @@ foreach i in 1 2 3 4 6 5 7 8 9 10  {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3D_data.rtf", ///
+esttab using "$results/exhibit_3D_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
 	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
 	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
@@ -444,7 +446,7 @@ foreach i in 1 2 3 4 6 5 7 8 9 10  {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3E_data.rtf", ///
+esttab using "$results/exhibit_3E_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
 	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
 	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
@@ -461,7 +463,7 @@ foreach i in 1 2 3 4 6 5 7 8 9 10  {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3F_data.rtf", ///
+esttab using "$results/exhibit_3F_data.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
 	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
 	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
@@ -484,14 +486,14 @@ marginsplot, ylabel(0(0.1)0.35, labsize(small)) xtitle("Quality of public system
 			 ytitle("Pr(very confident)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
 			 title("A. Health security: confidence can get and afford care", size(small)) 
 
-graph export "$output/Paper 1/exhib5_1.pdf", replace
+graph export "$results/exhib5_1.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
 marginsplot, ylabel(0(0.1)0.35, labsize(small)) xtitle("Government considers public opinion", size(small)) ///
 			 ytitle("Pr(very confident)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
 			 title("B. Health security: confidence can get and afford care", size(small)) 
 			 
-graph export "$output/Paper 1/exhib5_2.pdf", replace
+graph export "$results/exhib5_2.pdf", replace
 
 *** System outlook getting better ***
 
@@ -504,7 +506,7 @@ marginsplot, ylabel(.2(0.1)0.6, labsize(small)) xtitle("Quality of public system
 			 ytitle("Pr(getting better)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
 			 title("C. Endorsement: health system getting better in past two years", size(small)) 
 
-graph export "$output/Paper 1/exhib5_3.pdf", replace
+graph export "$results/exhib5_3.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
 
@@ -512,7 +514,7 @@ marginsplot, ylabel(.2(0.1)0.6, labsize(small)) xtitle("Government considers pub
 			 ytitle("Pr(getting better)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
 			 title("D. Endorsement: health system getting better in past two years", size(small)) 
 
-graph export "$output/Paper 1/exhib5_4.pdf", replace
+graph export "$results/exhib5_4.pdf", replace
 
 *** System reform minor ***
 
@@ -523,16 +525,16 @@ margins, at(qual_public=0 qual_public=1 qual_public=2 qual_public=3 qual_public=
 marginsplot, ylabel(0.1(0.1)0.4, labsize(small)) xtitle("Quality of public system", size(small)) ///
 			 ytitle("Pr(works well, only minor changes needed)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
 			 title("E. Endorsement: health system works well, only minor changes needed", size(small)) 
-graph export "$output/Paper 1/exhib5_5.pdf", replace
+graph export "$results/exhib5_5.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
 marginsplot, ylabel(0.1(0.1)0.4, labsize(small)) xtitle("Government considers public opinion", size(small)) ///
 		     ytitle("Pr(works well, only minor changes needed)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
 			  title("F. Endorsement: health system works well, only minor changes needed", size(small))  
-graph export "$output/Paper 1/exhib5_6.pdf", replace
+graph export "$results/exhib5_6.pdf", replace
 
 
-esttab using "$output/Paper 1/exhibit_4.rtf", ///
+esttab using "$results/exhibit_4.rtf", ///
 	replace wide b(2) ci(2) compress nobaselevels eform ///
 	rename(poor "Poor" under30 "Under 30 years" edu_secon "Secondary or higher education" ///
 	urban "Urban" health_vge "Self-rated health (vge)" ///
@@ -563,7 +565,7 @@ summtab2 , by(country2) vars(conf_sick_sv conf_afford_sv conf_getafford_sv) ///
 		   type(2 2 2)  wts(weight) /// 
 		   catmisstype(none) catrow /// 
 		   total replace excel /// 
-		   excelname(p1_exhib1_2) sheetname(Exhibit 2 data v2) directory("$output/Paper 1") /// 
+		   excelname(p1_exhib1_2) sheetname(Exhibit 2 data v2) directory("$results") /// 
 		   title(Data for Paper 1, Exhibit 2) 	
 
 * Exhibit 3 		   
@@ -577,7 +579,7 @@ foreach i in 1 2 3 4 6 5 7 8 9 10  {
 	
 }
 
-esttab using "$output/Paper 1/exhibit_3D_data v2.rtf", ///
+esttab using "$results/exhibit_3D_data v2.rtf", ///
 	replace wide b(2) ci(2) nostar compress nobaselevels eform drop(health_vge _cons) ///
 	rename(wealthy "High income" under30 "Under 30 years" most_educ "High education" ///
 	urban "Urban" gender2 "Female") mtitles("Ethiopia" "Kenya" "South Africa" "Peru" "Colombia" ///
@@ -599,14 +601,14 @@ marginsplot, ylabel(0.3(0.1)0.7, labsize(small)) xtitle("Quality of public syste
 			 ytitle("Pr(very or somewhat confident)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
 			 title("A. Health security: confidence can get and afford care", size(small)) 
 
-graph export "$output/Paper 1/exhib5_1 v2.pdf", replace
+graph export "$results/exhib5_1 v2.pdf", replace
 
 margins , at(q53=0 q53=1 q53=2 q53=3) 	
 marginsplot, ylabel(0.3(0.1)0.7, labsize(small)) xtitle("Government considers public opinion", size(small)) ///
 			 ytitle("Pr(very or somewhat confident)", size(small)) xlabel( , labsize(vsmall)) graphregion(color(white)) ///
 			 title("B. Health security: confidence can get and afford care", size(small)) 
 			 
-graph export "$output/Paper 1/exhib5_2 v2.pdf", replace
+graph export "$results/exhib5_2 v2.pdf", replace
 
 *** System outlook getting better ***
 
@@ -618,7 +620,7 @@ eststo: svy: logistic system_outlook_getbet poor under30 edu_secon urban health_
 eststo: svy: logistic system_reform_minor poor under30 edu_secon urban health_vge health_chronic gender2 unmet_need i.usual_quality i.qual_public i.qual_private i.covid_manage i.q53 i.country2
 **qual_public important (excellent OR 4.1)
 
-esttab using "$output/Paper 1/exhibit_4 v2.rtf", ///
+esttab using "$results/exhibit_4 v2.rtf", ///
 	replace wide b(2) ci(2) compress nobaselevels eform ///
 	rename(poor "Poor" under30 "Under 30 years" edu_secon "Secondary or higher education" ///
 	urban "Urban" health_vge "Self-rated health (vge)" ///
@@ -653,5 +655,5 @@ summtab2 , by(country2) vars(gender2 age education urban income health_vge healt
 		   wts(weight) wtfreq(ceiling) /// 
 		   catmisstype(none) /// 
 		   median total replace word landscape /// 
-		   wordname(sample_char_table_v2) directory("$output/Paper 1") /// 
+		   wordname(sample_char_table_v2) directory("$results") /// 
 		   title(Sample Characteristics Table)
