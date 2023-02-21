@@ -1,5 +1,5 @@
 * People's Voice Survey data cleaning for Laos
-* Last updated: January 31, 2023
+* Last updated: February 2023
 * N. Kapoor, E. Clarke-Deelder & A. Aryal 
 
 ************************************* Laos ************************************
@@ -245,18 +245,15 @@ recode q27 (. = .a) if q26 == 1 | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r
 * q31 & q32
 recode q31 (. = .a) if q3 == 1 | q3 == 3 | q3==.r | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
 recode q32 (. = .a) if q3 == 1 | q3 == 3 | q3==.r | q1 == .r | q2 == .r
-* EC Note: changed q31 and q32 to .a if gender is "another gender" or "refused"
 
 * q42
 recode q42 (. = .a) if q41 == 2 | q41==.r
-* EC note: changed q42 to .a if q41 is .r
 
 * q43-49 na's
 recode q43 q44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == .r 
 recode q46 (. = .r) if q46_refused==1 
 recode q47 (. = .r) if q47_refused==1
-* EC note: changed q46 and q47 to .r if q46_refused and q47_refused were positive, respectively
 
 *Q43/Q44
 recode q43 (. = .a) if q44 != 1
@@ -377,11 +374,11 @@ recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 	
-* COUNTRY-SPECIFIC items for append
+******** COUNTRY-SPECIFIC items for append ********
 * NOTE: We have only received data from Ipsos so far, so the value labels are programmed
 * to include all of countries being fielded by Ipsos 
 * For Laos, for now, recoded the values to start after Ipsos countries and then 
-* re-label the values on append (see append code at end)
+* re-label the values on append 
 
 * Interviewer ID - Other country data is anonomized interview ID from 1 through 57
 * Added Laos above 100 because India and SA interviewers to be added 
@@ -403,7 +400,6 @@ recode q6_la (1 = 30 "Additional private insurance") (2 = 29 "Only public insura
 * Q8 values after 44 are available 
 gen recq8 = q8 + 44
 replace recq8 = .r if q8==.r
-* EC note: added the refusals to the recode version
 
 * Q21
 recode q21 (10 = 9) (90 = .r)
@@ -420,12 +416,10 @@ replace recq44 = .r if q44==.r
 gen recq62 = q62 + 100 
 replace recq62 = .r if q62==.r
 replace recq62 = 995 if q62 == 4
-* EC note: added the refusals to the recode version
 
 * Q63 values after 61 are available 
 gen recq63 = q63 + 100 
 replace recq63 = .r if q63==.r
-* EC note: added the refusals to the recode version
 
 
 *------------------------------------------------------------------------------*

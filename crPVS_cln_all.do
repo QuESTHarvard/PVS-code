@@ -1,5 +1,5 @@
 * People's Voice Survey data cleaning and appending
-* Date of last update: Jan 5, 2023
+* Date of last update: February 2023
 * Last updated by: N Kapoor
 
 /*
@@ -22,7 +22,7 @@ set more off
 *********************** ETHIOPIA, KENYA & SOUTH AFRICA ***********************
 
 * NOTE: Ipsos has been sharing combined data in different ways. These are interim 
-*		work-arounds to obtain complete data until we receive final data
+*		work-arounds to obtain complete data until we receive final data (late March)
 
 * Import raw data 
 
@@ -95,7 +95,8 @@ replace q6 = .a if country == 9
 
 *------------------------------------------------------------------------------*
 
-*NK Note: May update and remove this code in the future  
+*NOTE: May update and remove this code in the future, as it could be recoded in
+*	   section below  
 
 * Recode all Refused and Don't know responses
 
@@ -103,7 +104,7 @@ replace q6 = .a if country == 9
 recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 q63 ///
 	   q66 q67 (997 = .d)
 	   
-* NOTE: currently in data q37_za "don't know" is category 3  
+*NOTE: currently in data q37_za "don't know" is category 3  
 
 * In raw data, 996 = "refused" 
 recode q1 q2 q3 q4 q5 q6 q6_za q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
@@ -191,8 +192,6 @@ recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 
-* Note: for other data add q28c 
-
 * q31 & q32
 recode q31 (. = .a) if q3 == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
 recode q32 (. = .a) if q3 == 1 | q1 == .r | q2 == .r
@@ -233,7 +232,7 @@ recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q66 ///
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk)
 	   
-* Note: Added "3" for q37_za 
+*Note: Added "3" for q37_za 
 
 lab val q46_refused q47_refused yes_no
 
@@ -327,10 +326,6 @@ recode q57 ///
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 
-* Note:
-* Some country-specific questions or questions with 8+ options (e.g., q20) have 
-* value labels, but not labels for .a or .r. Will edit this in future. 
-
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
@@ -359,7 +354,6 @@ ren (q46_min q47_min) (q46 q47)
 * ren ecs_id respondent_id
 ren interviewerid_recoded interviewer_id
 * Check ID variable and interviewer ID variable in other data 
-* Q37_B not currently in these data 
 
 *Reorder variables
 order q*, sequential
@@ -797,6 +791,8 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 * Kenya/Ethiopia data uses interviewer_id values 1 - 22 
 gen interviewer_id = interviewerid_recoded + 22
 * Note: 16 seems like a low number of interviewers across all three countries
+*		I think this is an error
+* 		I drop interviewer_id later anyways
 
 
 *------------------------------------------------------------------------------*
@@ -1048,8 +1044,18 @@ lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" /// 
 			    321 "West Virginia" 322 "Wisconsin" 323 "Wyoming" ///
 				995 "Other" .r "Refused", modify
 
-*Q7 -edit for ssrs-
-lab def labels9 29 "Only public" 30 "Additional private insurance" .a "NA" .r "Refused", modify
+*Q7 
+lab def labels9 29 "Only public" 30 "Additional private insurance" /// LA
+				31 "Additional private insurance" 32 "Only public insurance" /// IT
+				33 "Seguro Social (IMSS)" 34 "ISSSTE/ISSSTE Estatal" /// MX
+				35 "IMSS-Bienestar (antes Seguro Popular y INSABI)" ///
+				36 "PEMEX, Defensa o Marina" 37 "Seguro Médico Privado" ///
+				38 "Health insurance through your or someone else's employer or union" /// US
+				39 "Medicare, a government plan that pays health bills for people aged 65 or older and for some disabled people" ///
+				40 "Medicaid or any other state medical assistance plan for those with lower incomes" ///
+				41 "Health insurance plan that you or another family member bought on your own (including Obamacare)" ///
+		        42 " TRICARE (formerly CHAMPUS), VA, or military" ///
+				995 "Other" .a "NA" .r "Refused", modify
 
 *Q8 
 lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// LA 

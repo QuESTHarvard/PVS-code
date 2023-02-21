@@ -10,9 +10,7 @@ import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Ita
 * Rename all variables, and some recoding if variable will be dropped 
 
 ren RESPID respondent_serial
-* gen respondent_id var 
 ren XCHANNEL mode
-
 ren BIDENT_COUNTRY country
 ren Q1_1 q1
 ren Q1_2 q2
@@ -22,18 +20,15 @@ ren Q1_3IT q5_it
 ren Q1_3_OTHER_997 q5_other
 ren Q1_4 q3 
 ren Q1_5 q4 
-
 ren Q1_9IT q6_it
 ren Q1_9US q6
 ren Q1_10US q7_us
 ren Q1_10US_7_OTHER q7_other_us
 ren Q1_10MX q7_mx
 ren Q1_10MX_6_OTHER q7_other_mx
-
 ren Q1_11US q8_us
 ren Q1_11MX q8_mx
 ren Q1_11IT q8_it 
-
 ren Q1_12 q9
 ren Q1_13 q10
 ren Q1_14 q11
@@ -44,7 +39,6 @@ ren Q1_18 q15
 ren Q1_15 q12
 ren Q1_16 q13
 ren Q2_1 q18
-
 ren Q2_2MX q19_mx
 ren Q2_2MX_7_OTHER q19_other_mx
 ren Q2_3MX q20_mx
@@ -55,7 +49,6 @@ ren Q2_3IT q20_it
 ren Q2_3IT_5_OTHER q20_other_it
 ren Q2_3US q20_us
 ren Q2_3US_8_OTHER q20_other_us
-
 ren Q2_4 q21
 ren Q2_4_9_OTHER q21_other
 ren Q2_5 q22
@@ -81,7 +74,6 @@ ren Q2_21_B q40
 ren Q2_23 q41
 ren Q2_24 q42
 ren Q2_24_10_OTHER q42_other
-
 ren Q3_2US q44_us
 ren Q3_2US_8_OTHER q44_other_us
 ren Q3_1MX q43_mx
@@ -94,23 +86,18 @@ ren Q3_2IT q44_it
 ren Q3_2IT_5_OTHER q44_other_it
 ren Q3_3 q45
 ren Q3_3_4_OTHER q45_other
-
 ren Q3_4A q46_a_it_mx_us // add to data dictionary 
 ren Q3_4B_1X q46_b_hrs // add to data dictionary
 ren Q3_4B_2X q46_b_dys // add to data dictionary
 ren Q3_4B_3X q46_b_wks // add to data dictionary
 ren Q3_4B_4X q46_b_mth // add to data dictionary
-
 ren Q3_4_1X q46_hrs
 ren Q3_4_2X q46_min
-
 ren Q3_5_1X q47_hrs
 ren Q3_5_2X q47_min
-
 ren Q3_4B_999 q46_b_refused
 ren Q3_4_999 q46_refused 
 ren Q3_5_999 q47_refused 
-
 ren Q3_6_A q48_a
 ren Q3_6_B q48_b
 ren Q3_6_C q48_c
@@ -134,42 +121,41 @@ ren Q4_5MX_B q54_mx // secretaria de salud (public)
 ren Q4_5MX_A q56_mx_a //IMSS (third system)
 ren Q4_5MX_C q56_mx_b //IMSS bienestar (check)
 
-* FLAG check q54 versus q56
+* NOTE: discussed q54 vs q56 with MEK and CA 
 
 ren Q4_5IT q54_it
 ren Q4_5US q54_us
-
 egen q54 = rowmax(q54_mx q54_it q54_us)
 lab def scale 1 "Excellent" 2 "Very good" 3 "Good" 4 "Fair" 5 "Poor" 999 "Refused", replace
 lab val q54 scale
-
 ren Q4_6 q55
 ren Q4_8 q57
 ren Q4_9 q58
 ren Q4_10 q59
 ren Q4_11 q60
 ren Q4_12 q61
-
 ren Q4_13US q66a_us // add to data dictionary
 ren PARTYLEAN q66b_us // add to data dictionary
-
 ren Q4_14IT q63_it
 ren Q4_14MX q63_mx
 ren Q4_14US q63_us
-
 ren Q4_13MX q66_mx // add to data dictionary
 ren Q4_13IT q66_it // add to data dictionary
-
 ren WEIGHT weight_educ
 ren LANGUAGE lang
-
 order q*, sequential
 order respondent_serial mode lang country weight_educ
 
 
+* FLAG
+* Variables in our appended dataset that we need from this data (if avaialble)
+* Date variable, interview length variable (in minutes), q64 (do you have more than one phone),
+* q64 (if so how many phone numbers)
+* And potentially a time of interview variable (currently drop this in appended dataset, but may add back)
+
 *------------------------------------------------------------------------------*
 
-* Time variables - others to add? 
+* Time variables 
 
 * Q46, Q47 
 recode q46_min q46_hrs (. = 0) if q46_min < . | ///
@@ -210,9 +196,11 @@ drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE q46_min q46_hrs q47_min q47_hrs ///
 	 q54_it q54_us q54_mx q46_b_dys q46_b_hrs q46_b_mth q46_b_wks
 	 
-* Add back these variables later
+* Add back these variables later - telemedicine visit rating, 
 
 drop q28_c q66_it q66_mx q66a_us q66b_us
+
+* And ethnicity variables? 
 
 *------------------------------------------------------------------------------*
 
@@ -243,7 +231,7 @@ recode q23_q24 (998 = 999) if q24 == 999
 recode q23 q25_a q25_b q27 q28_b q30 q31 q32 q33 q34 q35 q36 q38 q63* ///
 	   (998 = .d)
 
-* Potentially no don't know in q25_a, q27, q63*
+* FLAG - potentially no don't know response option in q25_a, q27, q63*
 
 * In raw data, 999 = "refused" 	   
 recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7_us q7_mx q8* q9 q10 q11 q12 q13 q14 q15 q16 q17 /// 
@@ -271,7 +259,7 @@ recode q13 (. = .a) if q12 == 2  | q12==.r
 
 * q15
 * recode q15 (. = .a) if q14 == 3 | q14 == 4 | q14 == 5 | q14 == .r 
-* FLAG: was Q15 asked to eveyone? 
+* FLAG: was Q15 asked to eveyone? Skip pattern is different from main PVS data 
 * 		Should I make it a new var? Or recode those who said 0, 1, 2 doses
 *		(This skip pattern was also different in Laos )
 
@@ -308,7 +296,7 @@ recode q44_mx (. = .a) if q43_mx == 7
 recode q46_b_it_mx_us q46_b_refused (. = .a) if q46_a_it_mx_us == 2
 
 
-*q64/q65 - are there vars on number of phone numbers? 
+*q64/q65 - are there variarbles on number of phone numbers? 
 
 * Country-specific skip pattern - may not be needed as some of these are later merged 
 recode q5_it q6_it q8_it q19_it q20_it q43_it q44_it q63_it (. = .a) if country != 3
@@ -368,8 +356,8 @@ recode q48_e ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (6 = .a "NA") (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_visits)
-* NOTE: "I had no prior tests or visits" was not an option - was the skip pattern fixed? 
-* 		Can move this above if so
+* NOTE: "I had no prior tests or visits" was not an option - was the skip pattern different? 
+* 		Can move q48_e to above recode if so
 	 
 recode q48_j ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
@@ -429,7 +417,8 @@ recode q57 ///
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q47 na_rf	
 	
-**** Country-specific ****
+	
+******* Country-specific *******
 * Mode 
 recode mode (2 = 1) (1 = 4)
 lab def mode 1 "CATI" 4 "CAWI"
@@ -578,7 +567,7 @@ recode q7_mx (1 = 33 "Seguro Social (IMSS)") ///
 		(3 = 35 "IMSS-Bienestar (antes Seguro Popular y INSABI)") ///
 		(4 = 36 "PEMEX, Defensa o Marina") ///
 		(5 = 37 "Seguro Médico Privado") ///
-		(6 = 995 " Otro") ///
+		(6 = 995 "Other") ///
 		(.r = .r "Refused"), pre(rec) label(q7)
 		
 recode q7_us (1 = 38 "Health insurance through your or someone else's employer or union") ///
@@ -672,7 +661,7 @@ recode q20_us (1 = 1401 "Doctor's office, clinic, or health center") ///
 			  (8 = 995 "Other") ///
 			  , pre(rec) label(q20) 			  
 
-* FLAG - value labels for US data change in q44_it
+* FLAG - values and value labels labels for US data change between q20_us and q44_us
 *		 I recoded above and shifted numbers to make them match 			  
 			  
 gen q20 = max(recq20_it, recq20_mx, recq20_us)
@@ -772,7 +761,7 @@ recode q63 (. = .r) if q63_it == .r | q63_mx == .r | q63_us == .r
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q4 country q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8_it ///
+drop country q4 lang q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8_it ///
      recq8_mx recq8_us q5_it q5_mx q5_us ///
 	 recq5_it recq5_mx recq5_us q7_other_mx q7_other_us q19_other_it q19_other_mx ///
 	 q20_it q20_mx q20_us recq20_it recq20_mx recq20_us q20_other_it q20_other_mx ///

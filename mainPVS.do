@@ -1,5 +1,5 @@
 * People's Voice Survey main code file 
-* Date of last update: Jan 25, 2023
+* Date of last update: February 2023
 * Last updated by: N Kapoor
 
 /* Purpose of code file: 
@@ -56,5 +56,5 @@ run "$github/crPVS_cln_LA.do"
 run "$github/crPVS_der.do"
 
 * Creating megatable 
-run "$github/anPVS_mtbl.do"
+* run "$github/anPVS_mtbl.do"
 
