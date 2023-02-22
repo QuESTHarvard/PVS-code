@@ -1,7 +1,22 @@
 * PVS cleaning for appending datasets
 * February 2023
 * File for Italy, Mexico and US
-* N. Kapoor, P. Sarma, T. Lewis
+* N. Kapoor, T. Lewis
+
+/*
+
+This file cleans SSRS data (US, Italy Mexico). 
+
+Cleaning includes:
+	- Recoding skip patterns, refused, and don't know 
+	- Creating new variables (e.g., time variables), renaming variables, labeling variables 
+	- Correcting any values and value labels and their direction 
+	- Recoding outliers to missing 
+	
+Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true missing 
+
+*/
+
 
 * Import data 
 import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_2.1.23_confidential.sav", clear
@@ -237,6 +252,7 @@ replace respondent_id = "MX" + string(respondent_serial) if country == 2
 replace respondent_id = "IT" + string(respondent_serial) if country == 3
 
 gen q28_a = .a // any others not asked? 
+gen q62 = .a // asked differently 
 gen q64 = .a 
 gen q65 = .a
 
@@ -593,8 +609,8 @@ recode q5 (. = .r) if q5_it == .r | q5_mx == .r | q5_us == .r
 * Q7 - combine q7_us and q7_mx
 * create values for Italy
 
-recode q6_it (1 = 31 "Additional private insurance") ///
-			 (2 = 32 "Only public insurance") ///
+recode q6_it (1 = 32 "Additional private insurance") ///
+			 (2 = 31 "Only public insurance") ///
 			 (.a = .a "NA") (.r = .r "Refused"), gen(q7_it) lab(q7)
 
 recode q7_mx (1 = 33 "Seguro Social (IMSS)") ///
@@ -844,7 +860,39 @@ ren rec* *
 
 * Check for implausible values
 * q23 q25_b q27 q28_a q28_b q46 q47
- 
+
+
+ foreach var in q23 q25_b q27 q28_b q46 q46_b_it_mx_us q47 {
+	foreach i in 12 13 14 {
+		extremes `var' country if country == `i', high 
+	}				
+	 }
+
+* Q to CA: 
+* Do these values seem plausible to you? 	 
+* For visits variables, we've recoding values roughly above 52 to missing (weekly visit) 
+* For q46, 
+* For q47, we cut off roughly above 500 minutes 
+	 
+* Check for other implausible values 
+list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
+* Note: okay in these data
+
+list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
+* Note: okay in these data (2.5 is mid-point value)
+
+list q26 q27 country if q27 == 0 | q27 == 1
+* Some implasuible values of 0 and 1
+* Recode 0 values for q27 to .a for q27 and "No" for q26
+* Recode 1 values to 2, because respondent likely meant 1 additional facility 
+recode q26 (0 = 1) if q27 == 0
+recode q27 (0 = .a)  
+recode q27 (1 = 2) 
+
+list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
+							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .	 
+* Note: okay in these data 
+	 
 *------------------------------------------------------------------------------*
 order respondent_serial mode language weight_educ respondent_id country
 order q*, sequential

@@ -175,7 +175,7 @@ lab val system_reform sr
 
 * health_chronic, ever_covid, covid_confirmed, usual_source, inpatient
 * unmet_need 
-* Yes/No/Refused -Q6 Q11 Q12 Q13 Q18 Q29 Q41 
+* Yes/No/Refused - Q11 Q12 Q13 Q18 Q29 Q41 
 
 gen health_chronic = q11
 gen ever_covid = q12
@@ -271,22 +271,22 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 31 32 33 = 1 "Urban") (4 8 11 14 19 34 = 0
 * insurance status
 gen insured = q6 
 recode insured (.a = 0) if q7 == 14
-recode insured (.a = 1) if country == 9 | country == 11
+recode insured (.a = 1) if country == 9 | country == 11 | country == 13 | country == 14
+* Note: All are insured in South Africa, Laos, Mexico and Italy, correct? 
 recode insured (.a = 1) if q7 == 10 | q7 == 11 | q7 == 12 | q7 == 13 | ///
 						q7 == 15 | q7 == 16 | q7 == 17 | q7 == 18 | q7 == 19 | ///
 						q7 == 20 | q7 == 21 | q7 == 22 | q7 == 28 
 recode insured (.a = .r) if q7 == .r | q7 == 995 | q7 == .  
 lab val insured yes_no
 
-
 * insur_type 
 * NOTE: check other, specify later
 
-recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 = 0 Public) (2 4 5 6 7 8 9 28 13 21 30 = 1 Private) /// 
+recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 31 33 34 35 36 39 40 42 = 0 Public) ///
+		  (2 4 5 6 7 8 9 28 13 21 30 32 37 38 41 = 1 Private) /// 
 		  (995 = 2 Other) ///
 		  (.r = .r "Refused") (14 .a = .a NA), gen(insur_type)
 
- 
 * education 
 recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal education)") /// 
 		  (3 8 14 15 27 20 34 46 52 53 59 66 67 = 1 "Primary") ///
@@ -329,7 +329,7 @@ recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r | 
 								   
 * usual_type_lvl 
 
-recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 ///
+recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /// 38 added for ZA, may change
 			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 501 502 ///
 			801 802 805 808 809 812 813 815 817 818 1401 1402 1403 1404 = 0 "Primary") /// 
 		   (4 5 8 9 13 19 21 29 30 34 35 37 81 82 86 87 41 42 44 46 49 93 97 ///
@@ -383,7 +383,7 @@ recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r | /
 
 
 * last_type_lvl 
-recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 ///
+recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 ///
 			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 202 203 ///
 			501 502 801 802 805 808 809 812 813 815 817 818 1401 1402 1403 1404 = 0 "Primary") /// 
 		   (4 5 8 9 13 19 21 29 30 34 35 37 81 82 86 87 41 42 44 46 49 93 97 ///
@@ -406,21 +406,29 @@ lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Priva
 					.a NA .r Refused, replace
 lab val last_type fac_own_lvl
 
-* native language
+* minority
+* Need to add ZA 
 recode q62 (1 5 8 9 10 11 12 13 14 15 23 24 25 26 27 28 29 30 31 32 ///
-			44 45 49 81 102 103 = 0 "Minority group languages") /// 
-		   (2 3 4 6 7 21 22 53 87 101 = 1 "Majority group languages") /// 
+			44 45 49 81 102 103 = 1 "Minority group") /// 
+		   (2 3 4 6 7 21 22 53 87 101 = 0 "Majority group") /// 
 		   (995 998 104 = 2 "Other") ///
-		   (.r = .r "Refused") (.a = .a "NA"), gen(native_lang)
+		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
+recode minority (.a = 1) if q62_mx == 1		   
+recode minority (.a = 1) if q62a_us == 1		   
+recode minority (.a = 1) if q62b_us == 1 | q62b_us == 2 | q62b_us == 3 ///
+						  | q62b_us == 4 |q62b_us == 6 
+* Note - check this 
 
 * income
+* Note - will update this grouping based on income data 
 recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 151 152 158 159 163 164 = 0 "Lowest income") /// 
 		   (3 4 5 11 12 18 19 20 41 42 43 33 34 35 51 52 53 103 104 105 153 154 155 160 165 = 1 "Middle income") /// 
 		   (6 7 13 14 21 22 44 45 36 37 54 55 106 107 156 157 161 162 166 167 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
-
-
+		  
+* NOTE: will create some derived variables for new US/IT/MX vars, also asked in other countries
+*		(appointment scheduling time, voting, telemedicine rating, etc.)
 * NOTE: Ignored country-specific questions Q13B and Q13E
 
 		   
@@ -441,7 +449,7 @@ order respondent_serial respondent_id country language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_opinion qual_public qual_private qual_ngo_et_ke_za qual_ss_pe ///
 	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good native_lang income q1 q2 q3 q3a q4 q5 q6 q6_za q7 ///
+	  vignette_good minority income q1 q2 q3 q3a q4 q5 q6 q6_za q7 ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q15 q16 q17 q18 ///
 	  q18a_la q18b_la ///
 	  q19_et_ke_za q19_co q19_pe q19_uy q19_other q19_q20a_la q19_q20a_other q19_q20b_la ///
@@ -533,7 +541,7 @@ lab var	system_reform "Health system opinion: minor, major changes, or must be c
 lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q59)" 
 lab var	vignette_poor "Rating of vignette in Q60 (poor care)"
 lab var	vignette_good "Rating of vignette in Q61 (good care)"
-lab var	native_lang "Native language (Q62)"
+lab var	minority "Minority group (based on native language, ethnicity or race) (Q62)"
 lab var	income "Income group (Q63)"
 
 

@@ -998,8 +998,8 @@ recode q6_it q19_it q43_it (. = .a) if country != 14
 recode q19_mx q43_mx q56_mx_a q56_mx_b q62_mx (. = .a) if country != 13
 recode q62a_us q62b_us q66a_us q66b_us (. = .a) if country != 12
 recode q28_c q46_a_it_mx_us q46_b_it_mx_us q46_b_refused q48_k q66_it_mx ///
-	   (. = .a) if country != 12 | country != 13 | country != 14
-		
+	   (. = .a) if country != 12 | country != 13 | country != 14	   
+	   
 * Country-specific value labels -edit for ssrs-
 recode language (. = 11) if country == 2 | country == 7 | country == 10 
 lab def Language 11 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong" 18 "Italian", modify 
@@ -1046,7 +1046,7 @@ lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" /// 
 
 *Q7 
 lab def labels9 29 "Only public" 30 "Additional private insurance" /// LA
-				31 "Additional private insurance" 32 "Only public insurance" /// IT
+				31 "Only public insurance" 32 "Additional private insurance" /// IT
 				33 "Seguro Social (IMSS)" 34 "ISSSTE/ISSSTE Estatal" /// MX
 				35 "IMSS-Bienestar (antes Seguro Popular y INSABI)" ///
 				36 "PEMEX, Defensa o Marina" 37 "Seguro Médico Privado" ///
