@@ -411,6 +411,8 @@ label define fac_choose 9 "Other", modify
 gen recq44 = q44 + 200
 replace recq44 = 995 if q44== 4
 replace recq44 = .r if q44==.r
+replace recq44 = .a if q44==.a
+
 
 * Q62 values after 89 are available
 gen recq62 = q62 + 100 
@@ -494,12 +496,12 @@ lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
-lab var q18a_la "Q18a. LA only: Is there one place you usually...? (incl pharm, traditional)"
-lab var q19_q20a_la "Q19a. LA only: What type of place is this?"
-lab var q19_q20a_other "Q19a. LA only: Other"
-lab var q18b_la "Q18b. LA only: Is there one hospital, health center, or clinic you usually...?"
-lab var q19_q20b_la "Q19b. LA only: What type of healthcare facility is this?"
-lab var q19_q20b_other "Q19b. LA only: Other"
+lab var q18a_la "Q18A. LA only: Is there one place you usually...? (incl pharm, traditional)"
+lab var q19_q20a_la "Q19A. LA only: What type of place is this?"
+lab var q19_q20a_other "Q19A. LA only: Other"
+lab var q18b_la "Q18B. LA only: Is there one hospital, health center, or clinic you usually...?"
+lab var q19_q20b_la "Q19B. LA only: What type of healthcare facility is this?"
+lab var q19_q20b_other "Q19B. LA only: Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
 lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"

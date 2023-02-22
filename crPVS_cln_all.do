@@ -758,7 +758,7 @@ recode q14_new ///
 recode q15 /// 
 	   (1 = 1 "Yes, I plan to receive all required doses") ///
 	   (2 = 0 "No, don't plan to receive all required doses") ///
-	   (.r = .r Refused) (.a = .a NA), ///
+	   (.r = .r Refused) (.a = .a NA) (.d = .d "Don't know"), /// Don't know included in some countries
 	   pre(rec) label(yes_no_doses)
 	   
 recode q24 ///
@@ -983,7 +983,7 @@ lab def mode 1 "CATI" 2 "F2F" 3 "CAWI", replace
 label val mode mode
 lab var mode "Mode of interview (CATI, CAWI, or F2F)"
 
-* Country-specific skip patterns = check this 
+* Country-specific skip patterns - check this 
 recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
 recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
 recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11
@@ -993,12 +993,12 @@ recode q19_co q43_co (. = .a) if country != 2
 recode q6_za q37_za (. = .a) if country != 9
 recode q6_la q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
 		(. = .a) if country != 11
-recode q6 q18 q20 q44 q64 q65 (. = .a) if country == 11
+recode q6 q18 q20 q64 q65 (. = .a) if country == 11
 recode q6_it q19_it q43_it (. = .a) if country != 14
-recode q19_mx q43_mx q48_k q56_mx_a q56_mx_b (. = .a) if country != 13
-recode q20 q44 (. = .a) if country == 12
-recode q48_k (. = .a) if country != 12 | country != 13 | country != 14
-
+recode q19_mx q43_mx q56_mx_a q56_mx_b q62_mx (. = .a) if country != 13
+recode q62a_us q62b_us q66a_us q66b_us (. = .a) if country != 12
+recode q28_c q46_a_it_mx_us q46_b_it_mx_us q46_b_refused q48_k q66_it_mx ///
+	   (. = .a) if country != 12 | country != 13 | country != 14
 		
 * Country-specific value labels -edit for ssrs-
 recode language (. = 11) if country == 2 | country == 7 | country == 10 
@@ -1178,7 +1178,6 @@ lab def place_type .a "NA" .r "Refused", modify
 lab def fac_owner .a "NA" .r "Refused", modify
 lab def fac_type1 .a "NA" .r "Refused", modify
 lab def fac_type3 .a "NA" .r "Refused", modify
-
  
 *** weights ***
 drop weight
