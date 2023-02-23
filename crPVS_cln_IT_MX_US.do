@@ -4,9 +4,7 @@
 * N. Kapoor, T. Lewis
 
 /*
-
 This file cleans SSRS data (US, Italy Mexico). 
-
 Cleaning includes:
 	- Recoding skip patterns, refused, and don't know 
 	- Creating new variables (e.g., time variables), renaming variables, labeling variables 
@@ -14,16 +12,13 @@ Cleaning includes:
 	- Recoding outliers to missing 
 	
 Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true missing 
-
 */
-
 
 * Import data 
 import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_2.1.23_confidential.sav", clear
 
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 
-
 ren RESPID respondent_serial
 ren XCHANNEL mode
 ren BIDENT_COUNTRY country
@@ -32,7 +27,7 @@ ren Q1_2 q2
 ren Q1_3US q5_us
 ren Q1_3MX q5_mx
 ren Q1_3IT q5_it
-ren Q1_3_OTHER_997 q5_other
+ren Q1_3_OTHER_997 q5_other // this is just for Italy
 ren Q1_4 q3 
 ren Q1_5 q4 
 ren Q1_9IT q6_it
@@ -72,8 +67,9 @@ ren Q2_7 q24
 ren Q2_8A q25_a
 ren Q2_8B_1 q25_b
 ren Q2_9 q26
-ren Q2_10_1 q27
-ren Q2_11_1 q28_b // check this - may be mislabeled 
+ren Q2_10_1 q27 
+ren Q2_11_1 q28_b // check this - may be mislabeled
+lab var q28_b "q2_11 How many virtual or telemedicine visits did you have in the past 12 months?"
 ren Q2_11B q28_c // to be added to data dictionary
 ren Q2_12 q29
 ren Q2_13_A q30
@@ -183,7 +179,7 @@ recode q46b_it_mx_us (. = .r) if q46b_refused == 1
 * Note: There are 9 values missing, after the skip pattern recoding. 
 * 		Is this a recoding error or just missing data?
 
-* Q54
+* Q54 (selected Secretaria de Salud in Mexico)
 egen q54 = rowmax(q54_mx q54_it q54_us)
 lab val q54 labels69
 
@@ -246,7 +242,6 @@ drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 *------------------------------------------------------------------------------*
 
 * Generate variables 
-
 gen respondent_id = "US" + string(respondent_serial) if country == 1
 replace respondent_id = "MX" + string(respondent_serial) if country == 2
 replace respondent_id = "IT" + string(respondent_serial) if country == 3
@@ -266,7 +261,6 @@ recode q23_q24 (998 = 999) if q24 == 999
 
 
 *------------------------------------------------------------------------------*
-
 * Refused values / Don't know values
 
 * In raw data, 998 = "don't know" 
@@ -306,7 +300,6 @@ recode q13 (. = .a) if q12 == 2  | q12==.r
 * FLAG: was Q15 asked to eveyone? Skip pattern is different from main PVS data 
 * 		Should I make it a new var? Or recode those who said 0, 1, 2 doses
 *		(This skip pattern was also different in Laos )
-
 
 *q19-22
 recode q19_it q19_mx q20_it q20_mx q20_us q21 q22 (. = .a) if q18 == 2 | q18 == .r 
@@ -353,7 +346,6 @@ recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q56a_mx q56b_mx q62_mx q63_
 recode q5_us q6 q7_us q8_us q20_us q44_us q62b_us q63_us q66a_us q66b_us (. = .a) if country != 1
 
 *------------------------------------------------------------------------------*
-
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense
 
@@ -513,6 +505,14 @@ recode q5_it (1 = 220 "Sicilia") ///
 			 (20 = 239 "Veneto") ///
 			 (21 = 240 "Provincia Autonoma Bolzano/Bozen") ///
 			 (997 = 995 "Other"), pre(rec) label(q5)
+			 replace recq5_it = 221 if q5_other=="CAMPAGNIA" |	q5_other=="PROVINCA DI SALERNO"
+			 replace recq5_it = 223 if q5_other=="CALABRIA" 
+			 replace recq5_it = 225 if q5_other=="PULIA" 
+			 replace recq5_it = 230 if q5_other=="PIEMONTE"	|	q5_other=="TORINO"	|	q5_other=="piemonte"
+			 replace recq5_it = 233 if q5_other=="umbria" 
+			 replace recq5_it = 234 if q5_other=="ASCOLIPICENO"
+			 replace recq5_it = 237 if q5_other=="lombardia"
+			 replace recq5_it = 239 if q5_other=="venzia"
 			 
 recode q5_mx (1 = 241 "Chiapas") ///
 			 (2 = 242 "Guerrero") ///
@@ -605,7 +605,14 @@ lab val q5 q5
 recode q5 (. = .r) if q5_it == .r | q5_mx == .r | q5_us == .r
 
 * Q6 okay - q6 is US only, q6_it, is Italy specific 
-
+* Creating the Q6 variable in Mexico // we forgot to leave an option for those without insurance
+replace recq6 = 1 if q7_mx< 6
+replace recq6 = 0 if q7_other_mx=="NIGUHNO" | q7_other_mx=="NIGUNO" ///
+		| q7_other_mx=="NINGUNA" | q7_other_mx=="NINGUNO" | q7_other_mx=="NINGUNO." ///
+		| q7_other_mx=="NO TENGO" | q7_other_mx=="NO TIENE SEGURO" | | q7_other_mx=="Ninguno" ///
+		| q7_other_mx=="ninguno"| q7_other_mx=="ninuno" | q7_other_mx=="no tiene ninguno" ///
+		| q7_other_mx=="no tiene seguro"
+replace recq6 = 1 if recq6==.a & q7_mx <.a
 * Q7 - combine q7_us and q7_mx
 * create values for Italy
 
@@ -620,6 +627,7 @@ recode q7_mx (1 = 33 "Seguro Social (IMSS)") ///
 		(5 = 37 "Seguro Médico Privado") ///
 		(6 = 995 "Other") ///
 		(.r = .r "Refused"), pre(rec) label(q7)
+		replace recq7_mx = 37 if q7_other_mx=="MEDICO PARTICULAR" | q7_other_mx=="medico particular"
 		
 recode q7_us (1 = 38 "Health insurance through your or someone else's employer or union") ///
 		(2 = 39 "Medicare, a government plan that pays health bills for people aged 65 or older and for some disabled people") ///
