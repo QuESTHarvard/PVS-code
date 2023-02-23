@@ -19,13 +19,14 @@ set more off
 macro drop _all
 
 * Setting user globals 
-global user "/Users/nek096"
+*global user "/Users/nek096"
+global user "/Users/catherine.arsenault"
 *global user "/Users/tol145"
 *global user "/Users/rodba"
 
 * Setting file path globals
-global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
-
+*global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
+global data "$user/Dropbox/SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
 * Path to multi-country data folder (includes input and output folders for data checks)
 global data_mc "$data/Multi-country"
 
