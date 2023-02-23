@@ -101,16 +101,16 @@ ren Q3_2IT q44_it
 ren Q3_2IT_5_OTHER q44_other_it
 ren Q3_3 q45
 ren Q3_3_4_OTHER q45_other
-ren Q3_4A q46_a_it_mx_us // add to data dictionary 
-ren Q3_4B_1X q46_b_hrs // add to data dictionary
-ren Q3_4B_2X q46_b_dys // add to data dictionary
-ren Q3_4B_3X q46_b_wks // add to data dictionary
-ren Q3_4B_4X q46_b_mth // add to data dictionary
+ren Q3_4A q46a_it_mx_us // add to data dictionary 
+ren Q3_4B_1X q46b_hrs // add to data dictionary
+ren Q3_4B_2X q46b_dys // add to data dictionary
+ren Q3_4B_3X q46b_wks // add to data dictionary
+ren Q3_4B_4X q46b_mth // add to data dictionary
 ren Q3_4_1X q46_hrs
 ren Q3_4_2X q46_min
 ren Q3_5_1X q47_hrs
 ren Q3_5_2X q47_min
-ren Q3_4B_999 q46_b_refused
+ren Q3_4B_999 q46b_refused
 ren Q3_4_999 q46_refused 
 ren Q3_5_999 q47_refused 
 ren Q3_6_A q48_a
@@ -133,8 +133,8 @@ ren Q4_2_A q51
 ren Q4_2_B q52
 ren Q4_2_C q53
 ren Q4_5MX_B q54_mx // secretaria de salud (public)
-ren Q4_5MX_A q56_mx_a //IMSS (third system)
-ren Q4_5MX_C q56_mx_b //IMSS bienestar (check)
+ren Q4_5MX_A q56a_mx //IMSS (third system)
+ren Q4_5MX_C q56b_mx //IMSS bienestar (check)
 
 * NOTE: discussed q54 vs q56 with MEK and CA 
 
@@ -173,12 +173,12 @@ gen q47 = q47_hrs*60 + q47_min
 recode q47 (. = .r) if q47_refused == 1
 
 * Q46a, Q46b 
-recode q46_b_dys q46_b_hrs q46_b_mth q46_b_wks (. = 0) if q46_b_dys < . | ///
-														  q46_b_hrs < . | ///
-														  q46_b_mth < . | ///
-														  q46_b_wks < . 
-gen q46_b_it_mx_us = (q46_b_hrs/24) + q46_b_dys + (q46_b_wks*7) + (q46_b_mth*30)
-recode q46_b_it_mx_us (. = .r) if q46_b_refused == 1 
+recode q46b_dys q46b_hrs q46b_mth q46b_wks (. = 0) if q46b_dys < . | ///
+														  q46b_hrs < . | ///
+														  q46b_mth < . | ///
+														  q46b_wks < . 
+gen q46b_it_mx_us = (q46b_hrs/24) + q46b_dys + (q46b_wks*7) + (q46b_mth*30)
+recode q46b_it_mx_us (. = .r) if q46b_refused == 1 
 
 * Note: There are 9 values missing, after the skip pattern recoding. 
 * 		Is this a recoding error or just missing data?
@@ -234,7 +234,7 @@ drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 	 HID_LOI BLANDCELL BSSRS_MATCH_CODE CATICALLTIME DIALTYPE DTYPE EMAIL ///
 	 RECORDTYPE BIDENT2 BSTRATA BREGION1 BREGION2 BREGION3 BREGION4 BLOCALITY ///
 	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE q46_min q46_hrs q47_min q47_hrs ///
-	 q54_it q54_us q54_mx q46_b_dys q46_b_hrs q46_b_mth q46_b_wks
+	 q54_it q54_us q54_mx q46b_dys q46b_hrs q46b_mth q46b_wks
 
 	 
 * FLAG
@@ -283,7 +283,7 @@ recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7_us q7_mx q8* q9 q10 q11 q12 ///
 	   q34 q35 q36 q38 q39 q40 q41 q42 q43_it q43_mx q44_it q44_mx q44_us ///
 	   q45 q46* q47* q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54* q55 /// 
-	   q56_mx* q57 q58 q59 q60 q61 q62_mx q62a_us q63* q66* (999 = .r)	
+	   q56* q57 q58 q59 q60 q61 q62_mx q62a_us q63* q66* (999 = .r)	
 	  
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for questions respondents would not have been asked 
@@ -334,12 +334,12 @@ recode q32 (. = .a) if q3 == 1 | q1 == .r | q2 == .r
 recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
-recode q43_it q43_mx q44_it q44_mx q44_us q45 q46 q46_refused q46_a_it_mx_us ///
-	   q46_b_it_mx_us q46_b_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_it q43_mx q44_it q44_mx q44_us q45 q46 q46_refused q46a_it_mx_us ///
+	   q46b_it_mx_us q46b_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r 
 recode q44_it (. = .a) if q43_it == 4 // different from above 
 recode q44_mx (. = .a) if q43_mx == 7 
-recode q46_b_it_mx_us q46_b_refused (. = .a) if q46_a_it_mx_us == 2
+recode q46b_it_mx_us q46b_refused (. = .a) if q46a_it_mx_us == 2
 
 
 *q64/q65 - are there variarbles on number of phone numbers? 
@@ -349,7 +349,7 @@ recode q66b_us (. = .a) if q66a_us == 1 | q66a_us == 2
 
 * Country-specific skip pattern - may not be needed as some of these are later merged 
 recode q5_it q6_it q8_it q19_it q20_it q43_it q44_it q63_it q66_it (. = .a) if country != 3
-recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q56_mx_a q56_mx_b q62_mx q63_mx q66_mx (. = .a) if country != 2
+recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q56a_mx q56b_mx q62_mx q63_mx q66_mx (. = .a) if country != 2
 recode q5_us q6 q7_us q8_us q20_us q44_us q62b_us q63_us q66a_us q66b_us (. = .a) if country != 1
 
 *------------------------------------------------------------------------------*
@@ -375,13 +375,13 @@ recode q39 q40 ///
 	   (.r = .r Refused), ///
 	   pre(rec) label(yes_no_na)
 	   
-recode q46_a_it_mx_us ///
+recode q46a_it_mx_us ///
 		(1 = 1 "Yes, the visit was scheduled, and I had an appointment") ///
 		(2 = 0 " No, I did not have an appointment") ///
 		(.a = .a "NA") ///
 		(.r = .r "Refused"), pre(rec) label(yes_no_appt)
 
-recode q46_b_refused ///
+recode q46b_refused ///
 		(1 = 1 "Yes") ///
 		(0 = 0 " No") ///
 		(.a = .a "NA") ///
@@ -396,7 +396,7 @@ recode q6_it ///
 * All Excellent to Poor scales
 
 recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 ///
-	   q56_mx_a q56_mx_b q55 q59 q60 q61 ///
+	   q56a_mx q56b_mx q55 q59 q60 q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(exc_poor)
@@ -466,7 +466,7 @@ recode q57 ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 	
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28_a q28_c q28_b q46 q46_b_it_mx_us q47 na_rf	
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_c q28_b q46 q46b_it_mx_us q47 na_rf	
 	
 	
 ******* Country-specific *******
@@ -847,11 +847,11 @@ drop country q4 lang q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8
 	 recq5_it recq5_mx recq5_us q7_other_mx q7_other_us q19_other_it q19_other_mx ///
 	 q20_it q20_mx q20_us recq20_it recq20_mx recq20_us q20_other_it q20_other_mx ///
 	 q20_other_us q43_other_it q43_other_mx q44_it q44_mx q44_us recq44_it ///
-	 recq44_mx recq44_us q44_other_it q44_other_mx q44_other_us q46_b_refused ///
+	 recq44_mx recq44_us q44_other_it q44_other_mx q44_other_us q46b_refused ///
 	 q63_it q63_mx q63_us recq63_it recq63_mx recq63_us q66_it q66_mx recq66_mx ///
      q6 q6_it q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
-	 q40 q46_a_it_mx_us q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
-	 q54 q56_mx_a q56_mx_b q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
+	 q40 q46a_it_mx_us q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
+	 q54 q56a_mx q56b_mx q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57 
 
 ren rec* *
@@ -862,7 +862,7 @@ ren rec* *
 * q23 q25_b q27 q28_a q28_b q46 q47
 
 
- foreach var in q23 q25_b q27 q28_b q46 q46_b_it_mx_us q47 {
+ foreach var in q23 q25_b q27 q28_b q46 q46b_it_mx_us q47 {
 	foreach i in 12 13 14 {
 		extremes `var' country if country == `i', high 
 	}				
@@ -961,10 +961,10 @@ lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var q46_refused "Q46. Refused"
-lab var q46_b_refused "Q46B. Refused"
+lab var q46b_refused "Q46B. Refused"
 lab var q47_refused "Q47. Refused"
-lab var q46_a_it_mx_us "Q46A IT/MX/US only: Was this a scheduled visit or did you go without an appt.?"
-lab var q46_b_it_mx_us "Q46B IT/MX/US only: In days: how long between scheduling and seeing provider?"
+lab var q46a_it_mx_us "Q46A IT/MX/US only: Was this a scheduled visit or did you go without an appt.?"
+lab var q46b_it_mx_us "Q46B IT/MX/US only: In days: how long between scheduling and seeing provider?"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
@@ -987,8 +987,8 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private for-profit healthcare?"
-lab var q56_mx_a "Q56. MX only: How would you rate the quality of services provided by IMSS?"
-lab var q56_mx_b "Q56. MX only: How would you rate the quality of services...IMSS BIENESTAR?"
+lab var q56a_mx "Q56a. MX only: How would you rate the quality of services provided by IMSS?"
+lab var q56b_mx "Q56b. MX only: How would you rate the quality of services...IMSS BIENESTAR?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"

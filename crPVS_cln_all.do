@@ -995,9 +995,9 @@ recode q6_la q18a_la q19_q20a_la q18b_la q19_q20b_la ///
 		(. = .a) if country != 11
 recode q6 q18 q20 q64 q65 (. = .a) if country == 11
 recode q6_it q19_it q43_it (. = .a) if country != 14
-recode q19_mx q43_mx q56_mx_a q56_mx_b q62_mx (. = .a) if country != 13
+recode q19_mx q43_mx q56a_mx q56b_mx q62_mx (. = .a) if country != 13
 recode q62a_us q62b_us q66a_us q66b_us (. = .a) if country != 12
-recode q28_c q46_a_it_mx_us q46_b_it_mx_us q46_b_refused q48_k q66_it_mx ///
+recode q28_c q46a_it_mx_us q46b_it_mx_us q46b_refused q48_k q66_it_mx ///
 	   (. = .a) if country != 12 | country != 13 | country != 14	   
 	   
 * Country-specific value labels -edit for ssrs-
