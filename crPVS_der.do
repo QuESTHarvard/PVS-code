@@ -270,9 +270,9 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 31 32 33 = 1 "Urban") (4 8 11 14 19 34 = 0
 
 * insurance status
 gen insured = q6 
-recode insured (.a = 0) if q7 == 14
 recode insured (.a = 1) if country == 9 | country == 11 | country == 13 | country == 14
 * Note: All are insured in South Africa, Laos, Mexico and Italy, correct? 
+recode insured (.a = 0) if q7 == 14
 recode insured (.a = 1) if q7 == 10 | q7 == 11 | q7 == 12 | q7 == 13 | ///
 						q7 == 15 | q7 == 16 | q7 == 17 | q7 == 18 | q7 == 19 | ///
 						q7 == 20 | q7 == 21 | q7 == 22 | q7 == 28 
@@ -286,7 +286,9 @@ recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 31 33 34 35 36 39 40 42 = 0 Publ
 		  (2 4 5 6 7 8 9 28 13 21 30 32 37 38 41 = 1 Private) /// 
 		  (995 = 2 Other) ///
 		  (.r = .r "Refused") (14 .a = .a NA), gen(insur_type)
-
+recode insur_type (.a = 0) if q6_za == 0
+		  
+		  
 * education 
 recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal education)") /// 
 		  (3 8 14 15 27 20 34 46 52 53 59 66 67 = 1 "Primary") ///

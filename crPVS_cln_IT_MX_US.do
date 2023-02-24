@@ -286,10 +286,10 @@ recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7_us q7_mx q8* q9 q10 q11 q12 ///
 *q1/q2 
 recode q2 (. = .a) if q1 != .r 
 
-* q6/q7 - CHECK THIS
+* q6/q7 
 recode q7_us (. = .a) if q6 == 2 | q6 == .r 
 
-* Note - add country specific skip pattern later (q6, q8)
+* q6_it asked in Italy, q6 not asked in MX 
 
 * q13 
 recode q13 (. = .a) if q12 == 2  | q12==.r
@@ -426,6 +426,7 @@ recode q16 q17 q51 q52 q53 ///
 	   pre(rec) label(vc_nc)
 	   
 * Miscellaneous questions with unique answer options
+
 recode q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
 		  (6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") ///
 		  (.a = .a "NA"), pre(rec) label(age_cat)
@@ -604,31 +605,35 @@ gen q5 = max(recq5_it, recq5_mx, recq5_us)
 lab val q5 q5
 recode q5 (. = .r) if q5_it == .r | q5_mx == .r | q5_us == .r
 
+
 * Q6 okay - q6 is US only, q6_it, is Italy specific 
-* Creating the Q6 variable in Mexico // we forgot to leave an option for those without insurance
-replace recq6 = 1 if q7_mx< 6
-replace recq6 = 0 if q7_other_mx=="NIGUHNO" | q7_other_mx=="NIGUNO" ///
-		| q7_other_mx=="NINGUNA" | q7_other_mx=="NINGUNO" | q7_other_mx=="NINGUNO." ///
-		| q7_other_mx=="NO TENGO" | q7_other_mx=="NO TIENE SEGURO" | | q7_other_mx=="Ninguno" ///
-		| q7_other_mx=="ninguno"| q7_other_mx=="ninuno" | q7_other_mx=="no tiene ninguno" ///
-		| q7_other_mx=="no tiene seguro"
-replace recq6 = 1 if recq6==.a & q7_mx <.a
 * Q7 - combine q7_us and q7_mx
-* create values for Italy
+* create values for Italy		
 
 recode q6_it (1 = 32 "Additional private insurance") ///
 			 (2 = 31 "Only public insurance") ///
 			 (.a = .a "NA") (.r = .r "Refused"), gen(q7_it) lab(q7)
 
+			 
 recode q7_mx (1 = 33 "Seguro Social (IMSS)") ///
 		(2 = 34 "ISSSTE/ISSSTE Estatal") ///
 		(3 = 35 "IMSS-Bienestar (antes Seguro Popular y INSABI)") ///
 		(4 = 36 "PEMEX, Defensa o Marina") ///
 		(5 = 37 "Seguro Médico Privado") ///
 		(6 = 995 "Other") ///
+		(14 = 14 "None") ///
 		(.r = .r "Refused"), pre(rec) label(q7)
-		replace recq7_mx = 37 if q7_other_mx=="MEDICO PARTICULAR" | q7_other_mx=="medico particular"
-		
+
+recode recq7_mx (995 = 37) if q7_other_mx=="MEDICO PARTICULAR" | q7_other_mx=="medico particular"
+
+* Creating the Q7 response option in Mexico // we forgot to leave an option for those without insurance
+* 14 is "You don't have insurance", used in Latin America 
+recode recq7_mx (995 = 14) if q7_other_mx=="NIGUHNO" | q7_other_mx=="NIGUNO" ///
+		| q7_other_mx=="NINGUNA" | q7_other_mx=="NINGUNO" | q7_other_mx=="NINGUNO." ///
+		| q7_other_mx=="NO TENGO" | q7_other_mx=="NO TIENE SEGURO" | | q7_other_mx=="Ninguno" ///
+		| q7_other_mx=="ninguno"| q7_other_mx=="ninuno" | q7_other_mx=="no tiene ninguno" ///
+		| q7_other_mx=="no tiene seguro"
+			
 recode q7_us (1 = 38 "Health insurance through your or someone else's employer or union") ///
 		(2 = 39 "Medicare, a government plan that pays health bills for people aged 65 or older and for some disabled people") ///
 		(3 = 40 "Medicaid or any other state medical assistance plan for those with lower incomes") ///
@@ -876,8 +881,8 @@ ren rec* *
 	}				
 	 }
 
-* Q to CA: 
-* Do these values seem plausible to you? 	 
+* Note
+* Do these values seem plausible? 	 
 * For visits variables, we've recoding values roughly above 52 to missing (weekly visit) 
 * For q46, 
 * For q47, we cut off roughly above 500 minutes 
