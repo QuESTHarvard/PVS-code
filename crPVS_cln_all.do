@@ -1225,14 +1225,25 @@ save "$data_mc/02 recoded data/pvs_appended.dta", replace
 /*
 ***************************** Data quality checks *****************************
 
-u "$data_mc/02 recoded data/pvs_all_countries.dta", replace
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
+
+gen interviewer_id = respondent_serial
+replace q19_other=trim(q19_other)
+replace q20_other=trim(q20_other)
+replace q21_other=trim(q21_other)
+replace q42_other=trim(q42_other)
+replace q43_other=trim(q43_other)
+replace q44_other=trim(q44_other)
+replace q45_other=trim(q45_other)
+replace q62_other=trim(q62_other)
+replace q7_other=trim(q7_other)
 
 * Macros for these commands
 gl inputfile	"$data_mc/03 test output/Input/dq_inputs.xlsm"	
 gl dq_output	"$output/dq_output.xlsx"				
 gl id 			"respondent_id"	
 gl key			"respondent_serial"	
-gl enum			"interviewerid_recoded"
+gl enum			"interviewer_id"
 gl date			"date"	
 gl time			"time"
 gl duration		"int_length"
@@ -1250,7 +1261,7 @@ global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 
 												
 * NOTE: The above lines are still not working well for me. It runs - but appears to not be accurate 
 * Just leaving in case we decide to add	them back 											
-												
+/*												
 *========================== Find Survey Duplicates ==========================* 
 
  * This command finds and exports duplicates in Survey ID
@@ -1288,14 +1299,37 @@ ipacheckoutliers using "${inputfile}",			///
 	outsheet("outliers")						///
 	sheetreplace
 
-   
+  
 *============================= Other Specify ===============================* 
  
 * This command lists all other, specify values
 * This command requires an input file that lists all the variables with other, specify text 
+*Run country by country and then rename the output file accordingly
 
-*format %td date
- 
+format %td date
+
+*All (q7, q20, q21, q42, q44, q45, q62)
+gl inputfile	"$data_mc/03 test output/Input/dq_inputs_all.xlsm"	
+
+ipacheckspecify using "${inputfile}",			///
+	id(${id})									///
+	enumerator(${enum})							///	
+	date(${date})	 							///
+	sheet("other specify")						///
+    outfile("${dq_output}") 					///
+	outsheet1("other specify ")					///
+	outsheet2("other specify (choices)")		///
+	sheetreplace
+	
+	loc childvars "`r(childvarlist)'"
+
+*Colombia
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
+keep if (country==2)
+gen interviewer_id = respondent_serial
+format %td date
+gl inputfile	"$data_mc/03 test output/Input/dq_inputs_col.xlsm"
+
 ipacheckspecify using "${inputfile}",			///
 	id(${id})									///
 	enumerator(${enum})							///	
@@ -1306,9 +1340,134 @@ ipacheckspecify using "${inputfile}",			///
 	outsheet2("other specify (choices)")		///
 	sheetreplace
 	
-*	loc childvars "`r(childvarlist)'"
+	loc childvars "`r(childvarlist)'"
+	
+*Ethiopia, Kenya, South Africa
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
+replace q19_other=trim(q19_other)
+replace q20_other=trim(q20_other)
+replace q21_other=trim(q21_other)
+replace q42_other=trim(q42_other)
+replace q43_other=trim(q43_other)
+replace q44_other=trim(q44_other)
+replace q45_other=trim(q45_other)
+replace q62_other=trim(q62_other)
+replace q7_other=trim(q7_other)
+keep if inlist(country, 3,5,9)
+gen interviewer_id = respondent_serial
+format %td date
+gl inputfile	"$data_mc/03 test output/Input/dq_inputs_et_ke_za.xlsm"
 
-*============================= Other Specify ===============================* 
+ipacheckspecify using "${inputfile}",			///
+	id(${id})									///
+	enumerator(${enum})							///	
+	date(${date})	 							///
+	sheet("other specify")						///
+    outfile("${dq_output}") 					///
+	outsheet1("other specify")					///
+	outsheet2("other specify (choices)")		///
+	sheetreplace
+	
+	loc childvars "`r(childvarlist)'"
+	
+*Italy
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
+keep if (country==14)
+gen interviewer_id = respondent_serial
+format %td date
+gl inputfile	"$data_mc/03 test output/Input/dq_inputs_ita.xlsm"	
+
+ipacheckspecify using "${inputfile}",			///
+	id(${id})									///
+	enumerator(${enum})							///	
+	date(${date})	 							///
+	sheet("other specify")						///
+    outfile("${dq_output}") 					///
+	outsheet1("other specify")					///
+	outsheet2("other specify (choices)")		///
+	sheetreplace
+	
+	loc childvars "`r(childvarlist)'"
+	
+*Mexico
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
+keep if (country==13)
+gen interviewer_id = respondent_serial
+format %td date
+gl inputfile	"$data_mc/03 test output/Input/dq_inputs_mex.xlsm"	
+
+ipacheckspecify using "${inputfile}",			///
+	id(${id})									///
+	enumerator(${enum})							///	
+	date(${date})	 							///
+	sheet("other specify")						///
+    outfile("${dq_output}") 					///
+	outsheet1("other specify")					///
+	outsheet2("other specify (choices)")		///
+	sheetreplace
+	
+	loc childvars "`r(childvarlist)'"
+	
+*Peru
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
+keep if (country==7)
+gen interviewer_id = respondent_serial
+format %td date
+gl inputfile	"$data_mc/03 test output/Input/dq_inputs_per.xlsm"	
+
+ipacheckspecify using "${inputfile}",			///
+	id(${id})									///
+	enumerator(${enum})							///	
+	date(${date})	 							///
+	sheet("other specify")						///
+    outfile("${dq_output}") 					///
+	outsheet1("other specify")					///
+	outsheet2("other specify (choices)")		///
+	sheetreplace
+	
+	loc childvars "`r(childvarlist)'"
+
+*Laos
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
+keep if (country==11)
+gen interviewer_id = respondent_serial
+format %td date
+gl inputfile	"$data_mc/03 test output/Input/dq_inputs_lao.xlsm"	
+
+ipacheckspecify using "${inputfile}",			///
+	id(${id})									///
+	enumerator(${enum})							///	
+	date(${date})	 							///
+	sheet("other specify")						///
+    outfile("${dq_output}") 					///
+	outsheet1("other specify")					///
+	outsheet2("other specify (choices)")		///
+	sheetreplace
+	
+	loc childvars "`r(childvarlist)'"	
+	
+*Uruguay
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
+keep if (country==10)
+gen interviewer_id = respondent_serial
+format %td date
+gl inputfile	"$data_mc/03 test output/Input/dq_inputs_uy.xlsm"	
+
+ipacheckspecify using "${inputfile}",			///
+	id(${id})									///
+	enumerator(${enum})							///	
+	date(${date})	 							///
+	sheet("other specify")						///
+    outfile("${dq_output}") 					///
+	outsheet1("other specify")					///
+	outsheet2("other specify (choices)")		///
+	sheetreplace
+	
+	loc childvars "`r(childvarlist)'"
+	
+
+/*
+*============================= Other Specify Recode ===============================* 
  
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
