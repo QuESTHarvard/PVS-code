@@ -237,7 +237,7 @@ recode q25_b q26 (. = .a) if q23==.r // refused to answer q23 --> did not answer
  
 * No 0 for q24  
 recode q26 (. = .a) if q23 == 0 | q23 == 1 
-recode q27 (. = .a) if q26 == 1 | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+recode q27 (. = .a) if q26 == 1 | q26 == .r | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 
 * EC Note: We are missing 11 responses for q23, q24, q25_b, q26, q27, q28b, and q29 because people were randomized not to answer this section. (We meant to turn this off after the pilot, but made a mistake when we first started full data collection)
 

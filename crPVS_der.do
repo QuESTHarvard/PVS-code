@@ -281,9 +281,8 @@ lab val insured yes_no
 
 * insur_type 
 * NOTE: check other, specify later
-
-recode q7 (1 3 15 16 17 18 10 11 12 19 20 22 29 31 33 34 35 36 39 40 42 = 0 Public) ///
-		  (2 4 5 6 7 8 9 28 13 21 30 32 37 38 41 = 1 Private) /// 
+recode q7 (1 3 17 18 10 11 12 19 20 22 29 31 33 34 35 36 39 40 42 = 0 Public) ///
+		  (2 4 5 6 7 8 9 15 16 28 13 21 30 32 37 38 41 = 1 Private) /// 
 		  (995 = 2 Other) ///
 		  (.r = .r "Refused") (14 .a = .a NA), gen(insur_type)
 recode insur_type (.a = 0) if q6_za == 0
