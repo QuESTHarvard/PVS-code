@@ -254,13 +254,16 @@ lab val qual_public qual_private qual_ngo_et_ke_za qual_ss_pe qual_mut_uy covid_
 
 * conf_sick conf_afford conf_opinion
 
-recode q51 q52 q53 ///
-	   (3 = 1 "Very confident") ///
-	   (0 1 2 = 0 "Somewhat confident/Not too confident/Not at all confident") /// 
-	   (.r = .r refused) (.a = .a na), /// 
+recode q51 q52 ///
+	   (3 2 = 1 "Somewhat confident/Very confident") ///
+	   (0 1 = 0 "Not too confident/Not at all confident") /// 
+	   (.r = .r Refused) (.a = .a na), /// 
 	   pre(der) label(vc_nc_der)
 
-ren (derq51 derq52 derq53) (conf_sick conf_afford conf_opinion)
+gen conf_opinion = q53
+lab val conf_opinion vc_nc
+
+ren (derq51 derq52) (conf_sick conf_afford)
 
 **** COUNTRY SPECIFIC ****
 
@@ -270,12 +273,13 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 31 32 33 = 1 "Urban") (4 8 11 14 19 34 = 0
 
 * insurance status
 gen insured = q6 
-recode insured (.a = 1) if country == 9 | country == 11 | country == 13 | country == 14
-* Note: All are insured in South Africa, Laos, Mexico and Italy, correct? 
+recode insured (.a = 1) if country == 9 | country == 11 | country == 14
+* Note: All are insured in South Africa, Laos, and Italy, correct? 
 recode insured (.a = 0) if q7 == 14
 recode insured (.a = 1) if q7 == 10 | q7 == 11 | q7 == 12 | q7 == 13 | ///
 						q7 == 15 | q7 == 16 | q7 == 17 | q7 == 18 | q7 == 19 | ///
-						q7 == 20 | q7 == 21 | q7 == 22 | q7 == 28 
+						q7 == 20 | q7 == 21 | q7 == 22 | q7 == 28 | q7 == 33 | ///
+						q7 == 34 | q7 == 35 | q7 == 36 | q7 == 37 
 recode insured (.a = .r) if q7 == .r | q7 == 995 | q7 == .  
 lab val insured yes_no
 
