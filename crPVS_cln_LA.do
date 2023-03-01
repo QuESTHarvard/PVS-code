@@ -25,8 +25,11 @@ ren bd1102A q2
 ren bd1103 q3 
 ren bd1104A q4 
 ren bd1105 q5
+* Mia: add this line since there are people who answered bd1105A but not bd1105
+* NA/AA check
+replace q5 = bd1105A if q5 == . & bd1105A != . // Mia: one changed
 lab val q5 province 
-* NOTE: bd1105 is province, ignore b1105a
+* NOTE: bd1105 is province, ignore bd1105A
 ren bd1106 q6_la 
 ren bd1108 q8
 ren hs1209 q9
@@ -34,8 +37,8 @@ ren hs1210 q10
 ren hs1211 q11
 ren hs1212 q12
 ren hs1213 q13 
-ren hs1214 q14
-ren hs1215b q15 
+ren hs1214 q14_la // Mia: added la in the variable name
+ren hs1215b q15_la // Mia: added la in the variable name
 ren pa1316 q16 
 ren pa1317 q17
 
@@ -249,11 +252,67 @@ list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
 
 * This is okay 
 
-list q23_q24 q39 q40 country if q39 == .a & q23_q24 > 0 & q23_q24 < . /// 
-							  | q40 == .a & q23_q24 > 0 & q23_q24 < .
-* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
+*** Mia changed this part ***
+* list if they say "I did not get healthcare in past 12 months"
 * but they have visit values in past 12 months 
-recode q39 q40 (.a = .r) if q23_q24 > 0 & q23_q24 < .
+egen visits_total = rowtotal(q23_q24 q28_a q28_b)
+
+list q23_q24 q39 q40 country if q39 == 3 & visits_total > 0 & visits_total < . /// 
+							  | q40 == 3 & visits_total > 0 & visits_total < .
+							  
+* This is fine
+
+* list if they got skipped but they have visit values in past 12 months 
+list q23_q24 q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
+							  | q40 == .a & visits_total > 0 & visits_total < .
+* Recoding Q39 and Q40 to refused if it is .a
+* but they have visit values in past 12 months 
+recode q39 q40 (.a = .r) if visits_total > 0 & visits_total < .
+* Mia: 85 changes made to q39; 86 changes made to q40
+
+* list if they chose other than "I did not get healthcare in past 12 months"
+* but visits_total == 0 
+
+list q23_q24 q39 q40 country if q39 != 3 & visits_total == 0 /// 
+							  | q40 != 3 & visits_total == 0
+							  
+* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
+* but they have no visit values in past 12 months 
+recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+* Mia: 114 changes made to q39; 116 changes made to q40
+
+drop visits_total
+* did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
+*****************************
+
+*** Mia add this part ***
+* recode any answer to .a if they said they had 0 visits in the past 12 months in q23
+* note: their answers will be kept if they refused both q23 and q24
+recode q43 recq44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+	   q48_g q48_h q48_i q48_j q49 (nonmissing  = .a) if q23 == 0
+
+/*
+341 changes made to q43
+491 changes made to recq44
+488 changes made to q45
+482 changes made to q46
+572 changes made to q46_refused
+478 changes made to q47
+572 changes made to q47_refused
+519 changes made to q48_a
+517 changes made to q48_b
+514 changes made to q48_c
+517 changes made to q48_d
+509 changes made to q48_e
+518 changes made to q48_f
+516 changes made to q48_g
+518 changes made to q48_h
+518 changes made to q48_i
+515 changes made to q48_j
+508 changes made to q49
+*/
+*****************************
+
 
 *------------------------------------------------------------------------------*
 
@@ -269,8 +328,8 @@ recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r // Mia: added .r to match with 
 * q13 
 recode q13 (. = .a) if q12 == 2  | q12==.r
 
-* q15
-recode q15 (. = .a) if q14 != 1
+* q15_la
+recode q15_la (. = .a) if q14_la != 1
 * NOTE: ONLY ASKED TO PEOPLE WHO SAID 0 DOSES 
 
 *q19-22
@@ -410,16 +469,18 @@ recode q3 ///
 * NOTE: This vaccine question is slightly different - looks like asked up to 5 and more
 * Other countries asked 3 and more 
 
-recode q14 ///
+* Mia: changed value labels to match the document: 1 - Laos PVS_adaptations to PVS version v3 09_May_2022 and the original value labels
+recode q14_la ///
 	(1 = 0 "0- no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
-	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused) , ///
+	(4 = 3 "3 doses") (5 = 4 "4 doses") (6 = 5 "More than 4 doses") (7 = .r Refused) (.r = .r Refused) , ///
 	pre(rec) label(covid_vacc)
 	
 * NOTE: This was potentially only asked to people with 0 doses - other countries asked for 0 or 1 
 
-recode q15 /// 
-	   (1 = 1 "Yes, I plan to receive all required doses") ///
-	   (2 = 0 "No, don't plan to receive all required doses") ///
+* Mia: changed value labels to match the document: 1 - Laos PVS_adaptations to PVS version v3 09_May_2022
+recode q15_la /// 
+	   (1 = 1 "Yes") ///
+	   (2 = 0 "No") ///
 	   (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no_doses)
 	   
@@ -471,7 +532,7 @@ label define fac_choose 9 "Other", modify
 drop q2 q3 q4 q5 q6_la q8 q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 q45 q30 q31 /// 
 	 q32 q33 q34 q35 q36 q38 q39 q40 q44 q9 q10 q22 q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
-	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14 q15 q24 q49 q57 language q62 q63 ///
+	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_la q15_la q24 q49 q57 language q62 q63 ///
 	 interviewerid q46_refused q47_refused
 
 ren rec* *
@@ -495,8 +556,8 @@ lab var q10 "Q10. In general, would you say your mental health is?"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
-lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
-lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
+lab var q14_la "Q14. LA only: How many doses of COVID-19 vaccine have you received?" //Mia: changed the variable label
+lab var q15_la "Q15B. LA only: If a vaccine against COVID-19 is or becomes available to you, do you plan to get vaccinated?" //Mia: changed the variable label
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18a_la "Q18A. LA only: Is there one place you usually...? (incl pharm, traditional)"
@@ -575,7 +636,7 @@ lab var q63 "Q63. Total monthly household income"
 *lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 *lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
-order respondent_id respondent_serial language interviewer_id weight q1 q2 q3 q4 q5 q6_la q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43 q44 q44_other q45 q45_other q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q63 
+order respondent_id respondent_serial language interviewer_id weight q1 q2 q3 q4 q5 q6_la q7 q8 q9 q10 q11 q12 q13 q14_la q15_la q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43 q44 q44_other q45 q45_other q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q63 
 
 save "$data_mc/02 recoded data/pvs_la.dta", replace
 save "$data/Laos/02 recoded data/pvs_harmonized_la.dta", replace
