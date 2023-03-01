@@ -624,15 +624,13 @@ recode q7_mx (1 = 33 "Seguro Social (IMSS)") ///
 		(14 = 14 "None") ///
 		(.r = .r "Refused"), pre(rec) label(q7)
 
-recode recq7_mx (995 = 37) if q7_other_mx=="MEDICO PARTICULAR" | q7_other_mx=="medico particular"
-
 * Creating the Q7 response option in Mexico // we forgot to leave an option for those without insurance
 * 14 is "You don't have insurance", used in Latin America 
 recode recq7_mx (995 = 14) if q7_other_mx=="NIGUHNO" | q7_other_mx=="NIGUNO" ///
 		| q7_other_mx=="NINGUNA" | q7_other_mx=="NINGUNO" | q7_other_mx=="NINGUNO." ///
 		| q7_other_mx=="NO TENGO" | q7_other_mx=="NO TIENE SEGURO" | | q7_other_mx=="Ninguno" ///
 		| q7_other_mx=="ninguno"| q7_other_mx=="ninuno" | q7_other_mx=="no tiene ninguno" ///
-		| q7_other_mx=="no tiene seguro"
+		| q7_other_mx=="no tiene seguro" | q7_other_mx=="MEDICO PARTICULAR" | q7_other_mx=="medico particular"
 			
 recode q7_us (1 = 38 "Health insurance through your or someone else's employer or union") ///
 		(2 = 39 "Medicare, a government plan that pays health bills for people aged 65 or older and for some disabled people") ///
