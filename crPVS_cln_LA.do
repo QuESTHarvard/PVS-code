@@ -41,10 +41,10 @@ ren pa1317 q17
 
 ren usc2118 q18a_la
 ren usc2119 q19_q20a_la
-ren usc2119a q19_q20a_other
+ren usc2119a q19_q20a_other_la // Mia: added la in the variable name
 ren usc2120a q18b_la
 ren usc2120b q19_q20b_la
-ren usc2120a1 q19_q20b_other
+ren usc2120a1 q19_q20b_other_la // Mia: added la in the variable name
 ren usc2121 q21
 ren usc2121_oth q21_other
 ren usc2122 q22
@@ -137,6 +137,7 @@ ren wgt weight_educ
 * Outliers are because of call backs  
 
 format timestamp_start %tcHH:MM:SS
+format timestamp_finalsec %tcHH:MM:SS // Mia: added this line
 gen start_min = (hh(timestamp_start)*3600 + mm(timestamp_start)*60 + ss(timestamp_start)) / 3600
 gen end_min = (hh(timestamp_finalsec)*3600 + mm(timestamp_finalsec)*60 + ss(timestamp_finalsec)) / 3600
 gen int_length = (end_min - start_min)*60
@@ -185,14 +186,30 @@ gen country = 11
 gen mode = 1
 gen q56 = .a
 
+*** Mia changed this part ***
+gen reclanguage = country*1000 +language
+gen recq5 = country*1000 + q5  
+gen recq4 = country*1000 + q4
+gen interviewer_id = country*1000 + interviewerid
+gen recq8 = country*1000 + q8
+replace recq8 = .r if q8== .r
+gen recq44 = country*1000 + q44
+replace recq44 = country*1000 + 995 if q44== 4
+replace recq44 = .r if q44== .r
+gen recq62 = country*1000 +q62
+replace recq62 = country*1000 + 995 if q62 == 4
+replace recq62 = .r if q62== .r
+gen recq63 = country*1000 + q63
+replace recq63 = .r if q63== .r
+replace recq63 = .d if q63== .d
+*****************************
 
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
 recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 1
 recode q23_q24 (.r = 7) (.d = 7) if q24 == 2
 recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
-
-
+recode q23_q24 (.d = .r) if q24 == .r // Mia: added this line
 
 *------------------------------------------------------------------------------*
 
@@ -200,13 +217,54 @@ recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
 
 *------------------------------------------------------------------------------*
 
+*------------------------------------------------------------------------------*
+* Mia: moved this part here to match the structure of other programs
+* Check for implausible values
+* q23 q25_b q27 q28_a q28_b q46 q47
+
+list q1 q2 if q2 == 0 | q1 < 18
+
+
+ foreach var in q23 q25_b q27 q28_a q28_b q46 q47 {
+		extremes `var', high 
+	 }
+	
+
+* All count values in Laos look plausible, time values seem plausible too 
+
+* Check for other implausible values 
+
+list q23 q24 q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
+replace q25_b = . if q25_b > q23_q24 & q25_b < .
+* Note: q23/q24 was supposed to be inclusive of COVID, so these are errors.
+
+list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
+* One potentially implausible value, where number of facilities is higher than number of visits
+recode q27 (9 = 8) if q23_q24 == 8 & q27 == 9
+
+list q26 q27 country if q27 == 0 | q27 == 1
+
+* Mia: added this check even though it looks fine for this dataset
+list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
+
+* This is okay 
+
+list q23_q24 q39 q40 country if q39 == .a & q23_q24 > 0 & q23_q24 < . /// 
+							  | q40 == .a & q23_q24 > 0 & q23_q24 < .
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
+recode q39 q40 (.a = .r) if q23_q24 > 0 & q23_q24 < .
+
+*------------------------------------------------------------------------------*
+
 * Recode missing values to NA for questions respondents would not have been asked 
 * due to skip patterns
 
+*** Mia changed this part ***
 *q1/q2 
-recode q1 (. = .r) if q2 == 2 | q2 == 3 | q2 == 4 | q2 == 5 | q2 == 6 | q2 == 7 | ///
-					  q2 == 8
-recode q2 (. = .a) if q1 != .r 
+recode q2 (. = .a) if q1 > 0 & q1 < . // Mia: change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
+recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r // Mia: added .r to match with other programs even though now there's no .r in the data
+*****************************
 
 * q13 
 recode q13 (. = .a) if q12 == 2  | q12==.r
@@ -218,8 +276,7 @@ recode q15 (. = .a) if q14 != 1
 *q19-22
 recode q19_q20a_la q18b_la (.=.r) if q18a_la==.r // refused to answer this sequence of questions
 recode q19_q20a_la q18b_la q19_q20b_la q21 q22 (. = .a) if q18a_la == 2 // no usual source of care
-recode q18b_la q19_q20b_la (. = .a) if q19_q20a_la == 1 | q19_q20a_la == 2 | q19_q20a_la == 3 | ///
-									 q19_q20a_la == 4 | q19_q20a_la == 6  // questions about a second usual source of care were only asked if the first usual source of care was a pharmacy, traditional healer, or other
+recode q18b_la q19_q20b_la (. = .a) if inrange(q19_q20a_la,1,4) | q19_q20a_la == 6  // questions about a second usual source of care were only asked if the first usual source of care was a pharmacy, traditional healer, or other
 
 recode q21 q22 q19_q20b_la (. = .a) if q18b_la == 2 // no usual source of care other than pharmacy or traditional healer 
 recode q21 q22 q19_q20b_la (. = .a) if q18a_la==.r | q18b_la == .r // refused to answer about usual source of care, so not eligible for this sequence of questions (EC added this on 26 Jan)
@@ -229,34 +286,48 @@ recode q21 q22 q19_q20b_la (. = .a) if q18a_la==.r | q18b_la == .r // refused to
 *		refused or did not answer the question.*/
 
 
-* NA's for q23-27 
-recode q24 (. = .a) if q23 != .
+*** Mia changed this part ***
+* NA's for q24-27 
+recode q24 (. = .a) if q23 != . | q23 != .d | q23 != .r // Mia: added the case that q23 == .d/.r to be consistant with other programs
 recode q25_a (. = .a) if q23 != 1
-recode q25_b (. = .a) if q23 == 0 | q23 == 1
-recode q25_b q26 (. = .a) if q23==.r // refused to answer q23 --> did not answer this sequence of questions
+recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == .r // Mia: added q24 == .r to be consistant with other programs
+* Mia: commented out this line. q24 can be 1-3 even if q23 == .r, if q24 in 1-3 and q23 == .r, we probably don't want to change . to .a
+*recode q25_b q26 (. = .a) if q23==.r // refused to answer q23 --> did not answer this sequence of questions
  
 * No 0 for q24  
-recode q26 (. = .a) if q23 == 0 | q23 == 1 
-recode q27 (. = .a) if q26 == 1 | q26 == .r | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == .r // Mia: added q24 == .r to be consistant with other programs
+recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a // Mia: changed to q26 == .a
+*****************************
 
 * EC Note: We are missing 11 responses for q23, q24, q25_b, q26, q27, q28b, and q29 because people were randomized not to answer this section. (We meant to turn this off after the pilot, but made a mistake when we first started full data collection)
 
 
+*** Mia changed this part ***
 * q31 & q32
-recode q31 (. = .a) if q3 == 1 | q3 == 3 | q3==.r | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
-recode q32 (. = .a) if q3 == 1 | q3 == 3 | q3==.r | q1 == .r | q2 == .r
+recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 1 (male)
+recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 1 (male)
+*****************************
 
 * q42
 recode q42 (. = .a) if q41 == 2 | q41==.r
 
 * q43-49 na's
-recode q43 q44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+* Mia: there are 22 people who have . for both q23 and 24 but answered questions
+recode q43 recq44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == .r 
-recode q46 (. = .r) if q46_refused==1 
-recode q47 (. = .r) if q47_refused==1
+	   
+*** Mia changed this part ***	   
+recode q46 (. = .r) if q46_refused==1 // Mia: changed the variable name to q46_min
+recode q47 (. = .r) if q47_refused==1 // Mia: changed the variable name to q47_min
+
+* add the part to recode q46_refused q47_refused to match other programs
+recode q46_refused (. = 0) if q46 != .
+recode q47_refused (. = 0) if q47 != .
+*****************************
+
 
 *Q43/Q44
-recode q43 (. = .a) if q44 != 1
+recode q43 (. = .a) if recq44 != 1
 
 *------------------------------------------------------------------------------*
 
@@ -380,48 +451,15 @@ recode q57 ///
 * For Laos, for now, recoded the values to start after Ipsos countries and then 
 * re-label the values on append 
 
-* Interviewer ID - Other country data is anonomized interview ID from 1 through 57
-* Added Laos above 100 because India and SA interviewers to be added 
-gen interviewer_id = interviewerid + 100
-
-* Language - available after 15 
-recode language (1 = 15 Lao) (2 = 16 Khmou) (3 = 17 Hmong), pre(rec) label(language)
-
-* Q4 values available - after 17
-recode q4 (1 = 18 "City") (2 = 19 "Rural area") (3 = 20 "Suburb"), pre(rec) label(residence)
-
-* Q5 values available after 187
-gen recq5 = q5 + 200
-
-* Q6/Q7 - LA specific 
+*** Mia changed this part ***
+* Q6/Q7 - LA specific
 recode q6_la (1 = 30 "Additional private insurance") (2 = 29 "Only public insurance") (99 = .r "Refused"), gen(q7) label(insur)
 * NOTE to self: check this 
-
-* Q8 values after 44 are available 
-gen recq8 = q8 + 44
-replace recq8 = .r if q8==.r
 
 * Q21
 recode q21 (10 = 9) (90 = .r)
 label define fac_choose 9 "Other", modify
-
-* Q42 values appears to be the same as other countries 
-
-* Q44, values go above 100 in ipsos data 
-gen recq44 = q44 + 200
-replace recq44 = 995 if q44== 4
-replace recq44 = .r if q44==.r
-replace recq44 = .a if q44==.a
-
-
-* Q62 values after 89 are available
-gen recq62 = q62 + 100 
-replace recq62 = .r if q62==.r
-replace recq62 = 995 if q62 == 4
-
-* Q63 values after 61 are available 
-gen recq63 = q63 + 100 
-replace recq63 = .r if q63==.r
+*****************************
 
 
 *------------------------------------------------------------------------------*
@@ -438,41 +476,6 @@ drop q2 q3 q4 q5 q6_la q8 q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 q45 q30 
 
 ren rec* *
 
-*------------------------------------------------------------------------------*
-
-* Check for implausible values
-* q23 q25_b q27 q28_a q28_b q46 q47
-
-list q1 q2 if q2 == 0 | q1 < 18
-
-
- foreach var in q23 q25_b q27 q28_a q28_b q46 q47 {
-		extremes `var', high 
-	 }
-	
-
-* All count values in Laos look plausible, time values seem plausible too 
-
-* Check for other implausible values 
-
-list q23 q24 q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
-replace q25_b = . if q25_b > q23_q24 & q25_b < .
-* Note: q23/q24 was supposed to be inclusive of COVID, so these are errors.
-
-list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
-* One potentially implausible value, where number of facilities is higher than number of visits
-recode q27 (9 = 8) if q23_q24 == 8 & q27 == 9
-
-list q26 q27 country if q27 == 0 | q27 == 1
-* This is okay 
-
-list q23_q24 q39 q40 country if q39 == .a & q23_q24 > 0 & q23_q24 < . /// 
-							  | q40 == .a & q23_q24 > 0 & q23_q24 < .
-* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
-* but they have visit values in past 12 months 
-recode q39 q40 (.a = .r) if q23_q24 > 0 & q23_q24 < .
-
-*------------------------------------------------------------------------------*
 
 * Label variables 
 
@@ -498,10 +501,10 @@ lab var q16 "Q16. How confident are you that you are responsible for managing yo
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18a_la "Q18A. LA only: Is there one place you usually...? (incl pharm, traditional)"
 lab var q19_q20a_la "Q19A. LA only: What type of place is this?"
-lab var q19_q20a_other "Q19A. LA only: Other"
+lab var q19_q20a_other_la "Q19A. LA only: Other"
 lab var q18b_la "Q18B. LA only: Is there one hospital, health center, or clinic you usually...?"
 lab var q19_q20b_la "Q19B. LA only: What type of healthcare facility is this?"
-lab var q19_q20b_other "Q19B. LA only: Other"
+lab var q19_q20b_other_la "Q19B. LA only: Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
 lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
