@@ -627,11 +627,11 @@ recode q7_mx (1 = 33 "Seguro Social (IMSS)") ///
 * Recoding the "other" insurance types in Mexico
 recode recq7_mx (995 = 34) if q7_other_mx=="ISSSTESH" // misspelled ISSSTE 
 recode recq7_mx (995=35) if q7_other_mx=="CENTR O DE SALUD O HOSPITAL" | /// grouped with MOH services (now covered by IMSS bienestar)
-						    q7_other_mx=="CENTRO DE SALUD" | q7_other_mx=="CENTRO SALUD" ///
-							q7_other_mx=="CLINICA" | q7_other_mx=="HOSPITAL" ///
-							q7_other_mx=="HOSPITAL DEL GOBIERNO" | q7_other_mx=="ISEMIN" ///
-							q7_other_mx=="ISSEMYN" | q7_other_mx=="centro de salud" ///
-							q7_other_mx=="hospital civil" | q7_other_mx=="publico" ///
+						    q7_other_mx=="CENTRO DE SALUD" | q7_other_mx=="CENTRO SALUD" | ///
+							q7_other_mx=="CLINICA" | q7_other_mx=="HOSPITAL" | ///
+							q7_other_mx=="HOSPITAL DEL GOBIERNO" | q7_other_mx=="ISEMIN" | ///
+							q7_other_mx=="ISSEMYN" | q7_other_mx=="centro de salud" | ///
+							q7_other_mx=="hospital civil" | q7_other_mx=="publico" | ///
 							q7_other_mx=="ss estdo de mexico"						
 	
 recode recq7_mx (995 = 14) if q7_other_mx=="NIGUHNO" | q7_other_mx=="NIGUNO" /// 14 is "You don't have insurance", used in Latin America 
