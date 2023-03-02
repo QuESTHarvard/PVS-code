@@ -387,7 +387,7 @@ recode q6_it ///
 		
 * All Excellent to Poor scales
 
-recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 ///
+recode q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 ///
 	   q56a_mx q56b_mx q55 q59 q60 q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
@@ -870,7 +870,7 @@ drop country q4 lang q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8
 	 q20_other_us q43_other_it q43_other_mx q44_it q44_mx q44_us recq44_it ///
 	 recq44_mx recq44_us q44_other_it q44_other_mx q44_other_us q46b_refused ///
 	 q63_it q63_mx q63_us recq63_it recq63_mx recq63_us q66_it q66_mx recq66_mx ///
-     q6 q6_it q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
+     q6 q6_it q11 q12 q13 q18 q25_a q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
 	 q40 q46a_it_mx_us q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q56a_mx q56b_mx q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57 
@@ -889,11 +889,11 @@ ren rec* *
 	}				
 	 }
 
-* Note
-* Do these values seem plausible? 	 
-* For visits variables, we've recoding values roughly above 52 to missing (weekly visit) 
-* For q46, 
-* For q47, we cut off roughly above 500 minutes 
+* NOTE: We will instead trim these at the derived variables stage for q23, but just doing this here for now 
+replace q23 = . if q23 > 60 & q23 < .
+* 3 values in US recoded, 2 in Italy 
+replace q47 = . if q47 > 300 & q47 < . & country == 14
+* 9 values recoded in US, 7 in Italy
 	 
 * Check for other implausible values 
 list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
