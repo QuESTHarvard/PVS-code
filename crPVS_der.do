@@ -554,7 +554,7 @@ lab var	income "Income group (Q63)"
 
 **************************** Save data *****************************
 
-save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
+* save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 
 *rm "$data_mc/02 recoded data/pvs_appended.dta"
