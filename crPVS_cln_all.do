@@ -41,23 +41,42 @@ drop QC_short _merge
 
 * Ethiopia: import latest data / weight
 append using "$data_mc/01 raw data/PVS_ET weighted_03.02.23.dta"
+
 drop Respondent_ID mode2
 ren ECS_ID Respondent_ID 
 
 * South Africa 
 append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
+*Change all variable names to lower case
+
+rename *, lower //Mia: move this early
 
 * Fix append issues
-recode Q20 Q44 (23 = 38) if Country == 9 
-* fixed this label on append below 
-lab def Language 6 "Sesotho" 7 "isiZulu" 8 "Afrikaans" 9 "Sepedi" 10 "isiXhosa", modify
+* Mia: changed to 16 since 16 is mobile clinic
+recode q20 q44 (23 = 16) if country == 9 
 
+*** Mia changed this part ***
+* gen rec variable for variables that have overlap values to be country code * 1000 + language 
+* replace the value to .r if the original one is 996
+gen reclanguage = country*1000 + language 
+gen interviewer_id = country*1000 + interviewerid_recoded
+gen recq5 = country*1000 + q5  
+replace recq5 = .r if q5 == 996
+gen recq4 = country*1000 + q4
+replace recq4 = .r if q4 == 996
+gen recq8 = country*1000 + q8
+replace recq8 = .r if q8== 996
+gen recq44 = country*1000 + q44
+replace recq44 = .r if q44== 996
+gen recq62 = country*1000 + q62
+replace recq62 = .r if q62== 996
+gen recq63 = country*1000 + q63
+replace recq63 = .r if q63== 996
+replace recq63 = .d if q63== 997
+*****************************
 
 *------------------------------------------------------------------------------*
 
-*Change all variable names to lower case
-
-rename *, lower
 
 *------------------------------------------------------------------------------*
 
@@ -101,18 +120,20 @@ replace q6 = .a if country == 9
 * Recode all Refused and Don't know responses
 
 * In raw data, 997 = "don't know" 
-recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 q63 ///
+* Mia: dropped q63 since we already recoded it
+recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 ///
 	   q66 q67 (997 = .d)
 	   
 *NOTE: currently in data q37_za "don't know" is category 3  
 
 * In raw data, 996 = "refused" 
-recode q1 q2 q3 q4 q5 q6 q6_za q7 q8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
+* Mia: dropped q4 q5 q44 q62 q63 since we already recoded them
+recode q1 q2 q3 q6 q6_za q7 recq8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
 	   q18 q19 q20 q21 q22 q23 q23_q24 q24 q25_a q25_b q26 q27 q28 q28_new q29 q30 /// 
-	   q31 q32 q33 q34 q35 q36 q37_za q38 q39 q40 q41 q42 q43 q44 q45 q46 q47 ///
+	   q31 q32 q33 q34 q35 q36 q37_za q38 q39 q40 q41 q42 q43 q45 q46 q47 ///
 	   q46_refused q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
-	   q56 q57 q58 q59 q60 q61 q62 q63 q66 q67 (996 = .r)	
+	   q56 q57 q58 q59 q60 q61 q66 q67 (996 = .r)	
 
 *------------------------------------------------------------------------------*
 
@@ -156,20 +177,49 @@ recode q26 (2 = 1) if q27 == 0
 recode q27 (0 = .a)  
 recode q27 (1 = 2) 
 
-list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
-							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .
+* Mia: added this check even though it looks fine for this dataset
+list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
+
+*** Mia changed this part ***
+* list if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
+egen visits_total = rowtotal(q23_q24 q28 q28_new)
+
+list q23_q24 q39 q40 country if q39 == 3 & visits_total > 0 & visits_total < . /// 
+							  | q40 == 3 & visits_total > 0 & visits_total < .
+							  
 * Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
 * but they have visit values in past 12 months 
-recode q40 (2 = .r) if q39 == 3
-recode q39 q40 (3 = .r) if q23_q24 > 0 & q23_q24 < .
+recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
+* Mia: total of 38 changes made to q39 and 36 changes made to q40
+
+* list if it is .a but they have visit values in past 12 months 
+list q23_q24 q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
+							  | q40 == .a & visits_total > 0 & visits_total < .
+* this is fine
+							  
+* list if they chose other than "I did not get healthcare in past 12 months"
+* but visits_total == 0 
+
+list q23_q24 q39 q40 country if q39 != 3 & visits_total == 0 /// 
+							  | q40 != 3 & visits_total == 0
+							  
+* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
+* but they have no visit values in past 12 months 
+recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+* Mia: total of 1477 changes made to q39, 1482 changes made to q40
+
+drop visits_total
+* did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
+*****************************
 
 *------------------------------------------------------------------------------*
 
 * Recode missing values to NA for intentionally skipped questions
 
 *q1/q2 
-recode q2 (. = .a) if q1 != .r
-recode q1 (. = .r) if q2 > 1 & q2 <= 8 | q2 == .r 
+recode q2 (. = .a) if q1 > 0 & q1 < . //Mia: change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
+recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r 
 * Note: Some missing values in q1 that should be refused 
 
 * q7 
@@ -179,37 +229,48 @@ recode q7 (. = .a) if q6 == 2 | q6 == .r | q6_za == 2 | q6_za == .r
 recode q13 (. = .a) if q12 == 2 | q12 == .r 
 
 * q15
-recode q15_new (. = .a) if q14_new == 3 | q14_new == 4 | q14_new == 5 | q14_new == .r 
+recode q15_new (. = .a) if inrange(q14_new,3,5) | q14_new == .r 
 
 *q19-22
 recode q19 q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
 recode q20 (. = .a) if q19 == 4 | q19 == .r
 
+*** Mia changed this part ***
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != .d | q23 != .r
+recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . // Mia: add the case that q23 == . to be consistant with other programs
 recode q25_a (. = .a) if q23 != 1
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q27 (. = .a) if q26 == 1 | q26 == .r | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r // Mia: add the case that q26 == .r
+*****************************
 
+*** Mia changed this part ***
 * q31 & q32
-recode q31 (. = .a) if q3 == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
-recode q32 (. = .a) if q3 == 1 | q1 == .r | q2 == .r
+recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 1 (male)
+recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 1 (male)
+*****************************
 
 * q42
 recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
-recode q43 q44 q45 q46 q46_min q46_refused q47 q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+* Mia: there is one case where both q23 and q24 are missing, but they answered q43-49
+recode q43 recq44 q45 q46 q46_min q46_refused q47 q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
-recode q44 (. = .a) if q43 == 4 | q43 == .r
+recode recq44 (. = .a) if q43 == 4 | q43 == .r
 
 recode q45 (995 = 4)
 
 *q46/q47 refused
 recode q46 q46_min (. = .r) if q46_refused == 1
 recode q47 q47_min (. = .r) if q47_refused == 1
+
+*** Mia changed this part ***
+* add the part to recode q46_refused q47_refused to match other programs
+recode q46_refused (. = 0) if q46 != .
+recode q47_refused (. = 0) if q47 != .
+*****************************
 
 *q66/67
 recode q67 (. = .a) if q66 == 2 | q66 == .d | q66 == .r 
@@ -222,10 +283,12 @@ recode q66 q67 (. = .a) if mode == 2
 
 * All Yes/No questions
 
-recode q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 ///
+recode q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 /// 
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 	   
+* Mia: moved q46_refused q47_refused here
+lab val q46_refused q47_refused yes_no
 
 recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (3 .d = .d "Don't know") /// 
@@ -233,8 +296,6 @@ recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q66 ///
 	   pre(rec) label(yes_no_dk)
 	   
 *Note: Added "3" for q37_za 
-
-lab val q46_refused q47_refused yes_no
 
 recode q39 q40 /// 
 	   (1 = 1 Yes) (2 = 0 No) ///
@@ -299,8 +360,9 @@ recode q14_new ///
 	(1 = 0 "0- no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
 	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(covid_vacc)
-	
-recode q15 /// 
+
+* Mia: q15_new instead of q15
+recode q15_new /// 
 	   (1 = 1 "Yes, I plan to receive all required doses") ///
 	   (2 = 0 "No, don't plan to receive all required doses") ///
 	   (.r = .r Refused) (.a = .a NA), ///
@@ -332,10 +394,13 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
+* Mia: q15_new instead of q15
+* Mia: added language, q5, q4, q8, q44, q62, and q63
 drop interviewer_gender q2 q3 q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
 	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
-	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57 q46 q47
+	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15_new q24 q49 q57 q46 q47 ///
+	 language q5 q4 q8 q44 q62 q63
 
 ren rec* *
  
@@ -352,12 +417,11 @@ ren q67 q65
 ren time_new time
 ren (q46_min q47_min) (q46 q47)
 * ren ecs_id respondent_id
-ren interviewerid_recoded interviewer_id
 * Check ID variable and interviewer ID variable in other data 
 
 *Reorder variables
 order q*, sequential
-order q*, after(interviewer_gender)
+order q*, after(interviewer_id) //Mia: changed to interviewer_id since we already dropped interviewer_gender
 
 
 * Drop other unecessary variables 
@@ -368,12 +432,11 @@ drop intlength
 *------------------------------------------------------------------------------*
 
 * Labeling variables 
-
+* Mia: dropped interviewer_gender since we already dropped the variable above
 lab var country "Country"
 lab var respondent_id "Respondent ID"
 lab var interviewer_id "Interviewer ID"
 lab var int_length "Interview length (in minutes)"
-lab var interviewer_gender "Interviewer gender"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
@@ -483,7 +546,6 @@ clear all
 * Import raw data 
 
 import spss using "/$data_mc/01 raw data/LATAM(Co_Pe_Ur)_v1_completes_backcoded_weighted 122222.sav", clear
-
 *------------------------------------------------------------------------------*
 
 *Change all variable names to lower case
@@ -523,21 +585,47 @@ recode q23_q24 (997 = 7) (996 = 7) if q24 == 3
 recode q23_q24 (997 = 10) (996 = 10) if q24 == 4
 recode q23_q24 (997 = 996) if q24 == 996
 	 
+*** Mia changed this part ***
+* gen rec variable for variables that have overlap values to be country code * 1000 + language 
+* replace the value to .r if the original one is 996
+gen language = country*1000 + 11 //Mia: moved the recode language (. = 11) if country == 2 | country == 7 | country == 10  to here by just genenrating the language variable 
+gen interviewer_id = country*1000 + interviewerid_recoded
+* Note: 16 seems like a low number of interviewers across all three countries
+*		I think this is an error
+* 		I drop interviewer_id later anyways
+gen recq5 = country*1000 + q5  
+replace recq5 = .r if q5 == 996
+gen recq4 = country*1000 + q4
+replace recq4 = .r if q4 == 996
+gen recq8 = country*1000 + q8
+replace recq8 = .r if q8== 996
+gen recq44 = country*1000 + q44
+replace recq44 = .r if q44== 996
+recode q62 (998 = 995) // Mia: move this to here
+gen recq62 = country*1000 +q62
+replace recq62 = .r if q62== 996
+gen recq63 = country*1000 + q63
+replace recq63 = .r if q63== 996
+replace recq63 = .d if q63== 997
+*****************************
+
 *------------------------------------------------------------------------------*
 
 * Recode all Refused and Don't know
 
 * Don't know is 997 in these raw data 
+* Mia: dropped q63 since we alreayd recoded it
 recode q13b q13e q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 ///
-	   q38 q63 q66 q67 (997 = .d)
+	   q38 q66 q67 (997 = .d)
 
 * Refused is 996 in these raw data 
-recode q1 q2 q3 q3a q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q13b q13e q14_new /// 
+* Mia: dropped q4 q5 q44 q62 q63 since we already recoded them
+recode q1 q2 q3 q3a q6 q7 recq8 q9 q10 q11 q12 q13 q13b q13e q14_new /// 
 	   q15_new q16 q17 q18 q19_pe q19_uy q19_co q20 q21 q22 q23 q24 q23_q24 q25_a /// 
 	   q25_b q26 q27 q28 q28_new q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 /// 
-	   q41 q42 q43_pe q43_uy q43_co q44 q45 q46 q47 q48_a q48_b q48_c q48_d /// 
+	   q41 q42 q43_pe q43_uy q43_co q45 q46 q47 q48_a q48_b q48_c q48_d /// 
 	   q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 /// 
-	   q52 q53 q54 q55 q56_uy q56_pe q57 q58 q59 q60 q61 q62 q63 q66 q67 /// 
+	   q52 q53 q54 q55 q56_uy q56_pe q57 q58 q59 q60 q61 q66 q67 /// 
 	   (996 = .r)	
 	
 *------------------------------------------------------------------------------*
@@ -574,12 +662,41 @@ list q23_q24 q27 country if q27 > q23_q24 & q27 < .
 list q26 q27 country if q27 == 0 | q27 == 1
 * Note: okay in LAC data 
 
-list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
-							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .
+* Mia: added this check even though it looks fine for this dataset
+list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
+
+*** Mia changed this part ***
+* list if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
+egen visits_total = rowtotal(q23_q24 q28 q28_new)
+
+list q23_q24 q39 q40 country if q39 == 3 & visits_total > 0 & visits_total < . /// 
+							  | q40 == 3 & visits_total > 0 & visits_total < .
+							  
 * Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
 * but they have visit values in past 12 months 
-recode q40 (2 = .r) if q39 == 3
-recode q39 q40 (3 = .r) if q23_q24 > 0 & q23_q24 < .
+recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
+* Mia: total of 38 changes made to q39 and 36 changes made to q40
+
+* list if it is .a but they have visit values in past 12 months  
+list q23_q24 q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
+							  | q40 == .a & visits_total > 0 & visits_total < .
+* this is fine
+
+* list if they chose other than "I did not get healthcare in past 12 months"
+* but visits_total == 0 
+
+list q23_q24 q39 q40 country if q39 != 3 & visits_total == 0 /// 
+							  | q40 != 3 & visits_total == 0
+							  
+* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
+* but they have no visit values in past 12 months 
+recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+* Mia: total of 1477 changes made to q39, 1482 changes made to q40
+
+drop visits_total
+* did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
+*****************************
 
 
 *------------------------------------------------------------------------------*
@@ -587,8 +704,8 @@ recode q39 q40 (3 = .r) if q23_q24 > 0 & q23_q24 < .
 * Recode missing values to NA for questions respondents would not have been asked due to skip patterns
 
 *q1/q2 
-recode q2 (. = .a) if q1 != .r
-recode q1 (. = .r) if q2 > 1 & q2 <= 8 | q2 == .r 
+recode q2 (. = .a) if q1 > 0 & q1 < . //Mia: change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
+recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r 
 
 * q6 was not asked, all respondents were asked q7
 recode q6 (. = .a)
@@ -600,8 +717,7 @@ recode q13e (. = .a) if q13b == .a | q13b == 1 | q13b == .d | q13b == .r
 * Note: Changed these to .a for all other countries after merge
 
 * q15
-recode q15_new (. = .a) if q14_new == 3 | q14_new == 4 | q14_new == 5 | q14_new == .r
-
+recode q15_new (. = .a) if inrange(q14_new,3,5) | q14_new == .r
 
 * q19-22
 recode q19_pe q19_uy q19_co q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
@@ -614,19 +730,22 @@ recode q19_co (. = .a) if country != 2
 recode q19_uy (3 = 995)
 label define labels23 995 "Other", modify
 
-
 recode q20 (. = .a) if q19_pe == .r | q19_uy == .r | q19_co  == .r
 
-* NA's for q23-27 
-recode q24 (. = .a) if q23 != .d | q23 != .r
+*** Mia changed this part ***
+* NA's for q24-27 
+recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . // Mia: add the case that q23 == . to be consistant with other programs
 recode q25_a (. = .a) if q23 != 1
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q27 (. = .a) if q26 == 1 | q26 == .r | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r // Mia: add the case that q26 == .r
+*****************************
 
+*** Mia changed this part ***
 * q31 & q32
-recode q31 (. = .a) if q3a == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
-recode q32 (. = .a) if q3a == 1 | q1 == .r | q2 == .r
+recode q31 (. = .a) if q3a == 1 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r
+recode q32 (. = .a) if q3a == 1 | q1 == .r | q2 == .r //dropped q1 == .r
+*****************************
 
 * NOTE: q3a was assigned sex at birth, used for skip pattern in LAC
 
@@ -635,13 +754,13 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 
 * q43-49 NA's
-recode q43_co q43_pe q43_uy q44 q45 q46 q46_min q46_996 q47 q47_min q47_996  q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_co q43_pe q43_uy recq44 q45 q46 q46_min q46_996 q47 q47_min q47_996  q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
 recode q43_pe (. = .a) if country != 7
 recode q43_uy (. = .a) if country != 10
 recode q43_co (. = .a) if country != 2
-recode q44 (. = .a) if q43_pe == .r | q43_uy == .r | q43_co  == .r
+recode recq44 (. = .a) if q43_pe == .r | q43_uy == .r | q43_co  == .r //Mia: changed to recq44
 
 
 *q46/q47 refused
@@ -657,7 +776,7 @@ recode q56_pe (. = .a) if country != 7
 recode q56_uy (. = .a) if country != 10
 
 *q62
-recode q62 (. = .a) if country == 10
+recode recq62 (. = .a) if country == 10
 
 * NOTE: q62 was not asked in UY
 
@@ -679,10 +798,13 @@ lab var q48_f
 lab var q53 
 
 * All Yes/No questions
-
-recode q6 q11 q12 q13 q18 q25_a q26 q29 q41 ///
+* Mia: added q46_996 and q47_996 so that labels are consistant after appending
+recode q6 q11 q12 q13 q18 q25_a q26 q29 q41 /// 
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
+
+* Mia: relabel q46_996 and q47_996 to be consistant
+lab val q46_996 q47_996 yes_no
 
 recode q13b q30 q31 q32 q33 q34 q35 q36 q38 q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.d = .d "Don't know") /// 
@@ -755,7 +877,8 @@ recode q14_new ///
 	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(covid_vacc)
 	
-recode q15 /// 
+* Mia: q15_new instead of q15	
+recode q15_new ///
 	   (1 = 1 "Yes, I plan to receive all required doses") ///
 	   (2 = 0 "No, don't plan to receive all required doses") ///
 	   (.r = .r Refused) (.a = .a NA) (.d = .d "Don't know"), /// Don't know included in some countries
@@ -788,12 +911,6 @@ recode q57 ///
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 
-* Kenya/Ethiopia data uses interviewer_id values 1 - 22 
-gen interviewer_id = interviewerid_recoded + 22
-* Note: 16 seems like a low number of interviewers across all three countries
-*		I think this is an error
-* 		I drop interviewer_id later anyways
-
 
 *------------------------------------------------------------------------------*
 
@@ -801,28 +918,27 @@ gen interviewer_id = interviewerid_recoded + 22
 * Rename variables to match question numbers in current survey 
 
 * Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
+* Mia: added language, q5, q4, q8, q44, q62, and q63
 drop interviewer_gender q2 q3 q3a q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 /// 
 	 q30 q31 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q45 q48_a q48_b q48_c ///
 	 q48_d q48_f q48_g q48_h q48_i q54 q55 q56_pe q56_uy q59 q60 q61 q48_e /// 
 	 q48_j q50_a q50_b q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57 ///
-	 q46 q47 date
+	 q46 q47 date language q5 q4 q8 q44 q62 q63
 	 
 
 ren rec* *
  
 ren q7_995 q7_other
-ren (q3a q13b q13b q13e) (q3a_co_pe_uy q13b_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy)
-ren q13e_10 q13e_other
+ren (q3a q13b q13e) (q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy) //Mia: deleted the double q13b
+ren q13e_10 q13e_other_co_pe_uy // Mia: added _co_pe_uy 
 ren q14_new q14
 ren q15_new q15
 ren q19_4 q19_other
-ren q20_other q20_other
 ren q21_9 q21_other
 ren q28 q28_a
 ren q28_new q28_b
 ren q42_10 q42_other
 ren q43_4 q43_other
-ren q44_other q44_other
 ren q45_11 q45_other
 ren q66 q64
 ren q67 q65
@@ -837,18 +953,26 @@ order q*, after(interviewer_id)
 * Drop other unecessary variables 
 drop intlength interviewerid_recoded
 
+*** Mia added this part ***
+*combining q19_pe/q19_co
+gen q19_co_pe = q19_co
+replace q19_co_pe = q19_pe if country == 7
+drop q19_co q19_pe
+*combining q19_pe/q19_co
+gen q43_co_pe = q43_co
+replace q43_co_pe = q43_pe if country == 7
+drop q43_co q43_pe
+*****************************
 *------------------------------------------------------------------------------*
 
 * Labeling variables 
-
+* Mia: dropped interviewer_gender since we already dropped the variable above
 lab var country "Country"
 lab var respondent_serial "Respondent Serial (unique within country)"
 lab var respondent_id "Respondent ID (unique ID)"
 lab var interviewer_id "Interviewer ID"
 lab var date "Date of interview"
 lab var int_length "Interview length (in minutes)"
-lab var interviewer_gender "Interviewer gender"
-lab var interviewer_gender "Interviewer gender"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
@@ -866,15 +990,14 @@ lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
 lab var q13b_co_pe_uy "Q13B. CO/PE/UY only: Did you seek health care for COVID-19?"
 lab var q13e_co_pe_uy "Q13E. CO/PE/UY only: Why didnt you receive health care for COVID-19?"
-lab var q13e_other "Q13E. CO/PE/UY only: Other"
+lab var q13e_other_co_pe_uy "Q13E. CO/PE/UY only: Other"
 lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_pe "Q19. PE only: Is this a public or private healthcare facility?"
+lab var q19_co_pe "Q19. CO/PE only: Is this a public or private healthcare facility?" // Mia: changed to CO/PE
 lab var q19_uy "Q19. UY only: Is this a public, private, or mutual healthcare facility?"
-lab var q19_co "Q19. CO only: Is this a public or private healthcare facility?"
 lab var q19_other "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q20_other "Q20. Other"
@@ -904,9 +1027,8 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_pe "Q43. PE only: Is this a public or private healthcare facility?"
+lab var q43_co_pe "Q43. CO/PE only: Is this a public or private healthcare facility?" // Mia: changed to CO/PE
 lab var q43_uy "Q43. UY only: Is this a public, private, or mutual healthcare facility?"
-lab var q43_co "Q43. CO only: Is this a public or private healthcare facility?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
@@ -1001,7 +1123,7 @@ recode q28_c q46a_it_mx_us q46b_it_mx_us q46b_refused q48_k q66_it_mx ///
 	   (. = .a) if country != 12 | country != 13 | country != 14	   
 	   
 * Country-specific value labels -edit for ssrs-
-recode language (. = 11) if country == 2 | country == 7 | country == 10 
+
 lab def Language 11 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong" 18 "Italian", modify 
 * NOTE: Edit this for future Ipsos data 
 
