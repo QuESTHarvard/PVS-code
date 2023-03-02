@@ -426,7 +426,7 @@ recode minority (.a = 1) if q62b_us == 1 | q62b_us == 2 | q62b_us == 3 ///
 
 * income
 * Note - will update this grouping based on income data 
-recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 151 152 158 159 163 164 = 0 "Lowest income") /// 
+recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 151 152 158 159 163 164 = 0 "No income/Lowest income") /// 
 		   (3 4 5 11 12 18 19 20 41 42 43 33 34 35 51 52 53 103 104 105 153 154 155 160 165 = 1 "Middle income") /// 
 		   (6 7 13 14 21 22 44 45 36 37 54 55 106 107 156 157 161 162 166 167 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
