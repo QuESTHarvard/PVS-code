@@ -45,7 +45,7 @@ global github "$user/Documents/GitHub/PVS-code"
 net install ipacheck, all replace from("https://raw.githubusercontent.com/PovertyAction/high-frequency-checks/master")
 ipacheck update
 
-
+ssc install elabel // Mia: I used this pacakge to combine the value labels
 * Running cleaning and analysis files
 ************************************************
 

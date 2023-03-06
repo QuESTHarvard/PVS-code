@@ -15,8 +15,8 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 */
 
 * Import data 
-import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_2.1.23_confidential.sav", clear
-
+*import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_2.1.23_confidential.sav", clear
+import spss using "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\BGC Projects\BGC - Mia Yu - Misc tasks\Harvard\Data\HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_3.2.23_confidential.sav", clear
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 
 ren RESPID respondent_serial
@@ -27,7 +27,7 @@ ren Q1_2 q2
 ren Q1_3US q5_us
 ren Q1_3MX q5_mx
 ren Q1_3IT q5_it
-ren Q1_3_OTHER_997 q5_other // this is just for Italy
+ren Q1_3_OTHER_997 q5_other_it // this is just for Italy Mia: added it in the name
 ren Q1_4 q3 
 ren Q1_5 q4 
 ren Q1_9IT q6_it
@@ -70,7 +70,7 @@ ren Q2_9 q26
 ren Q2_10_1 q27 
 ren Q2_11_1 q28_b // check this - may be mislabeled
 lab var q28_b "q2_11 How many virtual or telemedicine visits did you have in the past 12 months?"
-ren Q2_11B q28_c // to be added to data dictionary
+ren Q2_11B q28_c_it_mx_us // to be added to data dictionary Mia: added _it_mx_us for now since it only showed up in this dataset
 ren Q2_12 q29
 ren Q2_13_A q30
 ren Q2_13_B q31
@@ -98,15 +98,15 @@ ren Q3_2IT_5_OTHER q44_other_it
 ren Q3_3 q45
 ren Q3_3_4_OTHER q45_other
 ren Q3_4A q46a_it_mx_us // add to data dictionary 
-ren Q3_4B_1X q46b_hrs // add to data dictionary
-ren Q3_4B_2X q46b_dys // add to data dictionary
-ren Q3_4B_3X q46b_wks // add to data dictionary
-ren Q3_4B_4X q46b_mth // add to data dictionary
+ren Q3_4B_1X q46b_hrs
+ren Q3_4B_2X q46b_dys
+ren Q3_4B_3X q46b_wks
+ren Q3_4B_4X q46b_mth
 ren Q3_4_1X q46_hrs
 ren Q3_4_2X q46_min
 ren Q3_5_1X q47_hrs
 ren Q3_5_2X q47_min
-ren Q3_4B_999 q46b_refused
+ren Q3_4B_999 q46b_refused_it_mx_us // Mia: added _it_mx_us
 ren Q3_4_999 q46_refused 
 ren Q3_5_999 q47_refused 
 ren Q3_6_A q48_a
@@ -119,7 +119,7 @@ ren Q3_6_G q48_g
 ren Q3_6_H q48_h
 ren Q3_6_I q48_i
 ren Q3_6_J q48_j
-ren Q3_6_K q48_k // add to data dictionary
+ren Q3_6_K q48_k_it_mx_us // add to data dictionary Mia: added _it_mx_us
 ren Q3_7 q49
 ren Q4_1_A q50_a
 ren Q4_1_B q50_b
@@ -143,6 +143,7 @@ ren Q4_10 q59
 ren Q4_11 q60
 ren Q4_12 q61
 ren Q1_6MX q62_mx // add to data dictionary 
+ren Q1_6A q62a_us // Mia: moved to here so q62 together
 ren Q4_13US q66a_us // add to data dictionary
 ren PARTYLEAN q66b_us // add to data dictionary
 ren Q4_14IT q63_it
@@ -153,8 +154,65 @@ ren Q4_13IT q66_it // add to data dictionary
 
 ren WEIGHT weight_educ
 ren LANGUAGE lang
+ren LOIMINUTES int_length // Mia added this line
+
+generate double start_time = date( INTERVIEW_START , "YMDhms")
+format start_time %tdD_M_CY
+generate double end_time = date( INTERVIEW_END , "YMDhms")
+format end_time %tdD_M_CY
+
 order q*, sequential
 order respondent_serial mode lang country weight_educ
+
+*** Mia changed this part ***
+* Mia: move country recode here
+gen reccountry = country + 11
+lab def country 12 "US" 13 "Mexico" 14 "Italy"
+lab val reccountry country
+* gen rec variable for variables that have overlap values to be country code * 1000 + variable 
+* replace the value to .r if the original one is 999
+gen reclanguage = reccountry*1000 + lang 
+*gen interviewer_id = country*1000 + interviewerid_recoded //no interview id related var in the dataset
+* only q4 since others are country specific
+gen recq4 = reccountry*1000 + q4
+replace recq4 = .r if q4 == 999
+
+qui elabel list country
+local countryn = r(k)
+local countryval = r(values)
+local countrylab = r(labels)
+
+local q4l labels11
+
+foreach q in q4 {
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof rec`q', local(`q'level)
+
+	forvalues o = 1/`countryn' {
+		forvalues i = 1/``q'n' {
+			local recvalue`q' = `: word `o' of `countryval''*1000+`: word `i' of ``q'val''
+			foreach lev in ``q'level'{
+				if strmatch("`lev'", "`recvalue`q''") == 1{
+					elabel define `q'_label (= `: word `o' of `countryval''*1000+`: word `i' of ``q'val'') ///
+									        (`"`: word `o' of `countrylab'': `gr`i''"'), modify			
+				}	
+			}                 
+		}
+	}
+	
+	label val rec`q' `q'_label
+}
+
+*****************************
 
 **** Combining/recoding some variables ****
 
@@ -168,13 +226,19 @@ recode q46 (. = .r) if q46_refused == 1
 gen q47 = q47_hrs*60 + q47_min
 recode q47 (. = .r) if q47_refused == 1
 
+*** Mia changed this part ***
+* add the part to recode q46_refused q47_refused to match other programs
+recode q46_refused (. = 0) if q46 != .
+recode q47_refused (. = 0) if q47 != .
+*****************************
+
 * Q46a, Q46b 
 recode q46b_dys q46b_hrs q46b_mth q46b_wks (. = 0) if q46b_dys < . | ///
 														  q46b_hrs < . | ///
 														  q46b_mth < . | ///
 														  q46b_wks < . 
 gen q46b_it_mx_us = (q46b_hrs/24) + q46b_dys + (q46b_wks*7) + (q46b_mth*30)
-recode q46b_it_mx_us (. = .r) if q46b_refused == 1 
+recode q46b_it_mx_us (. = .r) if q46b_refused_it_mx_us == 1 
 
 * Note: There are 9 values missing, after the skip pattern recoding. 
 * 		Is this a recoding error or just missing data?
@@ -184,8 +248,19 @@ egen q54 = rowmax(q54_mx q54_it q54_us)
 lab val q54 labels69
 
 * Q62a, Q62b 
-ren Q1_6A q62a_us
+*** Mia changed this part ***
 gen q62b_us = .
+egen q62b_choice = rowtotal( Q1_6B_1 Q1_6B_2 Q1_6B_3 Q1_6B_4 Q1_6B_5 Q1_6B_6)
+recode q62b_us (. = 1) if Q1_6B_1 == 1 & q62b_choice == 1
+recode q62b_us (. = 2) if Q1_6B_2 == 1 & q62b_choice == 1
+recode q62b_us (. = 3) if Q1_6B_3 == 1 & q62b_choice == 1
+recode q62b_us (. = 4) if Q1_6B_4 == 1 & q62b_choice == 1
+recode q62b_us (. = 5) if Q1_6B_5 == 1 & q62b_choice == 1
+recode q62b_us (. = 995) if Q1_6B_6 == 1 & q62b_choice == 1
+recode q62b_us (. = 6) if q62b_choice > 0 & q62b_choice < .
+recode q62b_us (. = .r) if Q1_6B_999 == 1
+drop q62b_choice
+/*
 recode q62b_us (. = 1) if Q1_6B_1 == 1 & Q1_6B_2 == 0 & Q1_6B_3 == 0 & Q1_6B_4 == 0 ///
 					 & Q1_6B_5 == 0 & Q1_6B_6 == 0
 recode q62b_us (. = 2) if Q1_6B_2 == 1 & Q1_6B_1 == 0 & Q1_6B_3 == 0 & Q1_6B_4 == 0 ///
@@ -202,11 +277,14 @@ recode q62b_us (. = 6) if Q1_6B_1 > 0 & Q1_6B_1 < . | Q1_6B_2 != 0 & Q1_6B_2 < .
 						| Q1_6B_3 > 0 & Q1_6B_3 < . | Q1_6B_4 != 0 & Q1_6B_4 < . ///
 					 	| Q1_6B_5 > 0 & Q1_6B_5 < . 
 recode q62b_us (. = .r) if Q1_6B_999 == 1
+*/
+
 lab def race 1 "Black or African American" 2 "Asian" 3 "Native Hawaiian or Other Pacific Islander" ///
 			 4 "American Indian or Alaska Native" 5 "White" 6 "Mixed race" ///
 			 995 "Other" .r "Refused" .a "NA"
 lab val q62b_us race
-ren Q1_6B_6_OTHER q62_other 
+ren Q1_6B_6_OTHER q62b_other_us // Mia: changed from q62_other to q62b_other_us
+*****************************
 * Note - is there a better way to do this? 
 
 * Note: other country-specific variables combined below 
@@ -214,7 +292,7 @@ ren Q1_6B_6_OTHER q62_other
 *------------------------------------------------------------------------------*
 
 * Drop unused variables 
-
+* Mia: added q4 and lang; also added LOIMINUTES since we didn't use this variable but please double check
 drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 	 XSUSPEND QS LLINTRO LLINTRO2 CELLINTRO Q1_1_1_OTHER Q1_6B_1 Q1_6B_2 ///
 	 Q1_6B_3 Q1_6B_4 Q1_6B_5 Q1_6B_6 Q1_6B_999 NUMOFCHILDREN CHILD1AGE ///
@@ -230,13 +308,14 @@ drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 	 HID_LOI BLANDCELL BSSRS_MATCH_CODE CATICALLTIME DIALTYPE DTYPE EMAIL ///
 	 RECORDTYPE BIDENT2 BSTRATA BREGION1 BREGION2 BREGION3 BREGION4 BLOCALITY ///
 	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE q46_min q46_hrs q47_min q47_hrs ///
-	 q54_it q54_us q54_mx q46b_dys q46b_hrs q46b_mth q46b_wks
+	 q54_it q54_us q54_mx q46b_dys q46b_hrs q46b_mth q46b_wks q4 lang LOIMINUTES
 
 	 
 * FLAG
+* Mia: removed interview length variable (in minutes) and Date variable since I generated it
 * Variables in our appended dataset that we need from this data (if avaialble)
-* Date variable, interview length variable (in minutes), q64 (do you have more than one phone),
-* q64 (if so how many phone numbers)
+* q64 (do you have more than one phone),
+* q65 (if so how many phone numbers)
 * And potentially a time of interview variable (currently drop this in appended dataset, but may add back)	 
 	 
 *------------------------------------------------------------------------------*
@@ -270,8 +349,9 @@ recode q23 q25_a q25_b q27 q28_b q30 q31 q32 q33 q34 q35 q36 q38 q63* ///
 * FLAG - potentially no don't know response option in q25_a, q27, q63*
 *		 There were don't know options for these questions in other countries 
 
-* In raw data, 999 = "refused" 	   
-recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7_us q7_mx q8* q9 q10 q11 q12 ///
+* In raw data, 999 = "refused" 	  
+* Mia: dropped q4 since we already recoded it above 
+recode q1 q2 q3 q5_it q5_mx q5_us q6 q6_it q7_us q7_mx q8* q9 q10 q11 q12 ///
 	   q13 q14 q15 q16 q17 q18 q19_it q19_mx q20_it q20_mx q20_us q21 q22 ///
 	   q23 q24 q23_q24 q25_a q25_b q26 q27 q28_b q28_c q29 q30 q31 q32 q33 ///
 	   q34 q35 q36 q38 q39 q40 q41 q42 q43_it q43_mx q44_it q44_mx q44_us ///
@@ -283,8 +363,78 @@ recode q1 q2 q3 q4 q5_it q5_mx q5_us q6 q6_it q7_us q7_mx q8* q9 q10 q11 q12 ///
 * Recode missing values to NA for questions respondents would not have been asked 
 * due to skip patterns
 
+*------------------------------------------------------------------------------*
+* Mia: moved this part here to match the structures of other programs
+* Check for implausible values
+* q23 q25_b q27 q28_a q28_b q46 q47
+
+ foreach var in q23 q25_b q27 q28_b q46 q46b_it_mx_us q47 {
+	foreach i in 1 2 3 {
+		extremes `var' country if country == `i', high 
+	}				
+}
+* Mia: do nothing here, recode those later when we derive var
+* Note
+* Do these values seem plausible? 	 
+* For visits variables, we've recoding values roughly above 52 to missing (weekly visit) 
+* For q46, 
+* For q47, we cut off roughly above 500 minutes 
+	 
+* Check for other implausible values 
+list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
+* Note: okay in these data
+
+list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
+* Note: okay in these data (2.5 is mid-point value)
+
+list q26 q27 country if q27 == 0 | q27 == 1
+* Some implasuible values of 0 and 1
+* Recode 0 values for q27 to .a for q27 and "No" for q26
+* Recode 1 values to 2, because respondent likely meant 1 additional facility 
+recode q26 (2 = 1) if q27 == 0 // Mia: used 0 = 1 here but q26 takes value 1/2, changed to 2 = 1
+recode q27 (0 = .a)  
+recode q27 (1 = 2) 	 
+
+*** Mia changed this part ***
+* list if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
+egen visits_total = rowtotal(q23_q24 q28_a)
+
+* Mia: it was ok for in the old program only because 3 was recoded to .a earlier so q39/q40 can't be 3 anymore
+list q23_q24 q39 q40 country if q39 == 3 & visits_total > 0 & visits_total < . /// 
+							  | q40 == 3 & visits_total > 0 & visits_total < .
+							   
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
+recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
+* Mia: total of 15 changes made to q39 and 19 changes made to q40
+
+* list if it is .a but they have visit values in past 12 months 
+list q23_q24 q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
+							  | q40 == .a & visits_total > 0 & visits_total < .
+* this is fine
+							  
+* list if they chose other than "I did not get healthcare in past 12 months"
+* but visits_total == 0 
+
+list q23_q24 q39 q40 country if q39 != 3 & visits_total == 0 /// 
+							  | q40 != 3 & visits_total == 0
+							  
+* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
+* but they have no visit values in past 12 months 
+recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+* Mia: total of 418 changes made to q39, 416 changes made to q40
+
+drop visits_total
+* did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
+*****************************	 
+*------------------------------------------------------------------------------*
+
 *q1/q2 
-recode q2 (. = .a) if q1 != .r 
+*** Mia changed this part ***
+recode q2 (. = .a) if q1 > 0 & q1 < . //Mia: change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
+recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r 
+*****************************
 
 * q6/q7 
 recode q7_us (. = .a) if q6 == 2 | q6 == .r 
@@ -304,24 +454,29 @@ recode q13 (. = .a) if q12 == 2  | q12==.r
 *q19-22
 recode q19_it q19_mx q20_it q20_mx q20_us q21 q22 (. = .a) if q18 == 2 | q18 == .r 
 * Note: In Italy, SSRS asked q20 even if q19 was other or refused, but not the case in Mexico 
-recode q20_mx (. = .a) if q19_mx == 7 
+recode q20_mx (. = .a) if q19_mx == 7 | q18 ! = 1 // Mia: it also requires q18 == 1
+* 37 changes made to q20_mx
 
-
+*** Mia changed this part ***
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != .d | q23 != .r
+recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . // Mia: add the case that q23 == . to be consistant with other programs
 recode q25_a (. = .a) if q23 != 1
 recode q25_b q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q27 (. = .a) if q26 == 1 | q26 == .r | q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a
 * FLAG - some missing in q27 - maybe refusal? or skip pattern I missed?
 * br q23 q24 q23_q24 q26 q27 if q27 == .
+*****************************
 
 *q28_c
 recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r 
 
+*** Mia changed this part ***
 * q31 & q32
-recode q31 (. = .a) if q3 == 1 | q1 < 50 | q2 == 1 | q2 == 2 | q2 == 3 | q2 == 4 | q1 == .r | q2 == .r 
-recode q32 (. = .a) if q3 == 1 | q1 == .r | q2 == .r
+* Mia: I think they asked q31 for every female age 18 and over
+recode q31 (. = .a) if q3 != 2 | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
+recode q32 (. = .a) if q3 != 2 | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
 * FLAG - was the skip pattern for Q32 different? some missing 
+*****************************
 
 * q42
 recode q42 (. = .a) if q41 == 2 | q41 == .r
@@ -332,7 +487,7 @@ recode q43_it q43_mx q44_it q44_mx q44_us q45 q46 q46_refused q46a_it_mx_us ///
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r 
 recode q44_it (. = .a) if q43_it == 4 // different from above 
 recode q44_mx (. = .a) if q43_mx == 7 
-recode q46b_it_mx_us q46b_refused (. = .a) if q46a_it_mx_us == 2
+recode q46b_it_mx_us q46b_refused (. = .a) if q46a_it_mx_us == 2 | q46a_it_mx_us == .r //Mia: added the case when q46a_it_mx_us is refused
 
 
 *q64/q65 - are there variarbles on number of phone numbers? 
@@ -354,7 +509,9 @@ recode q5_us q6 q7_us q8_us q20_us q44_us q62b_us q63_us q66a_us q66b_us (. = .a
 recode q6 q11 q12 q13 q18 q25_a q26 q29 q41 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
-	   
+
+* Mia: relabel q46_refused q47_refused here to match with other programs
+lab val q46_refused q47_refused yes_no
 
 recode q30 q31 q32 q33 q34 q35 q36 q38 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (3 .d = .d "Don't know") /// 
@@ -426,7 +583,8 @@ recode q16 q17 q51 q52 q53 ///
 	   pre(rec) label(vc_nc)
 	   
 * Miscellaneous questions with unique answer options
-
+* Mia: remove the value labels for q2 first
+lab var q2
 recode q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
 		  (6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") ///
 		  (.a = .a "NA"), pre(rec) label(age_cat)
@@ -468,11 +626,8 @@ recode mode (2 = 1) (1 = 4)
 lab def mode 1 "CATI" 4 "CAWI"
 lab val mode mode
 
-* Country
-gen reccountry = country + 11
-lab def country 12 "US" 13 "Mexico" 14 "Italy"
-lab val reccountry country
-
+*** Mia changed this part ***
+/*
 * Language
 recode lang (9 = 1 "English") (10 2058 = 11 "Spanish") (16 = 18 "Italian"), ///
 	   gen(language) label(language)
@@ -483,7 +638,9 @@ gen recq4 = q4 + 30
 lab def q4 31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area" .r "Refused"
 lab val recq4 q4 
 recode recq4 (. = .r) if q4 == .r 
+*/
 
+/*
 * Q5
 recode q5_it (1 = 220 "Sicilia") ///
 			 (2 = 221 "Campania") ///
@@ -514,7 +671,19 @@ recode q5_it (1 = 220 "Sicilia") ///
 			 replace recq5_it = 234 if q5_other=="ASCOLIPICENO"
 			 replace recq5_it = 237 if q5_other=="lombardia"
 			 replace recq5_it = 239 if q5_other=="venzia"
-			 
+*/
+
+clonevar recq5_it = q5_it
+replace recq5_it = 2 if q5_other_it=="CAMPAGNIA" |	q5_other_it=="PROVINCA DI SALERNO"
+replace recq5_it = 4 if q5_other_it=="CALABRIA" 
+replace recq5_it = 6 if q5_other_it=="PULIA" 
+replace recq5_it = 11 if q5_other_it=="PIEMONTE"	|	q5_other_it=="TORINO"	|	q5_other=="piemonte"
+replace recq5_it = 14 if q5_other_it=="umbria" 
+replace recq5_it = 15 if q5_other_it=="ASCOLIPICENO"
+replace recq5_it = 18 if q5_other_it=="lombardia"
+replace recq5_it = 20 if q5_other_it=="venzia"
+
+/*		 
 recode q5_mx (1 = 241 "Chiapas") ///
 			 (2 = 242 "Guerrero") ///
 			 (3 = 243 "Veracruz de Ignacio de la Llave") ///
@@ -600,11 +769,50 @@ recode q5_us (1 = 273 "Alabama") ///
 			 (49 = 321 "West Virginia") ///
 			 (50 = 322 "Wisconsin") ///
 			 (51 = 323 "Wyoming"), pre(rec) label(q5)
+*/
 
+* Q5
+
+replace recq5_it = reccountry*1000 + recq5_it
+replace recq5_it = 14995 if recq5_it == 14997 // Mia: for now all 997 has been replaced with the answers in q5_other_it
+gen recq5_mx = reccountry*1000 + q5_mx
+gen recq5_us = reccountry*1000 + q5_us
 gen q5 = max(recq5_it, recq5_mx, recq5_us)
-lab val q5 q5
 recode q5 (. = .r) if q5_it == .r | q5_mx == .r | q5_us == .r
 
+local q5_itl labels9
+local q5_mxl labels8
+local q5_usl labels7
+
+foreach q in q5_it q5_mx q5_us {
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof q5, local(q5level)
+
+	forvalues o = 1/`countryn' {
+		forvalues i = 1/``q'n' {
+			local recvalue`q' = `: word `o' of `countryval''*1000+`: word `i' of ``q'val''
+			foreach lev in `q5level'{
+				if strmatch("`lev'", "`recvalue`q''") == 1{
+					elabel define q5_label (= `: word `o' of `countryval''*1000+`: word `i' of ``q'val'') ///
+									        (`"`: word `o' of `countrylab'': `gr`i''"'), modify		
+				}	
+			}                 
+		}
+	}
+}
+
+label define q5_label 14995 "Italy: Other", add
+
+label val q5 q5_label
 
 * Q6 okay - q6 is US only, q6_it, is Italy specific 
 * Q7 - combine q7_us and q7_mx
@@ -626,21 +834,15 @@ recode q7_mx (1 = 33 "Seguro Social (IMSS)") ///
 
 * Recoding the "other" insurance types in Mexico
 recode recq7_mx (995 = 34) if q7_other_mx=="ISSSTESH" // misspelled ISSSTE 
-recode recq7_mx (995=35) if q7_other_mx=="CENTR O DE SALUD O HOSPITAL" | /// grouped with MOH services (now covered by IMSS bienestar)
-						    q7_other_mx=="CENTRO DE SALUD" | q7_other_mx=="CENTRO SALUD" | ///
-							q7_other_mx=="CLINICA" | q7_other_mx=="HOSPITAL" | ///
-							q7_other_mx=="HOSPITAL DEL GOBIERNO" | q7_other_mx=="ISEMIN" | ///
-							q7_other_mx=="ISSEMYN" | q7_other_mx=="centro de salud" | ///
-							q7_other_mx=="hospital civil" | q7_other_mx=="publico" | ///
-							q7_other_mx=="ss estdo de mexico"						
-	
-recode recq7_mx (995 = 14) if q7_other_mx=="NIGUHNO" | q7_other_mx=="NIGUNO" /// 14 is "You don't have insurance", used in Latin America 
-		| q7_other_mx=="NINGUNA" | q7_other_mx=="NINGUNO" | q7_other_mx=="NINGUNO." ///
-		| q7_other_mx=="NO TENGO" | q7_other_mx=="NO TIENE SEGURO" |  q7_other_mx=="Ninguno" ///
-		| q7_other_mx=="ninguno"| q7_other_mx=="ninuno" | q7_other_mx=="no tiene ninguno" ///
-		| q7_other_mx=="no tiene seguro" | q7_other_mx=="MEDICO PARTICULAR" | q7_other_mx=="medico particular"
+*"CENTR O DE SALUD O HOSPITAL" grouped with MOH services (now covered by IMSS bienestar)
+recode recq7_mx (995=35) if inlist(q7_other_mx, "CENTR O DE SALUD O HOSPITAL", "CENTRO DE SALUD", "CENTRO SALUD", "CLINICA", "HOSPITAL") | ///
+							inlist(q7_other_mx, "HOSPITAL DEL GOBIERNO", "ISEMIN", "ISSEMYN", "centro de salud", "hospital civil", "publico", "ss estdo de mexico")				
 
-recode recq7_mx (995 = 36) if q7_other_mx=="ISSAM" | q7_other_mx=="ISSSAM" | q7_other_mx=="SEDENA" /// different names for Marina or Army
+*14 is "You don't have insurance", used in Latin America 
+recode recq7_mx (995 = 14) if inlist(q7_other_mx, "NIGUHNO", "NIGUNO", "NINGUNA", "NINGUNO", "NINGUNO.", "NO TENGO", "NO TIENE SEGURO") | ///
+							  inlist(q7_other_mx, "Ninguno", "ninguno", "ninuno", "no tiene ninguno", "no tiene seguro", "MEDICO PARTICULAR", "medico particular")
+
+recode recq7_mx (995 = 36) if inlist(q7_other_mx, "ISSAM", "ISSSAM", "SEDENA") /// different names for Marina or Army
 
 recode q7_us (1 = 38 "Health insurance through your or someone else's employer or union") ///
 		(2 = 39 "Medicare, a government plan that pays health bills for people aged 65 or older and for some disabled people") ///
@@ -658,7 +860,7 @@ recode q7 (. = .a) if q7_us == .a
 * Q7_other 
 gen q7_other = q7_other_mx + q7_other_us
 
-			 
+/*			 
 * Q8: Values above 50 available 
 recode q8_it (1 = 51 "Mai frequentato la scuola o solo Nido e Scuola dell'infanzia") ///
 		(2 = 52 "Scuola primaria") ///
@@ -683,9 +885,48 @@ recode q8_us (1 = 65 "Never attended school or only kindergarten") ///
 		  (5 = 69 "College 1 year to 3 years (some college or technical school)") ///
 		  (6 = 70 "College 4 years or more (college graduate)") ///
 		  , pre(rec) label(q8)
+*/
 
+* Q8
+gen recq8_it = reccountry*1000 + q8_it
+replace recq8_it = .r if q8_it == .r
+gen recq8_mx = reccountry*1000 + q8_mx
+gen recq8_us = reccountry*1000 + q8_us
 gen q8 = max(recq8_it, recq8_mx, recq8_us)
-lab val q8 q8
+
+local q8_itl labels26
+local q8_mxl labels25
+local q8_usl labels24
+
+foreach q in q8_it q8_mx q8_us {
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof q8, local(q8level)
+
+	forvalues o = 1/`countryn' {
+		forvalues i = 1/``q'n' {
+			local recvalue`q' = `: word `o' of `countryval''*1000+`: word `i' of ``q'val''
+			foreach lev in `q8level'{
+				if strmatch("`lev'", "`recvalue`q''") == 1{
+					elabel define q8_label (= `: word `o' of `countryval''*1000+`: word `i' of ``q'val'') ///
+									        (`"`: word `o' of `countrylab'': `gr`i''"'), modify		
+				}	
+			}                 
+		}
+	}
+}
+
+label define q8_label .r "Refused", add
+label val q8 q8_label
+
 recode q8 (. = .r) if q8_it == .r | q8_mx == .r | q8_us == .r
 
 * Q19
@@ -696,6 +937,7 @@ lab def labels36 .a "NA" .r "Refused", modify
 
 gen q19_other = q19_other_it + q19_other_mx
 
+/*	
 * Q20 
 recode q20_it (1 = 501 "General practitioner's office") ///
 			  (2 = 502 "Outpatient clinic") ///
@@ -737,16 +979,52 @@ recode q20_us (1 = 1401 "Doctor's office, clinic, or health center") ///
 
 * FLAG - values and value labels labels for US data change between q20_us and q44_us
 *		 I recoded above and shifted numbers to make them match 			  
-			  
+*/
+
+* Q20 
+gen recq20_it = reccountry*1000 + q20_it
+gen recq20_mx = reccountry*1000 + q20_mx
+gen recq20_us = reccountry*1000 + q20_us	
+		  
 gen q20 = max(recq20_it, recq20_mx, recq20_us)
 recode q20 (. = .r) if q20_it == .r | q20_mx == .r | q20_us == .r
 recode q20 (. = .a) if q20_it == .a | q20_mx == .a | q20_us == .a
-lab val q20 q20
+
+local q20_itl labels37
+local q20_mxl labels35
+local q20_usl labels38
+
+foreach q in q20_it q20_mx q20_us {
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof q20, local(q20level)
+
+	forvalues o = 1/`countryn' {
+		forvalues i = 1/``q'n' {
+			local recvalue`q' = `: word `o' of `countryval''*1000+`: word `i' of ``q'val''
+			foreach lev in `q20level'{
+				if strmatch("`lev'", "`recvalue`q''") == 1{
+					elabel define q20_label (= `: word `o' of `countryval''*1000+`: word `i' of ``q'val'') ///
+									        (`"`: word `o' of `countrylab'': `gr`i''"'), modify		
+				}	
+			}                 
+		}
+	}
+}
+
+lab val q20 q20_label
 
 * Q20 Other
 
 gen q20_other = q20_other_it + q20_other_mx + q20_other_us
-
 
 * Q43
 * Only relevant for IT and MX
@@ -758,6 +1036,8 @@ gen q43_other = q43_other_it + q43_other_mx
 
 
 * Q44
+
+/*
 recode q44_it (1 = 501 "General practitioner's office") ///
 			  (2 = 502 "Outpatient clinic") ///
 			  (3 = 503 "Hospital outpatient department (doctor's office based in hospital)") ///
@@ -796,17 +1076,53 @@ recode q44_us (1 = 1401 "Doctor's office, clinic, or health center") ///
 			  (7 = 1407 "Hospital outpatient department (doctor's office based in hospital)") ///
 			  (8 = 995 "Other") ///
 			  , pre(rec) label(q44) 			  
+*/
+
+gen recq44_it = reccountry*1000 + q44_it
+gen recq44_mx = reccountry*1000 + q44_mx
+gen recq44_us = reccountry*1000 + q44_us
 			  
 gen q44 = max(recq44_it, recq44_mx, recq44_us)
 recode q44 (. = .r) if q44_it == .r | q44_mx == .r | q44_us == .r
 recode q44 (. = .a) if q44_it == .a | q44_mx == .a | q44_us == .a
-lab val q44 q44
 
+local q44_itl labels61
+local q44_mxl labels59
+local q44_usl labels57
+
+foreach q in q44_it q44_mx q44_us {
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof q44, local(q44level)
+
+	forvalues o = 1/`countryn' {
+		forvalues i = 1/``q'n' {
+			local recvalue`q' = `: word `o' of `countryval''*1000+`: word `i' of ``q'val''
+			foreach lev in `q44level'{
+				if strmatch("`lev'", "`recvalue`q''") == 1{
+					elabel define q44_label (= `: word `o' of `countryval''*1000+`: word `i' of ``q'val'') ///
+									        (`"`: word `o' of `countrylab'': `gr`i''"'), modify		
+				}	
+			}                 
+		}
+	}
+}
+
+lab val q44 q44_label
 
 * Q44 Other
 
 gen q44_other = q44_other_it + q44_other_mx + q44_other_us
 
+/*
 * Q63: Values above 107 available
 
 recode q63_it (1 = 151 "Less than 10,000 euros") (2 = 152 "10,000-15,000 euros") ///
@@ -827,14 +1143,52 @@ recode q63_us (1 = 163 "Less than $26,000") (2 = 164 "$26,000 to less than $36,0
 		  (4 = 166 "$65,000 to less than $100,000") ///
 		  (5 = 167 "$100,000 or more") ///
 		  , pre(rec) label(q63)		  
+*/
+* Q63
+
+gen recq63_it = reccountry*1000 + q63_it
+gen recq63_mx = reccountry*1000 + q63_mx
+gen recq63_us = reccountry*1000 + q63_us
 
 gen q63 = max(recq63_it, recq63_mx, recq63_us)
-lab val q63 q63		
 recode q63 (. = .r) if q63_it == .r | q63_mx == .r | q63_us == .r  
+
+local q63_itl labels78
+local q63_mxl labels76
+local q63_usl labels74
+
+foreach q in q63_it q63_mx q63_us {
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof q63, local(q63level)
+
+	forvalues o = 1/`countryn' {
+		forvalues i = 1/``q'n' {
+			local recvalue`q' = `: word `o' of `countryval''*1000+`: word `i' of ``q'val''
+			foreach lev in `q63level'{
+				if strmatch("`lev'", "`recvalue`q''") == 1{
+					elabel define q63_label (= `: word `o' of `countryval''*1000+`: word `i' of ``q'val'') ///
+									        (`"`: word `o' of `countrylab'': `gr`i''"'), modify		
+				}	
+			}                 
+		}
+	}
+}
+
+lab val q63 q63_label
+
+*****************************
 
 * Q66 - combine Mexico and Italy 
 *		Keep Italy values, recode Mexico's values
-
 recode q66_mx (1 = 7 "MORENA") ///
 			  (2 = 8 "Partido Acción Nacional") ///
 			  (3 = 9 "Partido Revolucionario Institucional") ///
@@ -850,7 +1204,6 @@ lab val q66_it_mx labels77
 recode q66_it_mx (. = .r) if q66_it == .r | q66_mx == .r
 recode q66_it_mx (. = .a) if q66_it == .a | q66_mx == .a
 
-
 * Value labels for NA/Refused for other vars
 lab def labels12 .a "NA" .r "Refused", modify 
 lab def labels14 .a "NA" .r "Refused", modify 
@@ -862,8 +1215,8 @@ lab def labels73 .a "NA" .r "Refused", modify
 
 * Renaming variables 
 * Rename variables to match question numbers in current survey
-
-drop country q4 lang q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8_it ///
+* Mia: dropped q4 lang since we already dropped those vars
+drop country q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8_it ///
      recq8_mx recq8_us q5_it q5_mx q5_us ///
 	 recq5_it recq5_mx recq5_us q7_other_mx q7_other_us q19_other_it q19_other_mx ///
 	 q20_it q20_mx q20_us recq20_it recq20_mx recq20_us q20_other_it q20_other_mx ///
@@ -877,48 +1230,13 @@ drop country q4 lang q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8
 
 ren rec* *
 
-*------------------------------------------------------------------------------*
 
-* Check for implausible values
-* q23 q25_b q27 q28_a q28_b q46 q47
-
-
- foreach var in q23 q25_b q27 q28_b q46 q46b_it_mx_us q47 {
-	foreach i in 12 13 14 {
-		extremes `var' country if country == `i', high 
-	}				
-	 }
-
-* Note
-* Do these values seem plausible? 	 
-* For visits variables, we've recoding values roughly above 52 to missing (weekly visit) 
-* For q46, 
-* For q47, we cut off roughly above 500 minutes 
-	 
-* Check for other implausible values 
-list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
-* Note: okay in these data
-
-list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
-* Note: okay in these data (2.5 is mid-point value)
-
-list q26 q27 country if q27 == 0 | q27 == 1
-* Some implasuible values of 0 and 1
-* Recode 0 values for q27 to .a for q27 and "No" for q26
-* Recode 1 values to 2, because respondent likely meant 1 additional facility 
-recode q26 (0 = 1) if q27 == 0
-recode q27 (0 = .a)  
-recode q27 (1 = 2) 
-
-list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
-							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .	 
-* Note: okay in these data 
-	 
-*------------------------------------------------------------------------------*
 order respondent_serial mode language weight_educ respondent_id country
 order q*, sequential
 
 * Label variables 
+lab var int_length "Interview length (in minutes)" // Mia: added this line
+lab var date "Date of interview" // Mia: added this line
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
@@ -1018,7 +1336,7 @@ lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, op
 lab var q62_mx "Q62. MX only: Do you speak any indigenous language or dialect?"
 lab var q62a_us "Q62A. US only: What is your ethnicity?"
 lab var q62b_us "Q62B. US only: What is your race?"
-lab var q62_other "Q62. Other"
+lab var q62b_other_us "Q62B. US only: Other" // Mia: changed to q62b_other_us and modify the description
 lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
@@ -1027,7 +1345,7 @@ lab var q66b_us "Q66. US only: Do you lean more towards the Republican or Democr
 lab var q66_it_mx "Q66. IT/MX only: Which political party did you vote for in the last election?"
 
 *------------------------------------------------------------------------------*
- 
+
 * Save data
 
 save "$data_mc/02 recoded data/pvs_it_mx_us.dta", replace
