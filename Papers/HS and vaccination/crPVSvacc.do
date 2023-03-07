@@ -19,40 +19,61 @@ replace c = "SouthAfrica" if country==9
 replace c = "USA" if country==12
 
 * Create covid vaccination variables
-recode q14 (0/1=0) (2/4=1) if country==9 | country==3 | country==5, gen(fullvax1)
+recode q14 (0/1=0) (2/4=1) if country==9 | country==3 | country==5, gen(fullvax2dose)
 recode q14 (0/2=0) (3/4=1) if country ==2 | country==7 | country==10 | country==11 | ///
-							  country ==12 | country ==13 | country ==14, gen(fullvax2)
-egen fullvax = rowmax (fullvax1 fullvax2)						  
-drop 	fullvax1  fullvax2
-
+							  country ==12 | country ==13 | country ==14, gen(fullvax3dose)
+egen fullvax = rowmax (fullvax2d fullvax3d )						  
 
 * Create binary vars
 foreach v in health health_mental usual_quality last_qual {
 	recode `v' (1/2=0) (3/4=1), gen(vg`v')
 }
+
 recode system_outlook (1=0) (2=1), gen(getting_better)
 recode system_reform (1/2=0) (3=1), gen(minor_changes)
 
+recode usual_type_own (0=2) (1/2=1), gen(usual_own)
+lab def usual_own 1 "Public" 2 "Private or other"
+lab val usual_own usual_own
+recode gender (2=.)
+
+recode educ (0=1), gen(educ3)
+lab def educ3 1"None of primary only" 2 "Secondary only" 3 "Post secondary"
+lab val educ3 educ3
+
+lab var vghealth "Rates own health as very good or excellent"
+lab var vgusual_quality "Rates usual source of care as very good or excellent"
+lab var vglast_qual "Rates quality of last visit as very good or excellent"
 ********************************************************************************
 * Analysis						  
-tab   country fullvax [aw=weight], row nofreq
+tab  country fullvax [aw=weight], row nofreq
 
 
 foreach x in Peru Italy Uruguay Mexico LaoPDR USA Colombia Kenya SouthAfrica Ethiopia {
 	
-summtab if c=="`x'", catvars(gender urban education income insured vghealth ///
-					health_chronic ever_covid usual_source usual_type_own  ///
+summtab if c=="`x'", catvars( gender urban educ3 income insured vghealth ///
+					health_chronic ever_covid usual_source  usual_own ///
 					vgusual_quality vglast_qual blood_pressure mammogram cervical_cancer ///
-					eyes_exam teeth_exam blood_sugar blood_chol mistake discrim ///
+					eyes_exam teeth_exam blood_sugar blood_chol mistake discrim  ///
 					unmet_need conf_sick conf_afford system_outlook system_reform covid_manage) ///
 					contvars(age visits_total) pval mean meanrow catrow by(fullvax) wts(weight) ///
-					replace excel excelname(table1)  sheetname("`x'") 
-}
+					replace excel excelname(Table1)  sheetname("`x'") 
+	}
 
 table country conf_sick [aw=weight], stat(mean fullvax)
 table country conf_afford [aw=weight], stat(mean fullvax)
 table country getting_better [aw=weight], stat(mean fullvax)
 table country minor_changes [aw=weight], stat(mean fullvax)
+
+
+table country vgusual_quality [aw=weight], stat(mean fullvax)
+table country vglast_qual [aw=weight], stat(mean fullvax)
+
+xtlogit fullvax3d conf_sick i.age_cat i.gender i.urban i.income i.educ , re vce(robust)	
+
+melogit fullvax3d conf_sick  i.age_cat i.gender i.urban i.income i.educ || country:, vce(robust) or
+
+melogit fullvax2d conf_sick i.age_cat i.gender i.urban i.income i.educ || country:, vce(robust) or
 
 /*keep if age_cat<4 // exclude 60+ 
 tab country conf_sick [aw=weight], row nofreq
