@@ -15,8 +15,8 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 */
 
 * Import data 
-*import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_2.1.23_confidential.sav", clear
-import spss using "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\BGC Projects\BGC - Mia Yu - Misc tasks\Harvard\Data\HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_3.2.23_confidential.sav", clear
+import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_3.2.23_confidential.sav", clear
+*import spss using "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\BGC Projects\BGC - Mia Yu - Misc tasks\Harvard\Data\HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_3.2.23_confidential.sav", clear
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 
 ren RESPID respondent_serial
