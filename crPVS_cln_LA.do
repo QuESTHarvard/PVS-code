@@ -205,6 +205,43 @@ replace recq62 = .r if q62== .r
 gen recq63 = country*1000 + q63
 replace recq63 = .r if q63== .r
 replace recq63 = .d if q63== .d
+
+* Mia: relabel some variables now so we can use the orignal label values
+local q4l place
+local q5l province
+local q8l educ
+local q44l fac_type3
+local q62l lang
+local q63l income
+
+foreach q in q4 q5 q8 q44 q62 q63{
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof rec`q', local(`q'level)
+
+	forvalues i = 1/``q'n' {
+		local recvalue`q' = 11000+`: word `i' of ``q'val''
+		foreach lev in ``q'level' {
+			if strmatch("`lev'", "`recvalue`q''") == 1{
+				elabel define `q'_label (= 11000+`: word `i' of ``q'val'') ///
+										(`"Lao PDR: `gr`i''"'), modify
+			}
+		}         
+	}
+	
+	label val rec`q' `q'_label
+}
+
+label define q62_label 11995 "Lao PDR: Other", add
+label define q44_label 11995 "Lao PDR: Other", add
 *****************************
 
 * Q23/Q24 mid-point var 
@@ -363,8 +400,8 @@ recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a // Mia: changed to q26 =
 
 *** Mia changed this part ***
 * q31 & q32
-recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 1 (male)
-recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 1 (male)
+recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
+recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
 *****************************
 
 * q42
@@ -473,7 +510,7 @@ recode q3 ///
 recode q14_la ///
 	(1 = 0 "0- no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
 	(4 = 3 "3 doses") (5 = 4 "4 doses") (6 = 5 "More than 4 doses") (7 = .r Refused) (.r = .r Refused) , ///
-	pre(rec) label(covid_vacc)
+	pre(rec) label(covid_vacc_la)
 	
 * NOTE: This was potentially only asked to people with 0 doses - other countries asked for 0 or 1 
 
@@ -482,7 +519,7 @@ recode q15_la ///
 	   (1 = 1 "Yes") ///
 	   (2 = 0 "No") ///
 	   (.r = .r Refused) (.a = .a NA), ///
-	   pre(rec) label(yes_no_doses)
+	   pre(rec) label(yes_no_doses_la)
 	   
 recode q24 ///
 	(0 = 0 "0") (1 = 1 "1-4") (2 = 2 "5-9") (3 = 3 "10 or more") ///

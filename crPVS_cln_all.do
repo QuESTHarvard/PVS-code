@@ -56,7 +56,7 @@ rename *, lower //Mia: move this early
 recode q20 q44 (23 = 16) if country == 9 
 
 *** Mia changed this part ***
-* gen rec variable for variables that have overlap values to be country code * 1000 + language 
+* gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 996
 gen reclanguage = country*1000 + language 
 gen interviewer_id = country*1000 + interviewerid_recoded
@@ -66,6 +66,8 @@ gen recq4 = country*1000 + q4
 replace recq4 = .r if q4 == 996
 gen recq8 = country*1000 + q8
 replace recq8 = .r if q8== 996
+gen recq20 = country*1000 + q20
+replace recq20 = .r if q20== 996
 gen recq44 = country*1000 + q44
 replace recq44 = .r if q44== 996
 gen recq62 = country*1000 + q62
@@ -73,6 +75,48 @@ replace recq62 = .r if q62== 996
 gen recq63 = country*1000 + q63
 replace recq63 = .r if q63== 996
 replace recq63 = .d if q63== 997
+
+* Mia: relabel some variables now so we can use the orignal label values
+qui elabel list Country
+local countryn = r(k)
+local countryval = r(values)
+local countrylab = r(labels)
+
+local q4l Q4
+local q5l Q5
+local q8l Q8
+local q20l Q20
+local q44l Q44
+local q62l Q62
+local q63l Q63
+
+foreach q in q4 q5 q8 q20 q44 q62 q63{
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof rec`q', local(`q'level)
+
+	forvalues o = 1/`countryn' {
+		forvalues i = 1/``q'n' {
+			local recvalue`q' = `: word `o' of `countryval''*1000+`: word `i' of ``q'val''
+			foreach lev in ``q'level'{
+				if strmatch("`lev'", "`recvalue`q''") == 1{
+					elabel define `q'_label (= `: word `o' of `countryval''*1000+`: word `i' of ``q'val'') ///
+									        (`"`: word `o' of `countrylab'': `gr`i''"'), modify			
+				}	
+			}                 
+		}
+	}
+	
+	label val rec`q' `q'_label
+}
 *****************************
 
 *------------------------------------------------------------------------------*
@@ -129,7 +173,7 @@ recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 ///
 * In raw data, 996 = "refused" 
 * Mia: dropped q4 q5 q44 q62 q63 since we already recoded them
 recode q1 q2 q3 q6 q6_za q7 recq8 q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
-	   q18 q19 q20 q21 q22 q23 q23_q24 q24 q25_a q25_b q26 q27 q28 q28_new q29 q30 /// 
+	   q18 q19 recq20 q21 q22 q23 q23_q24 q24 q25_a q25_b q26 q27 q28 q28_new q29 q30 /// 
 	   q31 q32 q33 q34 q35 q36 q37_za q38 q39 q40 q41 q42 q43 q45 q46 q47 ///
 	   q46_refused q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
@@ -232,8 +276,8 @@ recode q13 (. = .a) if q12 == 2 | q12 == .r
 recode q15_new (. = .a) if inrange(q14_new,3,5) | q14_new == .r 
 
 *q19-22
-recode q19 q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
-recode q20 (. = .a) if q19 == 4 | q19 == .r
+recode q19 recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
+recode recq20 (. = .a) if q19 == 4 | q19 == .r
 
 *** Mia changed this part ***
 * NA's for q24-27 
@@ -246,8 +290,8 @@ recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r // Mia: add the case tha
 
 *** Mia changed this part ***
 * q31 & q32
-recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 1 (male)
-recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 1 (male)
+recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
+recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
 *****************************
 
 * q42
@@ -395,12 +439,12 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
 * Mia: q15_new instead of q15
-* Mia: added language, q5, q4, q8, q44, q62, and q63
+* Mia: added language, q5, q4, q8, q20, q44, q62, and q63
 drop interviewer_gender q2 q3 q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
 	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
 	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15_new q24 q49 q57 q46 q47 ///
-	 language q5 q4 q8 q44 q62 q63
+	 language q5 q4 q8 q44 q62 q63 q20
 
 ren rec* *
  
@@ -547,7 +591,6 @@ clear all
 
 import spss using "/$data_mc/01 raw data/LATAM(Co_Pe_Ur)_v1_completes_backcoded_weighted 122222.sav", clear
 *------------------------------------------------------------------------------*
-
 *Change all variable names to lower case
 
 rename *, lower
@@ -586,7 +629,7 @@ recode q23_q24 (997 = 10) (996 = 10) if q24 == 4
 recode q23_q24 (997 = 996) if q24 == 996
 	 
 *** Mia changed this part ***
-* gen rec variable for variables that have overlap values to be country code * 1000 + language 
+* gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 996
 gen language = country*1000 + 11 //Mia: moved the recode language (. = 11) if country == 2 | country == 7 | country == 10  to here by just genenrating the language variable 
 gen interviewer_id = country*1000 + interviewerid_recoded
@@ -599,6 +642,8 @@ gen recq4 = country*1000 + q4
 replace recq4 = .r if q4 == 996
 gen recq8 = country*1000 + q8
 replace recq8 = .r if q8== 996
+gen recq20 = country*1000 + q20
+replace recq20 = .r if q20== 996
 gen recq44 = country*1000 + q44
 replace recq44 = .r if q44== 996
 recode q62 (998 = 995) // Mia: move this to here
@@ -607,8 +652,50 @@ replace recq62 = .r if q62== 996
 gen recq63 = country*1000 + q63
 replace recq63 = .r if q63== 996
 replace recq63 = .d if q63== 997
-*****************************
 
+* Mia: relabel some variables now so we can use the orignal label values
+qui elabel list labels0
+local countryn = r(k)
+local countryval = r(values)
+local countrylab = r(labels)
+
+local q4l labels6
+local q5l labels7
+local q8l labels10
+local q20l labels25
+local q44l labels25
+local q62l labels51
+local q63l labels52
+
+foreach q in q4 q5 q8 q20 q44 q62 q63{
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof rec`q', local(`q'level)
+
+	forvalues o = 1/`countryn' {
+		forvalues i = 1/``q'n' {
+			local recvalue`q' = `: word `o' of `countryval''*1000+`: word `i' of ``q'val''
+			foreach lev in ``q'level'{
+				if strmatch("`lev'", "`recvalue`q''") == 1{
+					elabel define `q'_label (= `: word `o' of `countryval''*1000+`: word `i' of ``q'val'') ///
+									        (`"`: word `o' of `countrylab'': `gr`i''"'), modify			
+				}	
+			}         
+		}
+	}
+	
+	label val rec`q' `q'_label
+}
+
+*****************************
 *------------------------------------------------------------------------------*
 
 * Recode all Refused and Don't know
@@ -621,7 +708,7 @@ recode q13b q13e q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 ///
 * Refused is 996 in these raw data 
 * Mia: dropped q4 q5 q44 q62 q63 since we already recoded them
 recode q1 q2 q3 q3a q6 q7 recq8 q9 q10 q11 q12 q13 q13b q13e q14_new /// 
-	   q15_new q16 q17 q18 q19_pe q19_uy q19_co q20 q21 q22 q23 q24 q23_q24 q25_a /// 
+	   q15_new q16 q17 q18 q19_pe q19_uy q19_co recq20 q21 q22 q23 q24 q23_q24 q25_a /// 
 	   q25_b q26 q27 q28 q28_new q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 /// 
 	   q41 q42 q43_pe q43_uy q43_co q45 q46 q47 q48_a q48_b q48_c q48_d /// 
 	   q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 /// 
@@ -720,7 +807,7 @@ recode q13e (. = .a) if q13b == .a | q13b == 1 | q13b == .d | q13b == .r
 recode q15_new (. = .a) if inrange(q14_new,3,5) | q14_new == .r
 
 * q19-22
-recode q19_pe q19_uy q19_co q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
+recode q19_pe q19_uy q19_co recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
 recode q19_pe (. = .a) if country != 7
 recode q19_uy (. = .a) if country != 10
 recode q19_co (. = .a) if country != 2
@@ -730,7 +817,7 @@ recode q19_co (. = .a) if country != 2
 recode q19_uy (3 = 995)
 label define labels23 995 "Other", modify
 
-recode q20 (. = .a) if q19_pe == .r | q19_uy == .r | q19_co  == .r
+recode recq20 (. = .a) if q19_pe == .r | q19_uy == .r | q19_co  == .r
 
 *** Mia changed this part ***
 * NA's for q24-27 
@@ -918,12 +1005,12 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 * Rename variables to match question numbers in current survey 
 
 * Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-* Mia: added language, q5, q4, q8, q44, q62, and q63
+* Mia: added q5, q4, q8, q20, q44, q62, and q63
 drop interviewer_gender q2 q3 q3a q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 /// 
 	 q30 q31 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q45 q48_a q48_b q48_c ///
 	 q48_d q48_f q48_g q48_h q48_i q54 q55 q56_pe q56_uy q59 q60 q61 q48_e /// 
 	 q48_j q50_a q50_b q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15 q24 q49 q57 ///
-	 q46 q47 date language q5 q4 q8 q44 q62 q63
+	 q46 q47 date q5 q4 q8 q44 q62 q63 q20
 	 
 
 ren rec* *
@@ -955,11 +1042,11 @@ drop intlength interviewerid_recoded
 
 *** Mia added this part ***
 *combining q19_pe/q19_co
-gen q19_co_pe = q19_co
+clonevar q19_co_pe = q19_co
 replace q19_co_pe = q19_pe if country == 7
 drop q19_co q19_pe
 *combining q19_pe/q19_co
-gen q43_co_pe = q43_co
+clonevar q43_co_pe = q43_co
 replace q43_co_pe = q43_pe if country == 7
 drop q43_co q43_pe
 *****************************
@@ -1079,10 +1166,38 @@ save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
 
 ********************************* Append data *********************************
 
-u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
-append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
-append using "$data_mc/02 recoded data/pvs_la.dta"
-append using "$data_mc/02 recoded data/pvs_it_mx_us.dta"
+*u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
+*append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
+*append using "$data_mc/02 recoded data/pvs_la.dta"
+*append using "$data_mc/02 recoded data/pvs_it_mx_us.dta"
+
+global path "Q:/BGC - Mia Yu - Misc tasks/Harvard"
+
+use "$path/pvs_co_pe_uy.dta", clear
+
+tempfile label1
+label save q4_label q5_label q8_label q20_label q44_label q62_label q63_label using `label1'
+label drop q4_label q5_label q8_label q20_label q44_label q62_label q63_label 
+
+append using "$path/pvs_et_ke_za.dta"
+
+qui do `label1'
+
+tempfile label2
+label save q4_label q5_label q8_label q20_label q44_label q62_label q63_label using `label2'
+label drop q4_label q5_label q8_label q20_label q44_label q62_label q63_label
+
+append using "$path/pvs_la.dta"
+
+qui do `label2'
+
+tempfile label3
+label save q4_label q5_label q8_label q20_label q44_label q62_label q63_label using `label3'
+label drop q4_label q5_label q8_label q20_label q44_label q62_label q63_label
+
+append using "$path/pvs_it_mx_us.dta"
+
+qui do `label3'
 
 * Note: need to check append 
 * Note: Fix respondent_serial 
@@ -1108,32 +1223,44 @@ lab var mode "Mode of interview (CATI, CAWI, or F2F)"
 * Country-specific skip patterns - check this 
 recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
 recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
-recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11
+recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
-recode q19_pe q43_pe q56_pe (. = .a) if country != 7
-recode q19_co q43_co (. = .a) if country != 2
+recode q56_pe (. = .a) if country != 7
+recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 // Mia: changed to q19_co_pe q43_co_pe
 recode q6_za q37_za (. = .a) if country != 9
-recode q6_la q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
+* Mia: added q14_la q15_la
+recode q6_la q14_la q15_la q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
 		(. = .a) if country != 11
 recode q6 q18 q20 q64 q65 (. = .a) if country == 11
 recode q6_it q19_it q43_it (. = .a) if country != 14
 recode q19_mx q43_mx q56a_mx q56b_mx q62_mx (. = .a) if country != 13
 recode q62a_us q62b_us q66a_us q66b_us (. = .a) if country != 12
-recode q28_c q46a_it_mx_us q46b_it_mx_us q46b_refused q48_k q66_it_mx ///
+* Mia: changed q28_c to q28_c_it_mx_us; 48_k to q48_k_it_mx_us; q46b_refused to q46b_refused_it_mx_us
+recode q28_c q46a_it_mx_us q46b_it_mx_us q46b_refused_it_mx_us q48_k_it_mx_us ///
 	   (. = .a) if country != 12 | country != 13 | country != 14	   
+* Mia: q66_it_mx has it own line of codes since country == 12 should be skipped too
+recode q66_it_mx (. = .a) if country != 13 | country != 14
 	   
 * Country-specific value labels -edit for ssrs-
+*** Mia added this part ***
+lab def Language 2011 "Colombia: Spanish" 3003 "Ethiopia: Amharic" 3004 "Ethiopia: Oromo" 3005 "Ethiopia: Somali" ///
+				 5001 "Kenya: English" 5002 "Kenya: Swahili" 7011 "Peru: Spanish" 9001 "South Africa: English" ///
+				 9006 "South Africa: Sesotho" 9007 "South Africa: isiZulu" 9008 "South Africa: Afrikaans" ///
+				 9009 "South Africa: Sepedi" 9010 "South Africa: isiXhosa" 10011 "Uruguay: Spanish" 11001 "Lao PDR: Lao" ///
+				 11002 "Lao PDR: Khmou" 11003 "Lao PDR: Hmong"
 
-lab def Language 11 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong" 18 "Italian", modify 
+*lab def Language 11 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong" 18 "Italian", modify 
+label val language Language
 * NOTE: Edit this for future Ipsos data 
 
-
+/*
 *Q4
 lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused" /// LA
 				31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area" /// IT, MX, US
 				, modify 
 
 *Q5 
+
 lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" /// LA
 				205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" ///
 				209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" /// IT
@@ -1165,6 +1292,7 @@ lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" /// 
 			    316 "Texas" 317 "Utah" 318 "Vermont" 319 "Virginia" 320 "Washington" ///
 			    321 "West Virginia" 322 "Wisconsin" 323 "Wyoming" ///
 				995 "Other" .r "Refused", modify
+*/
 
 *Q7 
 lab def labels9 29 "Only public" 30 "Additional private insurance" /// LA
@@ -1178,7 +1306,7 @@ lab def labels9 29 "Only public" 30 "Additional private insurance" /// LA
 				41 "Health insurance plan that you or another family member bought on your own (including Obamacare)" ///
 		        42 " TRICARE (formerly CHAMPUS), VA, or military" ///
 				995 "Other" .a "NA" .r "Refused", modify
-
+/*
 *Q8 
 lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// LA 
 					  47 "Lower secondary (1-4 years)" /// 
@@ -1283,8 +1411,16 @@ lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" /// ET
 				 166 "$65,000 to less than $100,000" ///
 				 167 "$100,000 or more" ///
 				 .d "Don't know" .r "Refused", modify
+*/
 		
 * Other value label modifcations
+lab def q4_label .a "NA" .r "Reufsed", modify
+lab def q5_label .a "NA" .r "Reufsed", modify
+lab def q8_label .a "NA" .r "Reufsed", modify
+lab def q22_label .a "NA" .r "Reufsed", modify
+lab def q44_label .a "NA" .r "Reufsed", modify
+lab def q62_label .a "NA" .r "Reufsed", modify
+lab def q63_label .a "NA" .r "Reufsed", modify
 lab def labels16 .a "NA" .r "Refused", modify
 lab def labels24 .a "NA" .r "Refused", modify
 lab def labels22 .a "NA" .r "Refused", modify
