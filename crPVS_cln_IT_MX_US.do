@@ -1230,40 +1230,6 @@ drop country q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8_it ///
 
 ren rec* *
 
-* Check for implausible values
-* q23 q25_b q27 q28_a q28_b q46 q47
-
-
- foreach var in q23 q25_b q27 q28_b q46 q46b_it_mx_us q47 {
-	foreach i in 12 13 14 {
-		extremes `var' country if country == `i', high 
-	}				
-	 }
-
-* NOTE: We will instead trim these at the derived variables stage for q23, but just doing this here for now 
-replace q23 = . if q23 > 60 & q23 < .
-* 3 values in US recoded, 2 in Italy 
-replace q47 = . if q47 > 300 & q47 < . & country == 14
-* 9 values recoded in US, 7 in Italy
-	 
-* Check for other implausible values 
-list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
-* Note: okay in these data
-
-list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
-* Note: okay in these data (2.5 is mid-point value)
-
-list q26 q27 country if q27 == 0 | q27 == 1
-* Some implasuible values of 0 and 1
-* Recode 0 values for q27 to .a for q27 and "No" for q26
-* Recode 1 values to 2, because respondent likely meant 1 additional facility 
-recode q26 (0 = 1) if q27 == 0
-recode q27 (0 = .a)  
-recode q27 (1 = 2) 
-
-list q23_q24 q39 q40 country if q39 == 3 & q23_q24 > 0 & q23_q24 < . /// 
-							  | q40 == 3 & q23_q24 > 0 & q23_q24 < .	 
-* Note: okay in these data 
 	 
 *------------------------------------------------------------------------------*
 
