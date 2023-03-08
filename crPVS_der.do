@@ -295,8 +295,8 @@ recode insur_type (.a = 0) if q6_za == 0
 * education 
 recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal education)") /// 
 		  (3 8 14 15 27 20 34 46 52 53 59 66 67 = 1 "Primary") ///
-		  (4 9 16 28 21 35 47 48 54 55 60 61 62 68 = 2 "Secondary") /// 
-	      (5 10 11 17 29 30 31 22 23 24 36 37 38 49 50 56 57 63 64 69 70 = 3 "Post-secondary") ///
+		  (4 9 16 28 21 35 47 48 54 60 61 68 = 2 "Secondary") /// 
+	      (5 10 11 17 29 30 31 22 23 24 36 37 38 49 50 55 56 57 62 63 64 69 70 = 3 "Post-secondary") ///
 		  (.r = .r "Refused"), gen(education)
 
 * usual_type_own
@@ -426,7 +426,7 @@ recode minority (.a = 1) if q62b_us == 1 | q62b_us == 2 | q62b_us == 3 ///
 
 * income
 * Note - will update this grouping based on income data 
-recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 151 152 158 159 163 164 = 0 "Lowest income") /// 
+recode q63 (1 2 9 10 15 16 17 23 39 40 48 31 32 38 49 50 61 101 102 151 152 158 159 163 164 = 0 "No income/Lowest income") /// 
 		   (3 4 5 11 12 18 19 20 41 42 43 33 34 35 51 52 53 103 104 105 153 154 155 160 165 = 1 "Middle income") /// 
 		   (6 7 13 14 21 22 44 45 36 37 54 55 106 107 156 157 161 162 166 167 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
@@ -554,7 +554,7 @@ lab var	income "Income group (Q63)"
 
 **************************** Save data *****************************
 
-save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
+* save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 
 *rm "$data_mc/02 recoded data/pvs_appended.dta"
