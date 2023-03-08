@@ -206,6 +206,10 @@ gen recq63 = country*1000 + q63
 replace recq63 = .r if q63== .r
 replace recq63 = .d if q63== .d
 
+* Q6/Q7 - LA specific
+recode q6_la (1 = 11001 "LA: Additional private insurance") (2 = 11002 "LA: Only public insurance") (99 = .r "Refused"), gen(q7) label(q7_label)
+* NOTE to self: check this 
+
 * Mia: relabel some variables now so we can use the orignal label values
 local q4l place
 local q5l province
@@ -232,7 +236,7 @@ foreach q in q4 q5 q8 q44 q62 q63{
 		foreach lev in ``q'level' {
 			if strmatch("`lev'", "`recvalue`q''") == 1{
 				elabel define `q'_label (= 11000+`: word `i' of ``q'val'') ///
-										(`"Lao PDR: `gr`i''"'), modify
+										(`"LA: `gr`i''"'), modify
 			}
 		}         
 	}
@@ -258,21 +262,10 @@ recode q23_q24 (.d = .r) if q24 == .r // Mia: added this line
 *------------------------------------------------------------------------------*
 
 *------------------------------------------------------------------------------*
-* Mia: moved this part here to match the structure of other programs
-* Check for implausible values
-* q23 q25_b q27 q28_a q28_b q46 q47
-
-list q1 q2 if q2 == 0 | q1 < 18
-
-
- foreach var in q23 q25_b q27 q28_a q28_b q46 q47 {
-		extremes `var', high 
-	 }
-	
-
-* All count values in Laos look plausible, time values seem plausible too 
 
 * Check for other implausible values 
+
+list q1 q2 if q2 == 0 | q1 < 18
 
 list q23 q24 q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
 replace q25_b = . if q25_b > q23_q24 & q25_b < .
@@ -550,10 +543,6 @@ recode q57 ///
 * re-label the values on append 
 
 *** Mia changed this part ***
-* Q6/Q7 - LA specific
-recode q6_la (1 = 30 "Additional private insurance") (2 = 29 "Only public insurance") (99 = .r "Refused"), gen(q7) label(insur)
-* NOTE to self: check this 
-
 * Q21
 recode q21 (10 = 9) (90 = .r)
 label define fac_choose 9 "Other", modify
