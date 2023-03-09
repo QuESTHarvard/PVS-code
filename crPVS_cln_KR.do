@@ -129,11 +129,30 @@ recode q23_q24 (.d = .r) if q24 == .r
 
 *------------------------------------------------------------------------------*
 
+* Value labels 
 
-lab def q19_kr 1 "Public"  2"Private" 3"Other" .a "NA" .r"Refused"
-lab	val q19_kr q19_kr
+lab def q19_43 1 "KR: Public" 2 "KR: Private (for profit)" ///
+			   3 "KR: Private (non-profit organization/religion related)" ///
+			   4 "KR: Other" .a "NA" .r "Refused"
+			   			   
+lab	val q19_kr q43_kr q19_43
 
+lab def q20_44 15001 "KR: Health center" 15002 "KR: Clinic" 15003 "KR: Hospital or secondary hospital" ///
+			   15004 "KR: Tertiary general hospital" .a "NA" .r "Refused"
+lab	val recq20 recq44 q20_44
 
+lab def q62 15001 "KR: Korean"  15002 "KR: Other" .r "Refused"
+lab val recq62 q62
+
+lab def q63 15001 "KR: <50(10,000KW)" 15002 "KR:≥50 and <100(10,000KW)" ///
+				 15003 "KR: ≥100 and <200(10,000KW)" 15004 "KR: ≥200 and <300(10,000KW)" ///
+				 15005 "KR: ≥300 and <400(10,000KW)" 15006 "KR: ≥400 and <500(10,000KW)" ///
+				 15007 "KR: ≥500 and <600(10,000KW)" 15008 "KR: ≥600(10,000KW)"  ///
+				 .r"Refused"
+lab val recq63 q63
+
+* q4, q5, q6_kr, q7_kr, q8, 
+*q21, q42, q45, q49, q58, q66 
 
 *------------------------------------------------------------------------------*
 * Check for other implausible values 
