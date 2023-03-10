@@ -98,7 +98,6 @@ summtab2 , by(country) vars(age_calc age_cat gender urban insured insur_type edu
 		  title(Derived Variables) 
 
 
-stop
 
 * WEIGHTED DATA 
 clear all

@@ -15,7 +15,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 */
 
 * Import data 
-import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_2.1.23_confidential.sav", clear
+import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_3.8.23_confidential.sav", clear
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 
 ren RESPID respondent_serial
@@ -176,6 +176,7 @@ lab def country_short 12 "US" 13 "MX" 14 "IT"
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 999
 gen reclanguage = reccountry*1000 + lang 
+recode reclanguage (15058 = 13058)
 *gen interviewer_id = country*1000 + interviewerid_recoded //no interview id related var in the dataset
 * only q4 since others are country specific
 gen recq4 = reccountry*1000 + q4
@@ -309,7 +310,7 @@ drop STATUS STATU2 INTERVIEW_START INTERVIEW_END LAST_TOUCHED LASTCOMPLETE ///
 	 ILANGUAGE_3 ILANGUAGE_4 ILANGUAGE_4_OTHER HRANDOM_Q1_21LOOPCHAR HRANDOM_Q3_6LOOPCHAR ///
 	 XCURRENTSECTION HID_SECTIONTIME_SB HID_SECTIONTIME_SC HID_SECTIONTIME_DE ///
 	 HID_SECTIONTIME_1 HID_SECTIONTIME_2 HID_SECTIONTIME_3 HID_SECTIONTIME_4 ///
-	 HID_LOI BLANDCELL BSSRS_MATCH_CODE CATICALLTIME DIALTYPE DTYPE EMAIL ///
+	 HID_LOI BLANDCELL BSSRS_MATCH_CODE CATICALLTIME DIALTYPE DTYPE ///
 	 RECORDTYPE BIDENT2 BSTRATA BREGION1 BREGION2 BREGION3 BREGION4 BLOCALITY ///
 	 BSTATE BITALY_REGIONS BMEXICO_STATES SAMPSOURCE q46_min q46_hrs q47_min q47_hrs ///
 	 q54_it q54_us q54_mx q46b_dys q46b_hrs q46b_mth q46b_wks q4 lang start_time end_time
@@ -1341,8 +1342,8 @@ lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing 
 lab var q46_refused "Q46. Refused"
 lab var q46b_refused "Q46B. Refused"
 lab var q47_refused "Q47. Refused"
-lab var q46a "Q46A IT/MX/US only: Was this a scheduled visit or did you go without an appt.?"
-lab var q46b "Q46B IT/MX/US only: In days: how long between scheduling and seeing provider?"
+lab var q46a "Q46A. Was this a scheduled visit or did you go without an appt.?"
+lab var q46b "Q46B. In days: how long between scheduling and seeing provider?"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"

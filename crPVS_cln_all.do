@@ -1214,11 +1214,12 @@ recode q66_it_mx (. = .a) if country != 13 | country != 14
 	   
 * Country-specific value labels -edit for ssrs-
 *** Mia added this part ***
-lab def Language 2011 "Colombia: Spanish" 3003 "Ethiopia: Amharic" 3004 "Ethiopia: Oromo" 3005 "Ethiopia: Somali" ///
-				 5001 "Kenya: English" 5002 "Kenya: Swahili" 7011 "Peru: Spanish" 9001 "South Africa: English" ///
-				 9006 "South Africa: Sesotho" 9007 "South Africa: isiZulu" 9008 "South Africa: Afrikaans" ///
-				 9009 "South Africa: Sepedi" 9010 "South Africa: isiXhosa" 10011 "Uruguay: Spanish" 11001 "Lao PDR: Lao" ///
-				 11002 "Lao PDR: Khmou" 11003 "Lao PDR: Hmong"
+lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
+				 5001 "KE: English" 5002 "KE: Swahili" 7011 "PE: Spanish" 9001 "ZA: English" ///
+				 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA: Afrikaans" ///
+				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
+				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
+				 13058 "MX: Spanish" 14016 "IT: Italian"
 
 *lab def Language 11 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong" 18 "Italian", modify 
 label val language Language
@@ -1385,14 +1386,14 @@ lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" /// ET
 */
 		
 * Other value label modifcations
-lab def q4_label .a "NA" .r "Reufsed", modify
-lab def q5_label .a "NA" .r "Reufsed", modify
-lab def q7_label .a "NA" .r "Reufsed", modify
-lab def q8_label .a "NA" .r "Reufsed", modify
-lab def q20_label .a "NA" .r "Reufsed", modify
-lab def q44_label .a "NA" .r "Reufsed", modify
-lab def q62_label .a "NA" .r "Reufsed", modify
-lab def q63_label .a "NA" .r "Reufsed", modify
+lab def q4_label .a "NA" .r "Refused", modify
+lab def q5_label .a "NA" .r "Refused", modify
+lab def q7_label .a "NA" .r "Refused", modify
+lab def q8_label .a "NA" .r "Refused", modify
+lab def q20_label .a "NA" .r "Refused", modify
+lab def q44_label .a "NA" .r "Refused", modify
+lab def q62_label .a "NA" .r "Refused", modify
+lab def q63_label .a "NA" .r "Refused", modify
 lab def labels16 .a "NA" .r "Refused", modify
 lab def labels24 .a "NA" .r "Refused", modify
 lab def labels22 .a "NA" .r "Refused", modify

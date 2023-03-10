@@ -11,8 +11,8 @@ dataset created in the cr01_pvs_clin.do file.
 
 ***************************** Deriving variables *******************************
 
-*u "$data_mc/02 recoded data/pvs_appended.dta", clear
-use "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\BGC Projects\BGC - Mia Yu - Misc tasks\Harvard\pvs_appended.dta", clear
+u "$data_mc/02 recoded data/pvs_appended.dta", clear
+*use "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\BGC Projects\BGC - Mia Yu - Misc tasks\Harvard\pvs_appended.dta", clear
 *------------------------------------------------------------------------------*
 
 * age: exact respondent age or middle of age range 
@@ -507,6 +507,7 @@ recode q63 (5001 5002 3009 3010 9015 9016 9017 902 2039 2040 2048 7031 7032 7038
 * Recode implausible values to missing 
 
 * All visit count variables and wait time variables:
+
 * q23, q25_b, q27, q28_a, q28_b, q46, q47 
 * Mia: no derived variables for q27, q46 and q47  
 qui levelsof country, local(countrylev)
@@ -518,6 +519,7 @@ foreach i in `countrylev' {
 	}
 	
 	foreach var in visits visits_covid visits_tele {
+
 		
 		extremes `var' country if country == `i', high
 	}
@@ -526,6 +528,7 @@ foreach i in `countrylev' {
 * Ethiopia: 92 visits for q28, South Africa: 120 visits for q28
 recode visits_home (92 = .) (120 = .)
 * Colombia q28_new values seem implausible 
+
 recode visits_tele (80 = .)
 * Uruguay: q23 values seem implausible 
 recode visits (200 = .) (156 = .)	
@@ -543,28 +546,28 @@ order respondent_serial respondent_id country language date ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
 	  usual_reason usual_quality visits visits_cat visits_covid ///
-	  fac_number visits_home visits_tele visits_total inpatient blood_pressure mammogram ///
+	  fac_number visits_home visits_tele tele_qual visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_mental /// 
 	  mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
-	  last_type last_reason last_wait_time ///
+	  last_type last_reason last_wait_time last_sched_time ///
 	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
-	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
+	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_opinion qual_public qual_private qual_ngo_et_ke_za qual_ss_pe ///
 	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
 	  vignette_good minority income q1 q2 q3 q3a q4 q5 q5_other q6 q6_it q6_la q6_za q7 ///
-	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q15 q16 q17 q18 ///
-	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_mx q19_pe q19_uy q19_other ///
+	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q14_la q15 q15_la q16 q17 q18 ///
+	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_mx q19_co_pe q19_uy q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q37_za q38 q39 q40 q41 q42 q42_other q43_co q43_et_ke_za_la q43_it q43_mx ///
-	  q43_pe q43_uy q43_other q44 ///
+	  q37_za q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_ke_za_la q43_it q43_mx ///
+	   q43_uy q43_other q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q56a_mx q56b_mx q57 q58 q59 ///
-	  q60 q61 q62 q62_mx q62a_us q62b_us  q62_other q63 q64 q65 q66_it_mx q66a_us q66b_us
+	  q60 q61 q62 q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66_it_mx q66a_us q66b_us
 	  
 	  
 ***************************** Labeling variables ***************************** 
