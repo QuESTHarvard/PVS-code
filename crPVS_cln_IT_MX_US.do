@@ -952,6 +952,8 @@ forvalues o = 1/`countryn' {
 }
 
 label define q8_label .r "Refused", add
+* Mia: manually adding this for now since no one chose 1 but this does not effect result
+label define q8_label 14001 "IT: Mai frequentato la scuola o solo Nido e Scuola dell infanzia", add 
 label val q8 q8_label
 
 recode q8 (. = .r) if q8_it == .r | q8_mx == .r | q8_us == .r
@@ -1009,9 +1011,10 @@ recode q20_us (1 = 1401 "Doctor's office, clinic, or health center") ///
 */
 
 * Q20 
-gen recq20_it = reccountry*1000 + q20_it
+gen recq20_it = reccountry*1000 + q20_it 
 gen recq20_mx = reccountry*1000 + q20_mx
 gen recq20_us = reccountry*1000 + q20_us	
+replace recq20_us = 12995 if q20_us == 8
 		  
 gen q20 = max(recq20_it, recq20_mx, recq20_us)
 recode q20 (. = .r) if q20_it == .r | q20_mx == .r | q20_us == .r
@@ -1049,6 +1052,7 @@ forvalues o = 1/`countryn' {
 	}
 }
 
+label define q20_label 12995 "US: Other", add
 lab val q20 q20_label
 
 * Q20 Other
@@ -1110,7 +1114,8 @@ recode q44_us (1 = 1401 "Doctor's office, clinic, or health center") ///
 gen recq44_it = reccountry*1000 + q44_it
 gen recq44_mx = reccountry*1000 + q44_mx
 gen recq44_us = reccountry*1000 + q44_us
-			  
+replace recq44_us = 12995 if q44_us == 8	
+  
 gen q44 = max(recq44_it, recq44_mx, recq44_us)
 recode q44 (. = .r) if q44_it == .r | q44_mx == .r | q44_us == .r
 recode q44 (. = .a) if q44_it == .a | q44_mx == .a | q44_us == .a
@@ -1146,7 +1151,7 @@ forvalues o = 1/`countryn' {
 		}                 
 	}
 }
-
+label define q44_label 12995 "US: Other", add
 lab val q44 q44_label
 
 * Q44 Other
