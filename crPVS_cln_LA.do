@@ -583,7 +583,7 @@ lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
 lab var q14_la "Q14. LA only: How many doses of COVID-19 vaccine have you received?" //Mia: changed the variable label
-lab var q15_la "Q15B. LA only: If a vaccine against COVID-19 is or becomes available to you, do you plan to get vaccinated?" //Mia: changed the variable label
+lab var q15_la "Q15. LA only: If a vaccine becomes available, do you plan to get vaccinated?" //Mia: changed the variable label
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18a_la "Q18A. LA only: Is there one place you usually...? (incl pharm, traditional)"

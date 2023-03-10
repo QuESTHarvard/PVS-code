@@ -597,7 +597,7 @@ order respondent_serial respondent_id country language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_opinion qual_public qual_private qual_ngo_et_ke_za qual_ss_pe ///
 	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income q1 q2 q3 q3a q4 q5 q5_other q6 q6_it q6_la q6_za q7 q7_it ///
+	  vignette_good minority income q1 q2 q3 q3a q4 q5 q5_other q6 q6_it q6_la q6_za q7 ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q14_la q15 q15_la q16 q17 q18 ///
 	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_mx q19_co_pe q19_uy q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
