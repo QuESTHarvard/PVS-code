@@ -11,8 +11,8 @@ dataset created in the cr01_pvs_clin.do file.
 
 ***************************** Deriving variables *******************************
 
-*u "$data_mc/02 recoded data/pvs_appended.dta", clear
-use "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\BGC Projects\BGC - Mia Yu - Misc tasks\Harvard\pvs_appended.dta", clear
+u "$data_mc/02 recoded data/pvs_appended.dta", clear
+*use "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\BGC Projects\BGC - Mia Yu - Misc tasks\Harvard\pvs_appended.dta", clear
 *------------------------------------------------------------------------------*
 
 * age: exact respondent age or middle of age range 
@@ -160,7 +160,7 @@ lab val last_wait_time lwt
 
 *last_sched_time
 * Mia: added this new derived variable
-last_sched_time = q46b
+gen last_sched_time = q46b
 
 *last_visit_time
 gen last_visit_time = 0 if q47 <= 15
@@ -367,7 +367,7 @@ recode usual_type_own (.a = 2) if inlist(q19_uy,5,995) | ///
 								  q19_it == 4 | q19_mx == 7 | ///
 								  q20 == 12995
 								  
-recode usual_type_own (.a = .r) if q19_co == .r | q19_pe == .r | q19_uy == .r | ///
+recode usual_type_own (.a = .r) if q19_co_pe == .r | q19_uy == .r | ///
 								   q19_q20a_la == .r | q19_q20b_la == .r | ///
 								   q19_it == .r | q19_mx == .r | ///
 								   (q20 == .r & country == 12)
@@ -390,7 +390,7 @@ recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 *       no 103 1405 
 
 recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
-			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002///
+			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
 			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 = 0 "Primary") /// 
 		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 ///
@@ -427,7 +427,7 @@ recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 
 * Mia updated variable to q43_co_pe
 recode last_type_own (.a = 0) if q43_co_pe == 1 | q43_uy == 1 | ///
-								 q43_it == 1 | irange(q43_mx,1,5) | ///
+								 q43_it == 1 | inrange(q43_mx,1,5) | ///
 								 inlist(q44,12003,12004,12005)
 
 * Mia updated variable to q43_co_pe
@@ -438,7 +438,7 @@ recode last_type_own (.a = 1) if q43_co_pe == 2 | q43_uy == 2 | ///
 recode last_type_own (.a = 2) if inlist(q43_uy,5,995) | q43_it == 4 | q43_mx == 7 | ///
 								 q44 == 12995
 								 
-recode last_type_own (.a = .r) if q43_co == .r | q43_pe == .r | q43_uy == .r | ///
+recode last_type_own (.a = .r) if q43_co_pe == .r | q43_uy == .r | ///
 								  q43_it == .r | q43_mx == .r | ///
 								  (q44 == .r & country == 12)
 
@@ -509,7 +509,7 @@ recode q63 (5001 5002 3009 3010 9015 9016 9017 902 2039 2040 2048 7031 7032 7038
 * All visit count variables and wait time variables:
 * q23, q25_b, q27, q28, q28_new, q46_min, q47_min   
  
- foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
+ foreach var in q23 q25_b q27 q28_a q28_b q46 q47 {
 	foreach i in 3 5 9 {
 		extremes `var' country if country == `i', high 
 		
@@ -520,12 +520,12 @@ recode q63 (5001 5002 3009 3010 9015 9016 9017 902 2039 2040 2048 7031 7032 7038
 * South Africa; 144 visits for q23
 recode q23 q23_q24 (144 = .)
 * Ethiopia: 92 visits for q28, South Africa: 120 visits for q28
-recode q28 (92 = .) (120 = .)
+*recode q28 (92 = .) (120 = .)
 
 * q46_min, highest value is 4320 minutes (72 hours), seems plausible for Ethiopia
 
 * q47_min, above 300 minutes (5 hours) seems implausible 
-replace q47_min = . if q47_min > 300 & q47_min < .
+*replace q47_min = . if q47_min > 300 & q47_min < .
 * 3 values recoded in Kenya, 7 recoded in Ethiopia, 4 in South Africa 
 
 
@@ -534,7 +534,7 @@ replace q47_min = . if q47_min > 300 & q47_min < .
 * All visit count variables and wait time variables:
 * q23, q25_b, q27, q28, q28_new, q46_min, q47_min   
  
- foreach var in q23 q25_b q27 q28 q28_new q46_min q47_min {
+ foreach var in q23 q25_b q27 q28_a q28_b q46 q47 {
 	foreach i in 2 7 10 {
 		extremes `var' country if country == `i', high 
 		
@@ -544,11 +544,11 @@ replace q47_min = . if q47_min > 300 & q47_min < .
 * Uruguay: q23 values seem implausible 
 recode q23 q23_q24 (200 = .) (156 = .)	 
 * Colombia q28_new values seem implausible 
-recode q28_new (80 = .)
+*recode q28_new (80 = .)
 * q46_min seems okay for all (no more than 12 hours)
 
 * q47_min, above 300 minutes (5 hours) seems implausible 
-replace q47_min = . if q47_min > 300 & q47_min < .
+*replace q47_min = . if q47_min > 300 & q47_min < .
 
 * Mia: moved this part here to match the structure of other programs
 * Check for implausible values
@@ -564,7 +564,7 @@ replace q47_min = . if q47_min > 300 & q47_min < .
 
 * All count values in Laos look plausible, time values seem plausible too 
 
- Mia: moved this part here to match the structures of other programs
+* Mia: moved this part here to match the structures of other programs
 * Check for implausible values
 * q23 q25_b q27 q28_a q28_b q46 q47
 
@@ -588,28 +588,28 @@ order respondent_serial respondent_id country language date ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
 	  usual_reason usual_quality visits visits_cat visits_covid ///
-	  fac_number visits_home visits_tele visits_total inpatient blood_pressure mammogram ///
+	  fac_number visits_home visits_tele tele_qual visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_mental /// 
 	  mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
-	  last_type last_reason last_wait_time ///
+	  last_type last_reason last_wait_time last_sched_time ///
 	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
-	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
+	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_opinion qual_public qual_private qual_ngo_et_ke_za qual_ss_pe ///
 	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income q1 q2 q3 q3a q4 q5 q5_other q6 q6_it q6_la q6_za q7 ///
-	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q15 q16 q17 q18 ///
-	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_mx q19_pe q19_uy q19_other ///
+	  vignette_good minority income q1 q2 q3 q3a q4 q5 q5_other q6 q6_it q6_la q6_za q7 q7_it ///
+	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q14_la q15 q15_la q16 q17 q18 ///
+	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_mx q19_co_pe q19_uy q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q37_za q38 q39 q40 q41 q42 q42_other q43_co q43_et_ke_za_la q43_it q43_mx ///
-	  q43_pe q43_uy q43_other q44 ///
+	  q37_za q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_ke_za_la q43_it q43_mx ///
+	   q43_uy q43_other q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q56a_mx q56b_mx q57 q58 q59 ///
-	  q60 q61 q62 q62_mx q62a_us q62b_us  q62_other q63 q64 q65 q66_it_mx q66a_us q66b_us
+	  q60 q61 q62 q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66_it_mx q66a_us q66b_us
 	  
 	  
 ***************************** Labeling variables ***************************** 
