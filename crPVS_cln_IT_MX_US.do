@@ -1114,6 +1114,7 @@ recode q44_us (1 = 1401 "Doctor's office, clinic, or health center") ///
 
 gen recq44_it = reccountry*1000 + q44_it
 gen recq44_mx = reccountry*1000 + q44_mx
+replace recq44_mx = 13995 if q44_mx == 21
 gen recq44_us = reccountry*1000 + q44_us
 replace recq44_us = 12995 if q44_us == 8	
   

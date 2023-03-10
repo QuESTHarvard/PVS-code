@@ -316,8 +316,10 @@ recode q7 (1 3 17 18 10 11 12 19 20 22 29 31 33 34 35 36 39 40 42 = 0 Public) //
 		  (.r = .r "Refused") (14 .a = .a NA), gen(insur_type)
 */
 
-recode q7 (3001 5003 2015 2016 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 = 0 Public) ///
-		  (3002 5004 5005 5006 3007 9008 9009 2028 7013 10021 11001 12001 12004 13005 14001 = 1 Private) /// 
+*Mia: for now 2015 2016 coded to be Private
+
+recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 = 0 Public) ///
+		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 = 1 Private) /// 
 		  (2995 9995 12995 13995 = 2 Other) ///
 		  (.r = .r "Refused") (7014 13014 .a = .a NA), gen(insur_type)
 		  
@@ -332,6 +334,7 @@ recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal edu
 		  (4 9 16 28 21 35 47 48 54 55 60 61 62 68 = 2 "Secondary") ///
           (5 10 11 17 29 30 31 22 23 24 36 37 38 49 50 56 57 63 64 69 70 = 3 "Post-secondary") ///
           (.r = .r "Refused"), gen(education)
+		  
 */
 recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 14001 12001 = 0 "None (or no formal education)") ///
           (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 = 1 "Primary") ///
@@ -375,7 +378,7 @@ recode usual_type_own (.a = .r) if q19_co_pe == .r | q19_uy == .r | ///
 * NOTE: Check Laos
 								   
 * usual_type_lvl 
-* Mia: recoded this
+* Mia: recoded this, no 103 1405 38
 /*
 recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /// 38 added for ZA, may change
 			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 501 502 ///
@@ -384,10 +387,7 @@ recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 		   101 103 105 503 504 803 804 806 807 810 811 814 816 819 820 ///
 		   1405 1406 1407 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
-*/
-* Mia: 23 was coded to Primary but codebook sugggested Secondary
-*       8 was coded to Secondary but codebook suggested Primary	   
-*       no 103 1405 
+*/       
 
 recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
@@ -444,7 +444,7 @@ recode last_type_own (.a = .r) if q43_co_pe == .r | q43_uy == .r | ///
 
 
 * last_type_lvl 
-* Mia: recoded this
+* Mia: recoded this, no 90 38 98 811, added 7009
 /*
 recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 ///
 			80 85 90 40 43 45 47 48 92 94 96 98 100 102 104 202 203 ///
@@ -454,14 +454,14 @@ recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 		   1405 1406 1407 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
 */
-* Mia: no 90
-recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 ///
-			2080 2085 90 40 43 45 47 48 92 94 96 98 100 102 104 202 203 ///
-			501 502 801 802 805 808 809 812 813 815 817 818 1401 1402 1403 1404 = 0 "Primary") /// 
-		   (4 5 8 9 13 19 21 29 30 34 35 37 81 82 86 87 41 42 44 46 49 93 97 ///
-		   101 103 105 201 503 504 803 804 806 807 810 811 814 816 819 820 ///
-		   1405 1406 1407 = 1 "Secondary (or higher)") ///
-		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
+ 
+recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
+			2080 2085 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
+			14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 = 0 "Primary") /// 
+		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 ///
+		   10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 13019 13020 ///
+		   12005 12006 12007 = 1 "Secondary (or higher)") ///
+		   (.a = .a "NA") (3995 11995 12995 13995 .r = .r "Refused"), gen(last_type_lvl)
 		      
 * last_type - ownership and level
 gen last_type = . 
@@ -487,7 +487,7 @@ recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 302
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1		   
-recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6)
+recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 995 later
 * Note - check this 
 
 * income
@@ -507,79 +507,37 @@ recode q63 (5001 5002 3009 3010 9015 9016 9017 902 2039 2040 2048 7031 7032 7038
 * Recode implausible values to missing 
 
 * All visit count variables and wait time variables:
-* q23, q25_b, q27, q28, q28_new, q46_min, q47_min   
- 
- foreach var in q23 q25_b q27 q28_a q28_b q46 q47 {
-	foreach i in 3 5 9 {
-		extremes `var' country if country == `i', high 
-		
-	}				
-	 }
+
+* q23, q25_b, q27, q28_a, q28_b, q46, q47 
+* Mia: no derived variables for q27, q46 and q47  
+qui levelsof country, local(countrylev)
+
+foreach i in `countrylev' {
 	
-* Most visit values seem plausible, most 50 and below 
-* South Africa; 144 visits for q23
-recode q23 q23_q24 (144 = .)
-* Ethiopia: 92 visits for q28, South Africa: 120 visits for q28
-*recode q28 (92 = .) (120 = .)
-
-* q46_min, highest value is 4320 minutes (72 hours), seems plausible for Ethiopia
-
-* q47_min, above 300 minutes (5 hours) seems implausible 
-*replace q47_min = . if q47_min > 300 & q47_min < .
-* 3 values recoded in Kenya, 7 recoded in Ethiopia, 4 in South Africa 
-
-
-* Recode implausible values to missing 
-
-* All visit count variables and wait time variables:
-* q23, q25_b, q27, q28, q28_new, q46_min, q47_min   
- 
- foreach var in q23 q25_b q27 q28_a q28_b q46 q47 {
-	foreach i in 2 7 10 {
-		extremes `var' country if country == `i', high 
-		
-	}				
-	 }
-
-* Uruguay: q23 values seem implausible 
-recode q23 q23_q24 (200 = .) (156 = .)	 
-* Colombia q28_new values seem implausible 
-*recode q28_new (80 = .)
-* q46_min seems okay for all (no more than 12 hours)
-
-* q47_min, above 300 minutes (5 hours) seems implausible 
-*replace q47_min = . if q47_min > 300 & q47_min < .
-
-* Mia: moved this part here to match the structure of other programs
-* Check for implausible values
-* q23 q25_b q27 q28_a q28_b q46 q47
-
-
-
-
- foreach var in q23 q25_b q27 q28_a q28_b q46 q47 {
-		extremes `var', high 
-	 }
+	if !inlist(`i', 12, 13, 14) {
+		extremes visits_home country if country == `i', high
+	}
 	
+	foreach var in visits visits_covid visits_tele {
 
-* All count values in Laos look plausible, time values seem plausible too 
-
-* Mia: moved this part here to match the structures of other programs
-* Check for implausible values
-* q23 q25_b q27 q28_a q28_b q46 q47
-
- foreach var in q23 q25_b q27 q28_b q46 q46b q47 {
-	foreach i in 1 2 3 {
-		extremes `var' country if country == `i', high 
-	}				
+		
+		extremes `var' country if country == `i', high
+	}
 }
-* Mia: do nothing here, recode those later when we derive var
-* Note
-* Do these values seem plausible? 	 
-* For visits variables, we've recoding values roughly above 52 to missing (weekly visit) 
-* For q46, 
-* For q47, we cut off roughly above 500 minutes 
-		   
+
+* Ethiopia: 92 visits for q28, South Africa: 120 visits for q28
+recode visits_home (92 = .) (120 = .)
+* Colombia q28_new values seem implausible 
+
+recode visits_tele (80 = .)
+* Uruguay: q23 values seem implausible 
+recode visits (200 = .) (156 = .)	
+* South Africa; 144 visits for q23
+recode visits (144 = .)
+* 2 values in US recoded, 1 in Italy 
+replace visits = . if visits > 60 & visits < .
+
+
 **** Order Variables ****
 		   
 order respondent_serial respondent_id country language date /// 
