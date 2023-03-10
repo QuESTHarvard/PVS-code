@@ -47,12 +47,14 @@ ren ECS_ID Respondent_ID
 
 * Mia: Save to merge later so we won't lose ZA's value labels for some questions
 tempfile label0
-label save Q7 Q8 Q20 Q44 using `label0'
+label save Q7 Q20 Q44 using `label0'
 label drop Q7 Q8 Q20 Q44
 
 * South Africa 
 append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
 qui do `label0'
+* Mia: correct some value labels
+label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
 *Change all variable names to lower case
 
 rename *, lower //Mia: move this early
@@ -784,7 +786,8 @@ recode q19_co (. = .a) if country != 2
 
 * Note: UY appears to have NGO when it should be other
 recode q19_uy (3 = 995)
-label define labels23 995 "Other", modify
+* Mia: drop two value label to avoid confusion
+label define labels23 3 "" 4 "" 995 "Other", modify
 
 recode recq20 (. = .a) if q19_pe == .r | q19_uy == .r | q19_co  == .r
 
@@ -817,7 +820,6 @@ recode q43_pe (. = .a) if country != 7
 recode q43_uy (. = .a) if country != 10
 recode q43_co (. = .a) if country != 2
 recode recq44 (. = .a) if q43_pe == .r | q43_uy == .r | q43_co  == .r //Mia: changed to recq44
-
 
 *q46/q47 refused
 recode q46_min (. = .r) if q46_996 == 1 
@@ -1018,6 +1020,8 @@ drop q19_co q19_pe
 clonevar q43_co_pe = q43_co
 replace q43_co_pe = q43_pe if country == 7
 drop q43_co q43_pe
+
+label define labels24 3 "" 4 "" 5 "", modify //Mia: add this line to match codebook
 *****************************
 *------------------------------------------------------------------------------*
 

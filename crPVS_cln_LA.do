@@ -244,8 +244,8 @@ foreach q in q4 q5 q8 q44 q62 q63{
 	label val rec`q' `q'_label
 }
 
-label define q62_label 11995 "Lao PDR: Other", add
-label define q44_label 11995 "Lao PDR: Other", add
+label define q62_label 11995 "LA: Other", add
+label define q44_label 11995 "LA: Other", add
 *****************************
 
 * Q23/Q24 mid-point var 
