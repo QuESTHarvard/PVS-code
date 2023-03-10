@@ -1386,14 +1386,14 @@ lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" /// ET
 */
 		
 * Other value label modifcations
-lab def q4_label .a "NA" .r "Reufsed", modify
-lab def q5_label .a "NA" .r "Reufsed", modify
-lab def q7_label .a "NA" .r "Reufsed", modify
-lab def q8_label .a "NA" .r "Reufsed", modify
-lab def q20_label .a "NA" .r "Reufsed", modify
-lab def q44_label .a "NA" .r "Reufsed", modify
-lab def q62_label .a "NA" .r "Reufsed", modify
-lab def q63_label .a "NA" .r "Reufsed", modify
+lab def q4_label .a "NA" .r "Refused", modify
+lab def q5_label .a "NA" .r "Refused", modify
+lab def q7_label .a "NA" .r "Refused", modify
+lab def q8_label .a "NA" .r "Refused", modify
+lab def q20_label .a "NA" .r "Refused", modify
+lab def q44_label .a "NA" .r "Refused", modify
+lab def q62_label .a "NA" .r "Refused", modify
+lab def q63_label .a "NA" .r "Refused", modify
 lab def labels16 .a "NA" .r "Refused", modify
 lab def labels24 .a "NA" .r "Refused", modify
 lab def labels22 .a "NA" .r "Refused", modify
