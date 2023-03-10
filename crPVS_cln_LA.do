@@ -287,11 +287,6 @@ list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
 * but they have visit values in past 12 months 
 egen visits_total = rowtotal(q23_q24 q28_a q28_b)
 
-list q23_q24 q39 q40 country if q39 == 3 & visits_total > 0 & visits_total < . /// 
-							  | q40 == 3 & visits_total > 0 & visits_total < .
-							  
-* This is fine
-
 * list if they got skipped but they have visit values in past 12 months 
 list q23_q24 q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
 							  | q40 == .a & visits_total > 0 & visits_total < .
@@ -303,12 +298,12 @@ recode q39 q40 (.a = .r) if visits_total > 0 & visits_total < .
 * list if they chose other than "I did not get healthcare in past 12 months"
 * but visits_total == 0 
 
-list q23_q24 q39 q40 country if q39 != 3 & visits_total == 0 /// 
-							  | q40 != 3 & visits_total == 0
+list q23_q24 q39 q40 country if q39 != .a & visits_total == 0 /// 
+							  | q40 != .a & visits_total == 0
 							  
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
 * but they have no visit values in past 12 months 
-recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+recode q39 q40 (1 = .a) (2 = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
 * Mia: 114 changes made to q39; 116 changes made to q40
 
 drop visits_total

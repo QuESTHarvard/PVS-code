@@ -52,7 +52,7 @@ ssc install elabel // Mia: I used this pacakge to combine the value labels
 * Initial data cleaning to create multi-country dataset 
 run "$github/crPVS_cln_all.do"
 run "$github/crPVS_cln_LA.do"
-* run "$github/crPVS_cln_IT_MX_US.do"
+run "$github/crPVS_cln_IT_MX_US.do"
 
 * Adding derived variables for analysis
 run "$github/crPVS_der.do"

@@ -1256,7 +1256,7 @@ lab def labels73 .a "NA" .r "Refused", modify
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 * Mia: dropped q4 lang since we already dropped those vars
-drop country q7_it q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8_it ///
+drop country q7_it q7_mx q7_us recq7_mx recq7_us recq7_it q8_it q8_mx q8_us recq8_it ///
      recq8_mx recq8_us q5_it q5_mx q5_us ///
 	 recq5_it recq5_mx recq5_us q7_other_mx q7_other_us q19_other_it q19_other_mx ///
 	 q20_it q20_mx q20_us recq20_it recq20_mx recq20_us q20_other_it q20_other_mx ///

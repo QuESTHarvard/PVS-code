@@ -1223,6 +1223,8 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 
 *lab def Language 11 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong" 18 "Italian", modify 
 label val language Language
+lab var language "Language"
+* Is there a better place to name this? 
 * NOTE: Edit this for future Ipsos data 
 
 /*
@@ -1439,7 +1441,8 @@ drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
 interviewer_language psu_id interviewer_gender interviewer_id ///
 time respondent_num q1_codes
 
-drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et rim_age province county sublocation rim_region_ke rim_educ ecs_id rim_gender rim_region rim_education rim_eduction
+drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et rim_age province county sublocation rim_region_ke rim_educ ecs_id rim_gender rim_region rim_education rim_eduction interviewerid_recoded
+
 
 order q*, sequential
 order respondent_serial respondent_id mode country language date ///

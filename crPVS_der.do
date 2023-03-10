@@ -65,7 +65,7 @@ lab val covid_vax_intent yes_no_doses
 
 * region
 gen region = q5
-lab val region labels7
+lab val region q5_label
 
 * patient activiation
 gen activation = 1 if q16 == 3 & q17 == 3
@@ -124,6 +124,9 @@ gen visits_tele = q28_b
 * tele_qual
 * Mia: added this new derived variable
 gen tele_qual = q28_c
+lab val tele_qual exc_poor
+* Note - maybe move above lab val 
+
 
 * visits_total
 egen visits_total = rowtotal(q23_q24 q28_a q28_b)
@@ -161,6 +164,7 @@ lab val last_wait_time lwt
 *last_sched_time
 * Mia: added this new derived variable
 gen last_sched_time = q46b
+lab val last_sched_time na_rf
 
 *last_visit_time
 gen last_visit_time = 0 if q47 <= 15
@@ -244,7 +248,7 @@ gen last_sched_rate = q48_k // Mia: added this new derived variable
 gen vignette_poor = q60
 gen vignette_good = q61
 lab val health health_mental last_qual last_skills last_supplies last_respect /// 
-last_explain last_decisions last_visit_rate last_wait_rate vignette_poor /// 
+last_explain last_decisions last_visit_rate last_wait_rate last_sched_rate vignette_poor /// 
 vignette_good exc_poor
 	   
 gen usual_quality =q22
@@ -262,11 +266,8 @@ lab val phc_women phc_child phc_chronic phc_mental exc_poor_judge
 	
 gen qual_public = q54
 gen qual_private = q55 
-gen qual_ngo_et_ke_za = q56_et_ke_za
-gen qual_ss_pe = q56_pe
-gen qual_mut_uy = q56_uy
 gen covid_manage = q59
-lab val qual_public qual_private qual_ngo_et_ke_za qual_ss_pe qual_mut_uy covid_manage exc_poor
+lab val qual_public qual_private covid_manage exc_poor
 
 **** All Very Confident to Not at all Confident scales ****
 
@@ -282,6 +283,12 @@ gen conf_opinion = q53
 lab val conf_opinion vc_nc
 
 ren (derq51 derq52) (conf_sick conf_afford)
+
+gen conf_getafford = .
+replace conf_getafford=1 if conf_sick==1 & conf_afford==1
+replace conf_getafford=0 if conf_sick==0 | conf_afford==0
+replace conf_getafford=.r if conf_sick==.r & conf_afford==.r
+lab val conf_getafford vc_nc_der
 
 **** COUNTRY SPECIFIC ****
 
@@ -461,7 +468,7 @@ recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 901
 		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 13019 13020 ///
 		   12005 12006 12007 = 1 "Secondary (or higher)") ///
-		   (.a = .a "NA") (3995 11995 12995 13995 .r = .r "Refused"), gen(last_type_lvl)
+		   (.a = .a "NA") (3995 9995 11995 12995 13995 .r = .r "Refused"), gen(last_type_lvl)
 		      
 * last_type - ownership and level
 gen last_type = . 
@@ -493,7 +500,7 @@ recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 9
 * income
 * Note - will update this grouping based on income data 
 * Mia: add "No income" to the first group
-recode q63 (5001 5002 3009 3010 9015 9016 9017 902 2039 2040 2048 7031 7032 7038 10049 10050 10061 11001 11002 14001 14002 13001 13002 12001 12002 = 0 "No income/Lowest income") /// 
+recode q63 (5001 5002 3009 3010 9015 9016 9017 9023 2039 2040 2048 7031 7032 7038  10049 10050 10061 11001 11002 14001 14002 13001 13002 12001 12002 = 0 "No income/Lowest income") /// 
 		   (5003 5004 5005 3011 3012 9018 9019 9020 2041 2042 2043 7033 7034 7035 10051 10052 10053 11003 11004 11005 14003 14004 14005 13003 12003 = 1 "Middle income") /// 
 		   (5006 5007 3013 3014 9021 9022 2044 2045 7036 7037 10054 10055 11006 11007 14006 14007 13004 13005 12004 12005 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
@@ -537,10 +544,16 @@ recode visits (144 = .)
 * 2 values in US recoded, 1 in Italy 
 replace visits = . if visits > 60 & visits < .
 
+*** New country var ***
+recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
+				(2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (11 = 8 "Lao PDR") ///
+				(14 = 9 "Italy") (12 = 10 "United States"), gen(country_reg)
+lab var country_reg "Country (ordered by region)"
+
 
 **** Order Variables ****
 		   
-order respondent_serial respondent_id country language date /// 
+order respondent_serial respondent_id country country_reg language date /// 
 	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
 	  insured insur_type education health health_mental health_chronic ///
 	  ever_covid covid_confirmed covid_vax covid_vax_intent activation ///
@@ -553,8 +566,8 @@ order respondent_serial respondent_id country language date ///
 	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
-	  conf_afford conf_opinion qual_public qual_private qual_ngo_et_ke_za qual_ss_pe ///
-	  qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
+	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
+	  system_outlook system_reform covid_manage vignette_poor /// 
 	  vignette_good minority income q1 q2 q3 q3a q4 q5 q5_other q6 q6_it q6_la q6_za q7 ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q14_la q15 q15_la q16 q17 q18 ///
 	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_mx q19_co_pe q19_uy q19_other ///
@@ -640,10 +653,7 @@ lab var	conf_sick "Confidence in receiving good quality healthcare if became ver
 lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (Q52)"
 lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q53)"
 lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (Q54)"
-lab var	qual_private "Overall quality rating of private healthcare system in country (Q55)"
-lab var qual_ss_pe "PE only: Overall quality rating of social security system in country (Q56)"
-lab var qual_mut_uy "UY only: Overall quality rating of mutual healthcare system in country (Q56)"
-lab var qual_ngo_et_ke_za "KE/ET/ZA only: Overall quality rating of NGO healthcare system in country (Q56)"  
+lab var	qual_private "Overall quality rating of private healthcare system in country (Q55)" 
 lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q57)"
 lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q58)" 
 lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q59)" 
@@ -651,6 +661,11 @@ lab var	vignette_poor "Rating of vignette in Q60 (poor care)"
 lab var	vignette_good "Rating of vignette in Q61 (good care)"
 lab var	minority "Minority group (based on native language, ethnicity or race) (Q62)"
 lab var	income "Income group (Q63)"
+lab var tele_qual "Overall quality of last telemedicine visit (Q28C)"
+lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q46b)"
+lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q48K)"
+lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q51/Q52)"
+
 
 
 **************************** Save data *****************************
