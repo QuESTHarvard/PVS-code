@@ -189,6 +189,17 @@ gen country = 11
 gen mode = 1
 gen q56 = .a
 
+* Q23/Q24 mid-point var 
+gen q23_q24 = q23 
+recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 1
+recode q23_q24 (.r = 7) (.d = 7) if q24 == 2
+recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
+recode q23_q24 (.d = .r) if q24 == .r // Mia: added this line
+
+*------------------------------------------------------------------------------*
+
+* Country-specific values and value labels 
+
 *** Mia changed this part ***
 gen reclanguage = country*1000 +language
 gen recq5 = country*1000 + q5  
@@ -246,20 +257,11 @@ foreach q in q4 q5 q8 q44 q62 q63{
 
 label define q62_label 11995 "LA: Other", add
 label define q44_label 11995 "LA: Other", add
-*****************************
 
-* Q23/Q24 mid-point var 
-gen q23_q24 = q23 
-recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 1
-recode q23_q24 (.r = 7) (.d = 7) if q24 == 2
-recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
-recode q23_q24 (.d = .r) if q24 == .r // Mia: added this line
 
 *------------------------------------------------------------------------------*
 
 * Refused values :recoded refusal and don't know values from raw data in different file 
-
-*------------------------------------------------------------------------------*
 
 *------------------------------------------------------------------------------*
 
@@ -338,7 +340,6 @@ recode q43 recq44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q4
 */
 *****************************
 
-
 *------------------------------------------------------------------------------*
 
 * Recode missing values to NA for questions respondents would not have been asked 
@@ -408,7 +409,6 @@ recode q47 (. = .r) if q47_refused==1 // Mia: changed the variable name to q47_m
 recode q46_refused (. = 0) if q46 != .
 recode q47_refused (. = 0) if q47 != .
 *****************************
-
 
 *Q43/Q44
 recode q43 (. = .a) if recq44 != 1
