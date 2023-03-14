@@ -1365,7 +1365,7 @@ lab var q51 "Q51. How confident are you that you'd get good healthcare if you we
 lab var q52 "Q52. How confident are you that you'd be able to afford the care you requiered?"
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
-lab var q55 "Q55. How would you rate the quality of private for-profit healthcare?"
+lab var q55 "Q55. How would you rate the quality of private healthcare?"
 lab var q56a_mx "Q56a. MX only: How would you rate the quality of services provided by IMSS?"
 lab var q56b_mx "Q56b. MX only: How would you rate the quality of services...IMSS BIENESTAR?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"

@@ -5,7 +5,7 @@
 ************************************* South Korea ************************************
 
 * Import data 
-use "$data/South Korea/raw data/PVS_SK_raw.dta", clear
+import excel using "$data/South Korea/raw data/DATA_Peoples Voice Survey_Mar13.xlsx", firstrow clear
 
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
@@ -16,21 +16,25 @@ use "$data/South Korea/raw data/PVS_SK_raw.dta", clear
 * NOTE: q4 and q5 are switched
 ren Q4 q5
 ren Q5 q4
-* NOTE: Q55 is all missing, I think it may be Q56 may be Q55
+* NOTE: q56 will be q55, and then no q56
+* No for-profit system in Korea, so private system of interest is private non-profit 
+ren Q56 q55
+drop Q55
 
 rename *, lower 
 ren idx respondent_serial
-ren time_diff time
-* Note: need to fix this time var. Is it interview length? 
-* Is there no date var? 
-
+format time_diff %tcHH:MM:SS
+gen int_length = (hh(time_diff)*60 + mm(time_diff) + ss(time_diff)/60) 
+gen date = startdate
+format date %tdD_M_CY
+gen time = startdate
+format time 
+* NOTE: Mia, can you help me fix date/time to merge with other countries? 
 * Note: no interview_id because all online
 
-* CAWI (web interface) is 3 in mode
 ren q6 q6_kr 
 ren q7 q7_kr
 ren q19 q19_kr
-* maybe combine with PE/CO? 
 ren tq21_8 q21_other 
 ren tq19_4 q19_other
 ren q25a q25_a
@@ -72,7 +76,7 @@ ren q50_4 q50_d
 
 * Drop unused or other variables 
 drop agree q0 q6a qa qa_5 qb qc qd qe qf p0 q46b_1 q46b_2 q46b_3 q47_1 q47_2 ///
-     q46c_1 q46c_2
+     q46c_1 q46c_2 startdate time_diff agree 
 	 
 	 
 *------------------------------------------------------------------------------*
@@ -96,16 +100,30 @@ recode q1 q2 q3 q4 q5 q6_kr q7_kr q8 q9 q10 q11 q12 ///
 *------------------------------------------------------------------------------*
 
 * Generate variables
+
 gen respondent_id = "KR" + string(respondent_serial)
 gen country=15
 lab def country 15 "Republic of Korea" 
 lab val country country
 gen mode=3
+* CAWI (web interface) is 3 in mode
 lab def mode 3 "CAWI"
 lab val mode mode
 gen language=1501
 lab define lang 1501 "Korean" 
 lab val language lang
+
+* Q23/Q24 mid-point var 
+gen q23_q24 = q23 
+recode q23_q24 (.r = 0) (.d = 0) if q24 == 1
+recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 2
+recode q23_q24 (.r = 7) (.d = 7) if q24 == 3
+recode q23_q24 (.r = 10) (.d = 10) if q24 == 4
+recode q23_q24 (.d = .r) if q24 == .r 
+
+*------------------------------------------------------------------------------*
+
+* Country-specific values and value labels 
 
 * Country-specific values 
 gen recq4 = country*1000 + q4
@@ -119,21 +137,32 @@ replace recq63 = .r if q63== .r
 gen recq66 = country*1000 + q66
 replace recq66 = .r if q66== .r
 
-* Q23/Q24 mid-point var 
-gen q23_q24 = q23 
-recode q23_q24 (.r = 0) (.d = 0) if q24 == 1
-recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 2
-recode q23_q24 (.r = 7) (.d = 7) if q24 == 3
-recode q23_q24 (.r = 10) (.d = 10) if q24 == 4
-recode q23_q24 (.d = .r) if q24 == .r 
+lab def q4 15001 "KR: Dong" 15002 "KR: Eup/Myeon"
+lab val recq4 q4
 
-*------------------------------------------------------------------------------*
+lab def q5 15001 "KR: Seoul" 15002 "KR: Busan" 15003 "KR: Daegu" 15004 "KR: Incheon" ///
+		   15005 "KR: Gwangju" 15006 "KR: Daejeon" 15007 "KR: Ulsan" 15008 ///
+		   "KR: Sejong" 15009 "KR: Gyeonggi-do" 15010 "KR: Gangwon-do" ///
+		   15011 "KR: Chungcheongbuk-do" 15012 "KR: Chungcheongnam-do" ///
+		   15013 "KR: Jeollabuk-do" 15014 "KR: Jeollanam-do" 15015 ///
+		   "KR: Gyeongsangbuk-do" 15016 "KR: Gyeongsangnam-do" 15017 "KR: Jeju-do"
+lab val recq5 q5 
 
-* Value labels 
+* Note: For q6_kr, "4" is "Difficult to answer"
+recode q6_kr (4 = .r)
+lab def q6_kr 1 "National Health Insurance" 2 "Medical benefit" ///
+			  3 "Not receiving any benefit health coverage" .r "Refused"
+lab val q6_kr q6_kr
 
-lab def q19_43 1 "KR: Public" 2 "KR: Private (for profit)" ///
-			   3 "KR: Private (non-profit organization/religion related)" ///
-			   4 "KR: Other" .a "NA" .r "Refused"
+recode q7_kr (1 = 1 "Yes") (2 = 0 "No"), pre(rec) label(yes_no)
+
+lab def q8 15002 "KR: Elementary school" 15003 "KR: Middle school" 15004 "KR: High school" ///
+		   15005 "KR: College" 15006 "KR: University" 15007 "KR: Graduate school or higher"
+lab val recq8 q8
+
+lab def q19_43 1 "Public" 2 "Private (for profit)" ///
+			   3 "Private (non-profit organization/religion related)" ///
+			   4 "Other" .a "NA" .r "Refused"
 			   			   
 lab	val q19_kr q43_kr q19_43
 
@@ -151,8 +180,11 @@ lab def q63 15001 "KR: <50(10,000KW)" 15002 "KR:≥50 and <100(10,000KW)" ///
 				 .r"Refused"
 lab val recq63 q63
 
-* q4, q5, q6_kr, q7_kr, q8, 
-*q21, q42, q45, q49, q58, q66 
+lab def q66 15001 "KR: Democratic Party of Korea" 15002 "KR: People Power Party" ///
+			15003 "KR: Justice Party" 15004 "KR: Others" 15005 "KR: Did not vote" .r "Refused"
+lab val recq66 q66 
+
+*q21, q42, q45, q49, q58
 
 *------------------------------------------------------------------------------*
 * Check for other implausible values 
@@ -228,7 +260,7 @@ recode q39 q40 ///
 
 * All Excellent to Poor scales
 
-recode q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 q55 q56 q59 q60 q61 ///
+recode q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 q55 q59 q60 q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(exc_poor)
@@ -305,10 +337,10 @@ lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q46b q47 na_rf
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
 
-drop q4 q5 q8 q20 q44 q62 q63 q66 q11 q12 q18 q13 q25_a q26 q29 q41 q30 q31 ///
+drop q4 q5 q7 q8 q20 q44 q62 q63 q66 q11 q12 q18 q13 q25_a q26 q29 q41 q30 q31 ///
 	 q32 q33 q34 q35 q36 q38 q39 q40 q46a q9 q10 q28_c q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q48_k q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a q50_b ///
-	 q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q56 q57
+	 q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q55 q57
 
 ren rec* *
  
@@ -400,8 +432,7 @@ lab var q51 "Q51. How confident are you that you'd get good healthcare if you we
 lab var q52 "Q52. How confident are you that you'd be able to afford the care you requiered?"
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
-lab var q55 "Q55. How would you rate the quality of private for-profit healthcare?"
-lab var q56 "Q56. How would you rate the quality of the NGO or faith-based healthcare?"
+lab var q55 "Q55. How would you rate the quality of private healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
