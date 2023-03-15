@@ -14,27 +14,36 @@ use "/Users/shalomsabwa/Downloads/Re_ PVS Mendoza Links/PVS_Mendoza_Data_23.01.2
 
 ren LanguageID Language
 
-*what is the int_length var?
+**date var generate from 3 vars: Month,Day,Year
+
+**what is the int_length var?
 *ren P46_Minutos int_length
+
+*mode = CATI?
 
 ren pond weight
 ren P1 q1
 ren SampleFields_SampEDAD q2
 
-*2 gender vars?
+**2 gender vars?
 *ren P3_A q3
 *ren SampleFields_SampSEXO
 
-*Argentina specific: "Are you a man or woman?"
-*ren P3_B
+**Argentina specific: "Are you a man or woman?" - generate new country specific var?
 
-*2 "area" vars
+
+**2 "area" vars
 *ren P4 q4
 *ren SampleFields_SampZONAP3A
 
-*2 vars for q5
+**2 vars for q5
 *ren P5 q5
 *ren SampleFieldls_SampPROVINCIA_DS q5
+
+* combine all q7
+recode q46b_1 q46b_2 q46b_3 (. = 0) if q46b_1 < . | q46b_2 < . |q46b_3< .
+gen q46b = (q46b_1/24) + q46b_2 + (q46b_3*7)
+
 
 ren P8 q8
 ren P9 q9
@@ -89,10 +98,34 @@ ren P48_3_C q48_c
 ren P48_4_C q48_d
 ren P48_5_C q48_e
 ren P48_6_C q48_f
-ren 
+ren P48_7_C q48_g
+ren P48_8_C q48_h
+ren P48_9_C q48_i
+ren P48_10_C q48_j
+ren P49 q49
+ren P50_1_C q50_a
+ren P50_2_C q50_b
+ren P50_3_C q50_c
+ren P50_4_C q50_d
+ren P51 q51
+ren P52 q52
+ren P53 q53
+ren P54 q54
+ren P55 q55
+ren P56 q56
+ren P57 q57
+ren P58 q58
+ren P59 q59
+ren P60 q60
+ren P61 q61
+ren P63 q63
+ren P64 q64
+ren P65 q65
 
 
 
+*for Q20_B:
+gen q44_other = q44_other_it + q44_other_mx + q44_other_us
 
 
 
