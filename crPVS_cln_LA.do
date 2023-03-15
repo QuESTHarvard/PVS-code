@@ -267,38 +267,33 @@ label define q44_label 11995 "LA: Other", add
 
 * Check for other implausible values 
 
+* Q1/Q2
 list q1 q2 if q2 == 0 | q1 < 18
 
+* Q25
 list q23 q24 q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
 replace q25_b = . if q25_b > q23_q24 & q25_b < .
 * Note: q23/q24 was supposed to be inclusive of COVID, so these are errors.
 
+* Q26/Q27
 list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
 * One potentially implausible value, where number of facilities is higher than number of visits
 recode q27 (9 = 8) if q23_q24 == 8 & q27 == 9
 
 list q26 q27 country if q27 == 0 | q27 == 1
 
-* Mia: added this check even though it looks fine for this dataset
 list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
-
 * This is okay 
 
-*** Mia changed this part ***
-* list if they say "I did not get healthcare in past 12 months"
-* but they have visit values in past 12 months 
+*Q39/Q40 
 egen visits_total = rowtotal(q23_q24 q28_a q28_b)
 
-* list if they got skipped but they have visit values in past 12 months 
 list q23_q24 q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
 							  | q40 == .a & visits_total > 0 & visits_total < .
 * Recoding Q39 and Q40 to refused if it is .a
 * but they have visit values in past 12 months 
 recode q39 q40 (.a = .r) if visits_total > 0 & visits_total < .
-* Mia: 85 changes made to q39; 86 changes made to q40
-
-* list if they chose other than "I did not get healthcare in past 12 months"
-* but visits_total == 0 
+* 85 changes made to q39; 86 changes made to q40
 
 list q23_q24 q39 q40 country if q39 != .a & visits_total == 0 /// 
 							  | q40 != .a & visits_total == 0
@@ -306,7 +301,7 @@ list q23_q24 q39 q40 country if q39 != .a & visits_total == 0 ///
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
 * but they have no visit values in past 12 months 
 recode q39 q40 (1 = .a) (2 = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
-* Mia: 114 changes made to q39; 116 changes made to q40
+* Note: 114 changes made to q39; 116 changes made to q40
 
 drop visits_total
 * did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
