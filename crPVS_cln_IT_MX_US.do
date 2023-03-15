@@ -496,7 +496,7 @@ recode q5_us q6 q7_us q8_us q20_us q44_us q62b_us q63_us q66a_us q66b_us (. = .a
 
 * All Yes/No questions
 
-recode q6 q11 q12 q13 q18 q25_a q26 q29 q41 ///
+recode q6 q11 q12 q13 q18 q25_a q26 q29 q41 q62_mx ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 
@@ -616,52 +616,6 @@ recode mode (2 = 1) (1 = 4)
 lab def mode 1 "CATI" 4 "CAWI"
 lab val mode mode
 
-*** Mia changed this part ***
-/*
-* Language
-recode lang (9 = 1 "English") (10 2058 = 11 "Spanish") (16 = 18 "Italian"), ///
-	   gen(language) label(language)
-
-
-* Q4: Values above 20 available 
-gen recq4 = q4 + 30
-lab def q4 31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area" .r "Refused"
-lab val recq4 q4 
-recode recq4 (. = .r) if q4 == .r 
-*/
-
-/*
-* Q5
-recode q5_it (1 = 220 "Sicilia") ///
-			 (2 = 221 "Campania") ///
-			 (3 = 222 "Molise") ///
-			 (4 = 223 "Calabria") ///
-			 (5 = 224 "Basilicata") ///
-			 (6 = 225 "Puglia") ///
-			 (7 = 226 "Sardegna") ///
-			 (8 = 227 "Liguria") ///
-			 (10 = 229 "Lazio") ///
-			 (11 = 230 "Piemonte") ///
-			 (12 = 231 "Abruzzo") ///
-			 (13 = 232 "Toscana") ///
-			 (14 = 233 "Umbria") ///
-			 (15 = 234 "Marche") ///
-			 (16 = 235 "Friuli-Venezia Giulia") ///
-			 (17 = 236 "Provincia Autonoma Trento") ///
-			 (18 = 237 "Lombardia") ///
-			 (19 = 238 "Emilia-Romagna") ///
-			 (20 = 239 "Veneto") ///
-			 (21 = 240 "Provincia Autonoma Bolzano/Bozen") ///
-			 (997 = 995 "Other"), pre(rec) label(q5)
-			 replace recq5_it = 221 if q5_other=="CAMPAGNIA" |	q5_other=="PROVINCA DI SALERNO"
-			 replace recq5_it = 223 if q5_other=="CALABRIA" 
-			 replace recq5_it = 225 if q5_other=="PULIA" 
-			 replace recq5_it = 230 if q5_other=="PIEMONTE"	|	q5_other=="TORINO"	|	q5_other=="piemonte"
-			 replace recq5_it = 233 if q5_other=="umbria" 
-			 replace recq5_it = 234 if q5_other=="ASCOLIPICENO"
-			 replace recq5_it = 237 if q5_other=="lombardia"
-			 replace recq5_it = 239 if q5_other=="venzia"
-*/
 
 clonevar recq5_it = q5_it
 replace recq5_it = 2 if q5_other_it=="CAMPAGNIA" |	q5_other_it=="PROVINCA DI SALERNO"
@@ -672,96 +626,6 @@ replace recq5_it = 14 if q5_other_it=="umbria"
 replace recq5_it = 15 if q5_other_it=="ASCOLIPICENO"
 replace recq5_it = 18 if q5_other_it=="lombardia"
 replace recq5_it = 20 if q5_other_it=="venzia"
-
-/*		 
-recode q5_mx (1 = 241 "Chiapas") ///
-			 (2 = 242 "Guerrero") ///
-			 (3 = 243 "Veracruz de Ignacio de la Llave") ///
-			 (4 = 244 "Oaxaca") ///
-			 (5 = 245 "Tlaxcala") ///
-			 (6 = 246 "Puebla") ///
-			 (7 = 247 "Hidalgo") ///
-			 (8 = 248 "Tabasco") ///
-			 (9 = 249 "Morelos") ///
-			 (10 = 250 "Zacatecas") ///
-			 (11 = 251 "Quintana Roo") ///
-			 (12 = 252 "Michoacán de Ocampo") ///
-			 (13 = 253 "Yucatán") ///
-			 (14 = 254 "Campeche") ///
-			 (15 = 255 "San Luis Potosí") ///
-			 (16 = 256 "Guanajuato") ///
-			 (17 = 257 "México") ///
-			 (18 = 258 "Tamaulipas") ///
-			 (19 = 259 "Durango") ///
-			 (20 = 260 "Nayarit") ///
-			 (21 = 261 "Coahuila de Zaragoza") /// 
-			 (22 = 262 "Jalisco") ///
-			 (23 = 263 "Sinaloa") ///
-			 (24 = 264 "Colima") ///
-			 (25 = 265 "Aguascalientes") ///
-			 (26 = 266 "Chihuahua") ///
-			 (27 = 267 "Querétaro") ///
-			 (28 = 268 "Sonora") ///
-			 (29 = 269 "Baja California Sur") ///
-			 (30 = 270 "Ciudad de México") ///
-			 (31 = 271 "Baja California") ///
-			 (32 = 272 "Nuevo León"), pre(rec) label(q5)
-
-			 			 
-recode q5_us (1 = 273 "Alabama") ///
-			 (2 = 274 "Alaska") ///
-			 (3 = 275 "Arizona") ///
-			 (4 = 276 "Arkansas") ///
-			 (5 = 277 "California") ///
-			 (6 = 278 "Colorado") ///
-			 (7 = 279 "Connecticut") ///
-			 (8 = 280 "Delaware") ///
-			 (9 = 281 "District of Columbia") ///
-			 (10 = 282 "Florida") ///
-			 (11 = 283 "Georgia") ///
-			 (12 = 284 "Hawaii") ///
-			 (13 = 285 "Idaho") ///
-			 (14 = 286 "Illinois") ///
-			 (15 = 287 "Indiana") ///
-			 (16 = 288 "Iowa") ///
-			 (17 = 289 "Kansas") ///
-			 (18 = 290 "Kentucky") ///
-			 (19 = 291 "Louisiana") ///
-			 (20 = 292 "Maine") ///
-			 (21 = 293 "Maryland") /// 
-			 (22 = 294 "Massachusetts") ///
-			 (23 = 295 "Michigan") ///
-			 (24 = 296 "Minnesota") ///
-			 (25 = 297 "Mississippi") ///
-			 (26 = 298 "Missouri") ///
-			 (27 = 299 "Montana") ///
-			 (28 = 300 "Nebraska") ///
-			 (29 = 301 "Nevada") ///
-			 (30 = 302 "New Hampshire") ///
-			 (31 = 303 "New Jersey") ///
-			 (32 = 304 "New Mexico") ///
-			 (33 = 305 "New York") ///
-			 (34 = 306 "North Carolina") /// 
-			 (35 = 307 "North Dakota") ///
-			 (36 = 308 "Ohio") ///
-			 (37 = 309 "Oklahoma") ///
-			 (38 = 310 "Oregon") ///
-			 (39 = 311 "Pennsylvania") ///
-			 (40 = 312 "Rhode Island") ///
-			 (41 = 313 "South Carolina") ///
-			 (42 = 314 "South Dakota") ///
-			 (43 = 315 "Tennessee") ///
-			 (44 = 316 "Texas") ///
-			 (45 = 317 "Utah") ///
-			 (46 = 318 "Vermont") ///
-			 (47 = 319 "Virginia") ///
-			 (48 = 320 "Washington") ///
-			 (49 = 321 "West Virginia") ///
-			 (50 = 322 "Wisconsin") ///
-			 (51 = 323 "Wyoming"), pre(rec) label(q5)
-*/
-
-* Q5
 
 replace recq5_it = reccountry*1000 + recq5_it
 replace recq5_it = 14995 if recq5_it == 14997 // Mia: for now all 997 has been replaced with the answers in q5_other_it
@@ -843,7 +707,6 @@ replace recq7_us = .a if q7_us == .a
 replace recq7_us = .r if q7_us == .r
 
 gen q7 = max(recq7_it, recq7_mx, recq7_us)
-// Mia: the following two lines should have been taken care of but just double do it here to be sure
 recode q7 (. = .r) if q7_it == .r | q7_mx == .r | q7_us == .r
 recode q7 (. = .a) if q7_it == .a | q7_mx == .a | q7_us == .a // Mia: added q7_it and q7_mx
 
@@ -885,33 +748,6 @@ label val q7 q7_label
 
 * Q7_other 
 gen q7_other = q7_other_mx + q7_other_us
-
-/*			 
-* Q8: Values above 50 available 
-recode q8_it (1 = 51 "Mai frequentato la scuola o solo Nido e Scuola dell'infanzia") ///
-		(2 = 52 "Scuola primaria") ///
-		(3 = 53 "Scuola secondaria di primo grado") ///
-		(4 = 54 "Scuola secondaria di secondo grado") ///
-		(5 = 55 "Liceo, Instituto tecnico o Instituto professionale") ///
-		(6 = 56 "Universita Laurea triennale (compreso alta formazione artistica)") ///
-		(7 = 57 "Universita Laurea Magistrale o ciclo unico o Dottorato") ///
-		(.r = .r "Refused"), pre(rec) label(q8)
-
-recode q8_mx (1 = 58 "Ninguno") (2 = 59 "Primaria") ///
-		  (3 = 60 "Secundaria") ///
-		  (4 = 61 "Preparatoria o Bachillerato") ///
-		  (5 = 62 "Carrera técnica") ///
-		  (6 = 63 "Licenciatura") ///
-		  (7 = 64 "Postgrado"), pre(rec) label(q8)
-
-recode q8_us (1 = 65 "Never attended school or only kindergarten") ///
-		  (2 = 66 "Grades 1 through 8 (elementary)") ///
-		  (3 = 67 "Grades 9 through 11 (some high school)") ///
-		  (4 = 68 "Grade 12 or GED (high school graduate)") ///
-		  (5 = 69 "College 1 year to 3 years (some college or technical school)") ///
-		  (6 = 70 "College 4 years or more (college graduate)") ///
-		  , pre(rec) label(q8)
-*/
 
 * Q8
 gen recq8_it = reccountry*1000 + q8_it
@@ -967,49 +803,8 @@ lab def labels36 .a "NA" .r "Refused", modify
 
 gen q19_other = q19_other_it + q19_other_mx
 
-/*	
-* Q20 
-recode q20_it (1 = 501 "General practitioner's office") ///
-			  (2 = 502 "Outpatient clinic") ///
-			  (3 = 503 "Hospital outpatient department (doctor's office based in hospital)") ///
-			  (4 = 504 "Hospital emergency room") ///
-			  , pre(rec) label(q20) 
-
-recode q20_mx (1 = 801 "Puesto de salud") ///
-			  (2 = 802 "Clinica o unidad de medicina familiar") ///
-			  (3 = 803 "Hospital general") ///
-			  (4 = 804 "Centro Médico Nacional o Hospitales de especialidades como hospital de ginecología y obstetricia, pediatría...") ///
-			  (5 = 805 "Clínica o unidad de medicina familiar, clínica o unidad de consulta externa, módulo de medecina familiar o puesto...") ///
-			  (6 = 806 "Hospital general o regional") ///
-			  (7 = 807 "Centro médico Nacional o Hospital de especialidades") ///
-			  (8 = 808 "Brigada móvil de salud") ///
-			  (9 = 809 "Centros de salud o centro de primer contacto") ///
-			  (10 = 810 "Hospital civil, municipal, general, o regional") ///
-			  (11 = 811 "Institutos Nacionales con hospitales monotemáticos (por ejemplo, Instituto Nacional de salud mental") ///
-			  (12 = 812 "Brigada móvil de salud o unidad médica móvil") ///
-			  (13 = 813 " Unidad de salud o Unidad de Médica Rural") ///
-			  (14 = 814 "Hospital general, hospital rural o centro de atención rural obstétrica") ///
-			  (15 = 815 "Clínica o unidad de consulta externa") ///
-			  (16 = 816 "Hospital de especialidades") ///
-			  (17 = 817 "Consultorio anexo a farmacia") ///
-			  (18 = 818 "Consultorio médico privado o grupos de consultorios de especialidades de atención ambulatoria") ///
-			  (19 = 819 "Hospital general privado") ///
-			  (20 = 820 "Hospital de especialidades privado") ///
-			  (21 = 995 "Other") ///
-			  , pre(rec) label(q20) 
-
-recode q20_us (1 = 1401 "Doctor's office, clinic, or health center") ///
-			  (2 = 1402 "Urgent care clinic") ///
-			  (3 = 1403 "Free community clinic or health center (e.g., Planned Parenthood or other clinics that are free of charge...") ///
-			  (4 = 1404 "Veteran's Affairs, Military, or Indian Health Service clinic or health center") ///
-			  (5 = 1406 "Hospital emergency room") ///
-			  (6 = 1407 " Hospital outpatient department (doctor's office based in hospital)") ///
-			  (8 = 995 "Other") ///
-			  , pre(rec) label(q20) 			  
 
 * FLAG - values and value labels labels for US data change between q20_us and q44_us
-*		 I recoded above and shifted numbers to make them match 			  
-*/
 
 * Q20 
 gen recq20_it = reccountry*1000 + q20_it 
@@ -1068,50 +863,6 @@ lab def labels60 .a "NA" .r "Refused", modify
 
 gen q43_other = q43_other_it + q43_other_mx
 
-
-* Q44
-
-/*
-recode q44_it (1 = 501 "General practitioner's office") ///
-			  (2 = 502 "Outpatient clinic") ///
-			  (3 = 503 "Hospital outpatient department (doctor's office based in hospital)") ///
-			  (4 = 504 "Hospital emergency room") ///
-			  , pre(rec) label(q44) 
-
-recode q44_mx (1 = 801 "Puesto de salud") ///
-			  (2 = 802 "Clinica o unidad de medicina familiar") ///
-			  (3 = 803 "Hospital general") ///
-			  (4 = 804 "Centro Médico Nacional o Hospitales de especialidades como hospital de ginecología y obstetricia, pediatría...") ///
-			  (5 = 805 "Clínica o unidad de medicina familiar, clínica o unidad de consulta externa, módulo de medecina familiar o puesto...") ///
-			  (6 = 806 "Hospital general o regional") ///
-			  (7 = 807 "Centro médico Nacional o Hospital de especialidades") ///
-			  (8 = 808 "Brigada móvil de salud") ///
-			  (9 = 809 "Centros de salud o centro de primer contacto") ///
-			  (10 = 810 "Hospital civil, municipal, general, o regional") ///
-			  (11 = 811 "Institutos Nacionales con hospitales monotemáticos (por ejemplo, Instituto Nacional de salud mental") ///
-			  (12 = 812 "Brigada móvil de salud o unidad médica móvil") ///
-			  (13 = 813 "Unidad de salud o Unidad de Médica Rural") ///
-			  (14 = 814 "Hospital general, hospital rural o centro de atención rural obstétrica") ///
-			  (15 = 815 "Clínica o unidad de consulta externa") ///
-			  (16 = 816 "Hospital de especialidades") ///
-			  (17 = 817 "Consultorio anexo a farmacia") ///
-			  (18 = 818 "Consultorio médico privado o grupos de consultorios de especialidades de atención ambulatoria") ///
-			  (19 = 819 "Hospital general privado") ///
-			  (20 = 820 "Hospital de especialidades privado") ///
-			  (21 = 995 "Other") ///
-			  , pre(rec) label(q44) 
-
-recode q44_us (1 = 1401 "Doctor's office, clinic, or health center") ///
-			  (2 = 1402 "Urgent care clinic") ///
-			  (3 = 1403 "Free community clinic or health center (e.g., Planned Parenthood or other clinics that are free of charge...") ///
-			  (4 = 1404 "Veteran's Affairs, Military, or Indian Health Service clinic or health center") ///
-			  (5 = 1405 "Veteran's Affairs, Military, or Indian Health Service Hospital") ///
-			  (6 = 1406 "Hospital emergency room") ///
-			  (7 = 1407 "Hospital outpatient department (doctor's office based in hospital)") ///
-			  (8 = 995 "Other") ///
-			  , pre(rec) label(q44) 			  
-*/
-
 gen recq44_it = reccountry*1000 + q44_it
 gen recq44_mx = reccountry*1000 + q44_mx
 replace recq44_mx = 13995 if q44_mx == 21
@@ -1160,28 +911,7 @@ lab val q44 q44_label
 
 gen q44_other = q44_other_it + q44_other_mx + q44_other_us
 
-/*
-* Q63: Values above 107 available
 
-recode q63_it (1 = 151 "Less than 10,000 euros") (2 = 152 "10,000-15,000 euros") ///
-		  (3 = 153 "15,000-26,000 euros") ///
-		  (4 = 154 "26,000-55,000 euros") ///
-		  (5 = 155 "55,000-75,000 euros") ///
-		  (6 = 156 "75,000-120,000 euros") ///
-		  (7 = 157 "More than 120,000 euros"), pre(rec) label(q63)
-
-recode q63_mx (1 = 158 "Less than 6,500 pesos") (2 = 159 "6,500-10,000 pesos") ///
-		  (3 = 160 "10,000-15,000 pesos") ///
-		  (4 = 161 "15,000-25,000 pesos") ///
-		  (5 = 162 "More than 25,000 pesos") ///
-		  , pre(rec) label(q63)
-
-recode q63_us (1 = 163 "Less than $26,000") (2 = 164 "$26,000 to less than $36,000") ///
-		  (3 = 165 "$36,000 to less than $65,000") ///
-		  (4 = 166 "$65,000 to less than $100,000") ///
-		  (5 = 167 "$100,000 or more") ///
-		  , pre(rec) label(q63)		  
-*/
 * Q63
 
 gen recq63_it = reccountry*1000 + q63_it
@@ -1225,24 +955,47 @@ forvalues o = 1/`countryn' {
 
 lab val q63 q63_label
 
-*****************************
 
 * Q66 - combine Mexico and Italy 
 *		Keep Italy values, recode Mexico's values
-recode q66_mx (1 = 7 "MORENA") ///
-			  (2 = 8 "Partido Acción Nacional") ///
-			  (3 = 9 "Partido Revolucionario Institucional") ///
-			  (4 = 10 "Partido de la Revolución Democrática") ///
-			  (5 = 11 "Partido del Trabajo") ///
-			  (6 = 12 "Partido Verde Ecologista de México") ///
-			  (7 = 13 "Movimiento Ciudadano") ///
-			  (. = .r "Refused") (.a = .a "NA") ///
-			  , gen(recq66_mx) label(labels77)
 
-gen q66_it_mx = max(q66_it, recq66_mx)
-lab val q66_it_mx labels77		
-recode q66_it_mx (. = .r) if q66_it == .r | q66_mx == .r
-recode q66_it_mx (. = .a) if q66_it == .a | q66_mx == .a
+gen recq66_it = reccountry*1000 + q66_it
+gen recq66_mx = reccountry*1000 + q66_mx
+gen q66 = max(recq66_it, recq66_mx)
+recode q66 (. = .r) if q66_it == .r | q66_mx == .r 
+
+local l14 labels77
+local l13 labels75
+
+qui levelsof q66, local(q66level)
+forvalues o = 1/`countryn' {
+	
+	local q = `: word `o' of `countryval''
+	
+	qui elabel list `l`q''
+	local n = r(k)
+	local val = r(values)
+	local lab = r(labels)
+	local g 0
+	foreach i in `lab'{
+		local ++g
+		local gr`g' `i'
+	}
+	
+	forvalues i = 1/`n' {
+		
+		local recvalue`q' = `: word `o' of `countryval''*1000+`: word `i' of `val''
+		foreach lev in `q66level'{
+			if strmatch("`lev'", "`recvalue`q''") == 1{
+					
+				elabel define q66_label (= `: word `o' of `countryval''*1000+`: word `i' of `val'') ///
+									    (`"`: word `o' of `countrylab'': `gr`i''"'), modify		
+			}	
+		}                 
+	}
+}
+lab val q66 q66_label
+recode q66 (. = .a) if reccountry == 12
 
 * Value labels for NA/Refused for other vars
 lab def labels12 .a "NA" .r "Refused", modify 
@@ -1262,11 +1015,11 @@ drop country q7_it q7_mx q7_us recq7_mx recq7_us recq7_it q8_it q8_mx q8_us recq
 	 q20_it q20_mx q20_us recq20_it recq20_mx recq20_us q20_other_it q20_other_mx ///
 	 q20_other_us q28_c q43_other_it q43_other_mx q44_it q44_mx q44_us recq44_it ///
 	 recq44_mx recq44_us q44_other_it q44_other_mx q44_other_us q46b_refused ///
-	 q63_it q63_mx q63_us recq63_it recq63_mx recq63_us q66_it q66_mx recq66_mx ///
+	 q63_it q63_mx q63_us recq63_it recq63_mx recq63_us q66_it q66_mx recq66_it recq66_mx ///
      q6 q6_it q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
 	 q40 q46a q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q56a_mx q56b_mx q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57 
+	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q57 q62_mx
 
 ren rec* *
 
@@ -1382,7 +1135,7 @@ lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 lab var q66a_us "Q66 US only: Republican, Democrat, an Independent, or something else?"
 lab var q66b_us "Q66. US only: Do you lean more towards the Republican or Democratic Party?"
-lab var q66_it_mx "Q66. IT/MX only: Which political party did you vote for in the last election?"
+lab var q66 "Q66. Which political party did you vote for in the last election?"
 
 *------------------------------------------------------------------------------*
 

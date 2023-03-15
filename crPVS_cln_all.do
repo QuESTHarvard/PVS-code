@@ -1139,11 +1139,6 @@ save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
 
 ********************************* Append data *********************************
 
-*u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
-*append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
-*append using "$data_mc/02 recoded data/pvs_la.dta"
-*append using "$data_mc/02 recoded data/pvs_it_mx_us.dta"
-
 u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
 
 tempfile label1
@@ -1170,11 +1165,17 @@ append using "$data_mc/02 recoded data/pvs_it_mx_us.dta"
 
 qui do `label3'
 
-* Note: need to check append 
-* Note: Fix respondent_serial 
+tempfile label4
+label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label q66_label using `label4'
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label q66_label
+
+append using "$data_mc/02 recoded data/pvs_kr.dta"
+
+qui do `label4'
+
 
 * Country
-lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy", modify
+lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea", modify
 
 * Kenya/Ethiopia variables 
 ren q19 q19_et_ke_za
@@ -1189,7 +1190,7 @@ lab var q56_et_ke_za "Q56. ET/KE/ZA only: How would you rate quality of NGO/fait
 recode mode (3 = 1) (4 = 3)
 lab def mode 1 "CATI" 2 "F2F" 3 "CAWI", replace
 label val mode mode
-lab var mode "Mode of interview (CATI, CAWI, or F2F)"
+lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 
 * Country-specific skip patterns - check this 
 recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
@@ -1197,196 +1198,32 @@ recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 |
 recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
-recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 // Mia: changed to q19_co_pe q43_co_pe
+recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
 recode q6_za q37_za (. = .a) if country != 9
-* Mia: added q14_la q15_la
 recode q6_la q14_la q15_la q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
 		(. = .a) if country != 11
 recode q6 q18 q20 q64 q65 (. = .a) if country == 11
 recode q6_it q19_it q43_it (. = .a) if country != 14
 recode q19_mx q43_mx q56a_mx q56b_mx q62_mx (. = .a) if country != 13
 recode q62a_us q62b_us q66a_us q66b_us (. = .a) if country != 12
-* Mia: changed q28_c to q28_c_it_mx_us; 48_k to q48_k_it_mx_us; q46b_refused to q46b_refused_it_mx_us
 recode q28_c q46a q46b q46b_refused q48_k ///
 	   (. = .a) if country != 12 | country != 13 | country != 14	   
-* Mia: q66_it_mx has it own line of codes since country == 12 should be skipped too
-recode q66_it_mx (. = .a) if country != 13 | country != 14
+recode q66 (. = .a) if country != 13 | country != 14 | country != 15
+recode q6_kr q7_kr q19_kr q43_kr (. = .a) if country != 15
+recode q6 q7 (. = .a) if country == 15
+
 	   
 * Country-specific value labels -edit for ssrs-
-*** Mia added this part ***
 lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
 				 5001 "KE: English" 5002 "KE: Swahili" 7011 "PE: Spanish" 9001 "ZA: English" ///
 				 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA: Afrikaans" ///
 				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
 				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
-				 13058 "MX: Spanish" 14016 "IT: Italian"
+				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean"
 
-*lab def Language 11 "Spanish" 15 "Lao" 16 "Khmou" 17 "Hmong" 18 "Italian", modify 
-label val language Language
+lab val language Language
 lab var language "Language"
-* Is there a better place to name this? 
-* NOTE: Edit this for future Ipsos data 
 
-/*
-*Q4
-lab def labels6 18 "City" 19 "Rural area"  20 "Suburb" .r "Refused" /// LA
-				31 "City" 32 "Suburb of city" 33 "Small town" 34 "Rural area" /// IT, MX, US
-				, modify 
-
-*Q5 
-
-lab def labels7 201 "Attapeu" 202 "Bokeo" 203 "Bolikhamxai" 204 "Champasak" /// LA
-				205 "Houaphan" 206 "Khammouan" 207 "Louangnamtha" 208 "Louangphabang" ///
-				209 "Oudoumxai" 210 "Phongsali" 211 "Salavan" 212 "Savannakhet" /// IT
-				213 "Vientiane_capital" 214 "Vientiane_province" 215 "Xainyabouli" ///
-				216 "Xaisoumboun" 217 "Xekong" 218 "Xiangkhouang" ///
-				220 "Sicilia" 221 "Campania" 222 "Molise" 223 "Calabria" 224 "Basilicata" ///
-			    225 "Puglia" 226 "Sardegna" 227 "Liguria" 229 "Lazio" 230 "Piemonte" ///
-			    231 "Abruzzo" 232 "Toscana" 233 "Umbria" 234 "Marche" 235 "Friuli-Venezia Giulia" ///
-			    236 "Provincia Autonoma Trento" 237 "Lombardia" 238 "Emilia-Romagna" ///
-			    239 "Veneto" 240 "Provincia Autonoma Bolzano/Bozen" ///
-				241 "Chiapas" 242 "Guerrero" 243 "Veracruz de Ignacio de la Llave" /// ME
-			    244 "Oaxaca" 245 "Tlaxcala" 246 "Puebla" 247 "Hidalgo" 248 "Tabasco" ///
-			    249 "Morelos" 250 "Zacatecas" 251 "Quintana Roo" 252 "Michoacán de Ocampo" ///
-			    253 "Yucatán" 254 "Campeche" 255 "San Luis Potosí" 256 "Guanajuato" ///
-			    257 "México" 258 "Tamaulipas" 259 "Durango" 260 "Nayarit" ///
-				261 "Coahuila de Zaragoza" 262 "Jalisco" 263 "Sinaloa" 264 "Colima" ///
-			    265 "Aguascalientes" 266 "Chihuahua" 267 "Querétaro" 268 "Sonora" ///
-			    269 "Baja California Sur" 270 "Ciudad de México" 271 "Baja California" ///
-			    272 "Nuevo León" 273 "Alabama" 274 "Alaska" 275 "Arizona" /// US
-				276 "Arkansas" 5 = 277 "California" 278 "Colorado" 279 "Connecticut" ///
-			    280 "Delaware" 281 "District of Columbia" 282 "Florida" 283 "Georgia" ///
-			    284 "Hawaii" 285 "Idaho" 286 "Illinois" 287 "Indiana" 288 "Iowa" ///
-			    289 "Kansas" 290 "Kentucky" 291 "Louisiana" 292 "Maine" 293 "Maryland" /// 
-			    294 "Massachusetts" 295 "Michigan" 296 "Minnesota" 297 "Mississippi" ///
-			    298 "Missouri" 299 "Montana" 300 "Nebraska" 301 "Nevada" 302 "New Hampshire" ///
-			    303 "New Jersey" 304 "New Mexico" 305 "New York" 306 "North Carolina" ///
-				307 "North Dakota" 308 "Ohio" 309 "Oklahoma" 310 "Oregon" 311 "Pennsylvania" ///
-			    312 "Rhode Island" 313 "South Carolina" 314 "South Dakota" 315 "Tennessee" ///
-			    316 "Texas" 317 "Utah" 318 "Vermont" 319 "Virginia" 320 "Washington" ///
-			    321 "West Virginia" 322 "Wisconsin" 323 "Wyoming" ///
-				995 "Other" .r "Refused", modify
-
-
-*Q7 
-lab def labels9 29 "Only public" 30 "Additional private insurance" /// LA
-				31 "Only public insurance" 32 "Additional private insurance" /// IT
-				33 "Seguro Social (IMSS)" 34 "ISSSTE/ISSSTE Estatal" /// MX
-				35 "IMSS-Bienestar (antes Seguro Popular y INSABI)" ///
-				36 "PEMEX, Defensa o Marina" 37 "Seguro Médico Privado" ///
-				38 "Health insurance through your or someone else's employer or union" /// US
-				39 "Medicare, a government plan that pays health bills for people aged 65 or older and for some disabled people" ///
-				40 "Medicaid or any other state medical assistance plan for those with lower incomes" ///
-				41 "Health insurance plan that you or another family member bought on your own (including Obamacare)" ///
-		        42 " TRICARE (formerly CHAMPUS), VA, or military" ///
-				995 "Other" .a "NA" .r "Refused", modify
-
-*Q8 
-lab def labels10 45 "None" 46 "Primary (primary 1-5 years)" /// LA 
-					  47 "Lower secondary (1-4 years)" /// 
-					  48 "Upper secondary (5-7 years)" ///
-					  49 "Post-secondary and non-tertiary (13-15 years)" ///
-					  50 "Tertiary (Associates or higher)" ///
-					  51 "Mai frequentato la scuola o solo Nido e Scuola dell'infanzia" /// IT
-					  52 "Scuola primaria" ///
-					  53 "Scuola secondaria di primo grado" ///
-					  54 "Scuola secondaria di secondo grado" ///
-					  55 "Liceo, Instituto tecnico o Instituto professionale" ///
-					  56 "Universita Laurea triennale (compreso alta formazione artistica)" ///
-					  57 "Universita Laurea Magistrale o ciclo unico o Dottorato" ///
-					  58 "Ninguno" /// MX
-					  59 "Primaria" ///
-					  60 "Secundaria" ///
-					  61 "Preparatoria o Bachillerato" ///
-					  62 "Carrera técnica" ///
-					  63 "Licenciatura" ///
-					  64 "Postgrado" ///
-					  65 "Never attended school or only kindergarten" /// US 
-					  66 "Grades 1 through 8 (elementary)" ///
-					  67 "Grades 9 through 11 (some high school)" ///
-					  68 "Grade 12 or GED (high school graduate)" ///
-					  69 "College 1 year to 3 years (some college or technical school)" ///
-					  70 "College 4 years or more (college graduate)" ///
-					  .r "Refused" , modify
-					  
-
-*Q20 / Q44 
-* Add LA, IT, US, MX and fix label issues on append
-lab def labels25 23 "NGO/Faith-based hospital" 38 "Mobile clinic" /// Issue on append 
-				 201 "Hospital" 202 "Health center" 203 "Clinic" /// LA
-				 501 "General practitioner's office" /// Italy 
-			     502 "Outpatient clinic" ///
-				 503 "Hospital outpatient department (doctor's office based in hospital)" ///
-				 504 "Hospital emergency room" ///
-				 801 "Puesto de salud" ///
-			     802 "Clinica o unidad de medicina familiar" ///
-			     803 "Hospital general" ///
-			     804 "Centro Médico Nacional o Hospitales de especialidades como hospital de ginecología y obstetricia, pediatría..." ///
-			     805 "Clínica o unidad de medicina familiar, clínica o unidad de consulta externa, módulo de medecina familiar o puesto..." ///
-			     806 "Hospital general o regional" ///
-			     807 "Centro médico Nacional o Hospital de especialidades" ///
-			     808 "Brigada móvil de salud" ///
-			     809 "Centros de salud o centro de primer contacto" ///
-			     810 "Hospital civil, municipal, general, o regional" ///
-			     811 "Institutos Nacionales con hospitales monotemáticos (por ejemplo, Instituto Nacional de salud mental" ///
-			     812 "Brigada móvil de salud o unidad médica móvil" ///
-			     813 " Unidad de salud o Unidad de Médica Rural" ///
-			     814 "Hospital general, hospital rural o centro de atención rural obstétrica" ///
-			     815 "Clínica o unidad de consulta externa" ///
-			     816 "Hospital de especialidades" ///
-			     817 "Consultorio anexo a farmacia" ///
-			     818 "Consultorio médico privado o grupos de consultorios de especialidades de atención ambulatoria" ///
-			     819 "Hospital general privado" ///
-			     820 "Hospital de especialidades privado" ///
-				 1401 "Doctor's office, clinic, or health center" ///
-			     1402 "Urgent care clinic" ///
-			     1403 "Free community clinic or health center (e.g., Planned Parenthood or other clinics that are free of charge..." ///
-			     1404 "Veteran's Affairs, Military, or Indian Health Service clinic or health center" ///
-			     1405 "Veteran's Affairs, Military, or Indian Health Service Hospital" ///
-			     1406 "Hospital emergency room" ///
-			     1407 "Hospital outpatient department (doctor's office based in hospital)" ///
-				 .a "NA" .r "Refused" ///
-				 995 "Other", modify
-
-					  
-*Q62 -edit for ssrs-
-recode q62 (998 = 995)
-lab def labels51 21 "Oromiffa" 22 "Amharegna" 23 "Somaligna" 24 "Tigrigna" 25 "Sidamigna" ///
-				 26 "Wolaytigna" 27 "Gurage" 28 "Afar" 29 "Hadiyya" 30 "Gamogna" ///
-				 31 "Gedeo" 32 "Kafa" 101 "Lao" 102 "Hmong" 103 "Kmou"  ///
-				 .a "NA" .r "Refused", modify
-
-*Q63
-lab def labels52 9 "Less than 1000 Eth.Birr" 10 "1000 - 3000  Eth.Birr" /// ET
-			     11 "3001 – 5000 Eth.Birr" 12 "5001 – 10000 Eth.Birr" ///
-				 13 "10001 - 20000 Eth.Birr" 14 "Greater than 20000 Eth.Birr" ///
-				 101 "Range A (Less than 1,000,000) Kip" /// LA
-				 102 "Range B (1,000,000 to 1,500,000) Kip" ///
-				 103 "Range C (1,500,001 to 2,000,000) Kip" ///
-				 104 "Range D (2,000,001 to 2,500,000) Kip" ///
-				 105 "Range E (2,500,001 to 3,000,000) Kip" ///
-				 106 "Range F (3,000,001 to 3,500,000) Kip" ///
-				 107 "Range G (More than 3,500,000) Kip" ///
-				 151 "Less than 10,000 euros" /// IT
-			     152 "10,000-15,000 euros" ///
-				 153 "15,000-26,000 euros" ///
-				 154 "26,000-55,000 euros" ///
-				 155 "55,000-75,000 euros" ///
-				 156 "75,000-120,000 euros" ///
-				 157 "More than 120,000 euros" /// 
-				 158 "Less than 6,500 pesos" /// MX
-				 159 "6,500-10,000 pesos" ///
-				 160 "10,000-15,000 pesos" ///
-				 161 "15,000-25,000 pesos" ///
-				 162 "More than 25,000 pesos" ///
-				 163 "Less than $26,000" /// US
-				 164 "$26,000 to less than $36,000" ///
-				 165 "$36,000 to less than $65,000" ///
-				 166 "$65,000 to less than $100,000" ///
-				 167 "$100,000 or more" ///
-				 .d "Don't know" .r "Refused", modify
-*/
-		
 * Other value label modifcations
 lab def q4_label .a "NA" .r "Refused", modify
 lab def q5_label .a "NA" .r "Refused", modify

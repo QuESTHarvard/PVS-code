@@ -105,12 +105,14 @@ gen respondent_id = "KR" + string(respondent_serial)
 gen country=15
 lab def country 15 "Republic of Korea" 
 lab val country country
-gen mode=3
-* CAWI (web interface) is 3 in mode
-lab def mode 3 "CAWI"
+gen mode=4
+* CAWI (web interface) is recoded to 3 on append 
+gen weight_educ = 1 
+* Weight = 1 apparently, but checking this 
+lab def mode 4 "CAWI"
 lab val mode mode
-gen language=1501
-lab define lang 1501 "Korean" 
+gen language=15001
+lab define lang 15001 "Korean" 
 lab val language lang
 
 * Q23/Q24 mid-point var 
@@ -125,7 +127,6 @@ recode q23_q24 (.d = .r) if q24 == .r
 
 * Country-specific values and value labels 
 
-* Country-specific values 
 gen recq4 = country*1000 + q4
 gen recq5 = country*1000 + q5 
 gen recq8 = country*1000 + q8 
@@ -137,16 +138,16 @@ replace recq63 = .r if q63== .r
 gen recq66 = country*1000 + q66
 replace recq66 = .r if q66== .r
 
-lab def q4 15001 "KR: Dong" 15002 "KR: Eup/Myeon"
-lab val recq4 q4
+lab def q4_label 15001 "KR: Dong" 15002 "KR: Eup/Myeon"
+lab val recq4 q4_label
 
-lab def q5 15001 "KR: Seoul" 15002 "KR: Busan" 15003 "KR: Daegu" 15004 "KR: Incheon" ///
+lab def q5_label 15001 "KR: Seoul" 15002 "KR: Busan" 15003 "KR: Daegu" 15004 "KR: Incheon" ///
 		   15005 "KR: Gwangju" 15006 "KR: Daejeon" 15007 "KR: Ulsan" 15008 ///
 		   "KR: Sejong" 15009 "KR: Gyeonggi-do" 15010 "KR: Gangwon-do" ///
 		   15011 "KR: Chungcheongbuk-do" 15012 "KR: Chungcheongnam-do" ///
 		   15013 "KR: Jeollabuk-do" 15014 "KR: Jeollanam-do" 15015 ///
 		   "KR: Gyeongsangbuk-do" 15016 "KR: Gyeongsangnam-do" 15017 "KR: Jeju-do"
-lab val recq5 q5 
+lab val recq5 q5_label
 
 * Note: For q6_kr, "4" is "Difficult to answer"
 recode q6_kr (4 = .r)
@@ -156,9 +157,9 @@ lab val q6_kr q6_kr
 
 recode q7_kr (1 = 1 "Yes") (2 = 0 "No"), pre(rec) label(yes_no)
 
-lab def q8 15002 "KR: Elementary school" 15003 "KR: Middle school" 15004 "KR: High school" ///
+lab def q8_label 15002 "KR: Elementary school" 15003 "KR: Middle school" 15004 "KR: High school" ///
 		   15005 "KR: College" 15006 "KR: University" 15007 "KR: Graduate school or higher"
-lab val recq8 q8
+lab val recq8 q8_label
 
 lab def q19_43 1 "Public" 2 "Private (for profit)" ///
 			   3 "Private (non-profit organization/religion related)" ///
@@ -166,36 +167,73 @@ lab def q19_43 1 "Public" 2 "Private (for profit)" ///
 			   			   
 lab	val q19_kr q43_kr q19_43
 
-lab def q20_44 15001 "KR: Health center" 15002 "KR: Clinic" 15003 "KR: Hospital or secondary hospital" ///
+lab def q20_label 15001 "KR: Health center" 15002 "KR: Clinic" 15003 "KR: Hospital or secondary hospital" ///
 			   15004 "KR: Tertiary general hospital" .a "NA" .r "Refused"
-lab	val recq20 recq44 q20_44
+lab	val recq20 recq44 q20_label
 
-lab def q62 15001 "KR: Korean"  15002 "KR: Other" .r "Refused"
-lab val recq62 q62
+lab def q44_label 15001 "KR: Health center" 15002 "KR: Clinic" 15003 "KR: Hospital or secondary hospital" ///
+			   15004 "KR: Tertiary general hospital" .a "NA" .r "Refused"
+lab	val recq44 q44_label
 
-lab def q63 15001 "KR: <50(10,000KW)" 15002 "KR:≥50 and <100(10,000KW)" ///
+lab def q62_label 15001 "KR: Korean"  15002 "KR: Other" .r "Refused"
+lab val recq62 q62_label
+
+lab def q63_label 15001 "KR: <50(10,000KW)" 15002 "KR:≥50 and <100(10,000KW)" ///
 				 15003 "KR: ≥100 and <200(10,000KW)" 15004 "KR: ≥200 and <300(10,000KW)" ///
 				 15005 "KR: ≥300 and <400(10,000KW)" 15006 "KR: ≥400 and <500(10,000KW)" ///
 				 15007 "KR: ≥500 and <600(10,000KW)" 15008 "KR: ≥600(10,000KW)"  ///
 				 .r"Refused"
-lab val recq63 q63
+lab val recq63 q63_label
 
-lab def q66 15001 "KR: Democratic Party of Korea" 15002 "KR: People Power Party" ///
-			15003 "KR: Justice Party" 15004 "KR: Others" 15005 "KR: Did not vote" .r "Refused"
-lab val recq66 q66 
-
-*q21, q42, q45, q49, q58
+lab def q66_label 15001 "KR: Democratic Party of Korea" 15002 "KR: People Power Party" ///
+				  15003 "KR: Justice Party" 15004 "KR: Others" 15005 "KR: Did not vote" .r "Refused"
+lab val recq66 q66_label
 
 *------------------------------------------------------------------------------*
-* Check for other implausible values 
+* Check for implausible values 
 
+* Q25_b
+list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
+* Note: okay in these data
+
+* Q26, Q27 
+list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
+* Note: okay in these data (2.5 is mid-point value)
+
+list q26 q27 country if q27 == 0 | q27 == 1
+* Some implasuible values of 1
+* Recode 1 values to 2, because respondent likely meant 1 additional facility 
+recode q27 (1 = 2) 
+
+list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
+
+* Q39, Q40 
+egen visits_total = rowtotal(q23_q24 q28_a q28_b)
+
+list visits_total q39 q40 if q39 == .a & visits_total > 0 & visits_total < . /// 
+							  | q40 == .a & visits_total > 0 & visits_total < .
+							  
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
+recode q39 q40 (.a = .r) if visits_total > 0 & visits_total < .
+
+list visits_total q39 q40 if q39 == .a & visits_total > 0 & visits_total < . /// 
+							 | q40 == .a & visits_total > 0 & visits_total < .
+* this is fine
+							  
+list visits_total q39 q40 if q39 != .a & visits_total == 0 /// 
+							  | q40 != .a & visits_total == 0
+							  
+* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
+* but they have no visit values in past 12 months 
+recode q39 q40 (.r = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+
+drop visits_total
 
 *------------------------------------------------------------------------------*
 
 * Recode missing values to NA for questions respondents would not have been asked 
 * due to skip patterns
-
-* Recode missing values to NA for intentionally skipped questions
 
 *q1/q2 - value for all q2 
 
@@ -325,10 +363,42 @@ recode q24 ///
 recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
+	
+* Questions missing value labels 
+	
+lab def q45 1 "Care for an urgent or acute health problem (accident or injury, fever, diarrhea, or a new pain or symptom)"  ///
+	    2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes; mental health conditions" ///
+	    3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" ///
+	    .a "NA" 4 "Other, specify" .r "Refused"
+lab val q45 q45
+	
+lab def q58 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
+	    2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
+	    3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." ///
+	    .r "Refused"
+lab val q58 q58
+	
+lab def q21 1 "Low cost" 2 "Short distance" 3 "Short waiting time" ///
+			4 "Good healthcare provider skillss" 5 "Staff shows respect" ///
+			6 "Medicines and equipment are available" 7 "Only facility available" ///
+			8 "Covered by insurance" 9 "Other, specify" .a "NA" .r "Refused", replace			 
+lab val q21 q21 
 
+lab def q42 1 "High cost (e.g., high out of pocket payment, not covered by insurance)" ///
+			2 "Far distance (e.g., too far to walk or drive, transport not readily available)" ///
+			3 "Long waiting time(long line to access facility,to receive health care , including time to get an appointment)" ///
+			4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
+			5 "Staff don't show respect (e.g., staff is rude, impolite, dismissive)" ///
+			6 "Medicines and equipment are not available(out of stock,X-ray machines broken or unavailable)" ///
+			7 "Illness not serious enough (you did not consider yourself too sick to go for care or you have an emergency)" ///
+			8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" ///
+			9 "COVID-19 fear" 10 "Other, specify" .a "NA" .r "Refused", replace
+lab val q42 q42
+
+			
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q46b q47 na_rf
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q46b q47 q49 na_rf
 
 *------------------------------------------------------------------------------*
 
@@ -442,3 +512,9 @@ lab var q62 "Q62. Respondent's mother tongue or native language"
 *lab var q62_other "Q62. Other"
 lab var q63 "Q63. Total monthly household income"
 lab var q66 "Q66. Which political party did you vote for in the last election?"
+
+*------------------------------------------------------------------------------*
+* Save data
+
+save "$data_mc/02 recoded data/pvs_kr.dta", replace
+
