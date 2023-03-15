@@ -192,6 +192,9 @@ lab val recq66 q66_label
 *------------------------------------------------------------------------------*
 * Check for implausible values 
 
+* Q1/Q2
+list q1 q2 if q2 == 1| q1 < 18
+
 * Q25_b
 list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
 * Note: okay in these data
