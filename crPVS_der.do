@@ -364,7 +364,7 @@ recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
 								  q19_it == 1 | inrange(q19_mx,1,5) | ///
-								  inlist(q20 == 12003,12004)
+								  inlist(q20 == 12003,12004) | q19_kr == 1
 								  
 * Mia updated variable to q19_co_pe 
 * Mia: changed the values of q20								  
@@ -372,18 +372,19 @@ recode usual_type_own (.a = 1) if q19_co_pe == 2 | q19_uy == 2 | ///
 								  inlist(q19_q20a_la,3,4,6) | ///
 								  inlist(q19_q20b_la,3,4,6) | ///
 								  q19_it == 2 | q19_it == 3 | q19_mx == 6 | ///
-								  inlist(q20,12001,12002,12005,12006) 
+								  inlist(q20,12001,12002,12005,12006) ///
+								  | q19_kr == 3
 								  
 * Mia: changed the values of q20							  
 recode usual_type_own (.a = 2) if inlist(q19_uy,5,995) | ///
 								  q19_q20a_la == 9 | q19_q20b_la == 7 | ///
 								  q19_it == 4 | q19_mx == 7 | ///
-								  q20 == 12995
+								  q20 == 12995 | q19_kr == 4
 								  
 recode usual_type_own (.a = .r) if q19_co_pe == .r | q19_uy == .r | ///
 								   q19_q20a_la == .r | q19_q20b_la == .r | ///
 								   q19_it == .r | q19_mx == .r | ///
-								   (q20 == .r & country == 12)
+								   (q20 == .r & country == 12) | q19_kr == .r
 
 * NOTE: Check Laos
 								   
@@ -401,10 +402,10 @@ recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 
 recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
-			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 = 0 "Primary") /// 
+			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 = 0 "Primary") /// 
 		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 ///
-		   12005 12006 = 1 "Secondary (or higher)") ///
+		   12005 12006 15003 15004 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 12995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if inlist(q19_q20a_la,2,4,6) | ///
@@ -429,6 +430,7 @@ lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Priva
 					.a NA .r Refused, replace
 lab val usual_type fac_own_lvl
 
+* NOTE: Check what's happening with other here
 
 * last_type_own
 recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
@@ -438,19 +440,19 @@ recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 * Mia updated variable to q43_co_pe
 recode last_type_own (.a = 0) if q43_co_pe == 1 | q43_uy == 1 | ///
 								 q43_it == 1 | inrange(q43_mx,1,5) | ///
-								 inlist(q44,12003,12004,12005)
+								 inlist(q44,12003,12004,12005) | q19_kr == 1
 
 * Mia updated variable to q43_co_pe
 recode last_type_own (.a = 1) if q43_co_pe == 2 | q43_uy == 2 | ///
 								 q43_it == 2 | q43_it == 3 | q43_mx == 6 | ///
-								 inlist(q44,12001,12002,12006,12007)
-
+								 inlist(q44,12001,12002,12006,12007) | q19_kr == 3
+ 
 recode last_type_own (.a = 2) if inlist(q43_uy,5,995) | q43_it == 4 | q43_mx == 7 | ///
-								 q44 == 12995
+								 q44 == 12995 | q19_kr == 4
 								 
 recode last_type_own (.a = .r) if q43_co_pe == .r | q43_uy == .r | ///
 								  q43_it == .r | q43_mx == .r | ///
-								  (q44 == .r & country == 12)
+								  (q44 == .r & country == 12) | q19_kr == .r
 
 
 * last_type_lvl 
@@ -467,10 +469,10 @@ recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
  
 recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
-			14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 = 0 "Primary") /// 
+			14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 = 0 "Primary") /// 
 		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 13019 13020 ///
-		   12005 12006 12007 = 1 "Secondary (or higher)") ///
+		   12005 12006 12007 15003 15004 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 11995 12995 13995 .r = .r "Refused"), gen(last_type_lvl)
 		      
 * last_type - ownership and level
@@ -513,13 +515,9 @@ recode q63 (5001 5002 3009 3010 9015 9016 9017 9023 2039 2040 2048 7031 7032 703
 		   11007 14006 14007 13004 13005 12004 12005 15008 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
+
 		  
-* NOTE: will create some derived variables for new US/IT/MX vars, also asked in other countries
-*		(appointment scheduling time, voting, telemedicine rating, etc.)
-* NOTE: Ignored country-specific questions Q13B and Q13E
-
-
-* Recode implausible values to missing 
+* Recode extreme values to missing 
 
 * All visit count variables and wait time variables:
 
@@ -540,22 +538,28 @@ foreach i in `countrylev' {
 	}
 }
 
-* Ethiopia: 92 visits for q28, South Africa: 120 visits for q28
-recode visits_home (92 = .) (120 = .)
-* Colombia q28_new values seem implausible 
-
-recode visits_tele (80 = .)
-* Uruguay: q23 values seem implausible 
-recode visits (200 = .) (156 = .)	
+* Ethiopia: 92 visits for q28 
+recode visits_home (92 = .) if country == 3
+*South Africa: 120 visits for q28
+recode visits_home (120 = .) if country == 9
 * South Africa; 144 visits for q23
-recode visits (144 = .)
-* 2 values in US recoded, 1 in Italy 
-replace visits = . if visits > 60 & visits < .
+recode visits (144 = .) if country == 9 
+* Colombia q28_b values seem implausible
+recode visits_tele (80 = .) if country == 2
+* Uruguay: q23 values seem implausible 
+recode visits (200 = .) (156 = .) if country == 10
+* US visits, 4 values recoded
+replace visits = . if visits > 60 & visits < . & country == 12
+* Italy visits, 1 value recoded 
+replace visits = . if visits > 60 & visits < . & country == 14
+* Korea, 1 visit_home and 1 visit_covid value 
+recode visits_home (68 = .) if country == 15
+recode visits_covid (80 = .) if country == 15
 
-*** New country var ***
+*** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
-				(2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (11 = 8 "Lao PDR") ///
-				(14 = 9 "Italy") (12 = 10 "United States"), gen(country_reg)
+			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (11 = 8 "Lao PDR") ///
+			   (15 = 9 "Rep. of Korea") (14 = 10 "Italy") (12 = 11 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)"
 
 
@@ -576,19 +580,19 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income q1 q2 q3 q3a q4 q5 q5_other q6 q6_it q6_la q6_za q7 ///
+	  vignette_good minority income q1 q2 q3 q3a q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q14_la q15 q15_la q16 q17 q18 ///
-	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_mx q19_co_pe q19_uy q19_other ///
+	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q37_za q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_ke_za_la q43_it q43_mx ///
+	  q37_za q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_ke_za_la q43_it q43_kr q43_mx ///
 	   q43_uy q43_other q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q56a_mx q56b_mx q57 q58 q59 ///
-	  q60 q61 q62 q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66_it_mx q66a_us q66b_us
+	  q60 q61 q62 q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66 q66a_us q66b_us
 	  
 	  
 ***************************** Labeling variables ***************************** 
