@@ -7,7 +7,6 @@
 * Import data 
 import excel using "$data/South Korea/raw data/DATA_Peoples Voice Survey_Mar13.xlsx", firstrow clear
 
-
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 
 *------------------------------------------------------------------------------*
@@ -17,7 +16,7 @@ import excel using "$data/South Korea/raw data/DATA_Peoples Voice Survey_Mar13.x
 ren Q4 q5
 ren Q5 q4
 * NOTE: q56 will be q55, and then no q56
-* No for-profit system in Korea, so private system of interest is private non-profit 
+* No for-profit system in Korea, so private system of interest is private non-profit
 ren Q56 q55
 drop Q55
 
@@ -25,11 +24,11 @@ rename *, lower
 ren idx respondent_serial
 format time_diff %tcHH:MM:SS
 gen int_length = (hh(time_diff)*60 + mm(time_diff) + ss(time_diff)/60) 
-gen date = startdate
+* Mia: updated date and time vars
+generate date = dofc(startdate)
 format date %tdD_M_CY
-gen time = startdate
-format time 
-* NOTE: Mia, can you help me fix date/time to merge with other countries? 
+clonevar time = startdate
+format time %tchH:MM:SS
 * Note: no interview_id because all online
 
 ren q6 q6_kr 
@@ -70,7 +69,7 @@ ren q50_1 q50_a
 ren q50_2 q50_b
 ren q50_3 q50_c
 ren q50_4 q50_d
-* change q56 in other data 
+* change q56 in other data  
 
 *------------------------------------------------------------------------------*
 
@@ -134,9 +133,9 @@ gen recq20 = country*1000 + q20
 gen recq44 = country*1000 + q44 
 gen recq62 = country*1000 + q62 
 gen recq63 = country*1000 + q63
-replace recq63 = .r if q63== .r
+replace recq63 = .r if q63 == .r
 gen recq66 = country*1000 + q66
-replace recq66 = .r if q66== .r
+replace recq66 = .r if q66 == .r
 
 lab def q4_label 15001 "KR: Dong" 15002 "KR: Eup/Myeon"
 lab val recq4 q4_label
@@ -169,7 +168,7 @@ lab	val q19_kr q43_kr q19_43
 
 lab def q20_label 15001 "KR: Health center" 15002 "KR: Clinic" 15003 "KR: Hospital or secondary hospital" ///
 			   15004 "KR: Tertiary general hospital" .a "NA" .r "Refused"
-lab	val recq20 recq44 q20_label
+lab	val recq20 q20_label //Mia: dropped recq44 here
 
 lab def q44_label 15001 "KR: Health center" 15002 "KR: Clinic" 15003 "KR: Hospital or secondary hospital" ///
 			   15004 "KR: Tertiary general hospital" .a "NA" .r "Refused"
@@ -213,6 +212,16 @@ list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
 * Q39, Q40 
 egen visits_total = rowtotal(q23_q24 q28_a q28_b)
 
+*** Mia changed this part ***
+* add this part since there are participants who answered 3 for q39/q40
+list visits_total q39 q40 country if q39 == 3 & visits_total > 0 & visits_total < . /// 
+							  | q40 == 3 & visits_total > 0 & visits_total < .
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
+* but they have visit values in past 12 months 
+recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
+*Mia: 1 changes made to q39, 1 changes made to q40					  
+*****************************
+
 list visits_total q39 q40 if q39 == .a & visits_total > 0 & visits_total < . /// 
 							  | q40 == .a & visits_total > 0 & visits_total < .
 							  
@@ -254,7 +263,7 @@ recode recq20 (. = .a) if q19_kr == 4 | q19_kr == .r
 
 * NA's for q24-28 
 recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . 
-recode q25_a (. = .a) if q23 != 1
+recode q25_a (. = .a) if q23 != 1 & q23 != . //Mia: add the case that q23 == .
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r 
@@ -263,7 +272,7 @@ recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r
 
 * q31 & q32
 recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r
-recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r 
+recode q32 (. = .a) if q3 != 2 | q2 == .r 
 
 * q42
 recode q42 (. = .a) if q41 == 2 | q41 == .r
@@ -271,7 +280,7 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 * q43-49 na's
 recode q43_kr recq44 q45 q46 q46a q46b q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
-recode q48_k (. = .a) if q46a == 2
+recode q48_k (. = .a) if q46a == 2 | q46a == .r //Mia: add the case that 46a == .r
 
 recode recq44 (. = .a) if q43_kr == 4 | q43_kr == .r
 recode q46b (. = .a) if q46a == 2 | q46a == .r 
