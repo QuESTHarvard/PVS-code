@@ -270,7 +270,7 @@ recode recq20 (. = .a) if q19 == 4 | q19 == .r
 *** Mia changed this part ***
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . // Mia: add the case that q23 == . to be consistant with other programs
-recode q25_a (. = .a) if q23 != 1
+recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r // Mia: add the case that q26 == .r
@@ -279,7 +279,7 @@ recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r // Mia: add the case tha
 *** Mia changed this part ***
 * q31 & q32
 recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
-recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
+recode q32 (. = .a) if q3 != 2 | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
 *****************************
 
 * q42
@@ -794,7 +794,7 @@ recode recq20 (. = .a) if q19_pe == .r | q19_uy == .r | q19_co  == .r
 *** Mia changed this part ***
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . // Mia: add the case that q23 == . to be consistant with other programs
-recode q25_a (. = .a) if q23 != 1
+recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r // Mia: add the case that q26 == .r
@@ -803,7 +803,7 @@ recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r // Mia: add the case tha
 *** Mia changed this part ***
 * q31 & q32
 recode q31 (. = .a) if q3a == 1 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r
-recode q32 (. = .a) if q3a == 1 | q1 == .r | q2 == .r //dropped q1 == .r
+recode q32 (. = .a) if q3a == 1 | q2 == .r //dropped q1 == .r
 *****************************
 
 * NOTE: q3a was assigned sex at birth, used for skip pattern in LAC
@@ -1202,7 +1202,7 @@ recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7
 recode q6_za q37_za (. = .a) if country != 9
 recode q6_la q14_la q15_la q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
 		(. = .a) if country != 11
-recode q6 q18 q20 q64 q65 (. = .a) if country == 11
+recode q18 q20 q64 q65 (. = .a) if country == 11 //Mia: dropped q6 since we will do it later with other countries
 recode q6_it q19_it q43_it (. = .a) if country != 14
 recode q19_mx q43_mx q56a_mx q56b_mx q62_mx (. = .a) if country != 13
 recode q62a_us q62b_us q66a_us q66b_us (. = .a) if country != 12
@@ -1210,7 +1210,10 @@ recode q28_c q46a q46b q46b_refused q48_k ///
 	   (. = .a) if country != 12 | country != 13 | country != 14	   
 recode q66 (. = .a) if country != 13 | country != 14 | country != 15
 recode q6_kr q7_kr q19_kr q43_kr (. = .a) if country != 15
-recode q6 q7 (. = .a) if country == 15
+recode q7 (. = .a) if country == 15 //Mia: dropped q6 since we will do it later with other countries
+* Mia: add the line to recode q6 to .a if the country has country specific q6
+*      This might have been done in each individual cleaning program but do it again here to be sure
+recode q6 (. = .a) if inlist(country,9,14,15) 
 
 	   
 * Country-specific value labels -edit for ssrs-

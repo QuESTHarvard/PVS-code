@@ -450,7 +450,7 @@ recode q20_mx (. = .a) if q19_mx == 7 | q18 ! = 1 // Mia: it also requires q18 =
 *** Mia changed this part ***
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . // Mia: add the case that q23 == . to be consistant with other programs
-recode q25_a (. = .a) if q23 != 1
+recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
 recode q25_b q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a
 * FLAG - some missing in q27 - maybe refusal? or skip pattern I missed?
@@ -475,6 +475,9 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 recode q43_it q43_mx q44_it q44_mx q44_us q45 q46 q46_refused q46a ///
 	   q46b q46b_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r 
+* Mia: added the additional condtion for q48_k:
+recode q48_k (. = .a) if q46a == 2 | q46a == .r
+
 recode q44_it (. = .a) if q43_it == 4 // different from above 
 recode q44_mx (. = .a) if q43_mx == 7 
 recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r //Mia: added the case when q46a is refused
