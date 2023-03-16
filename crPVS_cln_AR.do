@@ -66,7 +66,14 @@ ren P44 q44
 ren P45 q45
 ren P45_4 q45_other
 ren P46 q46
+*q46_refused will have to be recoded to .r if it equals something
+ren P46_Minutos_codes q46_refused
+
 ren P47 q47
+
+*probably will have to be recoded as well:
+ren P47_Codes q47_refused
+
 ren P48_1_C q48_a
 ren P48_2_C q48_b
 ren P48_3_C q48_c
@@ -87,7 +94,6 @@ ren P52 q52
 ren P53 q53
 ren P54 q54
 ren P55 q55
-ren P56 q56
 ren P57 q57
 ren P58 q58
 ren P59 q59
@@ -108,8 +114,17 @@ gen q44_other = q44_other_it + q44_other_mx + q44_other_us
 recode q46b_1 q46b_2 q46b_3 (. = 0) if q46b_1 < . | q46b_2 < . |q46b_3< .
 gen q46b = (q46b_1/24) + q46b_2 + (q46b_3*7)
 
+*------------------------------------------------------------------------------*
 
+* Drop unused or other variables 
 
+drop DataCollection_Status1 introduccion confidencial Auto_grab  P2 
+	 
+	 
+*------------------------------------------------------------------------------*
+
+* Recode refused and don't know values 
+*"Codes" vars need to be recoded as .r (refused) and .d (don't know) only for the participants with values in the "Code" var
 
 
 
