@@ -12,8 +12,72 @@ dataset created in the cr01_pvs_clin.do file.
 ***************************** Deriving variables *******************************
 
 u "$data_mc/02 recoded data/pvs_appended.dta", clear
-*use "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\BGC Projects\BGC - Mia Yu - Misc tasks\Harvard\pvs_appended.dta", clear
+
 *------------------------------------------------------------------------------*
+
+*** Mia changed this part ***
+* Mia: trim extreme values for for q27, q46 and q47; q46b for IT, MX, US and KR
+
+qui levelsof country, local(countrylev)
+
+foreach i in `countrylev' {
+
+	foreach var in q27 q46 q47 {
+		
+		if inrange(`i',12,15) {
+			extremes q46b country if country == `i', high
+		}
+		
+		extremes `var' country if country == `i', high
+	}
+}
+
+clonevar q27_original = q27
+clonevar q46_original = q46
+clonevar q47_original = q47
+clonevar q46b_origial = q46b
+
+* all q27 seems fine
+
+* q46
+replace q46 = . if q46 > 720 & q46 < . & country == 3
+*3 values recoded in Ethiopia
+replace q46 = . if q46 > 720 & q46 < . & country == 5
+*1 values recoded in Kenya
+replace q46 = . if q46 > 720 & q46 < . & country == 9
+*2 values recoded in South Africa
+replace q46 = . if q46 > 720 & q46 < . & country == 15
+*3 values recoded in South Korea
+
+* q47
+replace q47 = . if q47 > 300 & q47 < . & country == 3
+*7 values recoded in Ethiopia
+replace q47 = . if q47 > 300 & q47 < . & country == 5
+*3 values recoded in Kenya
+replace q47 = . if q47 > 300 & q47 < . & country == 9
+*4 values recoded in South Africa
+replace q47 = . if q47 > 300 & q47 < . & country == 2
+*2 values recoded in Colombia
+replace q47 = . if q47 > 300 & q47 < . & country == 7
+*2 values recoded in Peru
+replace q47 = . if q47 > 300 & q47 < . & country == 10
+*10 values recoded in Uruguay
+replace q47 = . if q47 > 300 & q47 < . & country == 12
+*9 values recoded in US
+replace q47 = . if q47 > 300 & q47 < . & country == 14
+*7 values recoded in Italy
+replace q47 = . if q47 > 300 & q47 < . & country == 15
+*15 values recoded in South Korea
+
+* q46b
+replace q46b = . if q46b > 365 & q46b < . & country == 12
+*4 values recoded in US
+replace q46b = . if q46b > 365 & q46b < . & country == 14
+*2 values recoded in Italy
+replace q46b = . if q46b > 365 & q46b < . & country == 15
+*1 values recoded in South Korea
+
+*****************************
 
 * age: exact respondent age or middle of age range 
 gen age = q1 
@@ -310,7 +374,7 @@ recode insured (.a = 1) if country == 9 | country == 11 | country == 14
 * Mia: recode this with new q7 values
 recode insured (.a = 0) if inlist(q7,7014,13014) | inlist(q6_kr, 3)
 recode insured (.a = 1) if inlist(q7,2015,2016,2017,2018,2028,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005) | inlist(q6_kr, 1, 2)
-recode insured (.a = .r) if q7 == .r | inlist(q7,2995,13995) | q7 == . | q6_kr == .r
+recode insured (.a = .r) if q7 == .r | inlist(q7,2995,13995) | q6_kr == .r
 lab val insured yes_no
 
 * insur_type 
@@ -433,6 +497,7 @@ lab val usual_type fac_own_lvl
 * NOTE: Check what's happening with other here
 
 * last_type_own
+* Mia: changed q19_kr to q43_kr
 recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
@@ -440,19 +505,19 @@ recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 * Mia updated variable to q43_co_pe
 recode last_type_own (.a = 0) if q43_co_pe == 1 | q43_uy == 1 | ///
 								 q43_it == 1 | inrange(q43_mx,1,5) | ///
-								 inlist(q44,12003,12004,12005) | q19_kr == 1
+								 inlist(q44,12003,12004,12005) | q43_kr == 1
 
 * Mia updated variable to q43_co_pe
 recode last_type_own (.a = 1) if q43_co_pe == 2 | q43_uy == 2 | ///
 								 q43_it == 2 | q43_it == 3 | q43_mx == 6 | ///
-								 inlist(q44,12001,12002,12006,12007) | q19_kr == 3
+								 inlist(q44,12001,12002,12006,12007) | q43_kr == 3
  
 recode last_type_own (.a = 2) if inlist(q43_uy,5,995) | q43_it == 4 | q43_mx == 7 | ///
-								 q44 == 12995 | q19_kr == 4
+								 q44 == 12995 | q43_kr == 4
 								 
 recode last_type_own (.a = .r) if q43_co_pe == .r | q43_uy == .r | ///
 								  q43_it == .r | q43_mx == .r | ///
-								  (q44 == .r & country == 12) | q19_kr == .r
+								  (q44 == .r & country == 12) | q43_kr == .r
 
 
 * last_type_lvl 
@@ -521,8 +586,8 @@ recode q63 (5001 5002 3009 3010 9015 9016 9017 9023 2039 2040 2048 7031 7032 703
 
 * All visit count variables and wait time variables:
 
-* q23, q25_b, q27, q28_a, q28_b, q46, q47 
-* Mia: no derived variables for q27, q46 and q47  
+* q23, q25_b, q28_a, q28_b
+ 
 qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
@@ -562,6 +627,14 @@ recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 
 			   (15 = 9 "Rep. of Korea") (14 = 10 "Italy") (12 = 11 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)"
 
+*** Mia changed this part ***
+* Drop trimmed q27 q46 q47 and get back the orignal var
+drop q27 q46 q47 q46b
+rename q27_original  q27
+rename q46_original  q46
+rename q47_original  q47
+rename q46b_origial  q46b
+*****************************
 
 **** Order Variables ****
 		   
@@ -580,8 +653,8 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income q1 q2 q3 q3a q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
-	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy q13e_co_pe_uy q13e_other q14 q14_la q15 q15_la q16 q17 q18 ///
+	  vignette_good minority income q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
+	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e_co_pe_uy q13e_other q14 q14_la q15 q15_la q16 q17 q18 ///
 	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
