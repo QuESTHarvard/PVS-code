@@ -18,6 +18,7 @@ ren pond weight
 ren P1 q1
 ren SampleFields_SampEDAD q2
 ren P3_A q3
+ren P3_B q3a_co_pe_uy_ar
 ren P4 q4
 ren P5 q5
 ren P8 q8
@@ -60,7 +61,7 @@ ren P40 q40
 ren P41 q41
 ren P42 q42
 ren P42_11 q42_other
-ren P43 q43
+ren P43 q43_ar
 ren P43_4 q43_other
 ren P44 q44
 ren P45 q45
@@ -104,11 +105,8 @@ ren P64 q64
 ren P65 q65
 
 
-
 *for Q20_B:
 gen q44_other = q44_other_it + q44_other_mx + q44_other_us
-
-
 
 * combine all q7
 recode q46b_1 q46b_2 q46b_3 (. = 0) if q46b_1 < . | q46b_2 < . |q46b_3< .
@@ -116,15 +114,20 @@ gen q46b = (q46b_1/24) + q46b_2 + (q46b_3*7)
 
 *------------------------------------------------------------------------------*
 
-* Drop unused or other variables 
+* Drop unused or other variables - drop P71-76 once you recode
 
-drop DataCollection_Status1 introduccion confidencial Auto_grab  P2 
-	 
-	 
+drop DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO cr1 cr2 cr3 cr4 cr5 P29_B
+ 
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
 *"Codes" vars need to be recoded as .r (refused) and .d (don't know) only for the participants with values in the "Code" var
+
+
+
+*------------------------------------------------------------------------------*
+
+* Generate variables
 
 
 
