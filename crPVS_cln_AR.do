@@ -4,8 +4,8 @@
 
 ************************************* Argentina ************************************
 
-* Import data 
-use "/Users/shalomsabwa/Downloads/Re_ PVS Mendoza Links/PVS_Mendoza_Data_23.01.27.dta", clear
+* Import data -confirm Path
+use "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Argentina (Mendoza)/01 raw data/PVS_Mendoza_Data_23.01.27.dta", clear
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 
@@ -13,38 +13,13 @@ use "/Users/shalomsabwa/Downloads/Re_ PVS Mendoza Links/PVS_Mendoza_Data_23.01.2
 * Rename all variables, and some recoding if variable will be dropped 
 
 ren LanguageID Language
-
-**date var generate from 3 vars: Month,Day,Year
-
-**what is the int_length var?
-*ren P46_Minutos int_length
-
-*mode = CATI?
-
+ren P46_Minutos int_length
 ren pond weight
 ren P1 q1
 ren SampleFields_SampEDAD q2
-
-**2 gender vars?
-*ren P3_A q3
-*ren SampleFields_SampSEXO
-
-**Argentina specific: "Are you a man or woman?" - generate new country specific var?
-
-
-**2 "area" vars
-*ren P4 q4
-*ren SampleFields_SampZONAP3A
-
-**2 vars for q5
-*ren P5 q5
-*ren SampleFieldls_SampPROVINCIA_DS q5
-
-* combine all q7
-recode q46b_1 q46b_2 q46b_3 (. = 0) if q46b_1 < . | q46b_2 < . |q46b_3< .
-gen q46b = (q46b_1/24) + q46b_2 + (q46b_3*7)
-
-
+ren P3_A q3
+ren P4 q4
+ren P5 q5
 ren P8 q8
 ren P9 q9
 ren P10 q10
@@ -60,6 +35,8 @@ ren P18 q18
 ren P19 q19
 ren P19_4 q19_other
 ren P20 q20
+ren P21 q21
+ren P21_10 q21_other
 ren P22 q22
 ren P23 q23
 ren P24 q24
@@ -67,6 +44,7 @@ ren P25 q25_a
 ren P25_B q25_b
 ren P26 q26
 ren P27 q27
+ren P28 q28_a
 ren P28_B q28_b
 ren P29 q29
 ren P30 q30
@@ -87,10 +65,7 @@ ren P43_4 q43_other
 ren P44 q44
 ren P45 q45
 ren P45_4 q45_other
-
-*P46_Minutos = int_length or q46
-*ren P46_Minutos q46
-
+ren P46 q46
 ren P47 q47
 ren P48_1_C q48_a
 ren P48_2_C q48_b
@@ -129,7 +104,9 @@ gen q44_other = q44_other_it + q44_other_mx + q44_other_us
 
 
 
-
+* combine all q7
+recode q46b_1 q46b_2 q46b_3 (. = 0) if q46b_1 < . | q46b_2 < . |q46b_3< .
+gen q46b = (q46b_1/24) + q46b_2 + (q46b_3*7)
 
 
 
