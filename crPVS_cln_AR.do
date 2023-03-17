@@ -16,7 +16,10 @@ ren LanguageID Language
 ren P46_Minutos int_length
 ren pond weight
 ren P1 q1
+
+*different age groups than core vars 
 ren SampleFields_SampEDAD q2
+
 ren P3_A q3
 ren P3_B q3a_co_pe_uy_ar
 ren P4 q4
