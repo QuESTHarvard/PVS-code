@@ -57,13 +57,33 @@ ren P21 q21
 ren P21_10 q21_other
 ren P22 q22
 ren P23 q23
+
+*adding .r/.d to q23 based on P23_Codes
+replace P23 = .d if P23_Codes == 1
+replace P23 = .r if P23_Codes == 2
+
 ren P24 q24
 ren P25 q25_a
 ren P25_B q25_b
 ren P26 q26
+
+*adding .r/.d to q27 based on P27_Codes1 or P27_Codes2
+replace P27 = .d if P27_Codes1 == 1
+*P27_Codes2 only has "No" in the data right now 
+replace P27 = .r if P27_Codes2 == 1 
 ren P27 q27
+
+*adding .r/.d to q28 based on P28_Codes1 or P28_Codes2
+*Codes1 only has "No" in the data right now
+replace P28 = .d if P28_Codes1 == 1
+replace P28 = .r if P28_Codes2 == 1 
 ren P28 q28_a
+
+*adding .r/.d to q28_b based on P28_B_Codes1 or P28_B_Codes2
+replace P28_B = .d if P28_B_Codes1 == 1
+replace P28_B = .r if P28_B_Codes2 == 1 
 ren P28_B q28_b
+
 ren P29 q29
 ren P30 q30
 ren P31 q31
@@ -129,6 +149,10 @@ ren P60 q60
 ren P61 q61
 ren P63 q63
 ren P64 q64
+
+*adding .r/.d to q65 based on P65_Codes1 or P65_Codes2
+replace P65 = .d if P65_Codes1 == 1
+replace P65 = .r if P65_Codes2 == 1 
 ren P65 q65
 
 *------------------------------------------------------------------------------*
@@ -139,9 +163,9 @@ format date %tdD_M_CY
 
 *------------------------------------------------------------------------------*
 
-* Drop unused or other variables - drop P71-76 once you recode
+* Drop unused or other variables - dropped P1_Codes because it has no data and no label as to which question it belongs to
 
-drop DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear
+drop DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes
  
 *------------------------------------------------------------------------------*
 
