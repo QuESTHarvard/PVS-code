@@ -24,6 +24,16 @@ ren P3_A q3
 ren P3_B q3a_co_pe_uy_ar
 ren P4 q4
 ren P5 q5
+
+*q7 is in 6 different vars: P71, P72, P73, P74, P75, P76 - need to change yes/no, yes to name of variable
+gen q7 = 1601 if P71 == 1 
+replace q7 =1602 if P72 == 1
+replace q7 = 1603 if P73 == 1
+replace q7 = 1604 if P74 == 1
+replace q7 = 1605 if P75 == 1
+replace q7 = 1606 if P76 == 1
+*1607 = "No insurance" - 0 people with no insurance
+replace q7 = 1607 if P71==. | P72==. | P73==. | P74==. | P75==. | P76==.
 ren P8 q8
 ren P9 q9
 ren P10 q10
@@ -41,6 +51,8 @@ ren P18 q18
 ren P19 q19
 ren P19_4 q19_other
 ren P20 q20
+*q20_other 
+gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_17 + P20_21 + P20_22 + P20_25 + P20_26
 ren P21 q21
 ren P21_10 q21_other
 ren P22 q22
@@ -121,7 +133,7 @@ gen q46b = (q46b_1/24) + q46b_2 + (q46b_3*7)
 
 * Drop unused or other variables - drop P71-76 once you recode
 
-drop DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO cr1 cr2 cr3 cr4 cr5 P29_B
+drop DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76
  
 *------------------------------------------------------------------------------*
 
