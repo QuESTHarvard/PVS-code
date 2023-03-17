@@ -27,6 +27,8 @@ ren P10 q10
 ren P11 q11
 ren P12 q12
 ren P13 q13
+ren P13_B q13b_co_pe_uy_ar
+ren P13_E q13e_co_pe_uy_ar
 ren P13_E_10 q13e_other
 ren P14 q14
 ren P15 q15
@@ -68,7 +70,7 @@ ren P45 q45
 ren P45_4 q45_other
 ren P46 q46
 *q46_refused will have to be recoded to .r if it equals something
-ren P46_Minutos_codes q46_refused
+ren P46_Minutos_Codes q46_refused
 
 ren P47 q47
 
