@@ -14,6 +14,9 @@ use "$data/Laos/02 recoded data/pvs_clean_weighted_la.dta", clear
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 
 
+* Study ID 10089 was incorrectly listed as complete
+drop if study_id == 10089
+
 ren study_id respondent_serial
 * NOTE: will create unique study ID upon merge 
 
@@ -25,9 +28,6 @@ ren bd1102A q2
 ren bd1103 q3 
 ren bd1104A q4 
 ren bd1105 q5
-* Mia: add this line since there are people who answered bd1105A but not bd1105
-* NA/AA check
-replace q5 = bd1105A if q5 == . & bd1105A != . // Mia: one changed
 lab val q5 province 
 * NOTE: bd1105 is province, ignore bd1105A
 ren bd1106 q6_la 
