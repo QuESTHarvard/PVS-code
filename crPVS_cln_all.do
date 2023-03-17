@@ -987,7 +987,8 @@ drop interviewer_gender q2 q3 q3a q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 ///
 ren rec* *
  
 ren q7_995 q7_other
-ren (q3a q13b q13e) (q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy) //Mia: deleted the double q13b
+* Mia: added _ar to the name
+ren (q3a q13b q13e) (q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy) //Mia: deleted the double q13b
 ren q13e_10 q13e_other_co_pe_uy // Mia: added _co_pe_uy 
 ren q14_new q14
 ren q15_new q15
@@ -1036,7 +1037,7 @@ lab var int_length "Interview length (in minutes)"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
-lab var q3a_co_pe_uy "Q3A. CO/PE/UY only: Are you a man or a woman?"
+lab var q3a_co_pe_uy_ar "Q3A. CO/PE/UY/AR only: Are you a man or a woman?"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
@@ -1048,7 +1049,7 @@ lab var q10 "Q10. In general, would you say your mental health is:"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
-lab var q13b_co_pe_uy "Q13B. CO/PE/UY only: Did you seek health care for COVID-19?"
+lab var q13b_co_pe_uy_ar "Q13B. CO/PE/UY/AR only: Did you seek health care for COVID-19?"
 lab var q13e_co_pe_uy "Q13E. CO/PE/UY only: Why didnt you receive health care for COVID-19?"
 lab var q13e_other_co_pe_uy "Q13E. CO/PE/UY only: Other"
 lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
@@ -1195,7 +1196,7 @@ lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 * Country-specific skip patterns - check this 
 recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
 recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
-recode q3a_co_pe_uy q13b_co_pe_uy q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11 
+recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 

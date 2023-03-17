@@ -812,6 +812,7 @@ gen q19_other = q19_other_it + q19_other_mx
 * Q20 
 gen recq20_it = reccountry*1000 + q20_it 
 gen recq20_mx = reccountry*1000 + q20_mx
+replace recq20_mx = 13995 if q20_mx == 21
 gen recq20_us = reccountry*1000 + q20_us	
 replace recq20_us = 12995 if q20_us == 8
 		  
@@ -851,7 +852,7 @@ forvalues o = 1/`countryn' {
 	}
 }
 
-label define q20_label 12995 "US: Other", add
+label define q20_label 12995 "US: Other" 13995 "MX: Other", add
 lab val q20 q20_label
 
 * Q20 Other
@@ -907,7 +908,7 @@ forvalues o = 1/`countryn' {
 		}                 
 	}
 }
-label define q44_label 12995 "US: Other", add
+label define q44_label 12995 "US: Other" 13995 "MX: Other", add
 lab val q44 q44_label
 
 * Q44 Other
