@@ -82,7 +82,7 @@ ren P43 q43_ar
 ren P43_4 q43_other
 ren P44 q44
 *q44_other:
-
+gen q44_other = P44_3 + P44_4 + P44_8 + P44_9 + P44_13 + P44_14 + P44_16 + P44_17 + P44_21 + P44_22 + P44_25 + P44_26
 ren P45 q45
 ren P45_4 q45_other
 ren P46 q46
@@ -124,16 +124,11 @@ ren P64 q64
 ren P65 q65
 
 
-
-* combine all q7 
-recode q46b_1 q46b_2 q46b_3 (. = 0) if q46b_1 < . | q46b_2 < . |q46b_3< .
-gen q46b = (q46b_1/24) + q46b_2 + (q46b_3*7)
-
 *------------------------------------------------------------------------------*
 
 * Drop unused or other variables - drop P71-76 once you recode
 
-drop DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26
+drop DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26
  
 *------------------------------------------------------------------------------*
 
