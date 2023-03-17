@@ -86,12 +86,14 @@ gen q44_other = P44_3 + P44_4 + P44_8 + P44_9 + P44_13 + P44_14 + P44_16 + P44_1
 ren P45 q45
 ren P45_4 q45_other
 ren P46 q46
-*q46_refused will have to be recoded to .r if it equals something
+
+*q46_refused will have to be recoded to .r if it equals something - confirm with Neena/Todd
+replace P46_Minutos_Codes = .r if P46_Minutos_Codes == "No responde <B>[NO LEER]</B>"
 ren P46_Minutos_Codes q46_refused
 
 ren P47 q47
 
-*probably will have to be recoded as well:
+*probably will have to be recoded as well - confirm
 ren P47_Codes q47_refused
 
 ren P48_1_C q48_a
@@ -114,6 +116,15 @@ ren P52 q52
 ren P53 q53
 ren P54 q54
 ren P55 q55
+
+*q56_ar: generate from 3 different "private" options: P55, P66, P67 - what to do if different answers to each question?
+ren P55 q56a_ar
+ren P66 q56b_ar
+ren P67 q56c_ar
+
+
+
+
 ren P57 q57
 ren P58 q58
 ren P59 q59
