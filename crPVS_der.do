@@ -40,12 +40,6 @@ clonevar q46b_origial = q46b
 * all q27 seems fine
 
 * q46
-replace q46 = . if q46 > 720 & q46 < . & country == 3
-*3 values recoded in Ethiopia
-replace q46 = . if q46 > 720 & q46 < . & country == 5
-*1 values recoded in Kenya
-replace q46 = . if q46 > 720 & q46 < . & country == 9
-*2 values recoded in South Africa
 replace q46 = . if q46 > 720 & q46 < . & country == 15
 *3 values recoded in South Korea
 
