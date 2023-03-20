@@ -11,6 +11,7 @@ use "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Cor
 
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 
+*"Codes" vars need to be recoded as .r (refused) and .d (don't know) only for the participants with values in the "Code" var
 
 ren LanguageID Language
 ren P46_Minutos int_length
@@ -48,7 +49,7 @@ ren P15 q15
 ren P16 q16
 ren P17 q17
 ren P18 q18
-ren P19 q19
+ren P19 q19_ar
 ren P19_4 q19_other
 ren P20 q20
 *q20_other 
@@ -56,15 +57,20 @@ gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_1
 ren P21 q21
 ren P21_10 q21_other
 ren P22 q22
-ren P23 q23
 
 *adding .r/.d to q23 based on P23_Codes
 replace P23 = .d if P23_Codes == 1
 replace P23 = .r if P23_Codes == 2
+ren P23 q23
 
 ren P24 q24
 ren P25 q25_a
+
+*adding .r/.d to q23 based on P25_Codes - no data
+replace P25_B = .d if P25_B_Codes == 1
+replace P25_B = .r if P25_B_Codes == 2
 ren P25_B q25_b
+
 ren P26 q26
 
 *adding .r/.d to q27 based on P27_Codes1 or P27_Codes2
@@ -165,12 +171,18 @@ format date %tdD_M_CY
 
 * Drop unused or other variables - dropped P1_Codes because it has no data and no label as to which question it belongs to
 
-drop DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2
+drop DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2
  
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
-*"Codes" vars need to be recoded as .r (refused) and .d (don't know) only for the participants with values in the "Code" var
+
+*used replace instead of encode here since this var is a string var
+replace q2 = .a if q2 == "SIN_DATO"
+
+*"No response" vars
+
+
 
 
 
