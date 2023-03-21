@@ -19,11 +19,11 @@ set more off
 macro drop _all
 
 * Setting user globals 
-global user "/Users/nek096"
+*global user "/Users/nek096"
 *global user "/Users/catherine.arsenault"
 *global user "/Users/tol145"
 *global user "/Users/rodba"
-*global user "/Users/shalomsabwa"
+global user "/Users/shs8688"
 
 * Setting file path globals
 global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
@@ -46,8 +46,8 @@ global github "$user/Documents/GitHub/PVS-code"
 net install ipacheck, all replace from("https://raw.githubusercontent.com/PovertyAction/high-frequency-checks/master")
 ipacheck update
 
-ssc install elabel 
-
+ssc install elabel // Mia: I used this pacakge to combine the value labels
+* Running cleaning and analysis files
 ************************************************
 
 * Initial data cleaning to create multi-country dataset 
