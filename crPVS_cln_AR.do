@@ -5,7 +5,7 @@
 ************************************* Argentina ************************************
 
 * Import data -confirm Path
-use "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Argentina (Mendoza)/01 raw data/PVS_Mendoza_Data_23.01.27.dta", clear
+use "$data/Argentina (Mendoza)/01 raw data/PVS_Mendoza_Data_23.01.27.dta", clear
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 
@@ -46,8 +46,8 @@ replace q7 = 1607 if (P71==0 & P72==0 & P73==0 & P74==0 & P75==0 & P76==0)
 
 *double check someone hasn't entered "Yes" to more than one option: 
 *No one has >1
-egen sum = rowtotal(P71 P72 P73 P74 P75)
-tab sum
+*egen sum = rowtotal(P71 P72 P73 P74 P75)
+*tab sum
 
 ren P8 q8
 ren P9 q9
@@ -69,21 +69,20 @@ ren P20 q20
 *q20_other 
 gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_17 + P20_21 + P20_22 + P20_25 + P20_26
 
-*change q21for additional AR var:
+*change q21for additional AR var: - Mia to double check 
 gen q21 = .
 replace q21 = 1 if P21 ==1
 replace q21 = 2 if P21 ==2
-replace q21 = 3 if P21 ==4
+replace q21 = 10 if P21 ==3
+replace q21 = 3 if P21 ==4 
 replace q21 = 4 if P21 ==5
 replace q21 = 5 if P21 ==6
 replace q21 = 6 if P21 ==7
 replace q21 = 7 if P21 ==8
 replace q21 = 8 if P21 ==9
 replace q21 = 9 if P21 ==10
-replace q21 = 10 if P21 ==3
 replace q21 = .r if P21 ==11
 
-	  
 ren P21_10 q21_other
 ren P22 q22
 
@@ -218,13 +217,12 @@ format date %tdD_M_CY
 
 * Drop unused or other variables - dropped P1_Codes because it has no data and no label as to which question it belongs to
 
-drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 sum P46_Minutos_Codes P47_Codes
+drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46_Minutos_Codes P47_Codes
  
-
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
-* In raw data, coding "No response" as refused 	  
+* In raw data, coding "No response" as refused 	- ADD Q44 (6,10,13) and the other one  
 recode q3a_co_pe_uy_ar q4 q36 q39 q57 q58 q64 (4 = .r)	
 recode q8 q63 (8 = .r)
 recode q9 q10 q14 q54 q56a_ar q56b_ar q56c_ar q55 q59 q60 q61 (6 = .r)
@@ -233,6 +231,14 @@ recode q16 q17 q19_ar q24 q43_ar q45 q51 q52 q53 (5 = .r)
 recode q22 q50_a q50_b q50_c q50_d (7 = .r)
 recode q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j (96 = .r)
 recode q21 (11 = .r)
+
+*Mia please confirm this was the right way to change all the "no response values to .r in this variable"
+recode q44 q20 (5 = .r)
+recode q44 q20 (10 = .r)
+recode q44 q20 (15 = .r)
+recode q44 q20 (18 = .r)
+recode q44 q20 (23 = .r)
+recode q44 q20 (27 = .r)
 
 *"Don't Know" vars
 recode q30 q31 q32 q35 q36 q38 (3 = .d)
@@ -252,11 +258,6 @@ recode q22 (6 = .a)
 recode q39 q40 (3 = .a)
 
 *------------------------------------------------------------------------------*
-
-* Generate variables:
-
-* Country-specific values and value labels 
-
 * Generate variables
 gen respondent_id = "AR" + string(Respondent_Serial)
 gen country=16
@@ -278,6 +279,40 @@ gen recq44 = country*1000 + q44
 gen recq63 = country*1000 + q63
 replace recq63 = .r if q63== .r
 
+* Mia: relabel some variables now so we can use the orignal label values
+local q4l labels9
+local q5l labels10
+local q8l labels11
+local q44l labels51
+local q63l labels83
+
+foreach q in q4 q5 q8 q44 q63{
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof rec`q', local(`q'level)
+
+	forvalues i = 1/``q'n' {
+		local recvalue`q' = 16000+`: word `i' of ``q'val''
+		foreach lev in ``q'level' {
+			if strmatch("`lev'", "`recvalue`q''") == 1{
+				elabel define `q'_label (= 16000+`: word `i' of ``q'val'') ///
+										(`"AR: `gr`i''"'), modify
+			}
+		}         
+	}
+	
+	label val rec`q' `q'_label
+}
+
+
 * Q23/Q24 mid-point var 
 gen q23_q24 = q23 
 recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 1
@@ -293,9 +328,10 @@ label define q2_label 0 "18-29" 1 "30-39" 2 "40-49" 3 "50-59" 4 "60-69" 5 "70-79
 
 label define labels8 3 "AR: Otro género", modify
 
-label define q7 1601 "AR: Pública" 1602 "AR: OSEP" 1603 "AR: Otras obras sociales (Ejemplo: OSPE, OSDIPP)" 1604 "AR: PAMI" 1605 "AR: Prepaga o privada. (Ejemplo OSDE, GALENO, o similares)" 
+
+label define q7_label 1601 "AR: Pública" 1602 "AR: OSEP" 1603 "AR: Otras obras sociales (Ejemplo: OSPE, OSDIPP)" 1604 "AR: PAMI" 1605 "AR: Prepaga o privada. (Ejemplo OSDE, GALENO, o similares)", add
 			   			    					
-label value q7 q7
+label value q7 q7_label
 
 *q21:
 label define q21_label 1 "Bajo costo" 2 "Cercanía" 3 "Espera corta en lugar de atención (desde que llega hasta consulta)" 4 "Calidad de la atención" 5 "Respeto del personal" 6 "Disponibilidad de medicación y equipamiento" 7 "Único lugar disponible" 8 "Le corresponde por la cobertura" 9 "Otro <B>[NO LEER] </B>" 10 "AR: Tiempos de espera cortos  para obtener turnos"
@@ -360,7 +396,9 @@ recode q43_ar recq44 q45 q46 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f ///
 
 recode recq44 (. = .a) if q43_ar == 4 | q43_ar == .r
  
-
+*q62
+gen q62 = .a
+ 
 *q65
 recode q65 (. = .a) if q64 == 2 | q64 == .r
 
@@ -457,15 +495,22 @@ lab var q2 "P2-Puede decirme si tiene entre…<BR/><B>ENCUESTADOR: LEER OPCIONES
 lab var q4 "P4-¿Cuál de estas opciones describe el lugar donde vive?<BR/> <B>ENCUESTADOR:"
 lab var q5 "P5-¿En qué departamento vive?<BR/> <B>ENCUESTADOR: NO LEER LAS OPCIONES. SI PA"
 lab var q6 "Q6. Do you have health insurance?"
+lab var q7 "Q7. What type of health insurance do you have? "
 lab var q8 "P8-¿Cuál es el último nivel educativo que completó? <BR/><B>ENCUESTADOR: NO"
+lab var q13e_other "Q13E. Otro"
+lab var q19_other "Q19. Otro"
 lab var q20 "P20-¿Qué tipo de establecimiento es?<BR/><B> LEER las opciones. SONDEAR para e"
 lab var q20_other "P20. Otro"
+lab var q21 "P21-¿Por qué eligió ese lugar?  (Díganos la razón principal). <BR/><B>ENCUE"
+lab var q21_other "Q21. Otro"
 lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q24 mid-point)"
+lab var q42 "P42-La última vez que sucedió, ¿cuál fue la razón principal por la que no o"
 lab var q42_other "P42. Otro"  
 lab var q43_other "P43. Otro"
 lab var q44 "P44-¿Qué tipo de establecimiento es? <BR/> <B> LEER las opciones. SONDEAR para"  
 lab var q44_other "P44. Otro"    
 lab var q45_other "P45. Otro" 
+lab var q62 "Q62. Respondent's mother tongue or native language"
 lab var q63 "P63-¿En cuál de estas categorías encaja el ingreso familiar de su hogar en el"
 
 
