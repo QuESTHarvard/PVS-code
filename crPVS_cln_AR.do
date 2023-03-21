@@ -68,7 +68,22 @@ ren P19_4 q19_other
 ren P20 q20
 *q20_other 
 gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_17 + P20_21 + P20_22 + P20_25 + P20_26
-ren P21 q21
+
+*change q21for additional AR var:
+gen q21 = .
+replace q21 = 1 if P21 ==1
+replace q21 = 2 if P21 ==2
+replace q21 = 3 if P21 ==4
+replace q21 = 4 if P21 ==5
+replace q21 = 5 if P21 ==6
+replace q21 = 6 if P21 ==7
+replace q21 = 7 if P21 ==8
+replace q21 = 8 if P21 ==9
+replace q21 = 9 if P21 ==10
+replace q21 = 10 if P21 ==3
+replace q21 = .r if P21 ==11
+
+	  
 ren P21_10 q21_other
 ren P22 q22
 
@@ -199,24 +214,14 @@ recode q11 q12 q13 q13b_co_pe_uy_ar q15 q18 q26 q29 q41 (3 = .r)
 recode q16 q17 q19_ar q24 q43_ar q45 q51 q52 q53 (5 = .r)
 recode q22 q50_a q50_b q50_c q50_d (7 = .r)
 recode q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j (96 = .r)
+recode q21 (11 = .r)
 
 *"Don't Know" vars
 recode q30 q31 q32 q35 q36 q38 (3 = .d)
 
 *------------------------------------------------------------------------------*
 
-* Generate variables 
-
-
-* Respondent ID
-gen respondent_id = "AR" + string(Respondent_Serial)
-gen country = 16 
-gen mode = 1
-gen q6 = .a
-gen q62 = .a
-
-
-*------------------------------------------------------------------------------*
+* Generate variables:
 
 * Country-specific values and value labels 
 
@@ -248,17 +253,31 @@ recode q23_q24 (.r = 7) (.d = 7) if q24 == 2
 recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
 recode q23_q24 (.d = .r) if q24 == .r 
 
+*q21:
+*recode AR specifc var:
+recode q21 = 12 if q21 == 3
+
+
+
 *------------------------------------------------------------------------------*
 
-* Value labels 
+* Value labels  - every variable came with its own set of value labels?
+
+label define labels8 3 "AR: Otro género", modify
 
 label define q7 1601 "AR: Pública" 1602 "AR: OSEP" 1603 "AR: Otras obras sociales (Ejemplo: OSPE, OSDIPP)" 1604 "AR: PAMI" 1605 "AR: Prepaga o privada. (Ejemplo OSDE, GALENO, o similares)" 
 			   			    					
 label value q7 q7
 
-*q50_a,b,c,d - add new value label for 6
+label define q13b_co_pe_uy_ar
 
-*q3a_co_pe_uy_ar - new value label for 3
+*q21:
+label define q21_label 1 "Bajo costo" 2 "Cercanía" 3 "Espera corta en lugar de atención (desde que llega hasta consulta)" 4 "Calidad de la atención" 5 "Respeto del personal" 6 "Disponibilidad de medicación y equipamiento" 7 "Único lugar disponible" 8 "Le corresponde por la cobertura" 9 "Otro <B>[NO LEER] </B>" 10 "AR: Tiempos de espera cortos  para obtener turnos"
+
+label value q21 q21_label
+
+
+
 
 *------------------------------------------------------------------------------*
 
@@ -269,10 +288,15 @@ label value q7 q7
 * Recode missing values to NA for questions respondents would not have been asked 
 * due to skip patterns
 
-* q13 
-recode q13 (. = .a) if q12 == 2 | q12 == .r 
+*q6
+recode q6 (. = .a)
 
-*q19-22 - redo for AR
+
+*q13b_co_pe_uy_ar  & q13e_co_pe_uy_ar
+recode q13b_co_pe_uy_ar (. = .a) if q12 == 2 | q12 == .r 
+recode q13e_co_pe_uy_ar (. = .a) if q12 == 2 | q12 == .r 
+
+*q19-22 - redo for AR (q19_ar)
 recode q19_q20a_la q18b_la (.=.r) if q18a_la==.r // refused to answer this sequence of questions
 recode q19_q20a_la q18b_la q19_q20b_la q21 q22 (. = .a) if q18a_la == 2 // no usual source of care
 recode q18b_la q19_q20b_la (. = .a) if inrange(q19_q20a_la,1,4) | q19_q20a_la == 6  // questions about a second usual source of care were only asked if the first usual source of care was a pharmacy, traditional healer, or other
@@ -358,8 +382,5 @@ recode q16 q17  ///
 	   pre(rec) label(vc_nc)
 
 
-
-
-	   
 	   
 	   
