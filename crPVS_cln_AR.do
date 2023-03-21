@@ -203,97 +203,53 @@ recode q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j (96 = .r)
 *"Don't Know" vars
 recode q30 q31 q32 q35 q36 q38 (3 = .d)
 
-
-
-*double check: q13b_co_pe_uy_ar 
-
-*need to make blank "other" values = NA (q19_other, q21_other, q42_other)
-
 *------------------------------------------------------------------------------*
 
 * Generate variables 
 
-* Respondent ID - Already one in dataset, ignore?
+
+* Respondent ID
 gen respondent_id = "AR" + string(Respondent_Serial)
 gen country = 16 
-lab def country 16 "Argentina" 
-lab val country country
 gen mode = 1
-lab def mode 3 "CATI"
-lab val mode mode
-gen language=1601
-lab define lang 1601 "Spanish" 
-lab val language lang
-
-
-
 gen q6 = .a
+gen q62 = .a
 
 
 *------------------------------------------------------------------------------*
 
 * Country-specific values and value labels 
 
-*** Mia changed this part ***
-gen reclanguage = country*1000 +language
-gen recq5 = country*1000 + q5  
+* Generate variables
+gen respondent_id = "AR" + string(Respondent_Serial)
+gen country=16
+lab def country 16 "Argentina" 
+lab val country country
+gen mode=1
+lab def mode 3 "CATI"
+lab val mode mode
+gen language=1601
+lab define lang 1601 "Spanish" 
+lab val language lang
+
+* Country-specific values 
 gen recq4 = country*1000 + q4
-gen interviewer_id = country*1000 + interviewerid
-gen recq8 = country*1000 + q8
-replace recq8 = .r if q8== .r
-gen recq44 = country*1000 + q44
-replace recq44 = country*1000 + 995 if q44== 4
-replace recq44 = .r if q44== .r
-gen recq62 = country*1000 +q62
-replace recq62 = country*1000 + 995 if q62 == 4
-replace recq62 = .r if q62== .r
+gen recq5 = country*1000 + q5 
+gen recq8 = country*1000 + q8 
+gen recq20 = country*1000 + q20 
+gen recq44 = country*1000 + q44 
 gen recq63 = country*1000 + q63
 replace recq63 = .r if q63== .r
-replace recq63 = .d if q63== .d
 
-* Q6/Q7 - LA specific
-recode q6_la (1 = 11001 "LA: Additional private insurance") (2 = 11002 "LA: Only public insurance") (99 = .r "Refused"), gen(q7) label(q7_label)
-* NOTE to self: check this 
-
-* Mia: relabel some variables now so we can use the orignal label values
-local q4l place
-local q5l province
-local q8l educ
-local q44l fac_type3
-local q62l lang
-local q63l income
-
-foreach q in q4 q5 q8 q44 q62 q63{
-	qui elabel list ``q'l'
-	local `q'n = r(k)
-	local `q'val = r(values)
-	local `q'lab = r(labels)
-	local g 0
-	foreach i in ``q'lab'{
-		local ++g
-		local gr`g' `i'
-	}
-
-	qui levelsof rec`q', local(`q'level)
-
-	forvalues i = 1/``q'n' {
-		local recvalue`q' = 11000+`: word `i' of ``q'val''
-		foreach lev in ``q'level' {
-			if strmatch("`lev'", "`recvalue`q''") == 1{
-				elabel define `q'_label (= 16000+`: word `i' of ``q'val'') ///
-										(`"AR: `gr`i''"'), modify
-			}
-		}         
-	}
-	
-	label val rec`q' `q'_label
-}
-
-*to confirm:
-*label define q62_label 11995 "LA: Other", add
-*label define q44_label 11995 "LA: Other", add
+* Q23/Q24 mid-point var 
+gen q23_q24 = q23 
+recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 1
+recode q23_q24 (.r = 7) (.d = 7) if q24 == 2
+recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
+recode q23_q24 (.d = .r) if q24 == .r 
 
 *------------------------------------------------------------------------------*
+
 * Value labels 
 
 label define q7 1601 "AR: Pública" 1602 "AR: OSEP" 1603 "AR: Otras obras sociales (Ejemplo: OSPE, OSDIPP)" 1604 "AR: PAMI" 1605 "AR: Prepaga o privada. (Ejemplo OSDE, GALENO, o similares)" 
