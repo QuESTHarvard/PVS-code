@@ -155,17 +155,20 @@ ren P44 q44
 gen q44_other = P44_3 + P44_4 + P44_8 + P44_9 + P44_13 + P44_14 + P44_16 + P44_17 + P44_21 + P44_22 + P44_25 + P44_26
 ren P45 q45
 ren P45_4 q45_other
-ren P46 q46
 
-*keep?
-gen q46_refused = .
-replace q46_refused = .r if P46_Minutos_Codes == 96
+ren P46 q46
+replace q46 = .r if P46_Minutos_Codes == 96
+
+*confirm- added .r to P46
+*gen q46_refused = .
+*replace q46_refused = .r if P46_Minutos_Codes == 96
 
 ren P47 q47
+replace q4 = .r if P47_Codes == 96
 
-*keep?
-gen q47_refused = . 
-replace q47_refused = .r if P47_Codes == 96
+*confirm- added .r to P47
+*gen q47_refused = . 
+*replace q47_refused = .r if P47_Codes == 96
 
 ren P48_1_C q48_a
 ren P48_2_C q48_b
@@ -215,7 +218,7 @@ format date %tdD_M_CY
 
 * Drop unused or other variables - dropped P1_Codes because it has no data and no label as to which question it belongs to
 
-drop P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 sum P46_Minutos_Codes P47_Codes
+drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 sum P46_Minutos_Codes P47_Codes
  
 
 *------------------------------------------------------------------------------*
@@ -243,7 +246,7 @@ recode q48_j (7 = .a)
 recode q50_a q50_b q50_c q50_d (6 = .a)
 
 *q22 6 "No se atendió en ese lugar en los últimos 12 meses." = You have not been seen at that location in the last 12 months which is .a in main data dictionary
-reocde q22 (6 = .a)
+recode q22 (6 = .a)
 
 *q39/q40 3 "No se atendió en los últimos 12 meses."
 recode q39 q40 (3 = .a)
@@ -323,17 +326,18 @@ label value q42 q42_label
 * due to skip patterns
 
 *q6
-recode q6 (. = .a)
-
+gen q6 = .a
 
 *q13b_co_pe_uy_ar  & q13e_co_pe_uy_ar
 recode q13b_co_pe_uy_ar (. = .a) if q12 == 2 | q12 == .r 
-recode q13e_co_pe_uy_ar (. = .a) if q12 == 2 | q12 == .r 
+recode q13e_co_pe_uy_ar (. = .a) if q12 == 2 | q12 == .r  | q13b_co_pe_uy_ar == 1
 
-*q19-22 - redo for AR (q19_ar)
-recode q19_q20a_la q18b_la (.=.r) if q18a_la==.r // refused to answer this sequence of questions
-recode q19_q20a_la q18b_la q19_q20b_la q21 q22 (. = .a) if q18a_la == 2 // no usual source of care
-recode q18b_la q19_q20b_la (. = .a) if inrange(q19_q20a_la,1,4) | q19_q20a_la == 6  // questions about a second usual source of care were only asked if the first usual source of care was a pharmacy, traditional healer, or other
+*q15
+recode q15 (. = .a) if q14 == 3 | q14 == 4 | q14 == 5 | q14 == .r
+
+
+*q19-22 
+recode q19_ar q20 q21 q22 (. = .a) if q18 == 2 | q18 ==.r // no usual source of care
 
 
 * NA's for q24-28 - redo for AR
@@ -342,32 +346,6 @@ recode q25_a (. = .a) if q23 != 1
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r 
-recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r 
-
-* q31 & q32
-recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r
-recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r 
-
-
-
-* q13 
-recode q13 (. = .a) if q12 == 2 | q12 == .r 
-
-* q15
-recode q15 (. = .a) if inrange(q14,3,5) | q14 == .r 
-
-*q19-22
-recode q19_kr recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
-recode recq20 (. = .a) if q19_kr == 4 | q19_kr == .r
-
-* NA's for q24-28 
-recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . 
-recode q25_a (. = .a) if q23 != 1
-recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r 
-recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r 
-
 
 * q31 & q32
 recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r
@@ -377,15 +355,14 @@ recode q32 (. = .a) if q3 != 2 | q1 == .r | q2 == .r
 recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
-recode q43_kr recq44 q45 q46 q46a q46b q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
-	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
-recode q48_k (. = .a) if q46a == 2
+recode q43_ar recq44 q45 q46 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
+	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 
-recode recq44 (. = .a) if q43_kr == 4 | q43_kr == .r
-recode q46b (. = .a) if q46a == 2 | q46a == .r 
+recode recq44 (. = .a) if q43_ar == 4 | q43_ar == .r
  
 
 *q65?
+recode q65 (. = .a) if q64 == 2 | q64 == .r
 
  
 *------------------------------------------------------------------------------*
@@ -393,15 +370,15 @@ recode q46b (. = .a) if q46a == 2 | q46a == .r
 * Recode value labels:
 * Recode values and value labels so that their values and direction make sense
 
-* All Yes/No questions
-recode q11 q12 q13 q13b_co_pe_uy_ar q13e_co_pe_uy_ar q18 q25_a q26 q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 ///
+* All Yes/No questions - should q15 be added? q64?
+recode q11 q12 q13 q13b_co_pe_uy_ar q18 q25_a q26 q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 	  
 	   
 * All Excellent to Poor scales
 
-recode q9 q10 q22 ///
+recode q9 q10 q22 q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q50_a q50_b q50_c q50_d q59 q60 q61 ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(exc_poor)
@@ -409,12 +386,84 @@ recode q9 q10 q22 ///
 
 * All Very Confident to Not at all Confident scales 
 	   
-recode q16 q17  ///
+recode q16 q17 q51 q52 q53 q54 q55 q56a_ar q56b_ar q56c_ar ///
 	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
 	   (3 = 1 "Not too confident") (4 = 0 "Not at all confident") /// 
 	   (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(vc_nc)
 
 
+* Miscellaneous questions with unique answer options
+recode q57 ///
+	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
+	(.r = .r "Refused") , pre(rec) label(system_outlook)
 	   
 	   
+	   recode q3 ///
+	(1 = 0 Male) (2 = 1 Female) (.r = .r Refused), ///
+	pre(rec) label(gender)
+
+recode q14 ///
+	(1 = 0 "0- no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
+	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused) (.a = .a NA), ///
+	pre(rec) label(covid_vacc)
+
+recode q15 /// 
+	   (1 = 1 "Yes, I plan to receive all required doses") ///
+	   (2 = 0 "No, don't plan to receive all required doses") ///
+	   (.r = .r Refused) (.a = .a NA), ///
+	   pre(rec) label(yes_no_doses)
+	   
+recode q24 ///
+	(1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") ///
+	(.r = .r Refused) (.a = .a NA), ///
+	pre(rec) label(number_visits)
+
+recode q57 ///
+	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
+	(.r = .r "Refused") , pre(rec) label(system_outlook)
+
+* Numeric questions needing NA and Refused value labels 
+lab def na_rf .a "NA" .r "Refused" .d "Don't know"
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q46b q47 na_rf
+
+	   *------------------------------------------------------------------------------*
+
+* Renaming variables 
+* Rename variables to match question numbers in current survey 
+
+***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
+
+drop q4 q5 q8 q20 q44 q62 q63 q66 q11 q12 q18 q13 q25_a q26 q29 q41 q30 q31 ///
+	 q32 q33 q34 q35 q36 q38 q39 q40 q46a q9 q10 q28_c q48_a q48_b q48_c q48_d ///
+	 q48_f q48_g q48_h q48_i q48_k q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a q50_b ///
+	 q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q56 q57
+
+ren rec* *
+ 
+*Reorder variables
+order q*, sequential
+order q*, after(language) 
+
+*------------------------------------------------------------------------------*
+* Label variables  - pending if we have to retranslate/fix HTML
+* do these need to be labeled: recq4 recq5 recq8 recq20 recq44 recq63 q23_q24 q6
+*Why are "other" and "refused" commented out in KR?
+
+lab var q2 "P2-Puede decirme si tiene entre…<BR/><B>ENCUESTADOR: LEER OPCIONES</B>"   
+lab var q7 "P1-<B>ENCUESTADOR DEBE LEER:</B><BR/>Voy a comenzar a hacerle preguntas sobre us" 
+lab var q13e_other "P13_E-¿Cuál fue la razón principal por la que no obtuvo atención para COVID-"
+lab var q19_other "P19. Otro" 
+lab var q21 "P21-¿Por qué eligió ese lugar?  (Díganos la razón principal). <BR/><B>ENCUE" 
+lab var q21_other "P21. Otro" 
+lab var q42 "P42-La última vez que sucedió, ¿cuál fue la razón principal por la que no o"    
+lab var q42_other "P42. Otro""   
+lab var q43_other "P43. Otro"  
+lab var q44_other "P44. Otro"    
+lab var q45_other "P45. Otro" 
+lab var date "Date of the interview" 
+lab var country "Country"  
+lab var mode "Mode of interview (CATI or F2F)"  
+lab var language "Language"   
+
+
