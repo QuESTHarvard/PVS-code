@@ -24,35 +24,47 @@ recode q14 (0/2=0) (3/4=1) if country ==2 | country==7 | country==10 | country==
 recode q14_la (0/2=0) (3/4=1) if country ==11, gen(fullvax3d_la)					  
 egen fullvax = rowmax (fullvax2d fullvax3d* )						  
 
-* Create binary vars
+* Other recoding
 foreach v in health health_mental usual_quality last_qual covid_manage{
 	recode `v' (1/2=0) (3/4=1), gen(vg`v')
 }
-
-egen preventive_score=rowtotal(blood_press blood_sugar eyes teeth care_mental), m 
+recode education (0=1), gen(educ3)
+egen preventive_score=rowtotal(blood_press blood_chol blood_sugar eyes teeth), m 
 recode preventive_score (0/2=0) (3/5=1), gen(preventive) 
 lab var preventive "Received at leat 3 out of 5 preventive services"
+recode unmet_need (0=1) (1=2), gen(no_unmet_need)
 recode system_outlook (1=0) (2=1), gen(getting_better)
 recode system_reform (1/2=0) (3=1), gen(minor_changes)
 recode visits_cat (1/2=1), gen(one_visit_or_more)
-********************************************************************************
 
+********************************************************************************
+* Table 1
+
+foreach x in  Colombia Ethiopia Italy Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay  {
+	
+summtab, catvars(age_cat educ3 income gender urban vghealth health_chronic ever_covid ///
+					usual_source no_unmet_need preventive ///
+					conf_getafford getting_better minor_changes) ///
+					contvars(visits) by(country) pval mean meanrow catrow by(fullvax) wts(weight) ///
+					replace excel excelname(Table_1)  sheetname("`x'") 
+	}
 * Regressions adjusted for Age, urban, male, above median income, higher education
 * Health: SR health + chronic
 * Health care use: has a usual source + visit frequency + preventive care BP, eyes, teeth, BS
 
-* sub-analysis: look at people with a ususal source + with a last visit 
+
 foreach x in Colombia Ethiopia Italy Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay {
 	
 	putexcel set "$user/$analysis/Utilization Confidence regressions.xlsx", sheet("`x'", replace)  modify
 
-	logistic fullvax  usual_source one_visit unmet_need preventive ///
+	logistic fullvax  usual_source one_visit no_unmet_need preventive ///
 					conf_getafford getting_better minor_changes ///
 					health_chronic ever_covid i.age_cat i.gender i.urban i.income ///
 					i.educ if c=="`x'", vce(robust) 		 
 	putexcel (A1) = etable	
 }
 
+* sub-analysis: look at people with a ususal source + with a last visit 
 foreach x in Colombia Ethiopia Italy Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay {
 	
 	putexcel set "$user/$analysis/Quality usual regressions.xlsx", sheet("`x'", replace)  modify
@@ -73,39 +85,39 @@ foreach x in Colombia Ethiopia Italy Kenya Korea LaoPDR Mexico Peru SouthAfrica 
 	putexcel (A1) = etable	
 }
 ********************************************************************************
-* FOREST PLOTS - UTILIZATION MODEL
-import excel using  "$user/$analysis/Utilization regressions.xlsx", sheet(Colombia) firstrow clear
+* FOREST PLOTS - UTILIZATION & CONFIDENCE MODEL
+import excel using  "$user/$analysis/Utilization Confidence regressions.xlsx", sheet(Colombia) firstrow clear
 	drop if B==""
 	drop in 1
 	gen country="Colombia"
-	drop in 5/21
+	drop in 8/24
 	save "$user/$analysis/foresplots.dta", replace
 
 foreach x in  LaoPDR Mexico SouthAfrica USA Uruguay { 
-import excel using  "$user/$analysis/Utilization regressions.xlsx", sheet("`x'") firstrow clear
+import excel using  "$user/$analysis/Utilization Confidence regressions.xlsx", sheet("`x'") firstrow clear
 	drop if B==""
 	drop in 1
 	gen country="`x'"
-	drop in 5/21
+	drop in 8/24
 	append using "$user/$analysis/foresplots.dta"
 	save "$user/$analysis/foresplots.dta", replace
 }
 foreach x in  Ethiopia Kenya Peru { 
-import excel using  "$user/$analysis/Utilization regressions.xlsx", sheet("`x'") firstrow clear
+import excel using  "$user/$analysis/Utilization Confidence regressions.xlsx", sheet("`x'") firstrow clear
 	drop if B==""
 	drop in 1
 	gen country="`x'"
-	drop in 5/20
+	drop in 8/23
 	append using "$user/$analysis/foresplots.dta"
 	save "$user/$analysis/foresplots.dta", replace
 }	
 	
 foreach x in  Italy Korea { 
-import excel using  "$user/$analysis/Utilization regressions.xlsx", sheet("`x'") firstrow clear
+import excel using  "$user/$analysis/Utilization Confidence regressions.xlsx", sheet("`x'") firstrow clear
 	drop if B==""
 	drop in 1
 	gen country="`x'"
-	drop in 5/19
+	drop in 8/22
 	append using "$user/$analysis/foresplots.dta"
 	save "$user/$analysis/foresplots.dta", replace
 }	
@@ -119,66 +131,25 @@ replace A ="Had at least 1 visit in last year" if A=="one_visit_or_more"
 replace A ="Did not seek care when needed" if A=="unmet_need"
 replace A ="Received 3/5 preventive services in last year" if A=="preventive"
 
-metan lnB lnF lnG , ///
+replace A ="Confident can get and afford quality care" if A=="conf_getafford"
+replace A ="Believes system is getting better" if A=="getting_better"
+replace A ="Believes the health system works well" if A=="minor_changes"
+
+gen conf=1 if A =="Confident can get and afford quality care" | A =="Believes system is getting better" | A =="Believes the health system works well"
+metan lnB lnF lnG if conf==., ///
 		by(A) sortby(lnB) nosubgroup eform  nooverall nobox  label(namevar=country) effect(aOR)  ///
 		xlabel(0.25, 0.5, 1, 2, 3, 4, 5) xtick (0.25, 0.5, 1, 2, 3, 4, 5) ///
 		graphregion(color(white)) forestplot(spacing(1.1)  ciopts(lcolor(navy) lwidth(vthin)) ///
 		pointopts (msize(tiny) mcolor(navy)))  
 graph export "$user/$analysis/FP Utilization.pdf", replace 
-********************************************************************************
-* FOREST PLOTS - CONFIDENCE MODELS
-import excel using  "$user/$analysis/Confidence regressions.xlsx", sheet(Colombia) firstrow clear
-	drop if B==""
-	drop in 1
-	gen country="Colombia"
-	drop in 4/20
-	save "$user/$analysis/foresplots.dta", replace
 
-foreach x in  LaoPDR Mexico SouthAfrica USA Uruguay { 
-import excel using  "$user/$analysis/Confidence regressions.xlsx", sheet("`x'") firstrow clear
-	drop if B==""
-	drop in 1
-	gen country="`x'"
-	drop in 4/20
-	append using "$user/$analysis/foresplots.dta"
-	save "$user/$analysis/foresplots.dta", replace
-}
-foreach x in  Ethiopia Kenya Peru { 
-import excel using  "$user/$analysis/Confidence regressions.xlsx", sheet("`x'") firstrow clear
-	drop if B==""
-	drop in 1
-	gen country="`x'"
-	drop in 4/19
-	append using "$user/$analysis/foresplots.dta"
-	save "$user/$analysis/foresplots.dta", replace
-}	
-	
-foreach x in  Italy Korea { 
-import excel using  "$user/$analysis/Confidence regressions.xlsx", sheet("`x'") firstrow clear
-	drop if B==""
-	drop in 1
-	gen country="`x'"
-	drop in 4/18
-	append using "$user/$analysis/foresplots.dta"
-	save "$user/$analysis/foresplots.dta", replace
-}	
-	keep A B F G country
-	foreach v in B F G {
-		destring `v', replace
-		gen ln`v' = ln(`v')
-	}
-
-replace A ="Confident could get & afford quality care" if A=="conf_getafford"
-replace A = "Believes health system is getting better in last 2 years" if A=="getting_better"
-replace A = "Believes health system works well" if A=="minor_changes"
-
-
-metan lnB lnF lnG , ///
+metan lnB lnF lnG if conf==1, ///
 		by(A) sortby(lnB) nosubgroup eform  nooverall nobox  label(namevar=country) effect(aOR)  ///
 		xlabel(0.25, 0.5, 1, 2, 3, 4, 5) xtick (0.25, 0.5, 1, 2, 3, 4, 5) ///
 		graphregion(color(white)) forestplot(spacing(1.1)  ciopts(lcolor(navy) lwidth(vthin)) ///
 		pointopts (msize(tiny) mcolor(navy)))  
-graph export "$user/$analysis/FP confidence.pdf", replace  
+graph export "$user/$analysis/FP confidence.pdf", replace 
+
 ********************************************************************************
 * FOREST PLOTS -QUALITY OF USUAL SOURCE
   import excel using  "$user/$analysis/Quality usual regressions.xlsx", sheet(Colombia) firstrow clear
@@ -306,16 +277,7 @@ graph export "$user/$analysis/FP NA EU.pdf", replace
 tab  country fullvax [aw=weight], row nofreq
 
 
-foreach x in Peru Italy Uruguay Mexico LaoPDR USA Colombia Kenya SouthAfrica Ethiopia {
-	
-summtab if c=="`x'", catvars( gender urban educ3 income insured vghealth ///
-					health_chronic ever_covid usual_source usual_own ///
-					vgusual_quality vglast_qual blood_pressure mammogram cervical_cancer ///
-					eyes_exam teeth_exam blood_sugar blood_chol mistake discrim  ///
-					unmet_need conf_sick conf_afford system_outlook system_reform vgcovid_manage) ///
-					contvars(age visits_total) pval mean meanrow catrow by(fullvax) wts(weight) ///
-					replace excel excelname(Table_1)  sheetname("`x'") 
-	}
+
 
 table country conf_sick [aw=weight], stat(mean fullvax)
 table country conf_afford [aw=weight], stat(mean fullvax)
