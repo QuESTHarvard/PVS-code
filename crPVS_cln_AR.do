@@ -131,7 +131,22 @@ ren P38 q38
 ren P39 q39
 ren P40 q40
 ren P41 q41
-ren P42 q42
+
+*specific AR value added to q42:
+gen q42 = .
+replace q42 = 1 if P42 ==1
+replace q42 = 2 if P42 ==2
+replace q42 = 11 if P42 ==3
+replace q42 = 3 if P42 ==4
+replace q42 = 4 if P42 == 5
+replace q42 = 5 if P42 ==6
+replace q42 = 6 if P42 ==7
+replace q42 = 7 if P42 ==8 
+replace q42 = 8 if P42 ==9
+replace q42 = 9 if P42 ==10
+replace q42 = 10 if P42 ==11
+replace q42 = .r if P42 ==12
+
 ren P42_11 q42_other
 ren P43 q43_ar
 ren P43_4 q43_other
@@ -219,6 +234,20 @@ recode q21 (11 = .r)
 *"Don't Know" vars
 recode q30 q31 q32 q35 q36 q38 (3 = .d)
 
+*"NA" vars - 6 is "No había hecho consultas o exámenes previos" = He had not made previous consultations or examinations and 7 is "El lugar no tenía otro personal" = the place had no other staff
+*double check q48_c data, 6 should not be an option according to the instrument
+recode q48_c q48_e (6 = .a)
+recode q48_j (7 = .a)
+
+*for these, recoding to NA as well but 6 is " No podría juzgar" = Couldn't judge
+recode q50_a q50_b q50_c q50_d (6 = .a)
+
+*q22 6 "No se atendió en ese lugar en los últimos 12 meses." = You have not been seen at that location in the last 12 months which is .a in main data dictionary
+reocde q22 (6 = .a)
+
+*q39/q40 3 "No se atendió en los últimos 12 meses."
+recode q39 q40 (3 = .a)
+
 *------------------------------------------------------------------------------*
 
 * Generate variables:
@@ -253,15 +282,11 @@ recode q23_q24 (.r = 7) (.d = 7) if q24 == 2
 recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
 recode q23_q24 (.d = .r) if q24 == .r 
 
-*q21:
-*recode AR specifc var:
-recode q21 = 12 if q21 == 3
-
-
-
 *------------------------------------------------------------------------------*
 
 * Value labels  - every variable came with its own set of value labels?
+
+label define q2_label 0 "18-29" 1 "30-39" 2 "40-49" 3 "50-59" 4 "60-69" 5 "70-79" 6 "80 or older"
 
 label define labels8 3 "AR: Otro género", modify
 
@@ -269,15 +294,24 @@ label define q7 1601 "AR: Pública" 1602 "AR: OSEP" 1603 "AR: Otras obras social
 			   			    					
 label value q7 q7
 
-label define q13b_co_pe_uy_ar
-
 *q21:
 label define q21_label 1 "Bajo costo" 2 "Cercanía" 3 "Espera corta en lugar de atención (desde que llega hasta consulta)" 4 "Calidad de la atención" 5 "Respeto del personal" 6 "Disponibilidad de medicación y equipamiento" 7 "Único lugar disponible" 8 "Le corresponde por la cobertura" 9 "Otro <B>[NO LEER] </B>" 10 "AR: Tiempos de espera cortos  para obtener turnos"
 
 label value q21 q21_label
 
 
+*q42: - var names cut off
+label define q42_label 1 "Alto costo (p.ej. elevado pago de bolsillo, atención no cubierta por seguro)" ///
+2 "Lejanía (p.ej. establecimiento muy lejo"  ///
+3 "Largos tiempos de espera en el establecimiento (p.ej. largas colas para acceder al establecimiento, larga espera para re" ///
+4 "Mala calidad de atención (p.ej. la consulta fue muy rápida, no se hizo un examen clínico completo" ///
+5 "Falta de respeto de parte del personal de salud (p.ej. el personal es vulgar, descortés, desdeñoso)" ///
+6 "No había medicamentos o equipos médicos disponibles (p.ej. generalmente no hay medicación, o no hay equipos, como aparat" ///
+7 "No estaba muy enfermo (incluye que usted no se consideraba muy enfermo para ir atenderse o que el personal de salud no l" ///
+8 "Restricciones por COVID-19 (p.ej. cuarentenas, restricciones de viaje, toques de queda)" 9 "Miedo al COVID-19" ///
+10 "Otro <B>[NO LEER] </B>" 11 "AR: Demora para conseguir un turno"
 
+label value q42 q42_label
 
 *------------------------------------------------------------------------------*
 
@@ -349,7 +383,7 @@ recode q48_k (. = .a) if q46a == 2
 
 recode recq44 (. = .a) if q43_kr == 4 | q43_kr == .r
 recode q46b (. = .a) if q46a == 2 | q46a == .r 
-
+ 
 
 *q65?
 
