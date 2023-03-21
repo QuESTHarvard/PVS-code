@@ -361,7 +361,7 @@ recode q43_ar recq44 q45 q46 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f ///
 recode recq44 (. = .a) if q43_ar == 4 | q43_ar == .r
  
 
-*q65?
+*q65
 recode q65 (. = .a) if q64 == 2 | q64 == .r
 
  
@@ -372,45 +372,43 @@ recode q65 (. = .a) if q64 == 2 | q64 == .r
 
 * All Yes/No questions - should q15 be added? q64?
 recode q11 q12 q13 q13b_co_pe_uy_ar q18 q25_a q26 q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 ///
-	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (.a = .a NA), ///
+	   (1 = 1 "Sí") (2 = 0 "No") (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 	  
 	   
 * All Excellent to Poor scales
 
-recode q9 q10 q22 q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q50_a q50_b q50_c q50_d q59 q60 q61 ///
-	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (.r = .r Refused) (.a = .a NA), /// 
+recode q9 q10 q22 q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q50_a q50_b q50_c q50_d q54 q55 q56a_ar q56b_ar q56c_ar q59 q60 q61 ///
+	   (1 = 4 "Excelente") (2 = 3 "Muy buena") (3 = 2 "Buena") (4 = 1 " Ni buena ni mala") /// 
+	   (5 = 0 "Mala") (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(exc_poor)
 	 
 
 * All Very Confident to Not at all Confident scales 
 	   
-recode q16 q17 q51 q52 q53 q54 q55 q56a_ar q56b_ar q56c_ar ///
-	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
-	   (3 = 1 "Not too confident") (4 = 0 "Not at all confident") /// 
+recode q16 q17 q51 q52 q53 ///
+	   (1 = 3 "Muy Seguro/a") (2 = 2 "Algo seguro/a") /// 
+	   (3 = 1 "No muy seguro/a") (4 = 0 "Nada seguro/a") /// 
 	   (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(vc_nc)
 
-
 * Miscellaneous questions with unique answer options
-recode q57 ///
-	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
-	(.r = .r "Refused") , pre(rec) label(system_outlook)
-	   
-	   
-	   recode q3 ///
-	(1 = 0 Male) (2 = 1 Female) (.r = .r Refused), ///
+recode q3 ///
+	(1 = 0 "Hombre") (2 = 1 "Mujer") (.r = .r Refused), ///
+	pre(rec) label(gender)
+
+recode q3a_co_pe_uy_ar ///
+	(1 = 0 "Masculino") (2 = 1 "Femenino") (3 = 3 "AR: Otro género") (.r = .r Refused), ///
 	pre(rec) label(gender)
 
 recode q14 ///
-	(1 = 0 "0- no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
-	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused) (.a = .a NA), ///
+	(1 = 0 "0 – ninguna dosis") (2 = 1 "Una dosis") (3 = 2 "Dos dosis") ///
+	(4 = 3 "Tres dosis") (5 = 4 "Más de 3 dosis") (.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(covid_vacc)
 
 recode q15 /// 
-	   (1 = 1 "Yes, I plan to receive all required doses") ///
-	   (2 = 0 "No, don't plan to receive all required doses") ///
+	   (1 = 1 "Sí, planea recibir todas las dosis recomendadas") ///
+	   (2 = 0 "No, no planea recibir todas las") ///
 	   (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no_doses)
 	   
@@ -418,27 +416,27 @@ recode q24 ///
 	(1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") ///
 	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(number_visits)
-
+	
 recode q57 ///
-	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
+	(3 = 0 " Está empeorando") (2 = 1 " Está igual") (1 = 2 "Está mejorando") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
+
 
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q46b q47 na_rf
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q47 na_rf
 
-	   *------------------------------------------------------------------------------*
+*------------------------------------------------------------------------------*
 
-* Renaming variables 
+* Renaming variables  - I don't understand this section i just used the vars that have rec in their name
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
 
-drop q4 q5 q8 q20 q44 q62 q63 q66 q11 q12 q18 q13 q25_a q26 q29 q41 q30 q31 ///
-	 q32 q33 q34 q35 q36 q38 q39 q40 q46a q9 q10 q28_c q48_a q48_b q48_c q48_d ///
-	 q48_f q48_g q48_h q48_i q48_k q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a q50_b ///
-	 q50_c q50_d q16 q17 q51 q52 q53 q2 q3 q14 q15 q24 q56 q57
-
+drop q3 q3a_co_pe_uy_ar q4 q5 q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q14 q15 q16 q17 q18 q20 q22 q24 q25_a q26 q29 q30 q31 q32 q33 q34 q35 q36 q38  ///
+q39 q40 q41 q44 q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56a_ar q56b_ar ///
+q56c_ar q57 q59 q60 q61 q63 
+ 
 ren rec* *
  
 *Reorder variables
@@ -449,21 +447,26 @@ order q*, after(language)
 * Label variables  - pending if we have to retranslate/fix HTML
 * do these need to be labeled: recq4 recq5 recq8 recq20 recq44 recq63 q23_q24 q6
 *Why are "other" and "refused" commented out in KR?
+*should q6 be dropped?
 
-lab var q2 "P2-Puede decirme si tiene entre…<BR/><B>ENCUESTADOR: LEER OPCIONES</B>"   
-lab var q7 "P1-<B>ENCUESTADOR DEBE LEER:</B><BR/>Voy a comenzar a hacerle preguntas sobre us" 
-lab var q13e_other "P13_E-¿Cuál fue la razón principal por la que no obtuvo atención para COVID-"
-lab var q19_other "P19. Otro" 
-lab var q21 "P21-¿Por qué eligió ese lugar?  (Díganos la razón principal). <BR/><B>ENCUE" 
-lab var q21_other "P21. Otro" 
-lab var q42 "P42-La última vez que sucedió, ¿cuál fue la razón principal por la que no o"    
-lab var q42_other "P42. Otro""   
-lab var q43_other "P43. Otro"  
+lab var country "Country"  
+lab var date "Date of the interview" 
+lab var mode "Mode of interview (CATI or F2F)"
+lab var language "Language"   
+lab var q2 "P2-Puede decirme si tiene entre…<BR/><B>ENCUESTADOR: LEER OPCIONES</B>"  
+lab var q4 "P4-¿Cuál de estas opciones describe el lugar donde vive?<BR/> <B>ENCUESTADOR:"
+lab var q5 "P5-¿En qué departamento vive?<BR/> <B>ENCUESTADOR: NO LEER LAS OPCIONES. SI PA"
+lab var q6 "Q6. Do you have health insurance?"
+lab var q8 "P8-¿Cuál es el último nivel educativo que completó? <BR/><B>ENCUESTADOR: NO"
+lab var q20 "P20-¿Qué tipo de establecimiento es?<BR/><B> LEER las opciones. SONDEAR para e"
+lab var q20_other "P20. Otro"
+lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q24 mid-point)"
+lab var q42_other "P42. Otro"  
+lab var q43_other "P43. Otro"
+lab var q44 "P44-¿Qué tipo de establecimiento es? <BR/> <B> LEER las opciones. SONDEAR para"  
 lab var q44_other "P44. Otro"    
 lab var q45_other "P45. Otro" 
-lab var date "Date of the interview" 
-lab var country "Country"  
-lab var mode "Mode of interview (CATI or F2F)"  
-lab var language "Language"   
+lab var q63 "P63-¿En cuál de estas categorías encaja el ingreso familiar de su hogar en el"
+
 
 
