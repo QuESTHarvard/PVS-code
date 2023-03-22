@@ -269,7 +269,7 @@ recode recq20 (. = .a) if q19 == 4 | q19 == .r
 
 *** Mia changed this part ***
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . // Mia: add the case that q23 == . to be consistant with other programs
+recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . // Mia: add the case that q23 == . to be consistant with other programs
 recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
@@ -793,7 +793,7 @@ recode recq20 (. = .a) if q19_pe == .r | q19_uy == .r | q19_co  == .r
 
 *** Mia changed this part ***
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . // Mia: add the case that q23 == . to be consistant with other programs
+recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . // Mia: add the case that q23 == . to be consistant with other programs
 recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 

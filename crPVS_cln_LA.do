@@ -368,7 +368,7 @@ recode q21 q22 q19_q20b_la (. = .a) if q18a_la==.r | q18b_la == .r // refused to
 
 *** Mia changed this part ***
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != . | q23 != .d | q23 != .r // Mia: added the case that q23 == .d/.r to be consistant with other programs
+recode q24 (. = .a) if q23 != . & q23 != .d & q23 != .r // Mia: added the case that q23 == .d/.r to be consistant with other programs
 recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == .r // Mia: added q24 == .r to be consistant with other programs
 * Mia: commented out this line. q24 can be 1-3 even if q23 == .r, if q24 in 1-3 and q23 == .r, we probably don't want to change . to .a

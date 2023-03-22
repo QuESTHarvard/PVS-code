@@ -261,7 +261,7 @@ recode q19_kr recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r
 recode recq20 (. = .a) if q19_kr == 4 | q19_kr == .r
 
 * NA's for q24-28 
-recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . 
+recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . 
 recode q25_a (. = .a) if q23 != 1 & q23 != . //Mia: add the case that q23 == .
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
