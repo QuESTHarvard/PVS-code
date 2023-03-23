@@ -988,8 +988,8 @@ ren rec* *
  
 ren q7_995 q7_other
 * Mia: added _ar to the name
-ren (q3a q13b q13e) (q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy) //Mia: deleted the double q13b
-ren q13e_10 q13e_other_co_pe_uy // Mia: added _co_pe_uy 
+ren (q3a q13b q13e) (q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar) //Mia: deleted the double q13b
+ren q13e_10 q13e_other_co_pe_uy_ar // Mia: added _co_pe_uy 
 ren q14_new q14
 ren q15_new q15
 ren q19_4 q19_other
@@ -1050,8 +1050,8 @@ lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
 lab var q13b_co_pe_uy_ar "Q13B. CO/PE/UY/AR only: Did you seek health care for COVID-19?"
-lab var q13e_co_pe_uy "Q13E. CO/PE/UY only: Why didnt you receive health care for COVID-19?"
-lab var q13e_other_co_pe_uy "Q13E. CO/PE/UY only: Other"
+lab var q13e_co_pe_uy_ar "Q13E. CO/PE/UY only: Why didnt you receive health care for COVID-19?"
+lab var q13e_other_co_pe_uy_ar "Q13E. CO/PE/UY only: Other"
 lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
@@ -1174,9 +1174,30 @@ append using "$data_mc/02 recoded data/pvs_kr.dta"
 
 qui do `label4'
 
+********* AR ********
+tempfile label5
+label save q4_label q5_label q7_label q8_label q20_label q44_label q63_label q66_label using `label5'
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q63_label q66_label
+
+append using "$data_mc/02 recoded data/pvs_ar.dta"
+
+qui do `label5'
+
+* q3a_co_pe_uy_ar
+label define gender2 3 "AR: Otro género", add
+
+* q13e_co_pe_uy_ar
+label define labels16 10 "AR: <B>Otro</B>", add // could potentially be combined with 995
+
+* q21
+label define labels26 10 "AR: Tiempos de espera cortos  para obtener turnos", add
+
+* q42
+label define labels37 11 "AR: Demora para conseguir un turno", add
+*********************
 
 * Country
-lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea", modify
+lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina", modify
 
 * Kenya/Ethiopia variables 
 ren q19 q19_et_ke_za
@@ -1196,7 +1217,7 @@ lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 * Country-specific skip patterns - check this 
 recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
 recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
-recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11 
+recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
@@ -1215,6 +1236,7 @@ recode q7 (. = .a) if country == 15 //Mia: dropped q6 since we will do it later 
 * Mia: add the line to recode q6 to .a if the country has country specific q6
 *      This might have been done in each individual cleaning program but do it again here to be sure
 recode q6 (. = .a) if inlist(country,9,14,15) 
+recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16
 
 	   
 * Country-specific value labels -edit for ssrs-
@@ -1223,7 +1245,7 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA: Afrikaans" ///
 				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
 				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
-				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean"
+				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish"
 
 lab val language Language
 lab var language "Language"
