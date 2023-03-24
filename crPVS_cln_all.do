@@ -1274,6 +1274,8 @@ lab def place_type .a "NA" .r "Refused", modify
 lab def fac_owner .a "NA" .r "Refused", modify
 lab def fac_type1 .a "NA" .r "Refused", modify
 lab def fac_type3 .a "NA" .r "Refused", modify
+lab def q6_kr .a "NA", modify
+lab def covid_vacc_la .a "NA", modify
  
 *** weights ***
 drop weight
