@@ -16,7 +16,6 @@ ren LanguageID language
 ren Respondent_Serial respondent_serial
 *ren P46_Minutos int_length // Mia: P46_Minutos is the minutes of q46
 ren pond weight_educ 
-ren pond weight_educ 
 ren P1 q1
 
 *needs to be recoded from P1 - confirm categories:
