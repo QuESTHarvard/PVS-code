@@ -13,8 +13,10 @@ use "$data/Argentina (Mendoza)/01 raw data/PVS_Mendoza_Data_23.01.27.dta", clear
 *"Codes" vars need to be recoded as .r (refused) and .d (don't know) only for the participants with values in the "Code" var
 
 ren LanguageID language
+ren Respondent_Serial respondent_serial
 *ren P46_Minutos int_length // Mia: P46_Minutos is the minutes of q46
-ren pond weight
+ren pond weight_educ 
+ren pond weight_educ 
 ren P1 q1
 
 *needs to be recoded from P1 - confirm categories:
