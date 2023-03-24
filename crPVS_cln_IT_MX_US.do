@@ -1000,6 +1000,7 @@ forvalues o = 1/`countryn' {
 }
 lab val q66 q66_label
 recode q66 (. = .a) if reccountry == 12
+lab def q66_label .a "NA" .r "Refused", add
 
 * Value labels for NA/Refused for other vars
 lab def labels12 .a "NA" .r "Refused", modify 
