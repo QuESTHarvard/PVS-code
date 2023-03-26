@@ -1297,7 +1297,7 @@ save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 * NOTE: Optional data quality checks 
 
-/
+/*
 ***************************** Data quality checks *****************************
 
 use "$data_mc\02 recoded data\pvs_appended.dta", clear
@@ -1426,11 +1426,15 @@ foreach i in 2 3 5 7 9 10 11 12 13 14 15 {
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 
-*All
-			
+*All (Laos and Argentina pending)		
 use "$data_mc\02 recoded data\pvs_appended.dta", clear
 
-foreach i in 13 {
+*Remove "" from responses for macros to work
+replace q19_other = subinstr(q19_other,`"""',  "", .)
+replace q43_other = subinstr(q43_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+foreach i in 2 3 5 7 9 10 12 13 14 15 {
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
 	sheet(other_specify_recode)							///	
@@ -1440,7 +1444,7 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
 	
 
 *Save recoded data
-*save "$data_mc/02 recoded data/pvs_appended.dta", replace
+save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 
 *========================= Summarizing All Missing ============================* 
