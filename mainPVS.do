@@ -19,10 +19,10 @@ set more off
 macro drop _all
 
 * Setting user globals 
-global user "/Users/nek096"
+*global user "/Users/nek096"
 *global user "/Users/catherine.arsenault"
 *global user "/Users/tol145"
-*global user "/Users/rodba"
+global user "/Users/rodba"
 *global user "/Users/shalomsabwa"
 
 * Setting file path globals
@@ -47,6 +47,7 @@ net install ipacheck, all replace from("https://raw.githubusercontent.com/Povert
 ipacheck update
 
 ssc install elabel 
+ssc install extremes
 
 ************************************************
 
