@@ -413,6 +413,8 @@ label define labels50 1 "Public" 2 "OSEP" 3 "Prepaid or private (Example OSDE, G
 label define labels52 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" ///
 					  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
 					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)", modify
+
+*3/27 Shalom: do we want to recode q63?
 					  
 label define labels79 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 					  2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
@@ -659,6 +661,7 @@ order q*, after(language)
 *Why are "other" and "refused" commented out in KR?
 *should q6 be dropped?
 
+lab var respondent_serial "Respondent Serial (unique within country)"
 lab var country "Country"  
 lab var date "Date of the interview" 
 lab var mode "Mode of interview (CATI or F2F)"
