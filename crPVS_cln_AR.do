@@ -57,7 +57,32 @@ ren P11 q11
 ren P12 q12
 ren P13 q13
 ren P13_B q13b_co_pe_uy_ar
-ren P13_E q13e_co_pe_uy_ar
+
+*3/27 Shalom: changed q13e_co_pe_uy_ar to make Other = 995
+gen q13e_co_pe_uy_ar = .
+replace q13e_co_pe_uy_ar = 1 if P13_E==1
+replace q13e_co_pe_uy_ar = 2 if P13_E==2
+replace q13e_co_pe_uy_ar = 3 if P13_E==3
+replace q13e_co_pe_uy_ar = 4 if P13_E==4
+replace q13e_co_pe_uy_ar = 5 if P13_E==5
+replace q13e_co_pe_uy_ar = 6 if P13_E==6
+replace q13e_co_pe_uy_ar = 7 if P13_E==7
+replace q13e_co_pe_uy_ar = 8 if P13_E==8
+replace q13e_co_pe_uy_ar = 9 if P13_E==9
+replace q13e_co_pe_uy_ar = 995 if P13_E==10
+
+label define q13e_label 1 "High cost (e.g., high out of pocket payment, not covered by insurance)" ///
+					  2 "Far distance (e.g., too far to walk or drive, transport not readily available)" ///
+					  3 "Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
+					  4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
+					  5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)" ///
+					  6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
+					  7 "The condition not serious enough (includes that you did not consider yourself too sick" ///
+					  8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" ///
+					  9 "COVID-19 fear" 995 "Other, specify"
+					  
+label value q13e_co_pe_uy_ar q13e_label
+
 ren P13_E_10 q13e_other_co_pe_uy_ar // Mia: added _co_pe_uy_ar
 ren P14 q14
 ren P15 q15
@@ -164,7 +189,7 @@ label define q42_label 1 "High cost (e.g., high out of pocket payment, not cover
 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
 5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)" ///
 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
-7 "The condition not serious enough (includes that you did not consider yourself too sick to go for care)" ///
+7 "Illness not serious enough" ///
 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" 9 "COVID-19 fear" ///
 10 "Other, specify" 11 "AR: Delay to get a turn"
 
@@ -372,11 +397,12 @@ label define labels8 3 "AR: Other gender", modify
 
 *confirm if we want q4 translated:
 label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Field", modify
-					  
+
+*Shalom to fix:					  
 label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
 					  16004 "AR: Secondary(basic cycle and 4th to 6th)" 16005 "AR: Non-university higher education" ///
 					  16006 "AR: University superior" 16007 "AR: Postgraduate", modify
-
+					  					  				  
 *q20/q44 = difficult to rename because values not matching up with instrument (shalom) keep in spanish since its a numerical value?
 
 label define labels50 1 "Public" 2 "OSEP" 3 "Prepaid or private (Example OSDE, GALENO, OMINT, MEDIFÉ or similar ones)" ///
@@ -384,7 +410,14 @@ label define labels50 1 "Public" 2 "OSEP" 3 "Prepaid or private (Example OSDE, G
 					  
 label define labels52 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" ///
 					  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
-					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)"
+					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)", modify
+					  
+label define labels79 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
+					  2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
+					  3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better.", modify
+					  
+label define labels84 1 "Yes" 2 "No/No other numbers", modify		  
+					
 
 *------------------------------------------------------------------------------*
 
@@ -557,6 +590,7 @@ recode q3 ///
 recode q3a_co_pe_uy_ar ///
 	(1 = 0 "Man") (2 = 1 "Woman") (3 = 3 "AR: Other gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
+
 
 recode q14 ///
 	(1 = 0 "0 – no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
