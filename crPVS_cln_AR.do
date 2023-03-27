@@ -6,6 +6,8 @@
 
 * Import data -confirm Path
 use "$data/Argentina (Mendoza)/01 raw data/PVS_Mendoza_Data_23.01.27.dta", clear
+
+
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 
 *------------------------------------------------------------------------------*
@@ -18,8 +20,10 @@ ren pond weight
 ren P1 q1
 
 *needs to be recoded from P1 - confirm categories:
+
 * Mia: set all q2 to be .a since everyone answered q1, the derive variable program will take care of this
 gen q2= .a
+
 
 ren P3_A q3
 ren P3_B q3a_co_pe_uy_ar
@@ -27,6 +31,7 @@ ren P4 q4
 ren P5 q5
 
 *q7 is in 6 different vars: P71, P72, P73, P74, P75, P76 - need to change yes/no, yes to name of variable - there are no "missing" in each variable
+
 gen q7 = .
 replace q7 = 16001 if P71 == 1 
 replace q7 =16002 if P72 == 1
@@ -42,6 +47,7 @@ label define q7_label 16001 "AR: Pública" 16002 "AR: OSEP" 16003 "AR: Otras obr
                       16004 "AR: PAMI" 16005 "AR: Prepaga o privada. (Ejemplo OSDE, GALENO, o similares)" 16007 "No insurance", add
 			   			    					
 label value q7 q7_label
+
 
 *double check someone hasn't entered "Yes" to more than one option: 
 *No one has >1
@@ -68,7 +74,9 @@ ren P20 q20
 *q20_other 
 gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_17 + P20_21 + P20_22 + P20_25 + P20_26
 
+
 *change q21for additional AR var:
+
 gen q21 = .
 replace q21 = 1 if P21 ==1
 replace q21 = 2 if P21 ==2
@@ -82,6 +90,7 @@ replace q21 = 8 if P21 ==9
 replace q21 = 9 if P21 ==10
 replace q21 = .r if P21 ==11
 
+
 * Mia: moved the value label part here
 label define q21_label 1 "Bajo costo" 2 "Cercanía" 3 "Espera corta en lugar de atención (desde que llega hasta consulta)" /// 
                        4 "Calidad de la atención" 5 "Respeto del personal" 6 "Disponibilidad de medicación y equipamiento" ///
@@ -89,6 +98,7 @@ label define q21_label 1 "Bajo costo" 2 "Cercanía" 3 "Espera corta en lugar de 
 					   10 "AR: Tiempos de espera cortos  para obtener turnos"
 
 label value q21 q21_label
+
 
 ren P21_10 q21_other
 ren P22 q22
@@ -104,6 +114,7 @@ ren P25 q25_a
 *adding .r/.d to q23 based on P25_Codes - no data
 *replace P25_B = .d if P25_B_Codes == 1
 *replace P25_B = .r if P25_B_Codes == 2
+
 ren P25_B q25_b
 
 ren P26 q26
@@ -153,6 +164,7 @@ replace q42 = 9 if P42 ==10
 replace q42 = 10 if P42 ==11
 replace q42 = .r if P42 ==12
 
+
 * Mia: moved it here
 *q42: - var names cut off
 label define q42_label 1 "Alto costo (p.ej. elevado pago de bolsillo, atención no cubierta por seguro)" ///
@@ -167,6 +179,7 @@ label define q42_label 1 "Alto costo (p.ej. elevado pago de bolsillo, atención 
 
 label value q42 q42_label
 
+
 ren P42_11 q42_other
 ren P43 q43_ar
 ren P43_4 q43_other
@@ -175,6 +188,7 @@ ren P44 q44
 gen q44_other = P44_3 + P44_4 + P44_8 + P44_9 + P44_13 + P44_14 + P44_16 + P44_17 + P44_21 + P44_22 + P44_25 + P44_26
 ren P45 q45
 ren P45_4 q45_other
+
 
 recode P46 P46_Minutos (. = 0) if P46 < . | P46_Minutos < . 
 gen q46 = P46*60 + P46_Minutos
@@ -185,13 +199,16 @@ replace q46 = .r if P46_Minutos_Codes == 96
 *replace q46_refused = 1 if P46_Minutos_Codes == 96
 *replace q46_refused = 0 if q46 >= 0 & q46 < . // check with Neena for the case where q46 == 0
 
+
 ren P47 q47
 replace q4 = .r if P47_Codes == 96
 
 *confirm- added .r to P47
 *gen q47_refused = . 
+
 *replace q47_refused = 1 if P47_Codes == 96
 *replace q46_refused = 0 if q47 >= 0 & q47 < . // check with Neena for the case where q46 == 0
+
 
 ren P48_1_C q48_a
 ren P48_2_C q48_b
@@ -244,6 +261,7 @@ format date %tdD_M_CY
 * Drop unused or other variables - dropped P1_Codes because it has no data and no label as to which question it belongs to
 
 drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46_Minutos_Codes P47_Codes P46 P46_Minutos
+
  
 *------------------------------------------------------------------------------*
 
@@ -256,14 +274,17 @@ recode q11 q12 q13 q13b_co_pe_uy_ar q15 q18 q26 q29 q41 (3 = .r)
 recode q16 q17 q19_ar q24 q43_ar q45 q51 q52 q53 (5 = .r)
 recode q22 q50_a q50_b q50_c q50_d (7 = .r)
 recode q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j (96 = .r)
+
 *recode q21 (11 = .r) // Mia: already recode this
 recode q44 q20 (5 = .r) (10 = .r) (15 = .r) (18 = .r) (23 = .r) (27 = .r)
+
 
 *"Don't Know" vars
 recode q30 q31 q32 q35 q36 q38 (3 = .d)
 
 *"NA" vars - 6 is "No había hecho consultas o exámenes previos" = He had not made previous consultations or examinations and 7 is "El lugar no tenía otro personal" = the place had no other staff
 *double check q48_c data, 6 should not be an option according to the instrument
+
 recode q48_c q48_e (6 = .a) 
 recode q48_j (7 = .a)
 
@@ -276,6 +297,7 @@ recode q22 (6 = .a)
 
 *q39/q40 3 "No se atendió en los últimos 12 meses."
 recode q39 q40 (3 = .a)
+
 
 *------------------------------------------------------------------------------*
 * Generate variables
@@ -362,6 +384,7 @@ recode q23_q24 (.d = .r) if q24 == .r
 
 * q3a_co_pe_uy_ar
 label define labels8 3 "AR: Otro género", modify
+
 
 *------------------------------------------------------------------------------*
 
@@ -454,13 +477,14 @@ recode q43_ar recq44 q45 q46 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f ///
 *      and there are people who answered q44 but refused q43
 *recode recq44 (. = .a) if q43_ar == 4 | q43_ar == .r 
  
+
 *q62
 gen q62 = .a
  
 *q65
 recode q65 (. = .a) if q64 == 2 | q64 == .r | q64 == .d // Mia: added the case q64 == .d
 
- 
+
 *------------------------------------------------------------------------------*
 
 * Recode value labels:
