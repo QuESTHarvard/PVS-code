@@ -656,8 +656,7 @@ order q*, sequential
 order q*, after(language) 
 
 *------------------------------------------------------------------------------*
-* Label variables  - pending if we have to retranslate/fix HTML
-* do these need to be labeled: recq4 recq5 recq8 recq20 recq44 recq63 q23_q24 q6
+* Label variables
 *Why are "other" and "refused" commented out in KR?
 *should q6 be dropped?
 
