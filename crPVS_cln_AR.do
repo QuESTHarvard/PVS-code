@@ -84,10 +84,11 @@ replace q21 = 9 if P21 ==10
 replace q21 = .r if P21 ==11
 
 * Mia: moved the value label part here
-label define q21_label 1 "Bajo costo" 2 "Cercanía" 3 "Espera corta en lugar de atención (desde que llega hasta consulta)" /// 
-                       4 "Calidad de la atención" 5 "Respeto del personal" 6 "Disponibilidad de medicación y equipamiento" ///
-					   7 "Único lugar disponible" 8 "Le corresponde por la cobertura" 9 "Otro <B>[NO LEER] </B>" ///
-					   10 "AR: Tiempos de espera cortos  para obtener turnos"
+*Shalom: full translations here a little different than what's in data dictionary but I matched them to it anyways, please confirm
+label define q21_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" /// 
+                       4 "Good healthcare provider skills" 5 "Staff shows respect" 6 "Medicines and equipment are available" ///
+					   7 "Only facility available" 8 "Covered by insurance" 9 "Other" ///
+					   10 "AR: Short waiting time to get appointments"
 
 label value q21 q21_label
 
@@ -155,16 +156,16 @@ replace q42 = 10 if P42 ==11
 replace q42 = .r if P42 ==12
 
 * Mia: moved it here
-*q42: - var names cut off
-label define q42_label 1 "Alto costo (p.ej. elevado pago de bolsillo, atención no cubierta por seguro)" ///
-2 "Lejanía (p.ej. establecimiento muy lejo"  ///
-3 "Largos tiempos de espera en el establecimiento (p.ej. largas colas para acceder al establecimiento, larga espera para re" ///
-4 "Mala calidad de atención (p.ej. la consulta fue muy rápida, no se hizo un examen clínico completo" ///
-5 "Falta de respeto de parte del personal de salud (p.ej. el personal es vulgar, descortés, desdeñoso)" ///
-6 "No había medicamentos o equipos médicos disponibles (p.ej. generalmente no hay medicación, o no hay equipos, como aparat" ///
-7 "No estaba muy enfermo (incluye que usted no se consideraba muy enfermo para ir atenderse o que el personal de salud no l" ///
-8 "Restricciones por COVID-19 (p.ej. cuarentenas, restricciones de viaje, toques de queda)" 9 "Miedo al COVID-19" ///
-10 "Otro <B>[NO LEER] </B>" 11 "AR: Demora para conseguir un turno"
+*q42: - var names cut off - confirm with survey
+label define q42_label 1 "High cost (e.g., high out of pocket payment, not covered by insurance)" ///
+2 "Far distance (e.g., too far to walk or drive, transport not readily available)"  ///
+3 "Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
+4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
+5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)" ///
+6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
+7 "The condition not serious enough (includes that you did not consider yourself too sick to go for care)" ///
+8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" 9 "COVID-19 fear" ///
+10 "Other, specify" 11 "AR: Delay to get a turn"
 
 label value q42 q42_label
 
@@ -371,11 +372,14 @@ label define labels8 3 "AR: Other gender", modify
 *confirm if we want q4 translated:
 label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Field", modify
 
+label define q7_label 16001 "AR: Public" 16002 "AR: OSEP" 16003: "AR: Other 'obras sociales' (Example: OSPE, OSDIPP)"///
+					  16004 "AR: PAMI" 16005 "AR: Private/Prepaid (Example: OSDE, GALENO, OMINT, MEDIFÉ or similar)"
+					  
 label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
 					  16004 "AR: Secondary(basic cycle and 4th to 6th)" 16005 "AR: Non-university higher education" ///
 					  16006 "AR: University superior" 16007 "AR: Postgraduate", modify
 
-
+*q20 = difficult to rename because values not matching up with instrument (shalom)
 
 *------------------------------------------------------------------------------*
 
