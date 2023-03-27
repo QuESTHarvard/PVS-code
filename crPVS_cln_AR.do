@@ -273,7 +273,7 @@ format date %tdD_M_CY
 
 * Drop unused or other variables - dropped P1_Codes because it has no data and no label as to which question it belongs to
 
-drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46_Minutos_Codes P47_Codes P46 P46_Minutos
+drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P13_E P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46_Minutos_Codes P47_Codes P46 P46_Minutos
  
 *------------------------------------------------------------------------------*
 
@@ -395,13 +395,15 @@ label define labels8 3 "AR: Other gender", modify
 
 **renam the value labels from Spanish to english:
 
-*confirm if we want q4 translated:
+*3/27: Shalom confirm if we want q4 translated:
 label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Field", modify
-
-*Shalom to fix:					  
+				  
 label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
 					  16004 "AR: Secondary(basic cycle and 4th to 6th)" 16005 "AR: Non-university higher education" ///
 					  16006 "AR: University superior" 16007 "AR: Postgraduate", modify
+					  
+label define labels24 1 "Public" 2 "OSEP" 3 "Prepaid or private (Example OSDE, GALENO, OMINT, MEDIFÉ or similar ones)" ///
+					  4 "Other" 6 "PAMI" 7 "Other 'obras sociales' (Example: OSPE, OSDIPP)", modify
 					  					  				  
 *q20/q44 = difficult to rename because values not matching up with instrument (shalom) keep in spanish since its a numerical value?
 
@@ -418,6 +420,7 @@ label define labels79 1 "Our healthcare system has so much wrong with it that we
 					  
 label define labels84 1 "Yes" 2 "No/No other numbers", modify		  
 					
+
 
 *------------------------------------------------------------------------------*
 
