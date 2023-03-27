@@ -39,15 +39,16 @@ replace q7 = .r if P76 == 1 //no response changed from .a to .r
 replace q7 = 16007 if (P71==0 & P72==0 & P73==0 & P74==0 & P75==0 & P76==0)
 
 * Mia: moved this part here 
-label define q7_label 16001 "AR: Pública" 16002 "AR: OSEP" 16003 "AR: Otras obras sociales (Ejemplo: OSPE, OSDIPP)" ///
-                      16004 "AR: PAMI" 16005 "AR: Prepaga o privada. (Ejemplo OSDE, GALENO, o similares)" 16007 "No insurance", add
+label define q7_label 16001 "AR: Public" 16002 "AR: OSEP" 16003 "AR: Other 'obras sociales' (Example: OSPE, OSDIPP)" ///
+                      16004 "AR: PAMI" 16005 "AR: Prepaid or private (Example: OSDE, GALENO, or similar)" 16007 "No insurance", add
 			   			    					
 label value q7 q7_label
 
 *double check someone hasn't entered "Yes" to more than one option: 
 *No one has >1
-*egen sum = rowtotal(P71 P72 P73 P74 P75)
-*tab sum
+egen sum = rowtotal(P71 P72 P73 P74 P75)
+tab sum
+drop sum
 
 ren P8 q8
 ren P9 q9
@@ -371,15 +372,19 @@ label define labels8 3 "AR: Other gender", modify
 
 *confirm if we want q4 translated:
 label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Field", modify
-
-label define q7_label 16001 "AR: Public" 16002 "AR: OSEP" 16003: "AR: Other 'obras sociales' (Example: OSPE, OSDIPP)"///
-					  16004 "AR: PAMI" 16005 "AR: Private/Prepaid (Example: OSDE, GALENO, OMINT, MEDIFÉ or similar)"
 					  
 label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
 					  16004 "AR: Secondary(basic cycle and 4th to 6th)" 16005 "AR: Non-university higher education" ///
 					  16006 "AR: University superior" 16007 "AR: Postgraduate", modify
 
-*q20 = difficult to rename because values not matching up with instrument (shalom)
+*q20/q44 = difficult to rename because values not matching up with instrument (shalom) keep in spanish since its a numerical value?
+
+label define labels50 1 "Public" 2 "OSEP" 3 "Prepaid or private (Example OSDE, GALENO, OMINT, MEDIFÉ or similar ones)" ///
+					  4 "Other" 6 "PAMI" 7 "Other 'obras sociales' (Example: OSPE, OSDIPP)", modify
+					  
+label define labels52 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" ///
+					  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
+					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)"
 
 *------------------------------------------------------------------------------*
 
