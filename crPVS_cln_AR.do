@@ -232,6 +232,7 @@ replace P65 = .d if P65_Codes1 == 1
 replace P65 = .r if P65_Codes2 == 1 
 ren P65 q65
 
+
 *------------------------------------------------------------------------------*
 
 * Date
@@ -239,6 +240,7 @@ generate date=mdy(CurrentMonth,CurrentDay,CurrentYear)
 format date %tdD_M_CY
 
 * Mia: need to generate mode and int_length
+*no variables for interview length in this dataset
 
 *------------------------------------------------------------------------------*
 
@@ -280,7 +282,7 @@ recode q39 q40 (3 = .a)
 
 *------------------------------------------------------------------------------*
 * Generate variables
-gen respondent_id = "AR" + string(Respondent_Serial)
+gen respondent_id = "AR" + string(respondent_serial)
 gen country=16
 lab def country 16 "Argentina" 
 lab val country country
@@ -362,7 +364,18 @@ recode q23_q24 (.d = .r) if q24 == .r
 *label define q2_label 0 "18-29" 1 "30-39" 2 "40-49" 3 "50-59" 4 "60-69" 5 "70-79" 6 "80 or older"
 
 * q3a_co_pe_uy_ar
-label define labels8 3 "AR: Otro género", modify
+label define labels8 3 "AR: Other gender", modify
+
+**renam the value labels from Spanish to english:
+
+*confirm if we want q4 translated:
+label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Field", modify
+
+label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
+					  16004 "AR: Secondary(basic cycle and 4th to 6th)" 16005 "AR: Non-university higher education" ///
+					  16006 "AR: University superior" 16007 "AR: Postgraduate", modify
+
+
 
 *------------------------------------------------------------------------------*
 
@@ -464,24 +477,24 @@ recode q65 (. = .a) if q64 == 2 | q64 == .r | q64 == .d // Mia: added the case q
  
 *------------------------------------------------------------------------------*
 
-* Recode value labels:
 * Recode values and value labels so that their values and direction make sense
 
 *** Mia changed this part ***
 * Mia: split this part into differen parts
 recode q11 q12 q13 q18 q25_a q26 q29 q41 /// 
-	   (1 = 1 "Sí") (2 = 0 "No") (.r = .r Refused) (.a = .a NA), ///
+	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 
 * I put q13b here to match other programs but for this dataset there's only yes, no and refused
 recode q13b_co_pe_uy_ar q30 q31 q32 q33 q34 q35 q36 q38 q64 ///
-	   (1 = 1 "Sí") (2 = 0 "No") (.r = .r Refused) (.d = .d "Don't know") /// 
+	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r Refused) (.d = .d "Don't Know") /// 
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk) 
-	   
+
+*Shalom note: confirm translation of .a with Rodrigo, this is from the data dictionary
 recode q39 q40 /// 
-	   (1 = 1 "Sí") (2 = 0 "No") ///
-	   (.a = .a "No se atendió en los últimos 12 meses") ///
+	   (1 = 1 "Yes") (2 = 0 "No") ///
+	   (.a = .a "I did not get healthcare in past 12 months") ///
 	   (.r = .r Refused), ///
 	   pre(rec) label(yes_no_na)
 	   
@@ -489,29 +502,29 @@ recode q39 q40 ///
 * All Excellent to Poor scales
 
 recode q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q54 q55 q56a_ar q56b_ar q56c_ar q59 q60 q61 ///
-	   (1 = 4 "Excelente") (2 = 3 "Muy buena") (3 = 2 "Buena") (4 = 1 " Ni buena ni mala") /// 
-	   (5 = 0 "Mala") (.r = .r Refused) (.a = .a NA), /// 
+	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
+	   (5 = 0 "Poor") (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(exc_poor)
 	   
 recode q22  ///
-	   (1 = 4 "Excelente") (2 = 3 "Muy buena") (3 = 2 "Buena") (4 = 1 " Ni buena ni mala") /// 
-	   (5 = 0 "Mala") (.a = .a "NA or No se atendió en ese lugar en los últimos 12 meses. ") /// 
+	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
+	   (5 = 0 "Poor") (.a = .a "NA or I have not had prior visits or tests") /// 
 	   (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_hlthcare)
 	   
 recode q48_e ///
-	   (1 = 4 "Excelente") (2 = 3 "Muy buena") (3 = 2 "Buena") (4 = 1 " Ni buena ni mala") /// 
-	   (5 = 0 "Mala") (.a = .a "NA or No había hecho consultas o exámenes previos") (.r = .r Refused), /// 
+	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
+	   (5 = 0 "Poor") (.a = .a "NA or I have not had prior visits or tests") (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_visits)
 	 
 recode q48_j ///
-	   (1 = 4 "Excelente") (2 = 3 "Muy buena") (3 = 2 "Buena") (4 = 1 " Ni buena ni mala") /// 
-	   (5 = 0 "Mala") (6 = .a "NA or El lugar no tenía otro personal") (.r = .r Refused), /// 
+	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
+	   (5 = 0 "Poor") (6 = .a "NA or The facility did not have other personnel") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor_staff)
 	   
 recode q50_a q50_b q50_c q50_d ///
-	   (1 = 4 "Excelente") (2 = 3 "Muy buena") (3 = 2 "Buena") (4 = 1 " Ni buena ni mala") /// 
-	   (5 = 0 "Mala") (.d = .d "No podría juzgar ") (.r = .r Refused) ///
+	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
+	   (5 = 0 "Poor") (.d = .d "I am unable to judge") (.r = .r Refused) ///
 	   (.a = .a NA), /// 
 	   pre(rec) label(exc_poor_judge)
 
@@ -520,30 +533,30 @@ recode q50_a q50_b q50_c q50_d ///
 * All Very Confident to Not at all Confident scales 
 	   
 recode q16 q17 q51 q52 q53 ///
-	   (1 = 3 "Muy Seguro/a") (2 = 2 "Algo seguro/a") /// 
-	   (3 = 1 "No muy seguro/a") (4 = 0 "Nada seguro/a") /// 
+	   (1 = 3 "Very confident") (2 = 2 "Someewhat confident") /// 
+	   (3 = 1 "Not too confident") (4 = 0 "Not at all confident") /// 
 	   (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(vc_nc)
 
 * Miscellaneous questions with unique answer options
 * Mia: note - different from other countries
 recode q3 ///
-	(1 = 0 "Hombre") (2 = 1 "Mujer") (.r = .r Refused), ///
+	(1 = 0 "Male") (2 = 1 "Female") (.r = .r Refused), ///
 	pre(rec) label(gender)
 
 * Mia: note - different from other countries
 recode q3a_co_pe_uy_ar ///
-	(1 = 0 "Masculino") (2 = 1 "Femenino") (3 = 3 "AR: Otro género") (.r = .r Refused), ///
+	(1 = 0 "Man") (2 = 1 "Woman") (3 = 3 "AR: Other gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
 
 recode q14 ///
-	(1 = 0 "0 – ninguna dosis") (2 = 1 "Una dosis") (3 = 2 "Dos dosis") ///
-	(4 = 3 "Tres dosis") (5 = 4 "Más de 3 dosis") (.r = .r Refused) (.a = .a NA), ///
+	(1 = 0 "0 – no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
+	(4 = 3 "3 doses") (5 = 4 "More than 3 doses") (.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(covid_vacc)
 
 recode q15 /// 
-	   (1 = 1 "Sí, planea recibir todas las dosis recomendadas") ///
-	   (2 = 0 "No, no planea recibir todas las") ///
+	   (1 = 1 "Yes, I plan to receive all required doses") ///
+	   (2 = 0 "No, don't plan to receive all required doses") ///
 	   (.r = .r Refused) (.a = .a NA) (.d = .d "Don't know"), /// Don't know included in some countries
 	   pre(rec) label(yes_no_doses)
 	   
@@ -560,7 +573,7 @@ recode q49 ///
 	pre(rec) label(prom_score)	
 	
 recode q57 ///
-	(3 = 0 " Está empeorando") (2 = 1 " Está igual") (1 = 2 "Está mejorando") ///
+	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 
 * Mia: added the following parts
