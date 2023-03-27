@@ -58,7 +58,7 @@ ren P12 q12
 ren P13 q13
 ren P13_B q13b_co_pe_uy_ar
 
-*3/27 Shalom: changed q13e_co_pe_uy_ar to make Other = 995
+*3/27 Shalom: changed q13e_co_pe_uy_ar to make Other = 995 
 gen q13e_co_pe_uy_ar = .
 replace q13e_co_pe_uy_ar = 1 if P13_E==1
 replace q13e_co_pe_uy_ar = 2 if P13_E==2
@@ -91,7 +91,26 @@ ren P17 q17
 ren P18 q18
 ren P19 q19_ar
 ren P19_4 q19_other
-ren P20 q20
+
+*3/27:
+gen q20 = .
+replace q20 = 16001 if P20 == 1
+replace q20 = 16002 if P20 == 2
+replace q20 = 16003 if P20 == 6
+replace q20 = 16004 if P20 == 7
+replace q20 = 16005 if P20 == 11
+replace q20 = 16006 if P20 == 3 | P20 == 8 |  P20 == 13 | P20 == 16 |  P20 == 21 | P20 == 25
+replace q20 = 16007 if P20 == 4  | P20 == 9 | P20 == 14 | P20 == 17 | P20 == 22 | P20 == 26 
+replace q20 = .r if P20 == 5 | P20 == 10 | P20 == 15 | P20 == 18 | P20 == 23 | P20 == 27
+
+*Add AR country specifc pre-label
+label define q20_label 16001 "Consultorio / Centro de Salud / Salita" 16002 "Hospital" ///
+					   16003 "OSEP Cerca / delegación / consultorio" 16004 "Clínica, Sanatorio, Hospital, OSEP Central" ///
+					   16005 "Centro de Salud/Policlínico" 16006 "Otro establecimiento de atención primaria" ///
+					   16007 "Otro establecimiento de atención secundaria o más" .r "Refused"
+					   
+label value q20 q20_label
+
 *q20_other 
 gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_17 + P20_21 + P20_22 + P20_25 + P20_26
 
@@ -287,15 +306,17 @@ recode q16 q17 q19_ar q24 q43_ar q45 q51 q52 q53 (5 = .r)
 recode q22 q50_a q50_b q50_c q50_d (7 = .r)
 recode q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j (96 = .r)
 *recode q21 (11 = .r) // Mia: already recode this
-recode q44 q20 (5 = .r) (10 = .r) (15 = .r) (18 = .r) (23 = .r) (27 = .r)
+*recode q44 q20 (5 = .r) (10 = .r) (15 = .r) (18 = .r) (23 = .r) (27 = .r)
 
 *"Don't Know" vars
 recode q30 q31 q32 q35 q36 q38 (3 = .d)
 
 *"NA" vars - 6 is "No había hecho consultas o exámenes previos" = He had not made previous consultations or examinations and 7 is "El lugar no tenía otro personal" = the place had no other staff
 *double check q48_c data, 6 should not be an option according to the instrument
-recode q48_c q48_e (6 = .a) 
+recode q48_e (6 = .a) 
 recode q48_j (7 = .a)
+*recode q48_c option 6 to = . should not have been a response option
+recode q48_c (6 = .)
 
 *for these, recoding to NA as well but 6 is " No podría juzgar" = Couldn't judge
 * Mia: in other datasets this was coded to be .d
@@ -306,6 +327,8 @@ recode q22 (6 = .a)
 
 *q39/q40 3 "No se atendió en los últimos 12 meses."
 recode q39 q40 (3 = .a)
+
+
 
 *------------------------------------------------------------------------------*
 * Generate variables
@@ -395,7 +418,7 @@ label define labels8 3 "AR: Other gender", modify
 
 **renam the value labels from Spanish to english:
 
-*3/27: Shalom confirm if we want q4 translated:
+*3/27: Shalom confirm if we want q4 translated- ask Rodrigo:
 label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Field", modify
 				  
 label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
@@ -404,8 +427,7 @@ label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: 
 					  
 label define labels24 1 "Public" 2 "OSEP" 3 "Prepaid or private (Example OSDE, GALENO, OMINT, MEDIFÉ or similar ones)" ///
 					  4 "Other" 6 "PAMI" 7 "Other 'obras sociales' (Example: OSPE, OSDIPP)", modify
-					  					  				  
-*q20/q44 = difficult to rename because values not matching up with instrument (shalom) keep in spanish since its a numerical value?
+					  					  				 
 
 label define labels50 1 "Public" 2 "OSEP" 3 "Prepaid or private (Example OSDE, GALENO, OMINT, MEDIFÉ or similar ones)" ///
 					  4 "Other" 6 "PAMI" 7 "Other 'obras sociales' (Example: OSPE, OSDIPP)", modify
@@ -414,7 +436,7 @@ label define labels52 1 "Care for an urgent or new health problem (an accident o
 					  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
 					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)", modify
 
-*3/27 Shalom: do we want to recode q63?
+*3/27 Shalom: do we want to recode q63? - no but add AR pre-code: change to comma
 					  
 label define labels79 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 					  2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
