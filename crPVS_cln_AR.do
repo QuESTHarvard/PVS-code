@@ -93,27 +93,16 @@ recode P20 (1 = 1 "Doctor's office / Health Center / 'Salita'") ///
 gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_17 + P20_21 + P20_22 + P20_25 + P20_26
 
 *change q21for additional AR var:
-gen q21 = .
-replace q21 = 1 if P21 ==1
-replace q21 = 2 if P21 ==2
-replace q21 = 10 if P21 ==3
-replace q21 = 3 if P21 ==4 
-replace q21 = 4 if P21 ==5
-replace q21 = 5 if P21 ==6
-replace q21 = 6 if P21 ==7
-replace q21 = 7 if P21 ==8
-replace q21 = 8 if P21 ==9
-replace q21 = 9 if P21 ==10
-replace q21 = .r if P21 ==11
-
-* Mia: moved the value label part here
-*Shalom: full translations here a little different than what's in data dictionary but I matched them to it anyways, please confirm
-label define q21_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" /// 
-                       4 "Good healthcare provider skills" 5 "Staff shows respect" 6 "Medicines and equipment are available" ///
-					   7 "Only facility available" 8 "Covered by insurance" 9 "Other" ///
-					   10 "AR: Short waiting time to get appointments"
-
-label value q21 q21_label
+recode P21 (1 = 1"Low cost") /// 
+			(2 = 2 "Short distance") ///
+			(10 = 3 "Short waiting time") ///
+			(3 = 4 "Good healthcare provider skills") ///
+			(4 = 5 "Staff shows respect") ///
+			(5 = 6"Medicines and equipment are available") ///
+			(6  =7 "Only facility available") ///
+			(7 = 8 "Covered by insurance") ///
+			(8 = 9 "Other") ///
+			(9 = 10 "AR: Short waiting time to get appointments") (11 = .r "Refused"), gen(q21)
 
 ren P21_10 q21_other
 ren P22 q22
@@ -164,57 +153,29 @@ ren P40 q40
 ren P41 q41
 
 *specific AR value added to q42:
-gen q42 = .
-replace q42 = 1 if P42 ==1
-replace q42 = 2 if P42 ==2
-replace q42 = 11 if P42 ==3
-replace q42 = 3 if P42 ==4
-replace q42 = 4 if P42 == 5
-replace q42 = 5 if P42 ==6
-replace q42 = 6 if P42 ==7
-replace q42 = 7 if P42 ==8 
-replace q42 = 8 if P42 ==9
-replace q42 = 9 if P42 ==10
-replace q42 = 10 if P42 ==11
-replace q42 = .r if P42 ==12
-
-* Mia: moved it here
-*q42: - var names cut off - confirm with survey
-label define q42_label 1 "High cost (e.g., high out of pocket payment, not covered by insurance)" ///
-					   2 "Far distance (e.g., too far to walk or drive, transport not readily available)"  ///
-					   3 "Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
-					   4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
-					   5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)" ///
-					   6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
-					   7 "Illness not serious enough" ///
-					   8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" 9 "COVID-19 fear" ///
-					   10 "Other, specify" 11 "AR: Delay to get a turn"
-
-label value q42 q42_label
+recode P42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
+			(2 = 2 "Far distance (e.g., too far to walk or drive, transport not readily available)") ///
+			(3 = 11 "AR: Delay to get a turn") ///
+			(4 = 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)") ///
+			(5 = 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)") ///
+			(6 = 5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)") ///
+			(7 = 6  "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
+			(8 = 7 "Illness not serious enough") ///
+			(9 = 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)") ///
+			(10 = 9 "COVID-19 fear") (11 = 10 "Other, specify") (12 = .r "Refused"), gen(q42)
 
 ren P42_11 q42_other
 ren P43 q43_ar
 ren P43_4 q43_other
-*ren P44 q44
 
 *q44:
-gen q44 = .
-replace q44 = 16001 if P44 == 1
-replace q44 = 16002 if P4 == 2
-replace q44 = 16003 if P20 == 6
-replace q44 = 16004 if P20 == 7
-replace q44 = 16005 if P20 == 11
-replace q44 = 16006 if P20 == 3 | P20 == 8 |  P20 == 13 | P20 == 16 |  P20 == 21 | P20 == 25
-replace q44 = 16007 if P20 == 4  | P20 == 9 | P20 == 14 | P20 == 17 | P20 == 22 | P20 == 26 
-replace q44 = .r if P20 == 5 | P20 == 10 | P20 == 15 | P20 == 18 | P20 == 23 | P20 == 27
-
-*Add AR country specifc pre-label
-label define q20_label 16001 "Centro de Salud/Policlínico" 16002 "Hospital" ///
-					   16003 "OSEP Cerca / delegación / consultorio" 16004 "Clínica, Sanatorio, Hospital, OSEP Central" ///
-					   16005 "Centro de Salud/Policlínico" 16006 "Otro establecimiento de atención primaria" ///
-					   16007 "Otro establecimiento de atención secundaria o más" .r "Refused"
-					   
-label value q20 q20_label
+recode P44 (1 = 1 "Health Center / 'Salita'") /// 
+			(2 7 12 20 = 2 "Clinic / Hospital / Sanatorium") ///
+			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
+			(11 19 24 = 4 "Health Center / Policlinic / Doctor's Office") ///
+			(3 8 13 16 21 25 = 5 "Otro establecimiento de atención primaria") ///
+			(4 9 14 17 22 26 = 6  "Otro establecimiento de atención secundaria o más") ///
+			(5 10 15 18 23 27 = .r "Refused"), gen(q44)
 
 *q44_other:
 gen q44_other = P44_3 + P44_4 + P44_8 + P44_9 + P44_13 + P44_14 + P44_16 + P44_17 + P44_21 + P44_22 + P44_25 + P44_26
