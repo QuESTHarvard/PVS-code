@@ -988,8 +988,8 @@ ren rec* *
  
 ren q7_995 q7_other
 * Mia: added _ar to the name
-ren (q3a q13b q13e) (q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy) //Mia: deleted the double q13b
-ren q13e_10 q13e_other_co_pe_uy // Mia: added _co_pe_uy 
+ren (q3a q13b q13e) (q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar) 
+ren q13e_10 q13e_other_co_pe_uy_ar 
 ren q14_new q14
 ren q15_new q15
 ren q19_4 q19_other
@@ -1205,7 +1205,6 @@ lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 * Country-specific skip patterns - check this 
 recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
 recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
-recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
@@ -1224,8 +1223,8 @@ recode q7 (. = .a) if country == 15 //Mia: dropped q6 since we will do it later 
 * Mia: add the line to recode q6 to .a if the country has country specific q6
 *      This might have been done in each individual cleaning program but do it again here to be sure
 recode q6 (. = .a) if inlist(country,9,14,15) 
+recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
-* Add for AR 
 
 	   
 * Country-specific value labels -edit for ssrs-
@@ -1326,7 +1325,6 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
 
 *Save recoded data
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
-
 
 
 /*
