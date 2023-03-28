@@ -357,14 +357,15 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 31 32 33 = 1 "Urban") (4 8 11 14 19 34 = 0
 		  (.r = .r "Refused"), gen(urban)
 */
 
-recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 = 1 "Urban") ///
-          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 = 0 "Rural") ///
+recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 = 1 "Urban") ///
+          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16002 16003 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
 gen insured = q6 
-recode insured (.a = 1) if country == 9 | country == 11 | country == 14
+recode insured (.a = 1) if country == 9 | country == 11 | country == 14 | country == 16
 * Note: All are insured in South Africa, Laos, and Italy, correct? 
+*Shalom: All people are insured in Mendoza as well
 * Mia: recode this with new q7 values
 recode insured (.a = 0) if inlist(q7,7014,13014) | inlist(q6_kr, 3)
 recode insured (.a = 1) if inlist(q7,2015,2016,2017,2018,2028,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005) | inlist(q6_kr, 1, 2)
