@@ -27,7 +27,7 @@ ren P3_B q3a_co_pe_uy_ar
 ren P4 q4
 ren P5 q5
 
-*q7 is in 6 different vars: P71, P72, P73, P74, P75, P76 - need to change yes/no, yes to name of variable - there are no "missing" in each variable
+*q7 is in 6 different vars: P71, P72, P73, P74, P75, P76 
 gen q7 = .
 replace q7 = 16001 if P71 == 1 
 replace q7 =16002 if P72 == 1
@@ -203,21 +203,43 @@ replace q42 = .r if P42 ==12
 * Mia: moved it here
 *q42: - var names cut off - confirm with survey
 label define q42_label 1 "High cost (e.g., high out of pocket payment, not covered by insurance)" ///
-2 "Far distance (e.g., too far to walk or drive, transport not readily available)"  ///
-3 "Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
-4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
-5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)" ///
-6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
-7 "Illness not serious enough" ///
-8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" 9 "COVID-19 fear" ///
-10 "Other, specify" 11 "AR: Delay to get a turn"
+					   2 "Far distance (e.g., too far to walk or drive, transport not readily available)"  ///
+					   3 "Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
+					   4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
+					   5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)" ///
+					   6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
+					   7 "Illness not serious enough" ///
+					   8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" 9 "COVID-19 fear" ///
+					   10 "Other, specify" 11 "AR: Delay to get a turn"
 
 label value q42 q42_label
 
 ren P42_11 q42_other
 ren P43 q43_ar
 ren P43_4 q43_other
-ren P44 q44
+*ren P44 q44
+
+*q44:
+gen q44 = .
+replace q44 = 16001 if P44 == 1
+replace q20 = 16002 if P4 == 2
+replace q20 = 16003 if P20 == 6
+replace q20 = 16004 if P20 == 7
+replace q20 = 16005 if P20 == 11
+replace q20 = 16006 if P20 == 3 | P20 == 8 |  P20 == 13 | P20 == 16 |  P20 == 21 | P20 == 25
+replace q20 = 16007 if P20 == 4  | P20 == 9 | P20 == 14 | P20 == 17 | P20 == 22 | P20 == 26 
+replace q20 = .r if P20 == 5 | P20 == 10 | P20 == 15 | P20 == 18 | P20 == 23 | P20 == 27
+
+*Add AR country specifc pre-label
+label define q20_label 16001 "Consultorio / Centro de Salud / Salita" 16002 "Hospital" ///
+					   16003 "OSEP Cerca / delegación / consultorio" 16004 "Clínica, Sanatorio, Hospital, OSEP Central" ///
+					   16005 "Centro de Salud/Policlínico" 16006 "Otro establecimiento de atención primaria" ///
+					   16007 "Otro establecimiento de atención secundaria o más" .r "Refused"
+					   
+label value q20 q20_label
+
+
+
 *q44_other:
 gen q44_other = P44_3 + P44_4 + P44_8 + P44_9 + P44_13 + P44_14 + P44_16 + P44_17 + P44_21 + P44_22 + P44_25 + P44_26
 ren P45 q45
