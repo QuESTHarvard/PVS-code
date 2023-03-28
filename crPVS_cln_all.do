@@ -1174,9 +1174,18 @@ append using "$data_mc/02 recoded data/pvs_kr.dta"
 
 qui do `label4'
 
+tempfile label5
+label save q4_label q5_label q7_label q8_label q20_label q44_label q63_label using `label5'
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q63_label
+
+append using "$data_mc/02 recoded data/pvs_ar.dta"
+
+qui do `label5'
+
+
 
 * Country
-lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea", modify
+lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza", modify
 
 * Kenya/Ethiopia variables 
 ren q19 q19_et_ke_za
@@ -1215,6 +1224,8 @@ recode q7 (. = .a) if country == 15 //Mia: dropped q6 since we will do it later 
 * Mia: add the line to recode q6 to .a if the country has country specific q6
 *      This might have been done in each individual cleaning program but do it again here to be sure
 recode q6 (. = .a) if inlist(country,9,14,15) 
+recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
+* Add for AR 
 
 	   
 * Country-specific value labels -edit for ssrs-
@@ -1223,8 +1234,9 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA: Afrikaans" ///
 				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
 				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
-				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean"
-
+				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish"
+				 
+				 
 lab val language Language
 lab var language "Language"
 
