@@ -93,16 +93,17 @@ recode P20 (1 = 1 "Doctor's office / Health Center / 'Salita'") ///
 gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_17 + P20_21 + P20_22 + P20_25 + P20_26
 
 *change q21for additional AR var:
-recode P21 (1 = 1"Low cost") /// 
+recode P21 (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
-			(10 = 3 "Short waiting time") ///
-			(3 = 4 "Good healthcare provider skills") ///
-			(4 = 5 "Staff shows respect") ///
-			(5 = 6"Medicines and equipment are available") ///
-			(6  =7 "Only facility available") ///
-			(7 = 8 "Covered by insurance") ///
-			(8 = 9 "Other") ///
-			(9 = 10 "AR: Short waiting time to get appointments") (11 = .r "Refused"), gen(q21)
+			(3 = 10 "AR: Short waiting time to get appointments") ///
+			(4 = 3 "Short waiting time") ///
+			(5 = 4 "Good healthcare provider skills") ///
+			(6 = 5 "Staff shows respect") ///
+			(7 = 6 "Medicines and equipment are available") ///
+			(8 = 7 "Only facility available") ///
+			(9 = 8 "Covered by insurance") ///
+			(10 = 9 "Other") ///
+			(11 = .r "Refused"), gen(q21)
 
 ren P21_10 q21_other
 ren P22 q22
@@ -251,7 +252,7 @@ format date %tdD_M_CY
 
 * Drop unused or other variables - dropped P1_Codes because it has no data and no label as to which question it belongs to
 
-drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P13_E P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46_Minutos_Codes P47_Codes P46 P46_Minutos
+drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P13_E P29_B P71 P72 P73 P74 P75 P76 P20 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46_Minutos_Codes P47_Codes P46 P46_Minutos P44
  
 *------------------------------------------------------------------------------*
 
@@ -286,8 +287,6 @@ recode q22 (6 = .a)
 
 *q39/q40 3 "No se atendió en los últimos 12 meses."
 recode q39 q40 (3 = .a)
-
-
 
 *------------------------------------------------------------------------------*
 * Generate variables
@@ -395,8 +394,15 @@ label define labels52 1 "Care for an urgent or new health problem (an accident o
 					  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
 					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)", modify
 
-*3/27 Shalom: do we want to recode q63? - no but add AR pre-code: change to comma
-					  
+*3/27 Shalom: do we want to recode q63? - no but add AR pre-code: change to comma - did No Income need a precode?
+label define q63_label 16001 "AR: 0 to 34,999 pesos" ///
+					   16002 "AR: 35,000 to 59,999 pesos" ///
+					   16003 "AR: 60,000 to 99,999 pesos" ///
+					   16004 "AR: 100,000 to 129,999 pesos" ///
+					   16005 "AR: 130,000 to 199,999 pesos" ///
+					   16006 "AR: 200,000 or more pesos" ///
+					   16007 "AR: No income", modify
+		  
 label define labels79 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 					  2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
 					  3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better.", modify
@@ -638,60 +644,32 @@ order q*, after(language)
 
 *------------------------------------------------------------------------------*
 * Label variables
-*Why are "other" and "refused" commented out in KR?
-*should q6 be dropped?
-
-lab var respondent_serial "Respondent Serial (unique within country)"
-lab var country "Country"  
-lab var date "Date of the interview" 
-lab var mode "Mode of interview (CATI or F2F)"
-lab var language "Language"   
-lab var q2 "P2-Puede decirme si tiene entre…<BR/><B>ENCUESTADOR: LEER OPCIONES</B>"  
-lab var q4 "P4-¿Cuál de estas opciones describe el lugar donde vive?<BR/> <B>ENCUESTADOR:"
-lab var q5 "P5-¿En qué departamento vive?<BR/> <B>ENCUESTADOR: NO LEER LAS OPCIONES. SI PA"
-lab var q6 "Q6. Do you have health insurance?"
-lab var q7 "Q7. What type of health insurance do you have? "
-lab var q8 "P8-¿Cuál es el último nivel educativo que completó? <BR/><B>ENCUESTADOR: NO"
-lab var q13e_other "Q13E. Otro"
-lab var q19_other "Q19. Otro"
-lab var q20 "P20-¿Qué tipo de establecimiento es?<BR/><B> LEER las opciones. SONDEAR para e"
-lab var q20_other "P20. Otro"
-lab var q21 "P21-¿Por qué eligió ese lugar?  (Díganos la razón principal). <BR/><B>ENCUE"
-lab var q21_other "Q21. Otro"
-lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q24 mid-point)"
-lab var q42 "P42-La última vez que sucedió, ¿cuál fue la razón principal por la que no o"
-lab var q42_other "P42. Otro"  
-lab var q43_other "P43. Otro"
-lab var q44 "P44-¿Qué tipo de establecimiento es? <BR/> <B> LEER las opciones. SONDEAR para"  
-lab var q44_other "P44. Otro"    
-lab var q45_other "P45. Otro" 
-lab var q62 "Q62. Respondent's mother tongue or native language"
-lab var q63 "P63-¿En cuál de estas categorías encaja el ingreso familiar de su hogar en el"
-
-
-
-*fix:
 
 lab var q1 "Q1. Respondent еxact age"
-lab var q2 "Q2. Respondent's age group"
+*lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
+lab var q3a_co_pe_uy_ar "Q3a. CO/PE/UY/AR only: Are you a man or a woman?"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
-lab var q6_kr "Q6. KR only: What is the type of your health coverage?"
-lab var q7_kr "Q7. KR only: Do you have private health insurance in addition to national...?"
+*lab var q6_kr "Q6. KR only: What is the type of your health coverage?"
+lab var q7 "Q7. What type of health insurance do you have?"
 lab var q8 "Q8. Highest level of education completed by the respondent"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health is?"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
+lab var q13b_co_pe_uy_ar "Q13B. CO/PE/UY/AR only: Did you seek health care for COVID-19?"
+lab var q13e_co_pe_uy_ar " Q13E. CO/PE/UY/AR only: Why didnt you receive health care for COVID-19?"
+*Shalom confirm q14 question
 lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
-lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
+*lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_kr "Q19. KR only: Is this...public, private, or non-profit/religious medical...?"
+*Shalom confirm 19_ar translation
+lab var q19_ar "Q19. AR only: Is this establishment public, OSEP, another social work, a medical center or hospital owned by PAMI or private/prepaid?"
 lab var q19_other "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 * lab var q20_other "Q20. Other"
@@ -703,7 +681,7 @@ lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q2
 lab var q24 "Q24. Total number of healthcare visits in the past 12 months (range)"
 lab var q25_a "Q25_A. Was this visit for COVID-19?"
 lab var q25_b "Q25_B. How many of these visits were for COVID-19?"
-lab var q28_c "Q28_C. How would you rate the overall quality of your last telemedicine visit?"
+*lab var q28_c "Q28_C. How would you rate the overall quality of your last telemedicine visit?"
 lab var q26 "Q26. Were all of the visits you made to the same healthcare facility?"
 lab var q27 "Q27. How many different healthcare facilities did you go to?"
 lab var q28_a "Q28_A. How many visits did you have with a healthcare provider at your home?"
@@ -721,17 +699,17 @@ lab var q39 "Q39. A medical mistake was made in your treatment or care in the pa
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
-lab var q42_other "Q42. Other"
-lab var q43_kr "Q43. KR only: Is this...public, private, or non-profit/religious medical...?"
+*lab var q42_other "Q42. Other"
+lab var q43_ar "Q43. AR only: Is this establishment Public, OSEP or Private?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
-*lab var q44_other "Q44. Other"
+lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 *lab var q46_refused "Q46. Refused"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
-lab var q46a "Q46A Was this a scheduled visit or did you go without an appt.?"
-lab var q46b "Q46B In days: how long between scheduling and seeing provider?"
+*lab var q46a "Q46A Was this a scheduled visit or did you go without an appt.?"
+*lab var q46b "Q46B In days: how long between scheduling and seeing provider?"
 *lab var q47_refused "Q47. Refused"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
@@ -753,16 +731,24 @@ lab var q51 "Q51. How confident are you that you'd get good healthcare if you we
 lab var q52 "Q52. How confident are you that you'd be able to afford the care you requiered?"
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
-lab var q55 "Q55. How would you rate the quality of private healthcare?"
+lab var q55 "Q55. How would you rate the quality of private/prepaid healthcare?"
+*Shalom confirm we want to write de Mendoza here:
+lab var q56a_ar "Q56a. How would you rate the quality of care provided by OSEP de Mendoza"
+*Shalom confirm translation of q56b_ar
+lab var q56b_ar "Q56b. How would you rate the quality of the 'otras obras sociales' health system in the province of Mendoza?"
+*Shalom confirm adding Mendoza here
+lab var q56c_ar "Q56c. How would you rate the quality of the PAMI health system in the province of Mendoza?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
 lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
 lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
-lab var q62 "Q62. Respondent's mother tongue or native language"
+*lab var q62 "Q62. Respondent's mother tongue or native language"
 *lab var q62_other "Q62. Other"
 lab var q63 "Q63. Total monthly household income"
-lab var q66 "Q66. Which political party did you vote for in the last election?"
+lab var q64 "Q64. Do you have another mobile phone number besides the one I am calling you on?"
+lab var q65 "Q65. How many other mobile phone numbers do you have?"
+*lab var q66 "Q66. Which political party did you vote for in the last election?"
 
 
 
