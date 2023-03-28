@@ -51,10 +51,10 @@ lab var getting_better "Believes the health system is getting better in past 2 y
 lab var minor_changes "Believes the health system works well"
 ********************************************************************************
 * Table 1	
-summtab, catvars(age_cat educ3 income gender urban vghealth health_chronic ever_covid ///
+summtab, catvars( educ3 income gender urban vghealth health_chronic ever_covid ///
 					usual_source no_unmet_need preventive ///
 					conf_getafford getting_better minor_changes) ///
-					contvars(visits) by(country) mean meanrow catrow wts(weight) ///
+					contvars(age visits) by(country) mean meanrow catrow wts(weight) ///
 					replace excel excelname(Table_1)  
 					
 * Regressions adjusted for Age, urban, male, above median income, higher education
