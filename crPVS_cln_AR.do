@@ -174,8 +174,8 @@ recode P44 (1 = 1 "Health Center / 'Salita'") ///
 			(2 7 12 20 = 2 "Clinic / Hospital / Sanatorium") ///
 			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
 			(11 19 24 = 4 "Health Center / Policlinic / Doctor's Office") ///
-			(3 8 13 16 21 25 = 5 "Otro establecimiento de atención primaria") ///
-			(4 9 14 17 22 26 = 6  "Otro establecimiento de atención secundaria o más") ///
+			(3 8 13 16 21 25 = 5 "Other primary care facility") ///
+			(4 9 14 17 22 26 = 6  "Other secondary care facility or higher") ///
 			(5 10 15 18 23 27 = .r "Refused"), gen(q44)
 
 *q44_other:
@@ -316,11 +316,12 @@ gen recq63 = country*1000 + q63
 replace recq63 = .r if q63 == .r
 
 * Mia: added q20
+*Shalom updated q20 and q44 labels to match recode at the top
 local q4l labels9
 local q5l labels10
 local q8l labels11
-local q20l labels25
-local q44l labels51
+local q20l q20
+local q44l q44
 local q63l labels83
 
 foreach q in q4 q5 q8 q20 q44 q63{
