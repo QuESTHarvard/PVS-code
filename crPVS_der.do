@@ -641,17 +641,18 @@ rename q46_original  q46
 rename q47_original  q47
 rename q46b_origial  q46b
 
-**Political alignment
+*** Political alignment***
+
 **Import excel as updatas and save it as .dta
-/*import excel "$data_mc/03 test output/Input/Policial alignment variable/Pol_align_recode_all.xlsx", sheet("pol_al") firstrow
-destring q5, replace float
-save "$data_mc/03 test output/Input/Policial alignment variable/pol_al.dta"
-u "$data_mc/02 recoded data/pvs_appended.dta", clear
-u "$data_mc/03 test output/Input/Policial alignment variable/pol_al.dta", clear
+/*import excel "$data_mc/03 test output/Input/Policial alignment variable/Pol_align_recode_all.xlsx", sheet("pol_al") firstrow clear
+destring q5 pol_align, replace float
+save "$data_mc/03 test output/Input/Policial alignment variable/pol_align.dta", replace
 */
-merge m:m q5 using "$data_mc/03 test output/Input/Policial alignment variable/pol_al.dta"
+
+merge m:m q5 using "$data_mc/03 test output/Input/Policial alignment variable/pol_align.dta" 
 drop _merge
-rename pol_al political_alignment
+lab def pol_align 0 "Not aligned (out of favor)" 1 "Aligned (in favor)"
+lab val pol_align pol_align
 
 *****************************
 
@@ -672,8 +673,8 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income income_tertiles political_alignment q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
-	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e_co_pe_uy q13e_other q14 q14_la q15 q15_la q16 q17 q18 ///
+	  vignette_good minority income income_tertiles pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
+	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
 	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
@@ -770,7 +771,7 @@ lab var tele_qual "Overall quality of last telemedicine visit (Q28C)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q46b)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q48K)"
 lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q51/Q52)"
-lab var political_alignment "Political alignment in respondent's region / district / state"
+lab var pol_align "Political alignment in respondent's region / district / state"
 
 
 
