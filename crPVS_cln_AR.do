@@ -174,8 +174,8 @@ recode P44 (1 = 1 "Health Center / 'Salita'") ///
 			(2 7 12 20 = 2 "Clinic / Hospital / Sanatorium") ///
 			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
 			(11 19 24 = 4 "Health Center / Policlinic / Doctor's Office") ///
-			(3 8 13 16 21 25 = 5 "Otro establecimiento de atención primaria") ///
-			(4 9 14 17 22 26 = 6  "Otro establecimiento de atención secundaria o más") ///
+			(3 8 13 16 21 25 = 5 "Other primary care facility") ///
+			(4 9 14 17 22 26 = 6  "Other secondary care facility or higher") ///
 			(5 10 15 18 23 27 = .r "Refused"), gen(q44)
 
 *q44_other:
