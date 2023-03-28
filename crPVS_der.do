@@ -557,6 +557,7 @@ lab val last_type fac_own_lvl
 
 * minority
 * Need to add ZA 
+*Shalom: No data for AR
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 3026 3027 3028 3029 3030 3031 3032 ///
 			7044 7045 7049 2081 11002 11003 15002 = 1 "Minority group") /// 
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 = 0 "Majority group") /// 
@@ -572,17 +573,18 @@ recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 9
 * Mia: add "No income" to the first group
 recode q63 (5001 5002 3009 3010 9015 9016 9017 9023 2039 2040 2048 7031 7032 7038  ///
 			10049 10050 10061 11001 11002 14001 14002 13001 13002 12001 12002 ///
-			15001 15002 15003 = 0 "No income/Lowest income") /// 
+			15001 15002 15003 16007 16001 16002 = 0 "No income/Lowest income") /// 
 		   (5003 5004 5005 3011 3012 9018 9019 9020 2041 2042 2043 7033 7034 7035 ///
 		   10051 10052 10053 11003 11004 11005 14003 14004 14005 13003 12003 ///
-		   15004 15005 15006 15007 = 1 "Middle income") /// 
+		   15004 15005 15006 15007 16003 16004 = 1 "Middle income") /// 
 		   (5006 5007 3013 3014 9021 9022 2044 2045 7036 7037 10054 10055 11006 ///
-		   11007 14006 14007 13004 13005 12004 12005 15008 = 2 "Highest income") ///
+		   11007 14006 14007 13004 13005 12004 12005 15008 16005 16006 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
 
 		  
 * Recode extreme values to missing 
+*3/28: shalom: haven't done this yet
 
 * All visit count variables and wait time variables:
 
