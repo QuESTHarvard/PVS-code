@@ -27,7 +27,7 @@ ren P3_B q3a_co_pe_uy_ar
 ren P4 q4
 ren P5 q5
 
-*q7 is in 6 different vars: P71, P72, P73, P74, P75, P76 - need to change yes/no, yes to name of variable - there are no "missing" in each variable
+*used replace instead of recode because q7 is in 6 different vars: P71, P72, P73, P74, P75, P76
 gen q7 = .
 replace q7 = 16001 if P71 == 1 
 replace q7 =16002 if P72 == 1
@@ -59,29 +59,16 @@ ren P13 q13
 ren P13_B q13b_co_pe_uy_ar
 
 *3/27 Shalom: changed q13e_co_pe_uy_ar to make Other = 995 
-gen q13e_co_pe_uy_ar = .
-replace q13e_co_pe_uy_ar = 1 if P13_E==1
-replace q13e_co_pe_uy_ar = 2 if P13_E==2
-replace q13e_co_pe_uy_ar = 3 if P13_E==3
-replace q13e_co_pe_uy_ar = 4 if P13_E==4
-replace q13e_co_pe_uy_ar = 5 if P13_E==5
-replace q13e_co_pe_uy_ar = 6 if P13_E==6
-replace q13e_co_pe_uy_ar = 7 if P13_E==7
-replace q13e_co_pe_uy_ar = 8 if P13_E==8
-replace q13e_co_pe_uy_ar = 9 if P13_E==9
-replace q13e_co_pe_uy_ar = 995 if P13_E==10
-
-label define q13e_label 1 "High cost (e.g., high out of pocket payment, not covered by insurance)" ///
-					  2 "Far distance (e.g., too far to walk or drive, transport not readily available)" ///
-					  3 "Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
-					  4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
-					  5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)" ///
-					  6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
-					  7 "The condition not serious enough (includes that you did not consider yourself too sick" ///
-					  8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" ///
-					  9 "COVID-19 fear" 995 "Other, specify"
-					  
-label value q13e_co_pe_uy_ar q13e_label
+recode P13_E (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
+			(2 = 2 "Far distance (e.g., too far to walk or drive, transport not readily available)") ///
+			(3 = 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)") ///
+			(4 = 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)") ///
+			(5 = 5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)") ///
+			(6 = 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
+			(7 = 7  "The condition not serious enough (includes that you did not consider yourself too sick") ///
+			(8 = 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)") ///
+			(9 = 9 "COVID-19 fear") ///
+			(10 = 995 "Other, specify") , gen(q13e_co_pe_uy_ar)
 
 ren P13_E_10 q13e_other_co_pe_uy_ar // Mia: added _co_pe_uy_ar
 ren P14 q14
@@ -93,49 +80,30 @@ ren P19 q19_ar
 ren P19_4 q19_other
 
 *3/27:
-gen q20 = .
-replace q20 = 16001 if P20 == 1
-replace q20 = 16002 if P20 == 2
-replace q20 = 16003 if P20 == 6
-replace q20 = 16004 if P20 == 7
-replace q20 = 16005 if P20 == 11
-replace q20 = 16006 if P20 == 3 | P20 == 8 |  P20 == 13 | P20 == 16 |  P20 == 21 | P20 == 25
-replace q20 = 16007 if P20 == 4  | P20 == 9 | P20 == 14 | P20 == 17 | P20 == 22 | P20 == 26 
-replace q20 = .r if P20 == 5 | P20 == 10 | P20 == 15 | P20 == 18 | P20 == 23 | P20 == 27
-
-*Add AR country specifc pre-label
-label define q20_label 16001 "Consultorio / Centro de Salud / Salita" 16002 "Hospital" ///
-					   16003 "OSEP Cerca / delegación / consultorio" 16004 "Clínica, Sanatorio, Hospital, OSEP Central" ///
-					   16005 "Centro de Salud/Policlínico" 16006 "Otro establecimiento de atención primaria" ///
-					   16007 "Otro establecimiento de atención secundaria o más" .r "Refused"
-					   
-label value q20 q20_label
+recode P20 (1 = 1 "Doctor's office / Health Center / 'Salita'") /// 
+			(2 = 2 "Hospital") ///
+			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
+			(7 12 20 = 4 "Clinic / Sanatorium / Hospital / OSEP Central") ///
+			(11 19 24 = 5 "Health Center / Policlinic / Doctor's Office") ///
+			(3 8 13 16 21 25 = 6 "Other primary care facility") ///
+			(4 9 14 17 22 26  = 7  "Other secondary care facility or higher") ///
+			(5 10 15 18 23 27 = .r "Refused"), gen(q20)
 
 *q20_other 
 gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_17 + P20_21 + P20_22 + P20_25 + P20_26
 
 *change q21for additional AR var:
-gen q21 = .
-replace q21 = 1 if P21 ==1
-replace q21 = 2 if P21 ==2
-replace q21 = 10 if P21 ==3
-replace q21 = 3 if P21 ==4 
-replace q21 = 4 if P21 ==5
-replace q21 = 5 if P21 ==6
-replace q21 = 6 if P21 ==7
-replace q21 = 7 if P21 ==8
-replace q21 = 8 if P21 ==9
-replace q21 = 9 if P21 ==10
-replace q21 = .r if P21 ==11
-
-* Mia: moved the value label part here
-*Shalom: full translations here a little different than what's in data dictionary but I matched them to it anyways, please confirm
-label define q21_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" /// 
-                       4 "Good healthcare provider skills" 5 "Staff shows respect" 6 "Medicines and equipment are available" ///
-					   7 "Only facility available" 8 "Covered by insurance" 9 "Other" ///
-					   10 "AR: Short waiting time to get appointments"
-
-label value q21 q21_label
+recode P21 (1 = 1 "Low cost") /// 
+			(2 = 2 "Short distance") ///
+			(3 = 10 "AR: Short waiting time to get appointments") ///
+			(4 = 3 "Short waiting time") ///
+			(5 = 4 "Good healthcare provider skills") ///
+			(6 = 5 "Staff shows respect") ///
+			(7 = 6 "Medicines and equipment are available") ///
+			(8 = 7 "Only facility available") ///
+			(9 = 8 "Covered by insurance") ///
+			(10 = 9 "Other") ///
+			(11 = .r "Refused"), gen(q21)
 
 ren P21_10 q21_other
 ren P22 q22
@@ -186,38 +154,30 @@ ren P40 q40
 ren P41 q41
 
 *specific AR value added to q42:
-gen q42 = .
-replace q42 = 1 if P42 ==1
-replace q42 = 2 if P42 ==2
-replace q42 = 11 if P42 ==3
-replace q42 = 3 if P42 ==4
-replace q42 = 4 if P42 == 5
-replace q42 = 5 if P42 ==6
-replace q42 = 6 if P42 ==7
-replace q42 = 7 if P42 ==8 
-replace q42 = 8 if P42 ==9
-replace q42 = 9 if P42 ==10
-replace q42 = 10 if P42 ==11
-replace q42 = .r if P42 ==12
-
-* Mia: moved it here
-*q42: - var names cut off - confirm with survey
-label define q42_label 1 "High cost (e.g., high out of pocket payment, not covered by insurance)" ///
-2 "Far distance (e.g., too far to walk or drive, transport not readily available)"  ///
-3 "Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
-4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
-5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)" ///
-6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
-7 "Illness not serious enough" ///
-8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" 9 "COVID-19 fear" ///
-10 "Other, specify" 11 "AR: Delay to get a turn"
-
-label value q42 q42_label
+recode P42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
+			(2 = 2 "Far distance (e.g., too far to walk or drive, transport not readily available)") ///
+			(3 = 11 "AR: Delay to get a turn") ///
+			(4 = 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)") ///
+			(5 = 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)") ///
+			(6 = 5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)") ///
+			(7 = 6  "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
+			(8 = 7 "Illness not serious enough") ///
+			(9 = 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)") ///
+			(10 = 9 "COVID-19 fear") (11 = 10 "Other, specify") (12 = .r "Refused"), gen(q42)
 
 ren P42_11 q42_other
 ren P43 q43_ar
 ren P43_4 q43_other
-ren P44 q44
+
+*q44:
+recode P44 (1 = 1 "Health Center / 'Salita'") /// 
+			(2 7 12 20 = 2 "Clinic / Hospital / Sanatorium") ///
+			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
+			(11 19 24 = 4 "Health Center / Policlinic / Doctor's Office") ///
+			(3 8 13 16 21 25 = 5 "Otro establecimiento de atención primaria") ///
+			(4 9 14 17 22 26 = 6  "Otro establecimiento de atención secundaria o más") ///
+			(5 10 15 18 23 27 = .r "Refused"), gen(q44)
+
 *q44_other:
 gen q44_other = P44_3 + P44_4 + P44_8 + P44_9 + P44_13 + P44_14 + P44_16 + P44_17 + P44_21 + P44_22 + P44_25 + P44_26
 ren P45 q45
@@ -292,7 +252,7 @@ format date %tdD_M_CY
 
 * Drop unused or other variables - dropped P1_Codes because it has no data and no label as to which question it belongs to
 
-drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P13_E P29_B P71 P72 P73 P74 P75 P76 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46_Minutos_Codes P47_Codes P46 P46_Minutos
+drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P13_E P29_B P71 P72 P73 P74 P75 P76 P20 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46_Minutos_Codes P47_Codes P46 P46_Minutos P44
  
 *------------------------------------------------------------------------------*
 
@@ -327,8 +287,6 @@ recode q22 (6 = .a)
 
 *q39/q40 3 "No se atendió en los últimos 12 meses."
 recode q39 q40 (3 = .a)
-
-
 
 *------------------------------------------------------------------------------*
 * Generate variables
@@ -436,8 +394,15 @@ label define labels52 1 "Care for an urgent or new health problem (an accident o
 					  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
 					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)", modify
 
-*3/27 Shalom: do we want to recode q63? - no but add AR pre-code: change to comma
-					  
+*3/27 Shalom: do we want to recode q63? - no but add AR pre-code: change to comma - did No Income need a precode?
+label define q63_label 16001 "AR: 0 to 34,999 pesos" ///
+					   16002 "AR: 35,000 to 59,999 pesos" ///
+					   16003 "AR: 60,000 to 99,999 pesos" ///
+					   16004 "AR: 100,000 to 129,999 pesos" ///
+					   16005 "AR: 130,000 to 199,999 pesos" ///
+					   16006 "AR: 200,000 or more pesos" ///
+					   16007 "AR: No income", modify
+		  
 label define labels79 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 					  2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
 					  3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better.", modify
@@ -679,35 +644,118 @@ order q*, after(language)
 
 *------------------------------------------------------------------------------*
 * Label variables
-*Why are "other" and "refused" commented out in KR?
-*should q6 be dropped?
+*q2, q6, q20_other, q42_other, q62 not in data but .a so i still added a variable label
 
-lab var respondent_serial "Respondent Serial (unique within country)"
-lab var country "Country"  
-lab var date "Date of the interview" 
-lab var mode "Mode of interview (CATI or F2F)"
-lab var language "Language"   
-lab var q2 "P2-Puede decirme si tiene entre…<BR/><B>ENCUESTADOR: LEER OPCIONES</B>"  
-lab var q4 "P4-¿Cuál de estas opciones describe el lugar donde vive?<BR/> <B>ENCUESTADOR:"
-lab var q5 "P5-¿En qué departamento vive?<BR/> <B>ENCUESTADOR: NO LEER LAS OPCIONES. SI PA"
+
+lab var q1 "Q1. Respondent еxact age"
+lab var q2 "Q2. Respondent's age group"
+lab var q3 "Q3. Respondent gender"
+lab var q3a_co_pe_uy_ar "Q3a. CO/PE/UY/AR only: Are you a man or a woman?"
+lab var q4 "Q4. Type of area where respondent lives"
+lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
-lab var q7 "Q7. What type of health insurance do you have? "
-lab var q8 "P8-¿Cuál es el último nivel educativo que completó? <BR/><B>ENCUESTADOR: NO"
-lab var q13e_other "Q13E. Otro"
-lab var q19_other "Q19. Otro"
-lab var q20 "P20-¿Qué tipo de establecimiento es?<BR/><B> LEER las opciones. SONDEAR para e"
-lab var q20_other "P20. Otro"
-lab var q21 "P21-¿Por qué eligió ese lugar?  (Díganos la razón principal). <BR/><B>ENCUE"
-lab var q21_other "Q21. Otro"
+lab var q7 "Q7. What type of health insurance do you have?"
+lab var q8 "Q8. Highest level of education completed by the respondent"
+lab var q9 "Q9. In general, would you say your health is:"
+lab var q10 "Q10. In general, would you say your mental health is?"
+lab var q11 "Q11. Do you have any longstanding illness or health problem?"
+lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
+lab var q13 "Q13. Was it confirmed by a test?"
+lab var q13b_co_pe_uy_ar "Q13B. CO/PE/UY/AR only: Did you seek health care for COVID-19?"
+lab var q13e_co_pe_uy_ar "Q13E. CO/PE/UY/AR only: Why didnt you receive health care for COVID-19?"
+lab var q13e_other_co_pe_uy_ar "Q13E. CO/PE/UY/AR only: Other"
+*Shalom confirm q14 question
+lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
+lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
+lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
+lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
+*lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
+lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
+*Shalom confirm 19_ar translation
+lab var q19_ar "Q19. AR only: Is this establishment public, OSEP, another social work, a medical center or hospital owned by PAMI or private/prepaid?"
+lab var q19_other "Q19. Other"
+lab var q20 "Q20. What type of healthcare facility is this?"
+lab var q20_other "Q20. Other"
+lab var q21 "Q21. Why did you choose this healthcare facility?"
+lab var q21_other "Q21. Other"
+lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
+lab var q23 "Q23. How many healthcare visits in total have you made in the past 12 months?"
 lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q24 mid-point)"
-lab var q42 "P42-La última vez que sucedió, ¿cuál fue la razón principal por la que no o"
-lab var q42_other "P42. Otro"  
-lab var q43_other "P43. Otro"
-lab var q44 "P44-¿Qué tipo de establecimiento es? <BR/> <B> LEER las opciones. SONDEAR para"  
-lab var q44_other "P44. Otro"    
-lab var q45_other "P45. Otro" 
+lab var q24 "Q24. Total number of healthcare visits in the past 12 months (range)"
+lab var q25_a "Q25_A. Was this visit for COVID-19?"
+lab var q25_b "Q25_B. How many of these visits were for COVID-19?"
+*lab var q28_c "Q28_C. How would you rate the overall quality of your last telemedicine visit?"
+lab var q26 "Q26. Were all of the visits you made to the same healthcare facility?"
+lab var q27 "Q27. How many different healthcare facilities did you go to?"
+lab var q28_a "Q28_A. How many visits did you have with a healthcare provider at your home?"
+lab var q28_b "Q28_B. How many virtual or telemedicine visits did you have?"
+lab var q29 "Q29. Did you stay overnight at a healthcare facility as a patient?"
+lab var q30 "Q30. Blood pressure tested in the past 12 months"
+lab var q31 "Q31. Received a mammogram in the past 12 months"
+lab var q32 "Q32. Received cervical cancer screening, like a pap test or visual inspection"
+lab var q33 "Q33. Had your eyes or vision checked in the past 12 months"
+lab var q34 "Q34. Had your teeth checked in the past 12 months"
+lab var q35 "Q35. Had a blood sugar test in the past 12 months"
+lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
+lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
+lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
+lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
+lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
+lab var q42 "Q42. The last time this happened, what was the main reason?"
+lab var q42_other "Q42. Other"
+lab var q43_ar "Q43. AR only: Is this establishment Public, OSEP or Private?"
+lab var q43_other "Q43. Other"
+lab var q44 "Q44. What type of healthcare facility is this?"
+lab var q44_other "Q44. Other"
+lab var q45 "Q45. What was the main reason you went?"
+lab var q45_other "Q45. Other"
+*lab var q46_refused "Q46. Refused"
+lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
+*lab var q46a "Q46A Was this a scheduled visit or did you go without an appt.?"
+*lab var q46b "Q46B In days: how long between scheduling and seeing provider?"
+*lab var q47_refused "Q47. Refused"
+lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
+lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
+lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
+lab var q48_c "Q48_C. How would you rate the equipment and supplies that the provider had?"
+lab var q48_d "Q48_D. How would you rate the level of respect your provider showed you?"
+lab var q48_e "Q48_E. How would you rate your provider knowledge about your prior visits?"
+lab var q48_f "Q48_F. How would you rate whether your provider explained things clearly?"
+lab var q48_g "Q48_G. How would you rate whether you were involved in your care decisions?"
+lab var q48_h "Q48_H. How would you rate the amount of time your provider spent with you?"
+lab var q48_i "Q48_I. How would you rate the amount of time you waited before being seen?"
+lab var q48_j "Q48_J. How would you rate the courtesy and helpfulness at the facility?"
+lab var q49 "Q49. How likely would recommend this facility to a friend or family member?"
+lab var q50_a "Q50_A. How would you rate the quality of care provided for care for pregnancy?"
+lab var q50_b "Q50_B. How would you rate the quality of care provided for children?"
+lab var q50_c "Q50_C. How would you rate the quality of care provided for chronic conditions?"
+lab var q50_d "Q50_D. How would you rate the quality of care provided for the mental health?"
+lab var q51 "Q51. How confident are you that you'd get good healthcare if you were very sick?"
+lab var q52 "Q52. How confident are you that you'd be able to afford the care you requiered?"
+lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
+lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
+lab var q55 "Q55. How would you rate the quality of private/prepaid healthcare?"
+*Shalom confirm we want to write de Mendoza here:
+lab var q56a_ar "Q56a. How would you rate the quality of care provided by OSEP de Mendoza"
+*Shalom confirm translation of q56b_ar
+lab var q56b_ar "Q56b. How would you rate the quality of the 'otras obras sociales' health system in the province of Mendoza?"
+*Shalom confirm adding Mendoza here
+lab var q56c_ar "Q56c. How would you rate the quality of the PAMI health system in the province of Mendoza?"
+lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
+lab var q58 "Q58. Which of these statements do you agree with the most?"
+lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
+lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
+lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
 lab var q62 "Q62. Respondent's mother tongue or native language"
-lab var q63 "P63-¿En cuál de estas categorías encaja el ingreso familiar de su hogar en el"
+*lab var q62_other "Q62. Other"
+lab var q63 "Q63. Total monthly household income"
+lab var q64 "Q64. Do you have another mobile phone number besides the one I am calling you on?"
+lab var q65 "Q65. How many other mobile phone numbers do you have?"
+*lab var q66 "Q66. Which political party did you vote for in the last election?"
+
+
+
+
 
 *** Mia changed this part ***
 *Mia: dropped the following value labels so the dataset won't get messed up when merging
