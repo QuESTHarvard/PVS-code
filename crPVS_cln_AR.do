@@ -316,11 +316,12 @@ gen recq63 = country*1000 + q63
 replace recq63 = .r if q63 == .r
 
 * Mia: added q20
+*Shalom updated q20 and q44 labels to match recode at the top
 local q4l labels9
 local q5l labels10
 local q8l labels11
-local q20l labels25
-local q44l labels51
+local q20l q20
+local q44l q44
 local q63l labels83
 
 foreach q in q4 q5 q8 q20 q44 q63{
