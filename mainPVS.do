@@ -19,11 +19,11 @@ set more off
 macro drop _all
 
 * Setting user globals 
-*global user "/Users/nek096"
+global user "/Users/nek096"
 *global user "/Users/catherine.arsenault"
 *global user "/Users/tol145"
 *global user "/Users/rodba"
-global user "/Users/shs8688"
+*global user "/Users/shs8688"
 
 * Setting file path globals
 global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"

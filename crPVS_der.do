@@ -357,8 +357,8 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 31 32 33 = 1 "Urban") (4 8 11 14 19 34 = 0
 		  (.r = .r "Refused"), gen(urban)
 */
 
-recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 = 1 "Urban") ///
-          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 = 0 "Rural") ///
+recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 = 1 "Urban") ///
+          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
@@ -617,8 +617,8 @@ recode visits_covid (80 = .) if country == 15
 
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
-			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (11 = 8 "Lao PDR") ///
-			   (15 = 9 "Rep. of Korea") (14 = 10 "Italy") (12 = 11 "United States"), gen(country_reg)
+			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (16 = 8 "Argentina") (11 = 9 "Lao PDR") ///
+			   (15 = 10 "Rep. of Korea") (14 = 11 "Italy") (12 = 12 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)"
 
 *** Mia changed this part ***

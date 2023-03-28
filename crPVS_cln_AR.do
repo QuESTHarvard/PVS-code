@@ -393,7 +393,7 @@ foreach q in q4 q5 q8 q20 q44 q63{
 
 label define q4_label .r "Refused", add
 label define q8_label .r "Refused", add
-label define q20_label .a "NA" .r "Refused", add
+*label define q20_label .a "NA" .r "Refused", add
 label define q44_label .a "NA" .r "Refused", add
 label define q63_label .r "Refused", add
 
