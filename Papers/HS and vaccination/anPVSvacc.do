@@ -34,11 +34,11 @@ corr usual_source one_visit no_unmet_need preventive ///
 foreach x in Colombia Ethiopia Italy Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay {
 	
 	putexcel set "$user/$analysis/Utilization Confidence regressions.xlsx", sheet("`x'", replace)  modify
-
-	logistic fullvax usual_source one_visit no_unmet_need preventive ///
+	svyset psu_id_for_svy_cmds, strata(mode)
+	svy: logistic fullvax usual_source one_visit no_unmet_need preventive ///
 					conf_getafford getting_better minor_changes ///
 					health_chronic ever_covid age2 female urban high_income ///
-					educ2 if c=="`x'", vce(robust) 		 
+					educ2 if c=="`x'" 
 	putexcel (A1) = etable	
 }
 
@@ -83,7 +83,7 @@ foreach x in  Ethiopia Italy Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Urug
 		destring `v', replace
 		gen ln`v' = ln(`v')
 	}
-	replace A= "Has a chronic illness" if A=="health_chronic"
+	replace A= "Has a chronic illness" if A=="health_chr~c"
 	replace A= "Had COVID" if A=="ever_covid"
 	replace A= "Aged 50+" if A=="age2"
 	replace A= "Female" if A=="female"
@@ -126,13 +126,12 @@ import excel using  "$user/$analysis/Utilization Confidence regressions.xlsx", s
 		gen ln`v' = ln(`v')
 	}
 replace A ="Has a usual source of care" if A=="usual_source"
-replace A ="Had at least 1 visit in last year" if A=="one_visit_or_more"
-replace A ="Had no unmet need in last year" if A=="no_unmet_need"
+replace A ="Had at least 1 visit in last year" if A=="one_visit_~e"
+replace A ="Had no unmet need in last year" if A=="no_unmet_n~d"
 replace A ="Received 3/5 preventive services in last year" if A=="preventive"
-
-replace A ="Confident can get and afford quality care" if A=="conf_getafford"
-replace A ="Believes system is getting better" if A=="getting_better"
-replace A ="Believes the health system works well" if A=="minor_changes"
+replace A ="Confident can get and afford quality care" if A=="conf_getaf~d"
+replace A ="Believes system is getting better" if A=="getting_be~r"
+replace A ="Believes the health system works well" if A=="minor_chan~s"
 
 gen conf=1 if A =="Confident can get and afford quality care" | A =="Believes system is getting better" | A =="Believes the health system works well"
 metan lnB lnF lnG if conf==., ///
@@ -208,6 +207,15 @@ metan lnB lnF lnG , ///
 graph export "$user/$analysis/FP quality_last.pdf", replace 
 
 /********************************************************************************
+* Mediation analysis
+
+sem (fullvax<-preventive education) (preventive<-education), nocapslatent
+medsem, indep(education) med(preventive) dep(fullvax) mcreps(500) rit rid
+
+gsem (fullvax<-preventive education) (preventive<-education), nocapslatent logit
+medsem, indep(education) med(preventive) dep(fullvax) mcreps(500) rit rid
+
+
 recode usual_type_own (0=2) (1/2=1), gen(usual_own)
 lab def usual_own 1 "Public" 2 "Private or other"
 lab val usual_own usual_own
