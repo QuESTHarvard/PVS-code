@@ -988,8 +988,8 @@ ren rec* *
  
 ren q7_995 q7_other
 * Mia: added _ar to the name
-ren (q3a q13b q13e) (q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy) //Mia: deleted the double q13b
-ren q13e_10 q13e_other_co_pe_uy // Mia: added _co_pe_uy 
+ren (q3a q13b q13e) (q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar) 
+ren q13e_10 q13e_other_co_pe_uy_ar 
 ren q14_new q14
 ren q15_new q15
 ren q19_4 q19_other
@@ -1174,9 +1174,18 @@ append using "$data_mc/02 recoded data/pvs_kr.dta"
 
 qui do `label4'
 
+tempfile label5
+label save q4_label q5_label q7_label q8_label q20_label q44_label q63_label using `label5'
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q63_label
+
+append using "$data_mc/02 recoded data/pvs_ar.dta"
+
+qui do `label5'
+
+
 
 * Country
-lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea", modify
+lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza", modify
 
 * Kenya/Ethiopia variables 
 ren q19 q19_et_ke_za
@@ -1196,7 +1205,6 @@ lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 * Country-specific skip patterns - check this 
 recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
 recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
-recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy (. = .a) if country != 2 | country != 7 |  country != 11 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
@@ -1215,6 +1223,8 @@ recode q7 (. = .a) if country == 15 //Mia: dropped q6 since we will do it later 
 * Mia: add the line to recode q6 to .a if the country has country specific q6
 *      This might have been done in each individual cleaning program but do it again here to be sure
 recode q6 (. = .a) if inlist(country,9,14,15) 
+recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
+recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
 
 	   
 * Country-specific value labels -edit for ssrs-
@@ -1223,8 +1233,9 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA: Afrikaans" ///
 				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
 				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
-				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean"
-
+				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish"
+				 
+				 
 lab val language Language
 lab var language "Language"
 
@@ -1252,6 +1263,8 @@ lab def place_type .a "NA" .r "Refused", modify
 lab def fac_owner .a "NA" .r "Refused", modify
 lab def fac_type1 .a "NA" .r "Refused", modify
 lab def fac_type3 .a "NA" .r "Refused", modify
+lab def gender2 3 "AR: Other gender", modify
+lab def labels26 10 "AR: Short waiting time to get appointments", modify
  
 *** weights ***
 drop weight
@@ -1290,24 +1303,66 @@ order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 
 
 
+**** Other Specify Recode ****
+
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+*All (Laos and Argentina pending)		
+
+*Remove "" from responses for macros to work
+replace q19_other = subinstr(q19_other,`"""',  "", .)
+replace q43_other = subinstr(q43_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+foreach i in 2 3 5 7 9 10 12 13 14 15 {
+
+ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+ 
+}	
+	
+
+*Save recoded data
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 
+/*
 *------------------------------------------------------------------------------*
 
 * NOTE: Optional data quality checks 
 
-/*
+
 ***************************** Data quality checks *****************************
 
-u "$data_mc/02 recoded data/pvs_all_countries.dta", replace
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
 
 * Macros for these commands
 gl inputfile	"$data_mc/03 test output/Input/dq_inputs.xlsm"	
-gl dq_output	"$output/dq_output.xlsx"				
+gl inputfile_2	"$data_mc/03 test output/Input/dq_inputs_2.xlsm"
+gl inputfile_3	"$data_mc/03 test output/Input/dq_inputs_3.xlsm"	
+gl inputfile_4	"$data_mc/03 test output/Input/dq_inputs_5.xlsm"
+gl inputfile_7	"$data_mc/03 test output/Input/dq_inputs_7.xlsm"		
+gl inputfile_9	"$data_mc/03 test output/Input/dq_inputs_9.xlsm"	
+gl inputfile_10	"$data_mc/03 test output/Input/dq_inputs_10.xlsm"	
+gl inputfile_11	"$data_mc/03 test output/Input/dq_inputs_11.xlsm"	
+gl inputfile_13	"$data_mc/03 test output/Input/dq_inputs_13.xlsm"
+gl inputfile_14	"$data_mc/03 test output/Input/dq_inputs_14.xlsm"		
+gl dq_output	"$output/dq_output.xlsx"
+gl dq_output_2	"$output/dq_output_2.xlsx"	
+gl dq_output_3	"$output/dq_output_3.xlsx"	
+gl dq_output_4	"$output/dq_output_4.xlsx"	
+gl dq_output_7	"$output/dq_output_7.xlsx"	
+gl dq_output_9	"$output/dq_output_9.xlsx"	
+gl dq_output_10	"$output/dq_output_10.xlsx"	
+gl dq_output_11	"$output/dq_output_11.xlsx"	
+gl dq_output_13	"$output/dq_output_13.xlsx"	
+gl dq_output_14	"$output/dq_output_14.xlsx"						
 gl id 			"respondent_id"	
 gl key			"respondent_serial"	
-gl enum			"interviewerid_recoded"
+gl enum			"interviewer_id"
 gl date			"date"	
 gl time			"time"
 gl duration		"int_length"
@@ -1369,31 +1424,39 @@ ipacheckoutliers using "${inputfile}",			///
 * This command lists all other, specify values
 * This command requires an input file that lists all the variables with other, specify text 
 
-*format %td date
+use "$data_mc\02 recoded data\pvs_appended.dta", clear
+
+gen interviewer_id = respondent_serial
+replace q19_other=trim(q19_other)
+replace q20_other=trim(q20_other)
+replace q21_other=trim(q21_other)
+replace q42_other=trim(q42_other)
+replace q43_other=trim(q43_other)
+replace q44_other=trim(q44_other)
+replace q45_other=trim(q45_other)
+replace q62_other=trim(q62_other)
+replace q7_other=trim(q7_other)
+
+foreach i in 2 3 5 7 9 10 11 12 13 14 15 {
+
+ preserve
+ keep if country == `i'
+  
+ ipacheckspecify using "$data_mc/03 test output/Input/dq_inputs/dq_inputs_`i'.xlsm",   ///
+ id(${id})         ///
+ enumerator(${enum})       /// 
+ date(${date})         ///
+ sheet("other specify")      ///
+    outfile("$output/dq_output/dq_output_`i'.xlsx")      ///
+ outsheet1("other specify")     ///
+ outsheet2("other specify (choices)")  ///
+ sheetreplace
  
-ipacheckspecify using "${inputfile}",			///
-	id(${id})									///
-	enumerator(${enum})							///	
-	date(${date})	 							///
-	sheet("other specify")						///
-    outfile("${dq_output}") 					///
-	outsheet1("other specify")					///
-	outsheet2("other specify (choices)")		///
-	sheetreplace
-	
-*	loc childvars "`r(childvarlist)'"
-
-*============================= Other Specify ===============================* 
+ loc childvars "`r(childvarlist)'"
  
-* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
-* This command requires an input file that lists all the variables to be recoded and their new values
-
-gl specifyrecode_inputs	"$data_mc/03 test output/Input/specifyrecode_inputs.xlsm"				
-gl id 			"respondent_id"	
-
-ipacheckspecifyrecode using "${specifyrecode_inputs}",	///
-	sheet(other_specify_recode)							///	
-	id(${id})	
+ restore 
+ 
+}	
 
 *========================= Summarizing All Missing ============================* 
 
