@@ -378,7 +378,7 @@ label define labels8 3 "AR: Other gender", modify
 **renam the value labels from Spanish to english:
 
 *3/27: Shalom confirm if we want q4 translated- ask Rodrigo:
-label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Field", modify
+label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Countryside", modify
 				  
 label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
 					  16004 "AR: Secondary(basic cycle and 4th to 6th)" 16005 "AR: Non-university higher education" ///
@@ -673,7 +673,7 @@ lab var q17 "Q17. Can tell a healthcare provider your concerns even when not ask
 *lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
 *Shalom confirm 19_ar translation
-lab var q19_ar "Q19. AR only: Is this establishment public, OSEP, another social work, a medical center or hospital owned by PAMI or private/prepaid?"
+lab var q19_ar "Q19. AR only: Is this facility Public, OSEP, Other 'obras sociales', A medical center/hospital owned by PAMI, or Private/prepaid?"
 lab var q19_other "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q20_other "Q20. Other"
@@ -704,7 +704,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_ar "Q43. AR only: Is this establishment Public, OSEP or Private?"
+lab var q43_ar "Q43. AR only: Is this facility Public, OSEP, or Private?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
@@ -736,11 +736,8 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private/prepaid healthcare?"
-*Shalom confirm we want to write de Mendoza here:
-lab var q56a_ar "Q56a. How would you rate the quality of care provided by OSEP de Mendoza"
-*Shalom confirm translation of q56b_ar
-lab var q56b_ar "Q56b. How would you rate the quality of the 'otras obras sociales' health system in the province of Mendoza?"
-*Shalom confirm adding Mendoza here
+lab var q56a_ar "Q56a. How would you rate the quality of care provided by OSEP of Mendoza?"
+lab var q56b_ar "Q56b. How would you rate the quality of the other 'obras sociales' health systems in the province of Mendoza?"
 lab var q56c_ar "Q56c. How would you rate the quality of the PAMI health system in the province of Mendoza?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
