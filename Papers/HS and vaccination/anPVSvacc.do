@@ -20,7 +20,7 @@ summtab, catvars( educ3 income gender urban vghealth health_chronic ever_covid /
 logistic fullvax usual_source one_visit no_unmet_need preventive ///
 			conf_getafford getting_better minor_changes ///
 			health_chronic ever_covid age2 female urban high_income ///
-			educ2 i.country, vce(robust) 	
+			educ2 i.country
 
 
 * CORRELATIONS
