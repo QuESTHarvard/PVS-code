@@ -30,6 +30,9 @@ foreach v in health health_mental usual_quality last_qual covid_manage{
 }
 recode age_cat (0/2=0) (3/6=1), gen(age2)
 recode education (0/2=0) (3=1) , gen(educ2) 
+recode education (0=1) , gen(educ3) 
+lab def educ3 1 "None or primary only" 2 "Secondary" 3"Post-secondary"
+lab val educ3 educ3
 egen preventive_score=rowtotal(blood_press blood_chol blood_sugar eyes teeth), m 
 recode preventive_score (0/2=0) (3/5=1), gen(preventive) 
 recode unmet_need (0=1) (1=0), gen(no_unmet_need)
@@ -51,4 +54,4 @@ lab var conf_getafford "Confident would get and afford quality care"
 lab var getting_better "Believes the health system is getting better in past 2 years"
 lab var minor_changes "Believes the health system works well"
 
-save "$user/$analysis/pvs_vacc_analysis.dta", clear
+save "$user/$analysis/pvs_vacc_analysis.dta", replace
