@@ -19,7 +19,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 clear all
 set more off 
 
-*********************** ETHIOPIA, KENYA, SOUTH AFRICA, & India ***********************
+*********************** ETHIOPIA, KENYA, SOUTH AFRICA, & INDIA ***********************
 
 * NOTE: Ipsos has been sharing combined data in different ways. These are interim 
 *		work-arounds to obtain complete data until we receive final data (late March)
@@ -52,14 +52,22 @@ label drop Q7 Q8 Q20 Q44
 
 * South Africa 
 append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
-qui do `label0'
+*qui do `label0'
 * Mia: correct some value labels
 label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
 *Change all variable names to lower case
 
 rename *, lower //Mia: move this early
 
+
+*Shalom: Save to merge later so we won't lose ZA's value labels for some questions
+tempfile label0
+label save Q7 Q20 Q44 using `label0'
+label drop Q7 Q8 Q20 Q44
+
 * India - load in India data 
+append using "$data/India/00 interim data/India_STATA_28.03.23.dta"
+qui do `label0'
 
 * Fix append issues
 * Mia: changed to 16 since 16 is mobile clinic
@@ -89,7 +97,7 @@ replace recq63 = .r if q63== 996
 replace recq63 = .d if q63== 997
 
 * Mia: relabel some variables now so we can use the orignal label values
-label define country_short 2 "CO" 3 "ET" 5 "KE" 7 "PE" 9 "ZA" 10 "UY"
+label define country_short 2 "CO" 3 "ET" 4 "IN" 5 "KE" 7 "PE" 9 "ZA" 10 "UY"
 qui elabel list country_short
 local countryn = r(k)
 local countryval = r(values)
@@ -568,7 +576,7 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Save data
 
-save "$data_mc/02 recoded data/pvs_et_ke_za.dta", replace
+save "$data_mc/02 recoded data/pvs_et_ke_za_in.dta", replace
 
 
 *------------------------------------------------------------------------------*
@@ -1148,7 +1156,7 @@ tempfile label1
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label1'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label 
 
-append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
+append using "$data_mc/02 recoded data/pvs_in_et_ke_za.dta"
 
 qui do `label1'
 
@@ -1190,13 +1198,13 @@ qui do `label5'
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)", modify
 
 * Kenya/Ethiopia variables 
-ren q19 q19_et_ke_za
-lab var q19_et_ke_za "Q19. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
-ren q43 q43_et_ke_za_la
-lab var q43_et_ke_za_la "Q43. ET/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
+ren q19 q19_et_in_ke_za
+lab var q19_et_in_ke_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
+ren q43 q43_et_in_ke_za_la
+lab var q43_et_in_ke_za_la "Q43. ET/IN/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
 * NOTE: Q43 also asked like this in Laos
-ren q56 q56_et_ke_za 
-lab var q56_et_ke_za "Q56. ET/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+ren q56 q56_et_in_ke_za 
+lab var q56_et_in_ke_za "Q56. ET/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 
 * Mode
 recode mode (3 = 1) (4 = 3)
@@ -1205,8 +1213,8 @@ label val mode mode
 lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 
 * Country-specific skip patterns - check this 
-recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
-recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
+recode q19_et_in_ke_za q56_et_in_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
+recode q43_et_in_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
