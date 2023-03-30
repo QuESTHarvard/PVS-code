@@ -348,6 +348,8 @@ replace conf_getafford=0 if conf_sick==0 | conf_afford==0
 replace conf_getafford=.r if conf_sick==.r & conf_afford==.r
 lab val conf_getafford vc_nc_der
 
+* Note: check missing data - refusal 
+
 **** COUNTRY SPECIFIC ****
 
 * urban: type of region respondent lives in 

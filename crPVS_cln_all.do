@@ -19,7 +19,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 clear all
 set more off 
 
-*********************** ETHIOPIA, KENYA & SOUTH AFRICA ***********************
+*********************** ETHIOPIA, KENYA, SOUTH AFRICA, & India ***********************
 
 * NOTE: Ipsos has been sharing combined data in different ways. These are interim 
 *		work-arounds to obtain complete data until we receive final data (late March)
@@ -58,6 +58,8 @@ label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)"
 *Change all variable names to lower case
 
 rename *, lower //Mia: move this early
+
+* India - load in India data 
 
 * Fix append issues
 * Mia: changed to 16 since 16 is mobile clinic
@@ -1185,7 +1187,7 @@ qui do `label5'
 
 
 * Country
-lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza", modify
+lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)", modify
 
 * Kenya/Ethiopia variables 
 ren q19 q19_et_ke_za
