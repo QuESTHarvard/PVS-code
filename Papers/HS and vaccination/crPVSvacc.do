@@ -30,6 +30,9 @@ egen fullvax = rowmax(fullvax2d fullvax3d* )
 rename q14 nb_doses
 
 * Health system variables
+
+recode visits_cat (1/2=1), gen(anyvisit)
+
 gen qual_system= qual_public 
 replace qual_system = qual_private if c=="USA" // quality of private sector in the USA
 replace qual_system= q56a_mx if c=="Mexico" // quality of IMSS in Mexico
