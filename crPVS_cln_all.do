@@ -52,22 +52,24 @@ label drop Q7 Q8 Q20 Q44
 
 * South Africa 
 append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
-*qui do `label0'
+qui do `label0'
 * Mia: correct some value labels
 label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
-*Change all variable names to lower case
-
-rename *, lower //Mia: move this early
 
 
 *Shalom: Save to merge later so we won't lose ZA's value labels for some questions
-tempfile label0
-label save Q7 Q20 Q44 using `label0'
-label drop Q7 Q8 Q20 Q44
+*tempfile label1
+*label save Q7 Q20 Q44 using `label0'
+*label drop Q7 Q8 Q20 Q44
 
 * India - load in India data 
 append using "$data/India/00 interim data/India_STATA_28.03.23.dta"
-qui do `label0'
+*qui do `label1'
+
+*Change all variable names to lower case
+rename *, lower //Mia: move this early
+
+
 
 * Fix append issues
 * Mia: changed to 16 since 16 is mobile clinic
@@ -576,7 +578,7 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Save data
 
-save "$data_mc/02 recoded data/pvs_et_ke_za_in.dta", replace
+save "$data_mc/02 recoded data/pvs_et_in_ke_za.dta", replace
 
 
 *------------------------------------------------------------------------------*
@@ -1156,7 +1158,7 @@ tempfile label1
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label1'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label 
 
-append using "$data_mc/02 recoded data/pvs_in_et_ke_za.dta"
+append using "$data_mc/02 recoded data/pvs_et_in_ke_za.dta"
 
 qui do `label1'
 
