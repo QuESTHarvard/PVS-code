@@ -60,8 +60,16 @@ label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)"
 label define Interviewer_Language 21 "Sesotho" 22 "Xhosa" 23 "Zulu" 24 "Tswana" 25 "Swati" ///
 								  26 "Sepedi" 27 "Tsonga" 28 "Afrikaans" 29 "Portuguese", modify
 
+* Mia: Save to merge later so we won't lose India's value labels for some questions
+tempfile label0
+label save Q4 Q5 using `label1'
+label drop Q4 Q5								  
+								  
 * India - load in India data 
 append using "$data/India/00 interim data/India_STATA_28.03.23.dta"
+qui do `label1'
+
+*potential vars: q25_b, q27, q28_a, q28_b, q45, language, def: q4, q5
 
 *Change all variable names to lower case
 rename *, lower //Mia: move this early
@@ -414,7 +422,7 @@ recode interviewer_gender ///
 
 * Note: Without relabeling (removing the appostrophe) next command will not run 
 lab var q2 
-recode q2 (2 = 0 "18-9") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
+recode q2 (2 = 0 "18-29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
 		  (6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") ///
 		  (.a = .a "NA"), pre(rec) label(age_cat)
 
@@ -453,6 +461,9 @@ recode q57 ///
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
+
+*Shalom added:
+label define Q45 4 "Other, specify", modify
 
 *------------------------------------------------------------------------------*
 
