@@ -6,22 +6,186 @@ global analysis "SPH Kruk Active Projects/Vaccine hesitancy/Analyses/Paper 7 vac
 clear all
 set more off
 
+cd "$user/$analysis/"
 u "$user/$analysis/pvs_vacc_analysis.dta", clear
+
+********************************************************************************
+* FIGURE 1 COVID DOSES
+ta nb_doses c  [aw=weight] , nofreq col
 ********************************************************************************
 * TABLE 1	
-summtab, catvars( educ3 income gender urban vghealth health_chronic ever_covid ///
-					usual_source no_unmet_need preventive ///
-					conf_getafford getting_better minor_changes) ///
-					contvars(age visits) by(country) mean meanrow catrow wts(weight) ///
-					replace excel excelname(Table_1)  
-					
-********************************************************************************
-* POOLED REGRESSION
-logistic fullvax usual_source one_visit no_unmet_need preventive ///
-			conf_getafford getting_better minor_changes ///
-			health_chronic ever_covid age2 female urban high_income ///
-			educ2 i.country
+summtab, catvars(usual_source no_unmet_need preventive vglast_qual discrim ///
+		 health_chronic ever_covid educ3 income female urban) ///
+		 contvars(age) by(country) mean meanrow catrow wts(weight) ///
+		 replace excel excelname(Table_1)  
 
+********************************************************************************
+* COUNTRY-SPECIFIC LOGISTIC REGRESSIONS
+
+foreach x in Argentina Colombia Ethiopia  Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay Italy {
+
+	putexcel set "$user/$analysis/country-specific regressions.xlsx", sheet("`x'", replace)  modify
+			
+	logistic fullvax usual_source no_unmet_need preventive ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban  if c=="`x'", vce(robust)
+	putexcel (A1) = etable	
+	
+	logistic fullvax quality_last last_public discrim ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban  if c=="`x'", vce(robust)
+	putexcel (A14) = etable
+}
+	
+import excel using "$user/$analysis/country-specific regressions.xlsx", sheet(Colombia) firstrow clear
+	keep in 2/11
+	gen country="Colombia"
+	save "$user/$analysis/graphs.dta", replace
+	
+foreach x in  Argentina Ethiopia Italy Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay { 
+	import excel using  "$user/$analysis/country-specific regressions.xlsx", sheet("`x'") firstrow clear
+	keep in 2/11
+	gen country="`x'"
+	append using "$user/$analysis/graphs.dta"
+	save "$user/$analysis/graphs.dta", replace
+}
+	keep A B E F G country
+	encode country, gen(co)
+	foreach v in E B F G  {
+		destring `v', replace
+	}
+	rename (B E F G) (aOR p_value LCL UCL)
+	
+	twoway (rspike UCL LCL co if A=="usual_source", lwidt(medium) lcolor(navy)) ///
+	(scatter aOR co if A=="usual_source", msize(small) mcolor(ebblue*2)) , ///
+	 graphregion(color(white)) legend(off) ///
+	 xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" 9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) 	xtitle("") ///
+	 ylabel(0.5(0.5)4, labsize(vsmall) gstyle(minor)) ///
+	 yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+	 title("Has a usual source of care", size(small))
+	 
+	 twoway (rspike UCL LCL co if A=="public_fac", lwidt(medium) lcolor(navy)) ///
+	(scatter aOR co if A=="public_fac", msize(small) mcolor(ebblue*2)) , ///
+	 graphregion(color(white)) legend(off) ///
+	 xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" 9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) 	xtitle("") ///
+	 ylabel(0.5(0.5)4, labsize(vsmall) gstyle(minor)) ///
+	 yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+	 title("Usual source of care is a public or government-owned facility", size(small))
+	 
+	 twoway (rspike UCL LCL co if A=="no_unmet_need", lwidt(medium) lcolor(navy)) ///
+	(scatter aOR co if A=="no_unmet_need", msize(small) mcolor(ebblue*2)) , ///
+	 graphregion(color(white)) legend(off) ///
+	 xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" 9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) 	xtitle("") ///
+	 ylabel(0.5(0.5)4, labsize(vsmall) gstyle(minor)) ///
+	 yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+	 title("Had no unmet health care need in last year", size(small))
+	 
+	  twoway (rspike UCL LCL co if A=="preventive", lwidt(medium) lcolor(navy)) ///
+	(scatter aOR co if A=="preventive", msize(small) mcolor(ebblue*2)) , ///
+	 graphregion(color(white)) legend(off) ///
+	 xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" 9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) 	xtitle("") ///
+	 ylabel(0.5(0.5)4, labsize(vsmall) gstyle(minor)) ///
+	 yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+	 title("Received at least 3 other preventive services in last year", size(small))
+	 
+	  twoway (rspike UCL LCL co if A=="vgusual_quality", lwidt(medium) lcolor(navy)) ///
+	(scatter aOR co if A=="vgusual_quality", msize(small) mcolor(ebblue*2)) , ///
+	 graphregion(color(white)) legend(off) ///
+	 xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" 9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) 	xtitle("") ///
+	 ylabel(0.5(0.5)3, labsize(vsmall) gstyle(minor)) ///
+	 yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+	 title("Rates their usual provider as very good or excellent quality", size(small))
+
+	  twoway (rspike UCL LCL co if A=="vglast_qual", lwidt(medium) lcolor(navy)) ///
+	(scatter aOR co if A=="vglast_qual", msize(small) mcolor(ebblue*2)) , ///
+	 graphregion(color(white)) legend(off) ///
+	 xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" 9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) 	xtitle("") ///
+	 ylabel(0.5(0.5)3, labsize(vsmall) gstyle(minor)) ///
+	 yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+	 title("Rates their last health care visit as very good or excellent quality", size(small))
+
+	 twoway (rspike UCL LCL co if A=="discrim", lwidt(medium) lcolor(navy)) ///
+	(scatter aOR co if A=="discrim", msize(small) mcolor(ebblue*2)) , ///
+	 graphregion(color(white)) legend(off) ///
+	 xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" 9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) 	xtitle("") ///
+	 ylabel(0.5(0.5)3, labsize(vsmall) gstyle(minor)) ///
+	 yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+	 title("Has experienced discrimination in health system in last year", size(small))
+	 
+	 export excel using "$user/$analysis/supp table 3.xlsx", sheet(Sheet1) firstrow(variable) replace 
+	 
+	gen inc_group = 1 if country=="LaoPDR" | countr=="Kenya" | count=="Ethiopia"
+	replace inc_group = 2 if count=="SouthAfrica" | count=="Peru" | count=="Mexico" | count=="Argentina" | count=="Colombia"
+	replace inc_group = 3 if count=="Uruguay" | count=="USA" | count=="Korea" | count=="Italy"
+	
+	lab def inc_group 1"LMI"  2"UMI" 3"HI"
+	lab val inc_group inc_group
+	
+	 export excel using "$user/$analysis/supp table 3.xlsx", sheet(Sheet2) firstrow(variable) replace 
+********************************************************************************
+* SUB-ANALYSIS: AMONG THOSE WITH >1 VISIT IN LAST YEAR
+foreach x in Argentina Colombia Ethiopia  Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay Italy {
+	putexcel set "$user/$analysis/at leat 1 visit.xlsx", sheet("`x'", replace)  modify
+	
+	logistic fullvax discrim  quality_score ///
+			 age2 health_chronic ever_covid post_secondary ///
+			 high_income female urban if c=="`x'", vce(robust)
+		putexcel (A1) = etable	
+}
+
+import excel using "$user/$analysis/at leat 1 visit.xlsx", sheet(Colombia) firstrow clear
+	drop if B==""
+	gen country="Colombia"
+	keep in 2/13
+	save "$user/$analysis/graph1.dta", replace
+	
+foreach x in  Argentina Ethiopia Italy Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay { 
+	import excel using  "$user/$analysis/at leat 1 visit.xlsx", sheet("`x'") firstrow clear
+	drop if B==""
+	gen country="`x'"
+	keep in 2/13
+	append using "$user/$analysis/graph1.dta"
+	save "$user/$analysis/graph1.dta", replace
+}
+
+	keep A B F G country
+	encode country, gen(co)
+	foreach v in B F G  {
+		destring `v', replace
+	}
+	rename (B F G) (aOR LCL UCL)
+	
+	twoway (rspike UCL LCL co if A=="vglast_qual", lwidt(medium) lcolor(navy)) ///
+	(scatter aOR co if A=="vglast_qual", msize(small) mcolor(ebblue*2)) , ///
+	 graphregion(color(white)) legend(off) ///
+	 xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" 9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) xtitle("") ///
+	 ylabel(0.5(0.5)4, labsize(vsmall) gstyle(minor)) ///
+	 yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+	 ytitle("vg")
+	
+********************************************************************************
+* POOLED MODEL
+putexcel set "$user/$analysis/multi-country regressions.xlsx", sheet("all", replace) modify
+
+regress nb_doses usual_source no_unmet_need preventive ///
+			 age2 health_chronic ever_covid post_secondary ///
+			high_income female urban i.country, vce(robust)
+		
+putexcel (A1) = etable	
+		
+putexcel set "$user/$analysis/multi-country regressions.xlsx", sheet("last_visit", replace) modify
+
+regress nb_doses discrim quality_score ///
+			 age2 health_chronic ever_covid post_secondary ///
+			high_income female urban i.country, vce(robust)
+
+			putexcel (A1) = etable	
+			
+			
+			
+			
+			
+			
 
 * CORRELATIONS
 foreach x in Colombia Ethiopia Italy Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay {
@@ -207,14 +371,60 @@ metan lnB lnF lnG , ///
 graph export "$user/$analysis/FP quality_last.pdf", replace 
 
 /********************************************************************************
-* Mediation analysis
+* BUBBLE PLOTS
+putexcel set "$user/$analysis/bubbleplots.xlsx",  modify
+		putexcel B2=("Vaccination")
+		putexcel C2=("Vax_SE")
+		putexcel D2=("Vax_LCI")
+		putexcel E2=("Vax_UCI")
+		
+	local row = 3
+	
+	foreach i in Argentina Colombia Ethiopia  Kenya Korea LaoPDR Mexico Peru SouthAfrica USA Uruguay Italy {
 
-sem (fullvax<-preventive education) (preventive<-education), nocapslatent
-medsem, indep(education) med(preventive) dep(fullvax) mcreps(500) rit rid
-
-gsem (fullvax<-preventive education) (preventive<-education), nocapslatent logit
-medsem, indep(education) med(preventive) dep(fullvax) mcreps(500) rit rid
-
+		set more off
+	
+		ci means fullvax  [aw=weight] if c=="`i'" 
+		putexcel A`row'=("`i'") 
+		putexcel B`row'=(r(mean))
+		putexcel C`row'=(r(se))
+		putexcel D`row'=(r(lb))
+		putexcel E`row'=(r(ub))
+		
+		putexcel F2=("Usual_source")
+		putexcel G2=("Usu_SE")
+		putexcel H2=("Usu_LCI")
+		putexcel I2=("Usu_UCI")
+		
+	ci means usual_source [aw=weight ] if c=="`i'" 
+		putexcel F`row'=(r(mean))
+		putexcel G`row'=(r(se))
+		putexcel H`row'=(r(lb))
+		putexcel I`row'=(r(ub))
+		local row = `row'+1
+}
+import excel using "$user/$analysis/bubbleplots.xlsx", firstrow clear
+	metareg Vaccination Usual_source, wsse(Vax_SE) graph
+	
+* BUBBLE PLOTS (scatter)
+collapse (mean) fullvax quality_score   ///
+		 (count) mode [aw=weight], by(c)
+		 
+scatter fullvax quality_score [w=mode], msymbol(circle_hollow)  ///
+	|| lfit fullvax quality_score [w=mode] ///
+	|| scatter fullvax quality_score, mcolor(white) mlabel(c) mlabcolor(navy) mlabsize(vsmall) mlabposition(12)  ///
+	ytitle("Proportion vaccinated with 2+ or 3+ doses") ///
+	xtitle("avg quality ") ///
+	graphregion(color(white)) legend(off) 
+	
+	xlabel(0.6(0.1)1) 
+	
+scatter fullvax preventive [w=mode], msymbol(circle_hollow)  ///
+	|| lfit fullvax preventive [w=mode] ///
+	|| scatter fullvax preventive, mcolor(white) mlabel(c) mlabcolor(navy) mlabsize(vsmall) mlabposition(12)  ///
+	ytitle("Proportion vaccinated with 2+ or 3+ doses") ///
+	xtitle("Proportion who received at least 3 other preventive services") ///
+	graphregion(color(white)) legend(off) 
 
 recode usual_type_own (0=2) (1/2=1), gen(usual_own)
 lab def usual_own 1 "Public" 2 "Private or other"
