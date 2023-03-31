@@ -477,11 +477,14 @@ label define q62_label .r "Refused", add
 label define q63_label .d "Don't Know" .r "Refused", add
 
 *Shalom added: language loses value labels when it's being generated with country code - is there a better fix for this above?
-*what is 5001? - i think english combined?
+*what is 5001/9001? - i think english combined for multiple countries? tab country with language
+*this section does not match data dictionary
 label define language 3003 "Amharic" 3004 "Oromo" 3005 "Somali" ///
 					  4011 "Hindi" 4012 "Kannada" 4013 "Tamil" 4014 "Bengali" ///
-					  5001 "" 5002 
+					  5001 "English" 5002 "Swahili" ///
+					  9001 "English" 9006 "Sesotho" 9007 "isiZulu" 9008 "Afrikaans" 9009 "Sepedi" 9010 "isiXhosa"
 
+label val reclanguage language
 
 *------------------------------------------------------------------------------*
 
