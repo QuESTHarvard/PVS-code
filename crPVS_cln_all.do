@@ -47,8 +47,8 @@ ren ECS_ID Respondent_ID
 
 * Mia: Save to merge later so we won't lose ZA's value labels for some questions
 tempfile label0
-label save Q7 Q20 Q44 using `label0'
-label drop Q7 Q8 Q20 Q44
+label save Language Q7 Q20 Q44 using `label0'
+label drop Language Q7 Q8 Q20 Q44
 
 * South Africa 
 append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
@@ -61,15 +61,14 @@ label define Interviewer_Language 21 "Sesotho" 22 "Xhosa" 23 "Zulu" 24 "Tswana" 
 								  26 "Sepedi" 27 "Tsonga" 28 "Afrikaans" 29 "Portuguese", modify
 
 * Mia: Save to merge later so we won't lose India's value labels for some questions
-tempfile label0
-label save Q4 Q5 using `label1'
-label drop Q4 Q5								  
+tempfile label1
+label save Language Q4 Q5 using `label1'
+label drop Language Q4 Q5								  
 								  
 * India - load in India data 
 append using "$data/India/00 interim data/India_STATA_28.03.23.dta"
 qui do `label1'
 
-*potential vars: q25_b, q27, q28_a, q28_b, q45, language, def: q4, q5
 
 *Change all variable names to lower case
 rename *, lower //Mia: move this early
@@ -464,6 +463,25 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 
 *Shalom added:
 label define Q45 4 "Other, specify", modify
+*add .a/.r labels for q21,q42/q43/q44/q45/q19/q20
+label define Q19 .a "NA" .r "Refused", add
+label define q20_label .a "NA" .r "Refused", add
+label define Q21 .a "NA" .r "Refused", add
+label define Q42 .a "NA" .r "Refused", add
+label define Q43 .a "NA" .r "Refused", add
+label define q44_label .a "NA" .r "Refused", add
+label define Q45 .a "NA" .r "Refused", add
+*add .r for q62
+label define q62_label .r "Refused", add
+*add .d/.r for q63
+label define q63_label .d "Don't Know" .r "Refused", add
+
+*Shalom added: language loses value labels when it's being generated with country code - is there a better fix for this above?
+*what is 5001? - i think english combined?
+label define language 3003 "Amharic" 3004 "Oromo" 3005 "Somali" ///
+					  4011 "Hindi" 4012 "Kannada" 4013 "Tamil" 4014 "Bengali" ///
+					  5001 "" 5002 
+
 
 *------------------------------------------------------------------------------*
 
