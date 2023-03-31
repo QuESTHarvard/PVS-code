@@ -66,7 +66,10 @@ append using "$data/India/00 interim data/India_STATA_28.03.23.dta"
 *Change all variable names to lower case
 rename *, lower //Mia: move this early
 
-*Shalom-India had "interviewr language in 13 different vars": named starting at 30
+*Shalom- corect value labels
+label define Q2 2 "18-29", modify
+
+*Shalom-India had "interviewer language in 13 different vars": named starting at 30
 replace interviewer_language = 30 if interviewer_language01 == 1
 replace interviewer_language = 31 if interviewer_language02 == 1
 replace interviewer_language = 32 if interviewer_language03 == 1
@@ -217,7 +220,7 @@ recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 ///
 * Mia: dropped q4 q5 q7 q8 q44 q62 q63 since we already recoded them
 recode q1 q2 q3 q6 q6_za q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
 	   q18 q19 recq20 q21 q22 q23 q23_q24 q24 q25_a q25_b q26 q27 q28 q28_new q29 q30 /// 
-	   q31 q32 q33 q34 q35 q36 q37_za q38 q39 q40 q41 q42 q43 q45 q46 q47 ///
+	   q31 q32 q33 q34 q35 q36 q37_za q37_in q38 q39 q40 q41 q42 q43 q45 q46 q47 ///
 	   q46_refused q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
 	   q56 q57 q58 q59 q60 q61 q66 q67 (996 = .r)	
@@ -353,7 +356,7 @@ recode q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 ///
 * Mia: moved q46_refused q47_refused here
 lab val q46_refused q47_refused yes_no
 
-recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q66 ///
+recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q37_in q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (3 .d = .d "Don't know") /// 
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk)
@@ -411,7 +414,7 @@ recode interviewer_gender ///
 
 * Note: Without relabeling (removing the appostrophe) next command will not run 
 lab var q2 
-recode q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
+recode q2 (2 = 0 "18-9") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
 		  (6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") ///
 		  (.a = .a "NA"), pre(rec) label(age_cat)
 
@@ -460,7 +463,7 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 * Mia: q15_new instead of q15
 * Mia: added language, q5, q4, q7, q8, q20, q44, q62, and q63
 drop interviewer_gender q2 q3 q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
-	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q48_a q48_b q48_c q48_d ///
+	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q37_in q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
 	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15_new q24 q49 q57 q46 q47 ///
 	 language q5 q4 q8 q44 q62 q63 q20 q7
@@ -545,6 +548,7 @@ lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
 lab var q37_za "Q37. ZA only: Had a test for HIV in the past 12 months"
+lab var q37_in "Q37. IN only: Have you received any of the following health services in the past 12 months?"
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
@@ -1256,6 +1260,7 @@ recode q7 (. = .a) if country == 15 //Mia: dropped q6 since we will do it later 
 recode q6 (. = .a) if inlist(country,9,14,15) 
 recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
+recode q37_in (. = .a) if country != 4
 
 	   
 * Country-specific value labels -edit for ssrs-
