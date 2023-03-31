@@ -56,10 +56,7 @@ lab def usual3 0"No usual source of care" 1"Poor-Good quality usual source" ///
 lab val usual3 usual3
 
 recode usual_type_own (0=1) (1/2=0), gen(usual_public_fac)
-replace public_fac=1 if q20==12003 | q20==12004 // miscoded in the USA
-
-recode usual_type_lvl (0=1) (1=0), gen(usual_primary_fac)
-
+replace usual_public_fac=1 if q20==12003 | q20==12004 // miscoded in the USA
 recode last_type_own (0=1) (1/2=0), gen(last_public)
 
 * Demographics
@@ -79,15 +76,18 @@ recode minority (2=1) (3033/9995=.) // MINORITY ETHNIC GROUP CODING IS PENDING I
 
 lab var fullvax "Received 2+ or 3+ doses of a COVID vaccine"
 lab var nb_doses "Number of COVID vacicne doses received"
-lab var preventive "Received at leat 3 out of 5 preventive services"
+lab var preventive "Received at leat 3 other preventive health services"
 lab var urban "Urban residence"
 lab var vghealth_mental "Rates own mental health as very good or excellent"
 lab var health_chronic "Has a longstanding illness or chronic health problem"
 lab var ever_covid "Had COVID-19"
 lab var no_unmet_need "Had no unmet need for health care in the past year"
 lab var usual_source "Has a usual source of care"
-lab var vgusual_qual "High quality usual source"
+lab var vgusual_qual "Rates usual facility quality as very good or excellent"
 lab var vglast_qual "High quality last visit"
 lab var quality_last "Quality score in last visit >50%"
+lab var usual_public_fac "Usual facility is a public or government-owned facility"
+lab var last_public "Last facility was a public of government-owned facility"
+lab var quality_score_last "Quality score for last visit"
 
 save "$user/$analysis/pvs_vacc_analysis.dta", replace
