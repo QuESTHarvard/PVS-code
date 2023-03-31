@@ -66,8 +66,29 @@ append using "$data/India/00 interim data/India_STATA_28.03.23.dta"
 *Change all variable names to lower case
 rename *, lower //Mia: move this early
 
-*Shalom-India had "interviewr language in 13 different vars"
-replace interviewer_language = "English" if interviewer_language01 == 1
+*Shalom-India had "interviewr language in 13 different vars": named starting at 30
+replace interviewer_language = 30 if interviewer_language01 == 1
+replace interviewer_language = 31 if interviewer_language02 == 1
+replace interviewer_language = 32 if interviewer_language03 == 1
+replace interviewer_language = 33 if interviewer_language04 == 1
+replace interviewer_language = 34 if interviewer_language05 == 1
+replace interviewer_language = 35 if interviewer_language06 == 1
+replace interviewer_language = 36 if interviewer_language07 == 1
+replace interviewer_language = 37 if interviewer_language08 == 1
+replace interviewer_language = 38 if interviewer_language09 == 1
+replace interviewer_language = 39 if interviewer_language10 == 1
+replace interviewer_language = 40 if interviewer_language11 == 1
+replace interviewer_language = 41 if interviewer_language12 == 1
+replace interviewer_language = 42 if interviewer_language13 == 1
+
+label define Interviewer_Language 30 "English" 31 "Hindi" 32 "Marathi" 33 "Kannada" 34 "Tamil" ///
+								  35 "Telegu" 36 "Bengali" 37 "Assamese" 38 "Gujarati" 39 "Bhojpuri" ///
+								  40 "Punjabi" 41 "Urdu" 42 "Oriya", modify
+								  
+drop interviewer_language01 interviewer_language02 interviewer_language03 interviewer_language04 ///
+	 interviewer_language05 interviewer_language06 interviewer_language07 interviewer_language08 ///
+	interviewer_language09 interviewer_language10 interviewer_language11 interviewer_language12 ///
+	interviewer_language13
 
 * Fix append issues
 * Mia: changed to 16 since 16 is mobile clinic
