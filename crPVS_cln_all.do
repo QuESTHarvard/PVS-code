@@ -56,20 +56,18 @@ qui do `label0'
 * Mia: correct some value labels
 label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
 
-
-*Shalom: Save to merge later so we won't lose ZA's value labels for some questions
-*tempfile label1
-*label save Q7 Q20 Q44 using `label0'
-*label drop Q7 Q8 Q20 Q44
+*Shalom - confirm language naming
+label define Interviewer_Language 21 "Sesotho" 22 "Xhosa" 23 "Zulu" 24 "Tswana" 25 "Swati" ///
+								  26 "Sepedi" 27 "Tsonga" 28 "Afrikaans" 29 "Portuguese", modify
 
 * India - load in India data 
 append using "$data/India/00 interim data/India_STATA_28.03.23.dta"
-*qui do `label1'
 
 *Change all variable names to lower case
 rename *, lower //Mia: move this early
 
-
+*Shalom-India had "interviewr language in 13 different vars"
+replace interviewer_language = "English" if interviewer_language01 == 1
 
 * Fix append issues
 * Mia: changed to 16 since 16 is mobile clinic
