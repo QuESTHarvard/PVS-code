@@ -559,9 +559,9 @@ lab val last_type fac_own_lvl
 * Need to add ZA 
 *Shalom: No data for AR
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 3026 3027 3028 3029 3030 3031 3032 ///
-			7044 7045 7049 2081 11002 11003 15002 = 1 "Minority group") /// 
-		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 = 0 "Majority group") /// 
-		   (2995 3995 5995 11995 = 2 "Other") ///
+			7044 7045 7049 2081 11002 11003 15002 4055 4062 4063 4064 4066 4068 4070 4071 4072 4073 = 1 "Minority group") /// 
+		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 = 0 "Majority group") /// 
+		   (2995 3995 5995 11995 4995 = 2 "Other") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1		   
@@ -573,12 +573,12 @@ recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 9
 * Mia: add "No income" to the first group
 recode q63 (5001 5002 3009 3010 9015 9016 9017 9023 2039 2040 2048 7031 7032 7038  ///
 			10049 10050 10061 11001 11002 14001 14002 13001 13002 12001 12002 ///
-			15001 15002 15003 16007 16001 16002 = 0 "No income/Lowest income") /// 
+			15001 15002 15003 16007 16001 16002 4024 4025 = 0 "No income/Lowest income") /// 
 		   (5003 5004 5005 3011 3012 9018 9019 9020 2041 2042 2043 7033 7034 7035 ///
 		   10051 10052 10053 11003 11004 11005 14003 14004 14005 13003 12003 ///
-		   15004 15005 15006 15007 16003 16004 = 1 "Middle income") /// 
+		   15004 15005 15006 15007 16003 16004 4026 4027 = 1 "Middle income") /// 
 		   (5006 5007 3013 3014 9021 9022 2044 2045 7036 7037 10054 10055 11006 ///
-		   11007 14006 14007 13004 13005 12004 12005 15008 16005 16006 = 2 "Highest income") ///
+		   11007 14006 14007 13004 13005 12004 12005 15008 16005 16006 4028 4029 4030 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 
 * income tertiles
@@ -595,7 +595,7 @@ recode q63 (2048 2039 3009 3010 5001 5002 5003 7038 7031 9023 9015 9016 10061 10
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income_tertiles)
 		  
 * Recode extreme values to missing 
-*3/28: shalom: haven't done this yet
+*3/28: shalom: haven't done this yet for AR/IN
 
 * All visit count variables and wait time variables:
 
@@ -635,6 +635,7 @@ recode visits_home (68 = .) if country == 15
 recode visits_covid (80 = .) if country == 15
 
 *** New country var based on region ***
+*Shalom - need to add India 
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
 			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (16 = 8 "Argentina") (11 = 9 "Lao PDR") ///
 			   (15 = 10 "Rep. of Korea") (14 = 11 "Italy") (12 = 12 "United States"), gen(country_reg)
@@ -681,17 +682,17 @@ order respondent_serial respondent_id country country_reg language date ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
 	  vignette_good minority income income_tertiles pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
-	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
-	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_other ///
+	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e_co_pe_uy_ar q13e_other_co_pe_uy_ar q14 q14_la q15 q15_la q16 q17 q18 ///
+	  q18a_la q18b_la q19_co q19_et_in_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q37_za q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_ke_za_la q43_it q43_kr q43_mx ///
-	   q43_uy q43_other q44 ///
+	  q37_za q37_in q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_in_ke_za_la q43_it q43_kr q43_mx ///
+	   q43_uy q43_ar q43_other q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
-	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q56a_mx q56b_mx q57 q58 q59 ///
+	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_in_ke_za q56_pe q56_uy q56a_mx q56b_mx q56a_ar q56b_ar q56c_ar q57 q58 q59 ///
 	  q60 q61 q62 q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66 q66a_us q66b_us
 	  
 	  
