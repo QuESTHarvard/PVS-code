@@ -415,7 +415,7 @@ recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 
 
 * usual_type_own
 		  
-recode q19_et_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
+recode q19_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
 		
