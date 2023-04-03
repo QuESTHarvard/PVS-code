@@ -1256,7 +1256,7 @@ lab def labels24 .a "NA" .r "Refused", modify
 lab def labels22 .a "NA" .r "Refused", modify
 lab def labels23 .a "NA" .r "Refused", modify
 lab def labels26 .a "NA" .r "Refused", modify
-lab def labels37 .a "NA" .r "Refused", modify
+lab def labels37 11 " AR: Delay to get a turn " .a "NA" .r "Refused", modify
 lab def labels39 .a "NA" .r "Refused", modify
 lab def labels40 .a "NA" .r "Refused", modify
 lab def labels50 .r "Refused", modify
@@ -1268,7 +1268,6 @@ lab def fac_type1 .a "NA" .r "Refused", modify
 lab def fac_type3 .a "NA" .r "Refused", modify
 lab def gender2 3 "AR: Other gender", modify
 lab def labels26 10 "AR: Short waiting time to get appointments", modify
-lab def labels37 11 " AR: Delay to get a turn "
  
 *** weights ***
 drop weight

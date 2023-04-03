@@ -577,31 +577,17 @@ recode minority (.a = 0) if q62_mx == 0
 recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 995 later
 * Note - check this 
 
-* income
-* Note - will update this grouping based on income data 
-* Mia: add "No income" to the first group
-recode q63 (5001 5002 3009 3010 9015 9016 9017 9023 2039 2040 2048 7031 7032 7038  ///
-			10049 10050 10061 11001 11002 14001 14002 13001 13002 12001 12002 ///
-			15001 15002 15003 16007 16001 16002 = 0 "No income/Lowest income") /// 
-		   (5003 5004 5005 3011 3012 9018 9019 9020 2041 2042 2043 7033 7034 7035 ///
-		   10051 10052 10053 11003 11004 11005 14003 14004 14005 13003 12003 ///
-		   15004 15005 15006 15007 16003 16004 = 1 "Middle income") /// 
-		   (5006 5007 3013 3014 9021 9022 2044 2045 7036 7037 10054 10055 11006 ///
-		   11007 14006 14007 13004 13005 12004 12005 15008 16005 16006 = 2 "Highest income") ///
+* income 
+* Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
+*Pending to include in dataset: India 
+recode q63 (2048 2039 2040 3009 5001 7038 7031 9023 9015 9016 10061 10049 ///
+			10050 10051 11001 11002 12001 12002 13001 14001 14002 15001 15002 15003 15004 16007 16001 16002 = 0 "Lowest income") /// 
+		   (2041 2042 2043 3010 7032 9017 9018 10052 10053 11003 ///
+			11004 12003 13002 14003 15005 15006 16003 16004 = 1 "Middle income") /// 
+		   (2044 2045 3011 3012 3013 3014 5002 5003 5004 5005 5006 5007 7033 7034 7035 7036 7037 9019 9020 ///
+			9021 9022 10054 10055 11005 11006 11007 12004 12005 13003 13004 13005 ///
+			14004 14005 14006 14007 15007 15008 16005 16006 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
-
-* income tertiles
-* Note - this is the income categories trying to reflex tertiles as close as possible based on WID and countries' input.
-*Reviewed by country teams for: Colombia, Ethiopia, Italy, Kenya, Laos, Mexico, Peru, US, United States, Uruguay
-*Pending review by country teams: South Africa, Korea, Argentina (Mendoza)
-*Pending to include in dataset: India, Mendoza (Argentina)
-recode q63 (2048 2039 3009 3010 5001 5002 5003 7038 7031 9023 9015 9016 10061 10049 ///
-			10050 11001 11002 12001 13001 13002 14001 14002 15001 15002 15003  = 0 "Bottom tertile") /// 
-		   (2040 2041 2042 3011 3012 5004 5005 7032 9017 9018 10051 10052 10053 11003 ///
-			11004 11005 11006 12002 12003 12004 13003 13004 14003 15004 15005 15006 15007 = 1 "Middle tertile") /// 
-		   (2043 2044 2045 3013 3014 5006 5007 7033 7034 7035 7036 7037 9019 9020 ///
-			9021 9022 10054 10055 11007 12005 13005 14004 14005 14006 14007 15008  = 2 "Top tertile") ///
-		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income_tertiles)
 		  
 * Recode extreme values to missing 
 *3/28: shalom: haven't done this yet
@@ -689,7 +675,7 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income income_tertiles pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
+	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
 	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
@@ -782,7 +768,6 @@ lab var	vignette_poor "Rating of vignette in Q60 (poor care)"
 lab var	vignette_good "Rating of vignette in Q61 (good care)"
 lab var	minority "Minority group (based on native language, ethnicity or race) (Q62)"
 lab var	income "Income group (Q63)"
-lab var	income_tertiles "Income tertiles (Q63)"
 lab var tele_qual "Overall quality of last telemedicine visit (Q28C)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q46b)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q48K)"
