@@ -1189,6 +1189,7 @@ qui do `label5'
 * Country
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)", modify
 
+
 * Kenya/Ethiopia variables 
 ren q19 q19_et_ke_za
 lab var q19_et_ke_za "Q19. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
@@ -1265,6 +1266,9 @@ lab def place_type .a "NA" .r "Refused", modify
 lab def fac_owner .a "NA" .r "Refused", modify
 lab def fac_type1 .a "NA" .r "Refused", modify
 lab def fac_type3 .a "NA" .r "Refused", modify
+lab def gender2 3 "AR: Other gender", modify
+lab def labels26 10 "AR: Short waiting time to get appointments", modify
+lab def labels37 11 " AR: Delay to get a turn "
  
 *** weights ***
 drop weight
