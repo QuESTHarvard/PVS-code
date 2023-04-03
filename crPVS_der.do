@@ -425,7 +425,7 @@ recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
 								  q19_it == 1 | inrange(q19_mx,1,5) | ///
-								  inlist(q20 == 12003,12004) | q19_kr == 1 | ///
+								  inlist(q20,12003,12004) | q19_kr == 1 | ///
 								  q19_ar == 1 | q19_ar == 2 | q19_ar == 6 | q19_ar == 7
 								  
 * Mia updated variable to q19_co_pe 
@@ -787,7 +787,7 @@ lab var pol_align "Political alignment in respondent's region / district / state
 
 **************************** Save data *****************************
 
-save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
+*save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 
 *rm "$data_mc/02 recoded data/pvs_appended.dta"
