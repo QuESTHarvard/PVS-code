@@ -560,6 +560,7 @@ lab val last_type fac_own_lvl
 * minority
 * Need to add ZA 
 *Shalom: No data for AR
+*For India: No data for Bodo" or "Dogri" but it is in country-specific sheet
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 3026 3027 3028 3029 3030 3031 3032 ///
 			7044 7045 7049 2081 11002 11003 15002 = 1 "Minority group") /// 
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 = 0 "Majority group") /// 
@@ -639,7 +640,7 @@ recode visits_covid (80 = .) if country == 15
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
 			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (16 = 8 "Argentina") (11 = 9 "Lao PDR") ///
-			   (15 = 10 "Rep. of Korea") (14 = 11 "Italy") (12 = 12 "United States"), gen(country_reg)
+			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (12 = 13 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)"
 
 *** Mia changed this part ***
