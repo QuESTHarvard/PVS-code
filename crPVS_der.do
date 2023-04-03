@@ -641,7 +641,7 @@ recode visits_covid (80 = .) if country == 15
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
 			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (16 = 8 "Argentina") (11 = 9 "Lao PDR") ///
 			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (12 = 13 "United States"), gen(country_reg)
-lab var country_reg "Country (ordered by region)"
+lab var country_reg "Country (ordered by region)" 
 
 *** Mia changed this part ***
 * Drop trimmed q27 q46 q47 and get back the orignal var
