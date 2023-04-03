@@ -408,9 +408,9 @@ recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal edu
 
 recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 14001 12001 15001 16001 16002 = 0 "None (or no formal education)") ///
           (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 = 1 "Primary") ///
-		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 13005 12004 15003 15004 16004 = 2 "Secondary") ///
+		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 15003 15004 16004 = 2 "Secondary") ///
           (3005 5010 5011 9017 2029 2030 2031 7022 7023 7024 10036 10037 10038 11005 11006 14006 14007 ///
-		  13006 13007 12005 12006 15005 15006 15007 16005 16006 16007 = 3 "Post-secondary") ///
+		  13005 13006 13007 12005 12006 15005 15006 15007 16005 16006 16007 = 3 "Post-secondary") ///
           (.r = .r "Refused"), gen(education)
 
 * usual_type_own
@@ -425,7 +425,7 @@ recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
 								  q19_it == 1 | inrange(q19_mx,1,5) | ///
-								  inlist(q20 == 12003,12004) | q19_kr == 1 | ///
+								  inlist(q20,12003,12004) | q19_kr == 1 | ///
 								  q19_ar == 1 | q19_ar == 2 | q19_ar == 6 | q19_ar == 7
 								  
 * Mia updated variable to q19_co_pe 
@@ -560,13 +560,20 @@ lab val last_type fac_own_lvl
 * minority
 * Need to add ZA 
 *Shalom: No data for AR
+*For India: No data for Bodo" or "Dogri" but it is in country-specific sheet
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 3026 3027 3028 3029 3030 3031 3032 ///
 			7044 7045 7049 2081 11002 11003 15002 = 1 "Minority group") /// 
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 = 0 "Majority group") /// 
 		   (2995 3995 5995 11995 = 2 "Other") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 recode minority (.a = 1) if q62_mx == 1		   
-recode minority (.a = 1) if q62a_us == 1		   
+recode minority (.a = 1) if q62a_us == 1
+*Shalom additions:
+*US:white and non-hispanic group:
+recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
+*Mexico majority group doesn't 
+recode minority (.a = 0) if q62_mx == 0
+ 
 recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 995 later
 * Note - check this 
 
@@ -639,8 +646,8 @@ recode visits_covid (80 = .) if country == 15
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
 			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (16 = 8 "Argentina") (11 = 9 "Lao PDR") ///
-			   (15 = 10 "Rep. of Korea") (14 = 11 "Italy") (12 = 12 "United States"), gen(country_reg)
-lab var country_reg "Country (ordered by region)"
+			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (12 = 13 "United States"), gen(country_reg)
+lab var country_reg "Country (ordered by region)" 
 
 *** Mia changed this part ***
 * Drop trimmed q27 q46 q47 and get back the orignal var
@@ -786,7 +793,7 @@ lab var pol_align "Political alignment in respondent's region / district / state
 
 **************************** Save data *****************************
 
-save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
+*save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 
 *rm "$data_mc/02 recoded data/pvs_appended.dta"
