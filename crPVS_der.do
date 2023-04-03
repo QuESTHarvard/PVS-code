@@ -567,7 +567,13 @@ recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 302
 		   (2995 3995 5995 11995 = 2 "Other") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 recode minority (.a = 1) if q62_mx == 1		   
-recode minority (.a = 1) if q62a_us == 1		   
+recode minority (.a = 1) if q62a_us == 1
+*Shalom additions:
+*US:white and non-hispanic group:
+recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
+*Mexico majority group doesn't 
+recode minority (.a = 0) if q62_mx == 0
+ 
 recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 995 later
 * Note - check this 
 
