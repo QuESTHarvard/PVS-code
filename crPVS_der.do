@@ -558,9 +558,9 @@ lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Priva
 lab val last_type fac_own_lvl
 
 * minority
-* Need to add ZA 
-*Shalom: No data for AR
-*For India: No data for Bodo" or "Dogri" but it is in country-specific sheet
+
+*Notes: Need to add ZA, No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet
+
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 3026 3027 3028 3029 3030 3031 3032 ///
 			7044 7045 7049 2081 11002 11003 15002 = 1 "Minority group") /// 
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 = 0 "Majority group") /// 
@@ -568,14 +568,16 @@ recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 302
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1
-*Shalom additions:
-*US:white and non-hispanic group:
-recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
-*Mexico majority group doesn't 
-recode minority (.a = 0) if q62_mx == 0
- 
 recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 995 later
 * Note - check this 
+
+*Shalom additions:
+*US:white and non-hispanic group = majority:
+recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
+*Mexico majority group (doesn't speak indigenous language)
+recode minority (.a = 0) if q62_mx == 0
+ 
+
 
 * income
 * Note - will update this grouping based on income data 
