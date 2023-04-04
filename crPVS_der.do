@@ -558,9 +558,9 @@ lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Priva
 lab val last_type fac_own_lvl
 
 * minority
-* Need to add ZA 
-*Shalom: No data for AR
-*For India: No data for Bodo" or "Dogri" but it is in country-specific sheet
+
+*Notes: Need to add ZA, No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet
+
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 3026 3027 3028 3029 3030 3031 3032 ///
 			7044 7045 7049 2081 11002 11003 15002 = 1 "Minority group") /// 
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 = 0 "Majority group") /// 
@@ -568,14 +568,16 @@ recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 302
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1
-*Shalom additions:
-*US:white and non-hispanic group:
-recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
-*Mexico majority group doesn't 
-recode minority (.a = 0) if q62_mx == 0
- 
 recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 995 later
 * Note - check this 
+
+*Shalom additions:
+*US:white and non-hispanic group = majority:
+recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
+*Mexico majority group (doesn't speak indigenous language)
+recode minority (.a = 0) if q62_mx == 0
+ 
+
 
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
@@ -677,16 +679,16 @@ order respondent_serial respondent_id country country_reg language date ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
 	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
-	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_other ///
+	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
 	  q37_za q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_ke_za_la q43_it q43_kr q43_mx ///
-	   q43_uy q43_other q44 ///
+	   q43_uy q43_ar q43_other q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
-	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q56a_mx q56b_mx q57 q58 q59 ///
+	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q56a_mx q56b_mx q56a_ar q56b_ar q56c_ar q57 q58 q59 ///
 	  q60 q61 q62 q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66 q66a_us q66b_us
 	  
 	  
