@@ -561,10 +561,10 @@ lab val last_type fac_own_lvl
 
 *Notes: Need to add ZA, No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet
 
-recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 3026 3027 3028 3029 3030 3031 3032 ///
+recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 3026 3027 3028 3029 3030 3031 3032 3033 3034 3035 3036 3037 3038 ///
 			7044 7045 7049 2081 11002 11003 15002 = 1 "Minority group") /// 
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 = 0 "Majority group") /// 
-		   (2995 3995 5995 11995 = 2 "Other") ///
+		   (2995 3995 5995 11995 3995 = 2 "Other") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1
