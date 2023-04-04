@@ -55,8 +55,14 @@ append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
 qui do `label0'
 * Mia: correct some value labels
 label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
-*Change all variable names to lower case
 
+recode Q63 (23 = 15 "No income") (15 = 16 "<R750") (16 = 17 "R751-R1500") (17 = 18 "R1501-R3000") (18 = 19 "R3001-R6000") ///
+		   (19 = 20 "R6001-R11000") (20 = 21 "R11001-R27000") (21 = 22 "R27001-R45000") (22 = 23 "R>45000") (996 = 996 "Refused") ///
+		   (997 = 997 "Don't know"), gen(q63)
+		   
+drop Q63
+
+*Change all variable names to lower case
 rename *, lower //Mia: move this early
 
 * India - load in India data 
@@ -102,7 +108,7 @@ local q8l Q8
 local q20l Q20
 local q44l Q44
 local q62l Q62
-local q63l Q63
+local q63l q63
 
 foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
@@ -603,6 +609,16 @@ format recdate %tdD_M_CY
 
 *------------------------------------------------------------------------------*
 
+*Shalom added: reoder "income" values to make "no income" the first category
+ren q63 Q63
+recode Q63 (38 = 31 "No income") (31 = 32 "Less than S/.1.000") (32 = 33 "S/. 1.000 – 2.500") (33 = 34 "S/. 2.501 – 3.500") (34 = 35 "S/. 3.501 – 5.500") (35 = 36 "S/. 5.501 – 7.500") (36 = 37 "S/. 7.501 – 10.000") (37 = 38 "Greater than S/.10.000") ///
+		   (48 = 39 "No income") (39 = 40 "Less than 75,000 pesos") (40 = 41 "75,000 to 200,000") (41 = 42 "200,000 to 400,000") (42 = 43 "400,000 to 600,000") (43 = 44 "600,000 to 800,000") (44 = 45 "800,000 to 10,000,000") (45 = 48 "More than 10,000,000") ///
+		   (61 = 49 "No income") (49 = 50 "1,200 pesos or less") (50 = 51 "1,200 to 14,000") (51 = 52 "14,000 to 30,000") (52 = 53 "30,000 to 40,000") (53 = 54 "40,000 to 50,000") (54 = 55 "50,000 to 65,000") (55 = 61 "More than 65,000") (996 = 996 "Refused"), gen(q63)
+		   
+drop Q63
+
+*------------------------------------------------------------------------------*
+
 * Drop any unwanted/empty variables
 * Generate any new needed variables
 
@@ -659,7 +675,7 @@ local q8l labels10
 local q20l labels25
 local q44l labels25
 local q62l labels51
-local q63l labels52
+local q63l q63
 
 foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
@@ -690,6 +706,16 @@ foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 }
 
 *****************************
+
+label define q5_label .r "Refused", add
+label define q4_label .r "Refused", add
+label define q7_label .r "Refused", add
+label define q8_label .r "Refused", add
+label define q20_label .r "Refused", add
+label define q44_label .r "Refused", add
+label define q62_label .r "Refused", add
+label define q63_label .r "Refused", add
+
 *------------------------------------------------------------------------------*
 
 * Recode all Refused and Don't know
@@ -969,7 +995,7 @@ recode q57 ///
 
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
+lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf 
 
 
 *------------------------------------------------------------------------------*
@@ -1184,8 +1210,6 @@ append using "$data_mc/02 recoded data/pvs_ar.dta"
 
 qui do `label5'
 
-
-
 * Country
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)", modify
 
@@ -1329,7 +1353,7 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
 	
 
 *Save recoded data
-save "$data_mc/02 recoded data/pvs_appended.dta", replace
+*save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 
 /*
