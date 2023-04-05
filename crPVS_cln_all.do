@@ -1376,7 +1376,7 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
 	
 
 *Save recoded data
-*save "$data_mc/02 recoded data/pvs_appended.dta", replace
+save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 
 /*
