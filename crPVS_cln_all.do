@@ -55,10 +55,31 @@ append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
 qui do `label0'
 * Mia: correct some value labels
 label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
-
-recode Q63 (23 = 15 "No income") (15 = 16 "<R750") (16 = 17 "R751-R1500") (17 = 18 "R1501-R3000") (18 = 19 "R3001-R6000") ///
-		   (19 = 20 "R6001-R11000") (20 = 21 "R11001-R27000") (21 = 22 "R27001-R45000") (22 = 23 "R>45000") (996 = 996 "Refused") ///
-		   (997 = 997 "Don't know"), gen(q63)
+	
+*Shalom- edited income orders
+recode Q63 (1 = 1 "< Ksh 15,572") ///
+		   (2 = 2 "Ksh 15,573 - 23,500") ///
+		   (3 = 3 "Ksh 23,501- 50,000") ///
+		   (4 = 4 "Ksh 50,001-75,000") ///
+		   (5 = 5 "Ksh 75,001- 120,000") ///
+		   (6 = 6 "Ksh 120,001-250,000") ///
+		   (7 = 7 ">Ksh 250,000") ///
+		   (9 = 9 "Less than 1000 Eth.Birr") ///
+		   (10 = 10 "1000 - 3000  Eth.Birr") ///
+		   (11 = 11 "3001 – 5000 Eth.Birr") ///
+		   (12 = 12 "5001 – 10000 Eth.Birr") ///
+		   (13 = 13 "10001 - 20000 Eth.Birr") ///
+		   (14 = 14 "Greater than 20000 Eth.Birr") ///
+		   (23 = 15 "No income") ///
+		   (15 = 16 "<R750") ///
+		   (16 = 17 "R751-R1500") ///
+		   (17 = 18 "R1501-R3000") ///
+		   (18 = 19 "R3001-R6000") ///
+		   (19 = 20 "R6001-R11000") ///
+		   (20 = 21 "R11001-R27000") ///
+		   (21 = 22 "R27001-R45000") ///
+		   (22 = 23 "R>45000") ///
+		   (996 = 996 "Refused") (997 = 997 "Don't know"), gen(q63)
 		   
 drop Q63
 
@@ -138,6 +159,8 @@ foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	label val rec`q' `q'_label
 }
 *****************************
+
+label define q63_label .r "Refused" .d "Don't Know", add
 
 *------------------------------------------------------------------------------*
 
@@ -426,7 +449,7 @@ recode q57 ///
 
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
+lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf 
 
 *------------------------------------------------------------------------------*
 
@@ -1353,7 +1376,7 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
 	
 
 *Save recoded data
-*save "$data_mc/02 recoded data/pvs_appended.dta", replace
+save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 
 /*
