@@ -19,7 +19,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 clear all
 set more off 
 
-*********************** ETHIOPIA, KENYA, SOUTH AFRICA, & India ***********************
+*********************** ETHIOPIA, KENYA, SOUTH AFRICA, & INDIA ***********************
 
 * NOTE: Ipsos has been sharing combined data in different ways. These are interim 
 *		work-arounds to obtain complete data until we receive final data (late March)
@@ -55,7 +55,9 @@ append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
 qui do `label0'
 * Mia: correct some value labels
 label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
-	
+label define Interviewer_Language 21 "Sesotho" 22 "isiXhosa" 23 "isiZulu" 24 "Setswana" 25 "siSwati" ///
+								  26 "Sepedi" 27 "Xitsonga" 28 "Afrikaans" 29 "Portuguese", modify
+
 *Shalom- edited income orders
 recode Q63 (1 = 1 "< Ksh 15,572") ///
 		   (2 = 2 "Ksh 15,573 - 23,500") ///
@@ -83,10 +85,44 @@ recode Q63 (1 = 1 "< Ksh 15,572") ///
 		   
 drop Q63
 
-*Change all variable names to lower case
-rename *, lower //Mia: move this early
+*Save to merge later so we won't lose India's value labels for some questions
+tempfile label1
+label save Language Q4 Q5 using `label1'
+label drop Language Q4 Q5								  
+								  
+* India - new weighted India data from 4-5: 
+append using "$data/India/01 raw data/PVS_India weighted.dta"
+qui do `label1'
 
-* India - load in India data 
+*Change all variable names to lower case
+rename *, lower 
+
+*Shalom- corect value labels
+label define Q2 2 "18-29", modify
+
+*Shalom-India had "interviewer language in 13 different vars": named starting at 30
+replace interviewer_language = 30 if interviewer_language01 == 1
+replace interviewer_language = 31 if interviewer_language02 == 1
+replace interviewer_language = 32 if interviewer_language03 == 1
+replace interviewer_language = 33 if interviewer_language04 == 1
+replace interviewer_language = 34 if interviewer_language05 == 1
+replace interviewer_language = 35 if interviewer_language06 == 1
+replace interviewer_language = 36 if interviewer_language07 == 1
+replace interviewer_language = 37 if interviewer_language08 == 1
+replace interviewer_language = 38 if interviewer_language09 == 1
+replace interviewer_language = 39 if interviewer_language10 == 1
+replace interviewer_language = 40 if interviewer_language11 == 1
+replace interviewer_language = 41 if interviewer_language12 == 1
+replace interviewer_language = 42 if interviewer_language13 == 1
+
+label define Interviewer_Language 30 "English" 31 "Hindi" 32 "Marathi" 33 "Kannada" 34 "Tamil" ///
+								  35 "Telegu" 36 "Bengali" 37 "Assamese" 38 "Gujarati" 39 "Bhojpuri" ///
+								  40 "Punjabi" 41 "Urdu" 42 "Oriya", modify
+								  
+drop interviewer_language01 interviewer_language02 interviewer_language03 interviewer_language04 ///
+	 interviewer_language05 interviewer_language06 interviewer_language07 interviewer_language08 ///
+	interviewer_language09 interviewer_language10 interviewer_language11 interviewer_language12 ///
+	interviewer_language13
 
 * Fix append issues
 * Mia: changed to 16 since 16 is mobile clinic
