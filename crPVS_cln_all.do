@@ -522,10 +522,8 @@ label val reclanguage language
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-* Mia: q15_new instead of q15
-* Mia: added language, q5, q4, q7, q8, q20, q44, q62, and q63
 drop interviewer_gender q2 q3 q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
-	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q48_a q48_b q48_c q48_d ///
+	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q37_in q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
 	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15_new q24 q49 q57 q46 q47 ///
 	 language q5 q4 q8 q44 q62 q63 q20 q7
@@ -555,7 +553,6 @@ order q*, after(interviewer_id) //Mia: changed to interviewer_id since we alread
 * Drop other unecessary variables 
 drop intlength 
 * Note: mode2 seems to be missing for Kenya data, but there is mode var 
-
 
 *------------------------------------------------------------------------------*
 
