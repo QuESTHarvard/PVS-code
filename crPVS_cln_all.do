@@ -1426,7 +1426,8 @@ order respondent_serial respondent_id mode country language date ///
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
-*All (Laos and Argentina pending)		
+*All (Laos and Argentina pending)	
+*Shalom: Need to do for IN	
 
 *Remove "" from responses for macros to work
 replace q19_other = subinstr(q19_other,`"""',  "", .)
