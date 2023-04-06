@@ -152,7 +152,7 @@ replace recq63 = .r if q63== 996
 replace recq63 = .d if q63== 997
 
 * Mia: relabel some variables now so we can use the orignal label values
-label define country_short 2 "CO" 3 "ET" 5 "KE" 7 "PE" 9 "ZA" 10 "UY"
+label define country_short 2 "CO" 3 "ET" 4 "IN" 5 "KE" 7 "PE" 9 "ZA" 10 "UY"
 qui elabel list country_short
 local countryn = r(k)
 local countryval = r(values)
@@ -165,7 +165,7 @@ local q8l Q8
 local q20l Q20
 local q44l Q44
 local q62l Q62
-local q63l q63
+local q63l Q63
 
 foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
@@ -253,11 +253,11 @@ recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 ///
 * Mia: dropped q4 q5 q7 q8 q44 q62 q63 since we already recoded them
 recode q1 q2 q3 q6 q6_za q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
 	   q18 q19 recq20 q21 q22 q23 q23_q24 q24 q25_a q25_b q26 q27 q28 q28_new q29 q30 /// 
-	   q31 q32 q33 q34 q35 q36 q37_za q38 q39 q40 q41 q42 q43 q45 q46 q47 ///
+	   q31 q32 q33 q34 q35 q36 q37_za q37_in q38 q39 q40 q41 q42 q43 q45 q46 q47 ///
 	   q46_refused q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
 	   q56 q57 q58 q59 q60 q61 q66 q67 (996 = .r)	
-
+	   
 *------------------------------------------------------------------------------*
 
 * Check for implausible values 
