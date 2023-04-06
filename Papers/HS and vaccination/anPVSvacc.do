@@ -84,16 +84,27 @@ foreach x in  Argentina  SouthAfrica Uruguay Italy  {
 		gen ln`v' = ln(`v')
 	}
 	rename (B E F G) (aOR p_value LCL UCL) 
+	replace model=1 if model==.
 	
 * Income groups	
 	gen inc_group = 1 if country=="LaoPDR" | countr=="Kenya" | count=="Ethiopia"
-	replace inc_group = 2 if count=="SouthAfrica" | count=="Peru" | count=="Mexico" | count=="Argentina" | count=="Colombia"
+	replace inc_group = 2 if count=="SouthAfrica" | count=="Peru" | count=="Mexico" | ///
+						     count=="Argentina" | count=="Colombia"
 	replace inc_group = 3 if count=="Uruguay" | count=="USA" | count=="Korea" | count=="Italy"
 	
 	lab def inc_group 1"LMI"  2"UMI" 3"HI"
 	lab val inc_group inc_group
-	replace model=1 if model==.
 
+* Region groups
+	gen reg_group = 1 if count=="SouthAfrica" | count=="Ethiopia" | countr=="Kenya"
+	replace reg_group = 2 if count=="Korea" |  country=="LaoPDR" | country=="India"
+	replace reg_group= 3 if count=="Peru" | count=="Mexico" | count=="Argentina" ///
+							| count=="Colombia" |  count=="Uruguay" 
+	replace reg_group=4 if count=="USA" | count=="Italy" | country=="UK"
+	
+	lab def reg_group 1 "SSA" 2"Asia" 3"LATAM" 4"NAWE"
+	lab val reg_group reg_group
+	
 *Supplemental table 3
 	export excel using "$user/$analysis/supp table 3.xlsx", sheet(Sheet1) firstrow(variable) replace 
 	
@@ -178,7 +189,7 @@ foreach x in  Argentina  SouthAfrica Uruguay Italy  {
 	
 		metan lnB lnF lnG if A=="`v'" & model==1 , by(inc_group) ///
 				eform nograph  label(namevar=country) effect(aOR)
-				
+				 
 	putexcel A`row'="`v'"
 	matrix b= r(bystats)
 	putexcel B`row'= matrix(b), rownames 
@@ -189,7 +200,7 @@ foreach x in  Argentina  SouthAfrica Uruguay Italy  {
 	local row = 1
 	
 	putexcel set "$user/$analysis/pooled estimate metan.xlsx", sheet("Model2")  modify
-	foreach v in  usual_public~c vgusual_qual~y discrim age2 health_chronic ///
+	foreach v in  usual_public_fac vgusual_quality discrim age2 health_chronic ///
 	             ever_covid post_secondary high_income female urban minority {
 	
 		metan lnB lnF lnG if A=="`v'" & model==2 , by(inc_group) ///
