@@ -55,10 +55,37 @@ append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
 qui do `label0'
 * Mia: correct some value labels
 label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
-
 *Shalom - confirm language naming
 label define Interviewer_Language 21 "Sesotho" 22 "Xhosa" 23 "Zulu" 24 "Tswana" 25 "Swati" ///
 								  26 "Sepedi" 27 "Tsonga" 28 "Afrikaans" 29 "Portuguese", modify
+
+	
+*Shalom- edited income orders
+recode Q63 (1 = 1 "< Ksh 15,572") ///
+		   (2 = 2 "Ksh 15,573 - 23,500") ///
+		   (3 = 3 "Ksh 23,501- 50,000") ///
+		   (4 = 4 "Ksh 50,001-75,000") ///
+		   (5 = 5 "Ksh 75,001- 120,000") ///
+		   (6 = 6 "Ksh 120,001-250,000") ///
+		   (7 = 7 ">Ksh 250,000") ///
+		   (9 = 9 "Less than 1000 Eth.Birr") ///
+		   (10 = 10 "1000 - 3000  Eth.Birr") ///
+		   (11 = 11 "3001 – 5000 Eth.Birr") ///
+		   (12 = 12 "5001 – 10000 Eth.Birr") ///
+		   (13 = 13 "10001 - 20000 Eth.Birr") ///
+		   (14 = 14 "Greater than 20000 Eth.Birr") ///
+		   (23 = 15 "No income") ///
+		   (15 = 16 "<R750") ///
+		   (16 = 17 "R751-R1500") ///
+		   (17 = 18 "R1501-R3000") ///
+		   (18 = 19 "R3001-R6000") ///
+		   (19 = 20 "R6001-R11000") ///
+		   (20 = 21 "R11001-R27000") ///
+		   (21 = 22 "R27001-R45000") ///
+		   (22 = 23 "R>45000") ///
+		   (996 = 996 "Refused") (997 = 997 "Don't know"), gen(q63)
+		   
+drop Q63
 
 * Mia: Save to merge later so we won't lose India's value labels for some questions
 tempfile label1
@@ -140,7 +167,7 @@ local q8l Q8
 local q20l Q20
 local q44l Q44
 local q62l Q62
-local q63l Q63
+local q63l q63
 
 foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
@@ -170,6 +197,8 @@ foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	label val rec`q' `q'_label
 }
 *****************************
+
+label define q63_label .r "Refused" .d "Don't Know", add
 
 *------------------------------------------------------------------------------*
 
@@ -458,7 +487,7 @@ recode q57 ///
 
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
+lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf 
 
 *Shalom added:
 label define Q45 4 "Other, specify", modify
@@ -668,6 +697,16 @@ format recdate %tdD_M_CY
 
 *------------------------------------------------------------------------------*
 
+*Shalom added: reoder "income" values to make "no income" the first category
+ren q63 Q63
+recode Q63 (38 = 31 "No income") (31 = 32 "Less than S/.1.000") (32 = 33 "S/. 1.000 – 2.500") (33 = 34 "S/. 2.501 – 3.500") (34 = 35 "S/. 3.501 – 5.500") (35 = 36 "S/. 5.501 – 7.500") (36 = 37 "S/. 7.501 – 10.000") (37 = 38 "Greater than S/.10.000") ///
+		   (48 = 39 "No income") (39 = 40 "Less than 75,000 pesos") (40 = 41 "75,000 to 200,000") (41 = 42 "200,000 to 400,000") (42 = 43 "400,000 to 600,000") (43 = 44 "600,000 to 800,000") (44 = 45 "800,000 to 10,000,000") (45 = 48 "More than 10,000,000") ///
+		   (61 = 49 "No income") (49 = 50 "1,200 pesos or less") (50 = 51 "1,200 to 14,000") (51 = 52 "14,000 to 30,000") (52 = 53 "30,000 to 40,000") (53 = 54 "40,000 to 50,000") (54 = 55 "50,000 to 65,000") (55 = 61 "More than 65,000") (996 = 996 "Refused"), gen(q63)
+		   
+drop Q63
+
+*------------------------------------------------------------------------------*
+
 * Drop any unwanted/empty variables
 * Generate any new needed variables
 
@@ -724,7 +763,7 @@ local q8l labels10
 local q20l labels25
 local q44l labels25
 local q62l labels51
-local q63l labels52
+local q63l q63
 
 foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
@@ -755,6 +794,16 @@ foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 }
 
 *****************************
+
+label define q5_label .r "Refused", add
+label define q4_label .r "Refused", add
+label define q7_label .r "Refused", add
+label define q8_label .r "Refused", add
+label define q20_label .r "Refused", add
+label define q44_label .r "Refused", add
+label define q62_label .r "Refused", add
+label define q63_label .r "Refused", add
+
 *------------------------------------------------------------------------------*
 
 * Recode all Refused and Don't know
@@ -1034,7 +1083,7 @@ recode q57 ///
 
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
+lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf 
 
 
 *------------------------------------------------------------------------------*
@@ -1249,10 +1298,9 @@ append using "$data_mc/02 recoded data/pvs_ar.dta"
 
 qui do `label5'
 
-
-
 * Country
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)", modify
+
 
 * Kenya/Ethiopia variables 
 ren q19 q19_et_in_ke_za
@@ -1289,7 +1337,7 @@ recode q6_kr q7_kr q19_kr q43_kr (. = .a) if country != 15
 recode q7 (. = .a) if country == 15 //Mia: dropped q6 since we will do it later with other countries
 * Mia: add the line to recode q6 to .a if the country has country specific q6
 *      This might have been done in each individual cleaning program but do it again here to be sure
-recode q6 (. = .a) if inlist(country,9,14,15) 
+recode q6 (. = .a) if inlist(country,9,11,14,15) 
 recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
 recode q37_in (. = .a) if country != 4
@@ -1321,7 +1369,7 @@ lab def labels24 .a "NA" .r "Refused", modify
 lab def labels22 .a "NA" .r "Refused", modify
 lab def labels23 .a "NA" .r "Refused", modify
 lab def labels26 .a "NA" .r "Refused", modify
-lab def labels37 .a "NA" .r "Refused", modify
+lab def labels37 11 " AR: Delay to get a turn " .a "NA" .r "Refused", modify
 lab def labels39 .a "NA" .r "Refused", modify
 lab def labels40 .a "NA" .r "Refused", modify
 lab def labels50 .r "Refused", modify
@@ -1331,6 +1379,8 @@ lab def place_type .a "NA" .r "Refused", modify
 lab def fac_owner .a "NA" .r "Refused", modify
 lab def fac_type1 .a "NA" .r "Refused", modify
 lab def fac_type3 .a "NA" .r "Refused", modify
+lab def gender2 3 "AR: Other gender", modify
+lab def labels26 10 "AR: Short waiting time to get appointments", modify
  
 *** weights ***
 drop weight

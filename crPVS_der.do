@@ -406,11 +406,14 @@ recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal edu
 		  
 */
 
+
 recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 14001 12001 15001 16001 16002 4039 = 0 "None (or no formal education)") ///
           (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 4040 = 1 "Primary") ///
 		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 13005 12004 15003 15004 16004 4041 = 2 "Secondary") ///
           (3005 5010 5011 9017 2029 2030 2031 7022 7023 7024 10036 10037 10038 11005 11006 14006 14007 ///
 		  13006 13007 12005 12006 15005 15006 15007 16005 16006 16007 4042 4043 4044 = 3 "Post-secondary") ///
+
+
           (.r = .r "Refused"), gen(education)
 
 * usual_type_own
@@ -425,7 +428,7 @@ recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
 								  q19_it == 1 | inrange(q19_mx,1,5) | ///
-								  inlist(q20 == 12003,12004) | q19_kr == 1 | ///
+								  inlist(q20,12003,12004) | q19_kr == 1 | ///
 								  q19_ar == 1 | q19_ar == 2 | q19_ar == 6 | q19_ar == 7
 								  
 * Mia updated variable to q19_co_pe 
@@ -556,17 +559,26 @@ lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Priva
 lab val last_type fac_own_lvl
 
 * minority
-* Need to add ZA 
-*Shalom: No data for AR
-recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 3026 3027 3028 3029 3030 3031 3032 ///
-			7044 7045 7049 2081 11002 11003 15002 4055 4062 4063 4064 4066 4068 4070 4071 4072 4073 = 1 "Minority group") /// 
-		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 = 0 "Majority group") /// 
-		   (2995 3995 5995 11995 4995 = 2 "Other") ///
+*Notes: No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet. Need to confirm 9044 is a minority group for ZA
+
+recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
+			3026 3027 3028 3029 3030 3031 3032 3033 3034 3035 3036 3037 3038 ///
+			7044 7045 7049 2081 11002 11003 15002 9035 9036 9037 9038 9041 9044 = 1 "Minority group") /// 
+		    (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 9033 ///
+			9034 9039 9040 9042 9043 = 0 "Majority group") /// 
+		    (2995 3995 5995 11995 3995 9995 = 2 "Other") ///
+
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 recode minority (.a = 1) if q62_mx == 1		   
-recode minority (.a = 1) if q62a_us == 1		   
+recode minority (.a = 1) if q62a_us == 1
 recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 995 later
 * Note - check this 
+
+*Shalom additions:
+*US:white and non-hispanic group = majority:
+recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
+*Mexico majority group (doesn't speak indigenous language)
+recode minority (.a = 0) if q62_mx == 0
 
 * income
 * Note - will update this grouping based on income data 
@@ -581,18 +593,6 @@ recode q63 (5001 5002 3009 3010 9015 9016 9017 9023 2039 2040 2048 7031 7032 703
 		   11007 14006 14007 13004 13005 12004 12005 15008 16005 16006 4028 4029 4030 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 
-* income tertiles
-* Note - this is the income categories trying to reflex tertiles as close as possible based on WID and countries' input.
-*Reviewed by country teams for: Colombia, Ethiopia, Italy, Kenya, Laos, Mexico, Peru, US, United States, Uruguay
-*Pending review by country teams: South Africa, Korea, Argentina (Mendoza)
-*Pending to include in dataset: India, Mendoza (Argentina)
-recode q63 (2048 2039 3009 3010 5001 5002 5003 7038 7031 9023 9015 9016 10061 10049 ///
-			10050 11001 11002 12001 13001 13002 14001 14002 15001 15002 15003  = 0 "Bottom tertile") /// 
-		   (2040 2041 2042 3011 3012 5004 5005 7032 9017 9018 10051 10052 10053 11003 ///
-			11004 11005 11006 12002 12003 12004 13003 13004 14003 15004 15005 15006 15007 = 1 "Middle tertile") /// 
-		   (2043 2044 2045 3013 3014 5006 5007 7033 7034 7035 7036 7037 9019 9020 ///
-			9021 9022 10054 10055 11007 12005 13005 14004 14005 14006 14007 15008  = 2 "Top tertile") ///
-		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income_tertiles)
 		  
 * Recode extreme values to missing 
 *3/28: shalom: haven't done this yet for AR/IN
@@ -638,8 +638,8 @@ recode visits_covid (80 = .) if country == 15
 *Shalom - need to add India 
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
 			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (16 = 8 "Argentina") (11 = 9 "Lao PDR") ///
-			   (15 = 10 "Rep. of Korea") (14 = 11 "Italy") (12 = 12 "United States"), gen(country_reg)
-lab var country_reg "Country (ordered by region)"
+			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (12 = 13 "United States"), gen(country_reg)
+lab var country_reg "Country (ordered by region)" 
 
 *** Mia changed this part ***
 * Drop trimmed q27 q46 q47 and get back the orignal var
@@ -692,7 +692,9 @@ order respondent_serial respondent_id country country_reg language date ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
+
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_in_ke_za q56_pe q56_uy q56a_mx q56b_mx q56a_ar q56b_ar q56c_ar q57 q58 q59 ///
+
 	  q60 q61 q62 q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66 q66a_us q66b_us
 	  
 	  
@@ -774,7 +776,6 @@ lab var	vignette_poor "Rating of vignette in Q60 (poor care)"
 lab var	vignette_good "Rating of vignette in Q61 (good care)"
 lab var	minority "Minority group (based on native language, ethnicity or race) (Q62)"
 lab var	income "Income group (Q63)"
-lab var	income_tertiles "Income tertiles (Q63)"
 lab var tele_qual "Overall quality of last telemedicine visit (Q28C)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q46b)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q48K)"

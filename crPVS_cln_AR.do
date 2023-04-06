@@ -40,7 +40,7 @@ replace q7 = 16007 if (P71==0 & P72==0 & P73==0 & P74==0 & P75==0 & P76==0)
 
 * Mia: moved this part here 
 label define q7_label 16001 "AR: Public" 16002 "AR: OSEP" 16003 "AR: Other 'obras sociales' (Example: OSPE, OSDIPP)" ///
-                      16004 "AR: PAMI" 16005 "AR: Prepaid or private (Example: OSDE, GALENO, or similar)" 16007 "No insurance", add
+                      16004 "AR: PAMI" 16005 "AR: Prepaid/private (Example: OSDE, GALENO, or similar)" 16007 "AR: No insurance", add
 			   			    					
 label value q7 q7_label
 
@@ -160,7 +160,7 @@ recode P42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 			(4 = 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)") ///
 			(5 = 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)") ///
 			(6 = 5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)") ///
-			(7 = 6  "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
+			(7 = 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
 			(8 = 7 "Illness not serious enough") ///
 			(9 = 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)") ///
 			(10 = 9 "COVID-19 fear") (11 = 10 "Other, specify") (12 = .r "Refused"), gen(q42)
@@ -230,9 +230,14 @@ ren P58 q58
 ren P59 q59
 ren P60 q60
 ren P61 q61
-ren P63 q63
-ren P64 q64
 
+*income need to reshuffle categories
+recode P63 (7 = 1 "Sin ingresos") (1 = 2 "0 a 34.999 pesos") (2 = 3 "35.000 a 59.999 pesos") ///
+           (3 = 4 "60.000 a 99.999 pesos") (4 = 5 "100.000 a 129.999 pesos") ///
+		   (5 = 6 "130.000 a 199.999 pesos") (6 = 7 "200.000 o más") (8 = 8 "No responde <B>[NO LEER]</B>"), gen(q63)
+
+ren P64 q64		   
+		   
 *adding .r/.d to q65 based on P65_Codes1 or P65_Codes2
 replace P65 = .d if P65_Codes1 == 1
 replace P65 = .r if P65_Codes2 == 1 
@@ -322,7 +327,7 @@ local q5l labels10
 local q8l labels11
 local q20l q20
 local q44l q44
-local q63l labels83
+local q63l q63
 
 foreach q in q4 q5 q8 q20 q44 q63{
 	qui elabel list ``q'l'
@@ -375,16 +380,13 @@ recode q23_q24 (.d = .r) if q24 == .r
 * q3a_co_pe_uy_ar
 label define labels8 3 "AR: Other gender", modify
 
-**renam the value labels from Spanish to english:
-
-*3/27: Shalom confirm if we want q4 translated- ask Rodrigo:
-label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Field", modify
+label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Countryside", modify
 				  
 label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
 					  16004 "AR: Secondary(basic cycle and 4th to 6th)" 16005 "AR: Non-university higher education" ///
 					  16006 "AR: University superior" 16007 "AR: Postgraduate", modify
 					  
-label define labels24 1 "Public" 2 "OSEP" 3 "Prepaid or private (Example OSDE, GALENO, OMINT, MEDIFÉ or similar ones)" ///
+label define labels24 1 "Public" 2 "OSEP" 3 "Prepaid/private (Example OSDE, GALENO, OMINT, MEDIFÉ or similar ones)" ///
 					  4 "Other" 6 "PAMI" 7 "Other 'obras sociales' (Example: OSPE, OSDIPP)", modify
 					  					  				 
 
@@ -396,21 +398,20 @@ label define labels52 1 "Care for an urgent or new health problem (an accident o
 					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)", modify
 
 *3/27 Shalom: do we want to recode q63? - no but add AR pre-code: change to comma - did No Income need a precode?
-label define q63_label 16001 "AR: 0 to 34,999 pesos" ///
-					   16002 "AR: 35,000 to 59,999 pesos" ///
-					   16003 "AR: 60,000 to 99,999 pesos" ///
-					   16004 "AR: 100,000 to 129,999 pesos" ///
-					   16005 "AR: 130,000 to 199,999 pesos" ///
-					   16006 "AR: 200,000 or more pesos" ///
-					   16007 "AR: No income", modify
+label define q63_label 16001 "AR: No income" ///
+					   16002 "AR: 0 to 34,999 pesos" ///
+					   16003 "AR: 35,000 to 59,999 pesos" ///
+					   16004 "AR: 60,000 to 99,999 pesos" ///
+					   16005 "AR: 100,000 to 129,999 pesos" ///
+					   16006 "AR: 130,000 to 199,999 pesos" ///
+					   16007 "AR: 200,000 or more pesos", modify
 		  
 label define labels79 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 					  2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
 					  3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better.", modify
 					  
 label define labels84 1 "Yes" 2 "No/No other numbers", modify		  
-					
-
+				
 
 *------------------------------------------------------------------------------*
 
@@ -514,8 +515,7 @@ recode q65 (. = .a) if q64 == 2 | q64 == .r | q64 == .d // Mia: added the case q
 
 * Recode values and value labels so that their values and direction make sense
 
-*** Mia changed this part ***
-* Mia: split this part into differen parts
+
 recode q11 q12 q13 q18 q25_a q26 q29 q41 /// 
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
@@ -526,7 +526,6 @@ recode q13b_co_pe_uy_ar q30 q31 q32 q33 q34 q35 q36 q38 q64 ///
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk) 
 
-*Shalom note: confirm translation of .a with Rodrigo, this is from the data dictionary
 recode q39 q40 /// 
 	   (1 = 1 "Yes") (2 = 0 "No") ///
 	   (.a = .a "I did not get healthcare in past 12 months") ///
@@ -628,7 +627,7 @@ lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q47 q65 na_rf
 
 *------------------------------------------------------------------------------*
 
-* Renaming variables  - I don't understand this section i just used the vars that have rec in their name
+* Renaming variables  
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
@@ -665,15 +664,13 @@ lab var q13 "Q13. Was it confirmed by a test?"
 lab var q13b_co_pe_uy_ar "Q13B. CO/PE/UY/AR only: Did you seek health care for COVID-19?"
 lab var q13e_co_pe_uy_ar "Q13E. CO/PE/UY/AR only: Why didnt you receive health care for COVID-19?"
 lab var q13e_other_co_pe_uy_ar "Q13E. CO/PE/UY/AR only: Other"
-*Shalom confirm q14 question
 lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 *lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-*Shalom confirm 19_ar translation
-lab var q19_ar "Q19. AR only: Is this establishment public, OSEP, another social work, a medical center or hospital owned by PAMI or private/prepaid?"
+lab var q19_ar "Q19. AR only: Is this facility Public, OSEP, Other 'obras sociales', A medical center/hospital owned by PAMI, or Private/prepaid?"
 lab var q19_other "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q20_other "Q20. Other"
@@ -704,7 +701,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_ar "Q43. AR only: Is this establishment Public, OSEP or Private?"
+lab var q43_ar "Q43. AR only: Is this facility Public, OSEP, or Private?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
@@ -736,11 +733,8 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private/prepaid healthcare?"
-*Shalom confirm we want to write de Mendoza here:
-lab var q56a_ar "Q56a. How would you rate the quality of care provided by OSEP de Mendoza"
-*Shalom confirm translation of q56b_ar
-lab var q56b_ar "Q56b. How would you rate the quality of the 'otras obras sociales' health system in the province of Mendoza?"
-*Shalom confirm adding Mendoza here
+lab var q56a_ar "Q56a. How would you rate the quality of care provided by OSEP of Mendoza?"
+lab var q56b_ar "Q56b. How would you rate the quality of the other 'obras sociales' health systems in the province of Mendoza?"
 lab var q56c_ar "Q56c. How would you rate the quality of the PAMI health system in the province of Mendoza?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
