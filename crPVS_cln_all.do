@@ -1434,7 +1434,7 @@ replace q19_other = subinstr(q19_other,`"""',  "", .)
 replace q43_other = subinstr(q43_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 
-foreach i in 2 3 5 7 9 10 12 13 14 15 {
+foreach i in 2 3 4 5 7 9 10 12 13 14 15 {
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
 	sheet(other_specify_recode)							///	
@@ -1461,7 +1461,8 @@ use "$data_mc\02 recoded data\pvs_appended.dta", clear
 gl inputfile	"$data_mc/03 test output/Input/dq_inputs.xlsm"	
 gl inputfile_2	"$data_mc/03 test output/Input/dq_inputs_2.xlsm"
 gl inputfile_3	"$data_mc/03 test output/Input/dq_inputs_3.xlsm"	
-gl inputfile_4	"$data_mc/03 test output/Input/dq_inputs_5.xlsm"
+gl inputfile_4	"$data_mc/03 test output/Input/dq_inputs_4.xlsm"
+gl inputfile_5	"$data_mc/03 test output/Input/dq_inputs_5.xlsm"
 gl inputfile_7	"$data_mc/03 test output/Input/dq_inputs_7.xlsm"		
 gl inputfile_9	"$data_mc/03 test output/Input/dq_inputs_9.xlsm"	
 gl inputfile_10	"$data_mc/03 test output/Input/dq_inputs_10.xlsm"	
@@ -1555,7 +1556,7 @@ replace q45_other=trim(q45_other)
 replace q62_other=trim(q62_other)
 replace q7_other=trim(q7_other)
 
-foreach i in 2 3 5 7 9 10 11 12 13 14 15 {
+foreach i in 2 3 4 5 7 9 10 11 12 13 14 15 {
 
  preserve
  keep if country == `i'
