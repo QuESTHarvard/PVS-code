@@ -956,7 +956,6 @@ forvalues o = 1/`countryn' {
 		}                 
 	}
 }
-
 lab val q63 q63_label
 
 
