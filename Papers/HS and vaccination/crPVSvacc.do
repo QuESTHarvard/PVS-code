@@ -59,9 +59,8 @@ replace c = "Argentina" if country==16
 	recode income (0/1=0) (2=1), gen(high_income)
 	recode gender (2=1), gen(female)
 
-	recode minority (2=1) (3033/9995=.) // MINORITY ETHNIC GROUP CODING IS PENDING IN SOME COUNTRIES
-	replace minority=0 if c=="USA" & minority==.a 
-	replace minority=0 if c=="Mexico" & minority==.a 
+	recode minority (2=1) 
+	replace minority = . if c=="Colombia" | c=="Korea"
 	
 	
 	lab var fullvax "Received 2+ or 3+ doses of a COVID vaccine"
