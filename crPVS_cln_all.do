@@ -607,6 +607,7 @@ lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
 lab var q37_za "Q37. ZA only: Had a test for HIV in the past 12 months"
+lab var q37_in "Q37. IN only: Have you received any of the following health services in the past 12 months?"
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
@@ -659,7 +660,7 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Save data
 
-save "$data_mc/02 recoded data/pvs_et_ke_za.dta", replace
+save "$data_mc/02 recoded data/pvs_et_in_ke_za.dta", replace
 
 
 *------------------------------------------------------------------------------*
@@ -1259,7 +1260,7 @@ tempfile label1
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label1'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label 
 
-append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
+append using "$data_mc/02 recoded data/pvs_et_in_ke_za.dta"
 
 qui do `label1'
 
@@ -1300,13 +1301,13 @@ lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Repub
 
 
 * Kenya/Ethiopia variables 
-ren q19 q19_et_ke_za
-lab var q19_et_ke_za "Q19. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
-ren q43 q43_et_ke_za_la
-lab var q43_et_ke_za_la "Q43. ET/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
+ren q19 q19_et_in_ke_za
+lab var q19_et_in_ke_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
+ren q43 q43_et_in_ke_za_la
+lab var q43_et_in_ke_za_la "Q43. ET/IN/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
 * NOTE: Q43 also asked like this in Laos
-ren q56 q56_et_ke_za 
-lab var q56_et_ke_za "Q56. ET/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+ren q56 q56_et_in_ke_za 
+lab var q56_et_in_ke_za "Q56. ET/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 
 * Mode
 recode mode (3 = 1) (4 = 3)
@@ -1315,8 +1316,8 @@ label val mode mode
 lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 
 * Country-specific skip patterns - check this 
-recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
-recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
+recode q19_et_in_ke_za q56_et_in_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
+recode q43_et_in_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
