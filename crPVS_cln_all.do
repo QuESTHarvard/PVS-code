@@ -1225,7 +1225,7 @@ recode q6_kr q7_kr q19_kr q43_kr (. = .a) if country != 15
 recode q7 (. = .a) if country == 15 //Mia: dropped q6 since we will do it later with other countries
 * Mia: add the line to recode q6 to .a if the country has country specific q6
 *      This might have been done in each individual cleaning program but do it again here to be sure
-recode q6 (. = .a) if inlist(country,9,14,15) 
+recode q6 (. = .a) if inlist(country,9,11,14,15) 
 recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
 
