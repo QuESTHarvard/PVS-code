@@ -66,9 +66,8 @@ label save Language Q4 Q5 using `label1'
 label drop Language Q4 Q5								  
 								  
 * India - load in India data 
-append using "$data/India/00 interim data/India_STATA_28.03.23.dta"
+append using "$data/India/01 raw data/PVS_India weighted.dta"
 qui do `label1'
-
 
 *Change all variable names to lower case
 rename *, lower //Mia: move this early
