@@ -389,7 +389,7 @@ recode q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 ///
 * Mia: moved q46_refused q47_refused here
 lab val q46_refused q47_refused yes_no
 
-recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q66 ///
+recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q37_in q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (3 .d = .d "Don't know") /// 
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk)
@@ -486,6 +486,35 @@ recode q57 ///
 * Numeric questions needing NA and Refused value labels 
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf 
+
+
+*Shalom added:
+label define Q45 4 "Other, specify", modify
+*add .a/.r labels for q21,q42/q43/q44/q45/q19/q20
+label define Q19 .a "NA" .r "Refused", add
+label define q20_label .a "NA" .r "Refused", add
+label define Q21 .a "NA" .r "Refused", add
+label define Q42 .a "NA" .r "Refused", add
+label define Q43 .a "NA" .r "Refused", add
+label define q44_label .a "NA" .r "Refused", add
+label define Q45 .a "NA" .r "Refused", add
+*add .r for q62
+label define q62_label .r "Refused", add
+*add .d/.r for q63
+label define q63_label .d "Don't Know" .r "Refused", add
+
+*Shalom added: language loses value labels when it's being generated with country code - is there a better fix for this above?
+*what is 5001/9001? - i think english combined for multiple countries? tab country with language
+*this section does not match data dictionary
+label define language 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
+					  4011 "IN: Hindi" 4012 "IN: Kannada" 4013 "IN: Tamil" 4014 "IN: Bengali" ///
+					  5001 "KE: English" 5002 "KE: Swahili" ///
+					  9001 "ZA: English" 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA :Afrikaans" ///
+					  9009 "ZA: Sepedi" 9010 "ZA: isiXhosa"
+
+label val reclanguage language
+
+
 
 *------------------------------------------------------------------------------*
 
