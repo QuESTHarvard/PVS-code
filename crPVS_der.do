@@ -359,8 +359,8 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 31 32 33 = 1 "Urban") (4 8 11 14 19 34 = 0
 		  (.r = .r "Refused"), gen(urban)
 */
 
-recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 = 1 "Urban") ///
-          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16002 16003 = 0 "Rural") ///
+recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 4015 4016 = 1 "Urban") ///
+          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16002 16003 4017 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
@@ -386,9 +386,9 @@ recode q7 (1 3 17 18 10 11 12 19 20 22 29 31 33 34 35 36 39 40 42 = 0 Public) //
 
 *Mia: for now 2015 2016 coded to be Private
 
-recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 16001 16002 16003 16004 = 0 Public) ///
-		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 16005 = 1 Private) /// 
-		  (2995 9995 12995 13995 = 2 Other) ///
+recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 16001 16002 16003 16004 4023 4024 4025 4026 = 0 Public) ///
+		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 16005 4027 = 1 Private) /// 
+		  (2995 9995 12995 13995 4995 = 2 Other) ///
 		  (.r = .r "Refused") (7014 13014 .a = .a NA), gen(insur_type)
 recode insur_type (.a = 0) if q6_za == 0
 recode insur_type (.a = 1) if q7_kr == 1
@@ -406,16 +406,19 @@ recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal edu
 		  
 */
 
-recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 14001 12001 15001 16001 16002 = 0 "None (or no formal education)") ///
-          (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 = 1 "Primary") ///
-		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 15003 15004 16004 = 2 "Secondary") ///
+
+recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 14001 12001 15001 16001 16002 4039 = 0 "None (or no formal education)") ///
+          (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 4040 = 1 "Primary") ///
+		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 13005 12004 15003 15004 16004 4041 = 2 "Secondary") ///
           (3005 5010 5011 9017 2029 2030 2031 7022 7023 7024 10036 10037 10038 11005 11006 14006 14007 ///
-		  13005 13006 13007 12005 12006 15005 15006 15007 16005 16006 16007 = 3 "Post-secondary") ///
+		  13006 13007 12005 12006 15005 15006 15007 16005 16006 16007 4042 4043 4044 = 3 "Post-secondary") ///
+
+
           (.r = .r "Refused"), gen(education)
 
 * usual_type_own
 		  
-recode q19_et_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
+recode q19_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
 		
@@ -465,10 +468,10 @@ recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 
 recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
-			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16005 16006 = 0 "Primary") /// 
+			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16005 16006 4067 4068 4069 4072 4073 4074 = 0 "Primary") /// 
 		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 ///
-		   12005 12006 15003 15004 16002 16004 16007 = 1 "Secondary (or higher)") ///
+		   12005 12006 15003 15004 16002 16004 16007 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 12995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if inlist(q19_q20a_la,2,4,6) | ///
@@ -477,6 +480,7 @@ recode usual_type_lvl (.a = 1) if q19_q20a_la == 1 | q19_q20a_la == 3 | q19_q20b
 
 
 * NOTE: Maybe add an other for Laos? also for last visit level? But we will see with other, specify data
+*Shalom - India also has "4995 = Other"
 		   
 * usual_type - ownership and level 
 gen usual_type = . 
@@ -496,18 +500,15 @@ lab val usual_type fac_own_lvl
 * NOTE: Check what's happening with other here
 
 * last_type_own
-* Mia: changed q19_kr to q43_kr
-recode q43_et_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
+recode q43_et_in_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
 
-* Mia updated variable to q43_co_pe
 recode last_type_own (.a = 0) if q43_co_pe == 1 | q43_uy == 1 | ///
 								 q43_it == 1 | inrange(q43_mx,1,5) | ///
 								 inlist(q44,12003,12004,12005) | q43_kr == 1 | ///
 								 q43_ar == 1 | q43_ar == 2 | q43_ar == 6 | q43_ar == 7
 
-* Mia updated variable to q43_co_pe
 recode last_type_own (.a = 1) if q43_co_pe == 2 | q43_uy == 2 | ///
 								 q43_it == 2 | q43_it == 3 | q43_mx == 6 | ///
 								 inlist(q44,12001,12002,12006,12007) | q43_kr == 3 | ///
@@ -536,10 +537,10 @@ recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
  
 recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
-			14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16004 16005 = 0 "Primary") /// 
+			14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074 = 0 "Primary") /// 
 		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 13019 13020 ///
-		   12005 12006 12007 15003 15004 16002 16006 = 1 "Secondary (or higher)") ///
+		   12005 12006 12007 15003 15004 16002 16006 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 11995 12995 13995 .r = .r "Refused"), gen(last_type_lvl)
 		      
 * last_type - ownership and level
@@ -558,7 +559,6 @@ lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Priva
 lab val last_type fac_own_lvl
 
 * minority
-
 *Notes: No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet. Need to confirm 9044 is a minority group for ZA
 
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
@@ -567,6 +567,7 @@ recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
 		    (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 9033 ///
 			9034 9039 9040 9042 9043 = 0 "Majority group") /// 
 		    (2995 3995 5995 11995 3995 9995 = 2 "Other") ///
+
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1
@@ -578,25 +579,23 @@ recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 9
 recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
 *Mexico majority group (doesn't speak indigenous language)
 recode minority (.a = 0) if q62_mx == 0
- 
 
-
-* income 
-* Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
-*Pending to include in dataset: India 
-recode q63 (2039 2040 2041 3009 5001 7031 7032 9015 9016 9017 10049 ///
-		   10050 10051 10052 11001 11002 12001 12002 13001 14001 14002 15001 15002 ///
-		   15003 15004 16001 16002 16003 = 0 "Lowest income") /// 
-		   (2042 2043 2044 3010 7033 9018 9019 10052 10053 10054 11003 ///
-		   11004 12003 13002 14003 15005 15006 16004 16005 = 1 "Middle income") /// 
-		   (2045 2048 3011 3012 3013 3014 5002 5003 5004 5005 5006 5007 7034 7035 ///
-		   7036 7037 7038 9020 9021 9022 9023 10055 10061 11005 11006 11007 12004 ///
-		   12005 13003 13004 13005 14004 14005 14006 14007 15007 15008 16005 16006 ///
-		   16007 = 2 "Highest income") ///
+* income
+* Note - will update this grouping based on income data 
+* Mia: add "No income" to the first group
+recode q63 (5001 5002 3009 3010 9015 9016 9017 9023 2039 2040 2048 7031 7032 7038  ///
+			10049 10050 10061 11001 11002 14001 14002 13001 13002 12001 12002 ///
+			15001 15002 15003 16007 16001 16002 4024 4025 = 0 "No income/Lowest income") /// 
+		   (5003 5004 5005 3011 3012 9018 9019 9020 2041 2042 2043 7033 7034 7035 ///
+		   10051 10052 10053 11003 11004 11005 14003 14004 14005 13003 12003 ///
+		   15004 15005 15006 15007 16003 16004 4026 4027 = 1 "Middle income") /// 
+		   (5006 5007 3013 3014 9021 9022 2044 2045 7036 7037 10054 10055 11006 ///
+		   11007 14006 14007 13004 13005 12004 12005 15008 16005 16006 4028 4029 4030 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
+
 		  
 * Recode extreme values to missing 
-*3/28: shalom: haven't done this yet
+*3/28: shalom: haven't done this yet for AR/IN
 
 * All visit count variables and wait time variables:
 
@@ -636,6 +635,7 @@ recode visits_home (68 = .) if country == 15
 recode visits_covid (80 = .) if country == 15
 
 *** New country var based on region ***
+*Shalom - need to add India 
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
 			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (16 = 8 "Argentina") (11 = 9 "Lao PDR") ///
 			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (12 = 13 "United States"), gen(country_reg)
@@ -681,18 +681,20 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
-	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
-	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
+	  vignette_good minority income income_tertiles pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
+	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e_co_pe_uy_ar q13e_other_co_pe_uy_ar q14 q14_la q15 q15_la q16 q17 q18 ///
+	  q18a_la q18b_la q19_co q19_et_in_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q37_za q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_ke_za_la q43_it q43_kr q43_mx ///
+	  q37_za q37_in q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_in_ke_za_la q43_it q43_kr q43_mx ///
 	   q43_uy q43_ar q43_other q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
-	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_ke_za q56_pe q56_uy q56a_mx q56b_mx q56a_ar q56b_ar q56c_ar q57 q58 q59 ///
+
+	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_in_ke_za q56_pe q56_uy q56a_mx q56b_mx q56a_ar q56b_ar q56c_ar q57 q58 q59 ///
+
 	  q60 q61 q62 q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66 q66a_us q66b_us
 	  
 	  
