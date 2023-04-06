@@ -230,9 +230,14 @@ ren P58 q58
 ren P59 q59
 ren P60 q60
 ren P61 q61
-ren P63 q63
-ren P64 q64
 
+*income need to reshuffle categories
+recode P63 (7 = 1 "Sin ingresos") (1 = 2 "0 a 34.999 pesos") (2 = 3 "35.000 a 59.999 pesos") ///
+           (3 = 4 "60.000 a 99.999 pesos") (4 = 5 "100.000 a 129.999 pesos") ///
+		   (5 = 6 "130.000 a 199.999 pesos") (6 = 7 "200.000 o más") (8 = 8 "No responde <B>[NO LEER]</B>"), gen(q63)
+
+ren P64 q64		   
+		   
 *adding .r/.d to q65 based on P65_Codes1 or P65_Codes2
 replace P65 = .d if P65_Codes1 == 1
 replace P65 = .r if P65_Codes2 == 1 
@@ -322,7 +327,7 @@ local q5l labels10
 local q8l labels11
 local q20l q20
 local q44l q44
-local q63l labels83
+local q63l q63
 
 foreach q in q4 q5 q8 q20 q44 q63{
 	qui elabel list ``q'l'
@@ -375,9 +380,6 @@ recode q23_q24 (.d = .r) if q24 == .r
 * q3a_co_pe_uy_ar
 label define labels8 3 "AR: Other gender", modify
 
-**renam the value labels from Spanish to english:
-
-*3/27: Shalom confirm if we want q4 translated- ask Rodrigo:
 label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Countryside", modify
 				  
 label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
@@ -396,13 +398,13 @@ label define labels52 1 "Care for an urgent or new health problem (an accident o
 					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)", modify
 
 *3/27 Shalom: do we want to recode q63? - no but add AR pre-code: change to comma - did No Income need a precode?
-label define q63_label 16001 "AR: 0 to 34,999 pesos" ///
-					   16002 "AR: 35,000 to 59,999 pesos" ///
-					   16003 "AR: 60,000 to 99,999 pesos" ///
-					   16004 "AR: 100,000 to 129,999 pesos" ///
-					   16005 "AR: 130,000 to 199,999 pesos" ///
-					   16006 "AR: 200,000 or more pesos" ///
-					   16007 "AR: No income", modify
+label define q63_label 16001 "AR: No income" ///
+					   16002 "AR: 0 to 34,999 pesos" ///
+					   16003 "AR: 35,000 to 59,999 pesos" ///
+					   16004 "AR: 60,000 to 99,999 pesos" ///
+					   16005 "AR: 100,000 to 129,999 pesos" ///
+					   16006 "AR: 130,000 to 199,999 pesos" ///
+					   16007 "AR: 200,000 or more pesos", modify
 		  
 label define labels79 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 					  2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
