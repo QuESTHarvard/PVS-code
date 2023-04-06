@@ -84,11 +84,12 @@ recode Q63 (1 = 1 "< Ksh 15,572") ///
 		   (996 = 996 "Refused") (997 = 997 "Don't know"), gen(q63)
 		   
 drop Q63
+ren q63 Q63
 
 *Save to merge later so we won't lose India's value labels for some questions
 tempfile label1
-label save Language Q4 Q5 using `label1'
-label drop Language Q4 Q5								  
+label save Language Q4 Q5 q63 using `label1'
+label drop Language Q4 Q5 q63							  
 								  
 * India - new weighted India data from 4-5: 
 append using "$data/India/01 raw data/PVS_India weighted.dta"
@@ -99,6 +100,10 @@ rename *, lower
 
 *Shalom- corect value labels
 label define Q2 2 "18-29", modify
+label define q63 24 "<3000 Indian National Rupee (INR)" ///
+			     25 "3000-10,000 INR" 26 "10,001-20,000 INR" ///
+				 27 "20,001-30,000 INR" 28 "30,001-40,000 INR" ///
+				 29 "40,001-50,000 INR" 30 ">50,000 INR", modify
 
 *Shalom-India had "interviewer language in 13 different vars": named starting at 30
 replace interviewer_language = 30 if interviewer_language01 == 1
@@ -128,7 +133,7 @@ drop interviewer_language01 interviewer_language02 interviewer_language03 interv
 * Mia: changed to 16 since 16 is mobile clinic
 recode q20 q44 (23 = 16) if country == 9 
 
-*** Mia changed this part ***
+
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 996
 gen reclanguage = country*1000 + language 
@@ -195,8 +200,6 @@ foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	label val rec`q' `q'_label
 }
 *****************************
-
-label define q63_label .r "Refused" .d "Don't Know", add
 
 *------------------------------------------------------------------------------*
 
