@@ -174,7 +174,7 @@ ren P43_4 q43_other
 *q44:
 * 4/6: Mia changed this
 recode P44 (1 = 1 "Health Center / 'Salita'") /// 
-			(2 = 2 "Hospital / Sanatorium") ///
+			(2 = 2 "Hospital") ///
 			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
 			(11 19 24 = 4 "Health Center / Policlinic / Doctor's Office") ///
 			(3 8 13 16 21 25 = 5 "Other primary care facility") ///
@@ -489,7 +489,7 @@ recode q19_ar recq20 q21 q22 (. = .a) if q18 == 2 | q18 ==.r // no usual source 
 
 * NA's for q24-28 - redo for AR
 recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . 
-recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
+recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == . // *Shalom added q23 == . per Mia's email but it didn't change anything
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r 

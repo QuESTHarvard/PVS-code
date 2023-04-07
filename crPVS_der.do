@@ -156,7 +156,7 @@ gen visits_cat = 0 if q23 == 0 | q24 == 0
 recode visits_cat (. = 1) if q23 >=1 & q23 <= 4 | q24 == 1
 recode visits_cat (. = 2) if q23 > 4 & q23 < . | q24 == 2 | q24 == 3
 recode visits_cat (. = .r) if q23 == .r | q24 == .r
-lab def visits_cat 0 "Non-user (0 visits)" 1 "Occasional usuer (1-4 visits)" ///
+lab def visits_cat 0 "Non-user (0 visits)" 1 "Occasional user (1-4 visits)" ///
 			   2 "Frequent user (more than 4)" .r "Refused"
 lab val visits_cat visits_cat
 
@@ -568,19 +568,17 @@ lab val last_type fac_own_lvl
 *Notes: No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet.
 
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
-			3026 3027 3028 3029 3030 3031 3032 7044 7045 7049 2081 11002 11003 ///
-			15002 9035 9036 9037 9038 9041 9044 = 1 "Minority group") /// 
-		    (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 9033 ///
-			9034 9039 9040 9042 9043 = 0 "Majority group") /// 
-		    (2995 3995 5995 11995 3995 9995 = 2 "Other") ///
+		   3026 3027 3028 3029 3030 3031 3032 7044 7045 7049 2081 11002 11003 ///
+		   15002 9035 9036 9037 9038 9041 9044 2995 3995 5995 11995 3995 9995 = 1 "Minority group") /// 
+		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 9033 ///
+		   9034 9039 9040 9042 9043 = 0 "Majority group") /// 
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 		   
 *US:
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1
-recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6)
-*Recode US "Other" to "Other" groups
-recode minority (.a = 2) if q62b_us == 995
+recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995)
+
 *US:white and non-hispanic group = majority:
 recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
 
@@ -672,6 +670,11 @@ drop _merge
 lab def pol_align 0 "Not aligned (out of favor)" 1 "Aligned (in favor)"
 lab val pol_align pol_align
 
+
+*shalom dropped political alignment until we can fix
+
+drop pol_align
+
 *****************************
 
 **** Order Variables ****
@@ -691,7 +694,7 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
+	  vignette_good minority income q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
 	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
@@ -788,7 +791,7 @@ lab var tele_qual "Overall quality of last telemedicine visit (Q28C)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q46b)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q48K)"
 lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q51/Q52)"
-lab var pol_align "Political alignment in respondent's region / district / state"
+*lab var pol_align "Political alignment in respondent's region / district / state"
 
 
 
