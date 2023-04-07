@@ -1351,11 +1351,6 @@ time respondent_num q1_codes
 drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et rim_age province county sublocation rim_region_ke rim_educ ecs_id rim_gender rim_region rim_education rim_eduction interviewerid_recoded
 
 
-order q*, sequential
-order respondent_serial respondent_id mode country language date ///
-	  int_length psu_id_for_svy_cmds weight 
-
-
 **** Other Specify Recode ****
 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
@@ -1364,11 +1359,8 @@ order respondent_serial respondent_id mode country language date ///
 
 *All (Laos and Argentina pending)
 
-* Clone the variables we are going to recode 
-* (Used gen here to abvoid format warning)
 gen q7_other_original = q7_other
 label var q7_other_original "Q7_other. Other type of health insurance?"
-	
 gen q13e_other_co_pe_uy_ar_original = q13e_other_co_pe_uy_ar
 label var q13e_other_co_pe_uy_ar_original "Q13E. CO/PE/UY only: Other"
 	
@@ -1418,7 +1410,13 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
 	id(respondent_id)	
  
 }	
-	
+
+drop q7_other
+ren q7_other_original q7_other 
+
+order q*, sequential
+order respondent_serial respondent_id mode country language date ///
+	  int_length psu_id_for_svy_cmds weight 	
 
 drop q7_other q13e_other_co_pe_uy_ar q19_other q19_q20a_other_la q19_q20b_other_la q20_other ///
 	 q21_other q42_other q43_other q44_other q45_other q62_other q62b_other_us
