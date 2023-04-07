@@ -411,7 +411,7 @@ recode interviewer_gender ///
 
 * Note: Without relabeling (removing the appostrophe) next command will not run 
 lab var q2 
-recode q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
+recode q2 (2 = 0 "18-29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
 		  (6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") ///
 		  (.a = .a "NA"), pre(rec) label(age_cat)
 
@@ -1410,9 +1410,6 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
 	id(respondent_id)	
  
 }	
-
-drop q7_other
-ren q7_other_original q7_other 
 
 order q*, sequential
 order respondent_serial respondent_id mode country language date ///
