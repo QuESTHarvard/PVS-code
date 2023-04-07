@@ -565,27 +565,27 @@ lab val last_type fac_own_lvl
 
 * minority
 
-*Notes: No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet. Need to confirm 9044 is a minority group for ZA
+*Notes: No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet.
 
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
-			3026 3027 3028 3029 3030 3031 3032 3033 3034 3035 3036 3037 3038 ///
-			7044 7045 7049 2081 11002 11003 15002 9035 9036 9037 9038 9041 9044 = 1 "Minority group") /// 
+			3026 3027 3028 3029 3030 3031 3032 7044 7045 7049 2081 11002 11003 ///
+			15002 9035 9036 9037 9038 9041 9044 = 1 "Minority group") /// 
 		    (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 9033 ///
 			9034 9039 9040 9042 9043 = 0 "Majority group") /// 
 		    (2995 3995 5995 11995 3995 9995 = 2 "Other") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
+		   
+*US:
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1
-recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 995 later
-* Note - check this 
-
-*Shalom additions:
+recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6)
+*Recode US "Other" to "Other" groups
+recode minority (.a = 2) if q62b_us == 995
 *US:white and non-hispanic group = majority:
 recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
+
 *Mexico majority group (doesn't speak indigenous language)
 recode minority (.a = 0) if q62_mx == 0
- 
-
 
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
@@ -602,7 +602,6 @@ recode q63 (2039 2040 2041 3009 5001 7031 7032 9015 9016 9017 10049 ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
 * Recode extreme values to missing 
-*3/28: shalom: haven't done this yet
 
 * All visit count variables and wait time variables:
 
