@@ -1411,9 +1411,6 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
  
 }	
 
-drop q7_other
-ren q7_other_original q7_other 
-
 order q*, sequential
 order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 	
