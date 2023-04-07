@@ -1456,8 +1456,6 @@ save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 use "$data_mc/02 recoded data/pvs_appended.dta", clear
 
-gen interviewer_id = respondent_id
-
 * Macros for these commands
 gl inputfile	"$data_mc/03 test output/Input/dq_inputs.xlsm"	
 gl inputfile_2	"$data_mc/03 test output/Input/dq_inputs_2.xlsm"
