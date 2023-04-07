@@ -174,7 +174,7 @@ ren P43_4 q43_other
 *q44:
 * 4/6: Mia changed this
 recode P44 (1 = 1 "Health Center / 'Salita'") /// 
-			(2 = 2 "Hospital / Sanatorium") ///
+			(2 = 2 "Hospital") ///
 			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
 			(11 19 24 = 4 "Health Center / Policlinic / Doctor's Office") ///
 			(3 8 13 16 21 25 = 5 "Other primary care facility") ///
