@@ -1366,19 +1366,40 @@ order respondent_serial respondent_id mode country language date ///
 
 * Clone the variables we are going to recode 
 * (Used gen here to abvoid format warning)
+gen q7_other_original = q7_other
+label var q7_other_original "Original value of q7_other"	
+gen q13e_other_co_pe_uy_ar_original = q13e_other_co_pe_uy_ar
+label var q13e_other_co_pe_uy_ar_original "Original value of q13e_other_co_pe_uy_ar"	
 gen q19_other_original = q19_other
 label var q19_other_original "Original value of q19_other"
+gen q19_q20a_other_original = q19_q20a_other
+label var q19_q20a_other_original "Original value of q19_q20a_other"
+gen q19_q20b_other_original = q19_q20b_other
+label var q19_q20b_other_original "Original value of q19_q20b_other"
+gen q20_other_original = q20_other
+label var q20_other_original "Original value of q20_other"
+gen q21_other_original = q21_other
+label var q21_other_original "Original value of q21_other"
+gen q42_other_original = q42_other
+label var q42_other_original "Original value of q42_other"
 gen q43_other_original = q43_other
 label var q43_other_original "Original value of q43_other"
+gen q44_other_original = q44_other
+label var q44_other_original "Original value of q44_other"	
 gen q45_other_original = q45_other
-label var q45_other_original "Original value of q45_other"		
+label var q45_other_original "Original value of q45_other"	
+gen q62_other_original = q62_other
+label var q62_other_original "Original value of q62_other"	
+gen q62b_other_us_original = q62b_other_us
+label var q62b_other_us_original "Original value of q62b_other_us"	
+	
 
 *Remove "" from responses for macros to work
 replace q19_other = subinstr(q19_other,`"""',  "", .)
 replace q43_other = subinstr(q43_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 
-foreach i in 2 3 5 7 9 10 12 13 14 15 {
+foreach i in 2 3 5 7 9 10 12 13 14 15 16 {
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
 	sheet(other_specify_recode)							///	
