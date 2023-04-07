@@ -670,6 +670,11 @@ drop _merge
 lab def pol_align 0 "Not aligned (out of favor)" 1 "Aligned (in favor)"
 lab val pol_align pol_align
 
+
+*shalom dropped political alignment until we can fix
+
+drop pol_align
+
 *****************************
 
 **** Order Variables ****
@@ -689,7 +694,7 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
+	  vignette_good minority income q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
 	  q18a_la q18b_la q19_co q19_et_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
@@ -786,7 +791,7 @@ lab var tele_qual "Overall quality of last telemedicine visit (Q28C)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q46b)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q48K)"
 lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q51/Q52)"
-lab var pol_align "Political alignment in respondent's region / district / state"
+*lab var pol_align "Political alignment in respondent's region / district / state"
 
 
 
