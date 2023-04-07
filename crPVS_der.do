@@ -674,6 +674,7 @@ lab val pol_align pol_align
 *shalom dropped political alignment until we can fix
 
 drop pol_align
+drop if country == .
 
 *****************************
 
