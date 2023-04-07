@@ -156,7 +156,7 @@ gen visits_cat = 0 if q23 == 0 | q24 == 0
 recode visits_cat (. = 1) if q23 >=1 & q23 <= 4 | q24 == 1
 recode visits_cat (. = 2) if q23 > 4 & q23 < . | q24 == 2 | q24 == 3
 recode visits_cat (. = .r) if q23 == .r | q24 == .r
-lab def visits_cat 0 "Non-user (0 visits)" 1 "Occasional usuer (1-4 visits)" ///
+lab def visits_cat 0 "Non-user (0 visits)" 1 "Occasional user (1-4 visits)" ///
 			   2 "Frequent user (more than 4)" .r "Refused"
 lab val visits_cat visits_cat
 
