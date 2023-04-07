@@ -1420,14 +1420,14 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
 }	
 	
 
-drop q7_other q13e_other_co_pe_uy_ar q19_other q19_q20a_other q19_q20b_other q20_other ///
+drop q7_other q13e_other_co_pe_uy_ar q19_other q19_q20a_other_la q19_q20b_other_la q20_other ///
 	 q21_other q42_other q43_other q44_other q45_other q62_other q62b_other_us
 	 
 ren q7_other_original q7_other
 ren q13e_other_co_pe_uy_ar_original q13e_other_co_pe_uy_ar
 ren q19_other_original q19_other
-ren q19_q20a_other_original q19_q20a_other
-ren q19_q20b_other_original q19_q20b_other
+ren q19_q20a_other_original q19_q20a_other_la
+ren q19_q20b_other_original q19_q20b_other_la
 ren q20_other_original q20_other
 ren q21_other_original q21_other
 ren q42_other_original q42_other
@@ -1440,7 +1440,7 @@ ren q62b_other_us_original q62b_other_us
 
 * Reorder variables
 order q*, sequential
-order q*, after(interviewer_id)
+order q*, after(respondent_id)
 	
 	
 *Save recoded data
