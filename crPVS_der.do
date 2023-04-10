@@ -21,12 +21,12 @@ u "$data_mc/02 recoded data/pvs_appended.dta", clear
 qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
+	
+	if inrange(`i',12,15) {
+		extremes q46b country if country == `i', high
+	}
 
 	foreach var in q27 q46 q47 {
-		
-		if inrange(`i',12,15) {
-			extremes q46b country if country == `i', high
-		}
 		
 		extremes `var' country if country == `i', high
 	}
@@ -42,6 +42,9 @@ clonevar q46b_origial = q46b
 * q46
 replace q46 = . if q46 > 720 & q46 < . & country == 15
 *3 values recoded in South Korea
+***4/6: Mia added this, please double check the cut-off 
+replace q46 = . if q46 > 720 & q46 < . & country == 16
+*2 values recoded in Argentina (Mendoza)
 
 * q47
 replace q47 = . if q47 > 300 & q47 < . & country == 3
@@ -153,7 +156,7 @@ gen visits_cat = 0 if q23 == 0 | q24 == 0
 recode visits_cat (. = 1) if q23 >=1 & q23 <= 4 | q24 == 1
 recode visits_cat (. = 2) if q23 > 4 & q23 < . | q24 == 2 | q24 == 3
 recode visits_cat (. = .r) if q23 == .r | q24 == .r
-lab def visits_cat 0 "Non-user (0 visits)" 1 "Occasional usuer (1-4 visits)" ///
+lab def visits_cat 0 "Non-user (0 visits)" 1 "Occasional user (1-4 visits)" ///
 			   2 "Frequent user (more than 4)" .r "Refused"
 lab val visits_cat visits_cat
 
@@ -359,8 +362,10 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 31 32 33 = 1 "Urban") (4 8 11 14 19 34 = 0
 		  (.r = .r "Refused"), gen(urban)
 */
 
-recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 4015 4016 = 1 "Urban") ///
-          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16002 16003 4017 = 0 "Rural") ///
+
+* Mia: 4/5 moved 16002 to Urban as the codebook suggested
+recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 4015 4016 = 1 "Urban") ///
+          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 4017 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
@@ -386,10 +391,12 @@ recode q7 (1 3 17 18 10 11 12 19 20 22 29 31 33 34 35 36 39 40 42 = 0 Public) //
 
 *Mia: for now 2015 2016 coded to be Private
 
+* Mia: 4/5 added 16007 to NA
 recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 16001 16002 16003 16004 4023 4024 4025 4026 = 0 Public) ///
 		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 16005 4027 = 1 Private) /// 
 		  (2995 9995 12995 13995 4995 = 2 Other) ///
-		  (.r = .r "Refused") (7014 13014 .a = .a NA), gen(insur_type)
+		  (.r = .r "Refused") (7014 13014 16007 .a = .a NA), gen(insur_type)
+
 recode insur_type (.a = 0) if q6_za == 0
 recode insur_type (.a = 1) if q7_kr == 1
 recode insur_type (.a = 0) if q7_kr == 0
@@ -426,7 +433,7 @@ recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
 								  q19_it == 1 | inrange(q19_mx,1,5) | ///
 								  inlist(q20,12003,12004) | q19_kr == 1 | ///
-								  q19_ar == 1 | q19_ar == 2 | q19_ar == 6 | q19_ar == 7
+								  inlist(q19_ar,1,2,6,7)
 								  
 * Mia updated variable to q19_co_pe 
 * Mia: changed the values of q20								  
@@ -463,13 +470,13 @@ recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
 */       
 
+* 4/6: Mia added 16008 and 16009
 recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
-			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 ///
-			16005 16006 4067 4068 4069 4072 4073 4074 = 0 "Primary") /// 
+			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 = 0 "Primary") /// 
 		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 ///
-		   12005 12006 15003 15004 16002 16004 16007 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
+		   12005 12006 15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 12995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if inlist(q19_q20a_la,2,4,6) | ///
@@ -506,7 +513,7 @@ recode q43_et_in_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 recode last_type_own (.a = 0) if q43_co_pe == 1 | q43_uy == 1 | ///
 								 q43_it == 1 | inrange(q43_mx,1,5) | ///
 								 inlist(q44,12003,12004,12005) | q43_kr == 1 | ///
-								 q43_ar == 1 | q43_ar == 2 | q43_ar == 6 | q43_ar == 7
+								 inlist(q43_ar,1,2,6,7)
 
 * Mia updated variable to q43_co_pe
 recode last_type_own (.a = 1) if q43_co_pe == 2 | q43_uy == 2 | ///
@@ -534,15 +541,17 @@ recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 		   1405 1406 1407 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
 */
- 
+
+* 4/6: Mia added 16007
 recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 		   2080 2085 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
 		   14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
 		   15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074= 0 "Primary") /// 
 		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 13019 13020 ///
-		   12005 12006 12007 15003 15004 16002 16006 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
+		   12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 11995 12995 13995 4995 .r = .r "Refused"), gen(last_type_lvl)
+
 		      
 * last_type - ownership and level
 gen last_type = . 
@@ -561,28 +570,26 @@ lab val last_type fac_own_lvl
 
 * minority
 
-*Notes: No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet. Need to confirm 9044 is a minority group for ZA
+*Notes: No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet.
 
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
-			3026 3027 3028 3029 3030 3031 3032 3033 3034 3035 3036 3037 3038 ///
-			7044 7045 7049 2081 11002 11003 15002 9035 9036 9037 9038 9041 9044 ///
-			4055 4062 4063 4064 4066 4068 4070 4071 4072 4073= 1 "Minority group") /// 
-		    (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 9033 ///
-			9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 = 0 "Majority group") /// 
-		    (2995 3995 5995 11995 3995 9995 4995 = 2 "Other") ///
+		   3026 3027 3028 3029 3030 3031 3032 7044 7045 7049 2081 11002 11003 ///
+		   15002 9035 9036 9037 9038 9041 9044 2995 3995 5995 11995 3995 9995 ///
+       4055 4062 4063 4064 4066 4068 4070 4071 4072 4073 = 1 "Minority group") /// 
+		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 9033 ///
+		   9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065  = 0 "Majority group") /// 
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
+		   
+*US:
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1
-recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995) //Note: might recode 995 later
-* Note - check this 
+recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995)
 
-*Shalom additions:
 *US:white and non-hispanic group = majority:
 recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
+
 *Mexico majority group (doesn't speak indigenous language)
 recode minority (.a = 0) if q62_mx == 0
- 
-
 
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
@@ -600,7 +607,6 @@ recode q63 (2039 2040 2041 3009 5001 7031 7032 9015 9016 9017 10049 ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
 * Recode extreme values to missing 
-*3/28: shalom: haven't done this yet
 
 * All visit count variables and wait time variables:
 
@@ -638,6 +644,11 @@ replace visits = . if visits > 60 & visits < . & country == 14
 * Korea, 1 visit_home and 1 visit_covid value 
 recode visits_home (68 = .) if country == 15
 recode visits_covid (80 = .) if country == 15
+***4/6: Mia added this, please double check the cut-off 
+* Argentina (Mendoza) visits, 4 value recoded 
+replace visits = . if visits > 60 & visits < . & country == 16
+* Argentina (Mendoza) visits_tele, 1 value recoded 
+recode visits_tele (96 = .) if country == 16
 
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
@@ -666,6 +677,11 @@ drop _merge
 lab def pol_align 0 "Not aligned (out of favor)" 1 "Aligned (in favor)"
 lab val pol_align pol_align
 
+
+*shalom dropped political alignment until we can fix
+
+drop pol_align
+
 *****************************
 
 **** Order Variables ****
@@ -685,7 +701,7 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
+	  vignette_good minority income q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
 	  q18a_la q18b_la q19_co q19_et_in_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
@@ -782,7 +798,7 @@ lab var tele_qual "Overall quality of last telemedicine visit (Q28C)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q46b)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q48K)"
 lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q51/Q52)"
-lab var pol_align "Political alignment in respondent's region / district / state"
+*lab var pol_align "Political alignment in respondent's region / district / state"
 
 
 

@@ -449,7 +449,7 @@ recode q20_mx (. = .a) if q19_mx == 7 | q18 ! = 1 // Mia: it also requires q18 =
 
 *** Mia changed this part ***
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . // Mia: add the case that q23 == . to be consistant with other programs
+recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . // Mia: add the case that q23 == . to be consistant with other programs
 recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
 recode q25_b q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a
@@ -956,7 +956,6 @@ forvalues o = 1/`countryn' {
 		}                 
 	}
 }
-
 lab val q63 q63_label
 
 
@@ -1000,6 +999,7 @@ forvalues o = 1/`countryn' {
 }
 lab val q66 q66_label
 recode q66 (. = .a) if reccountry == 12
+lab def q66_label .a "NA" .r "Refused", add
 
 * Value labels for NA/Refused for other vars
 lab def labels12 .a "NA" .r "Refused", modify 

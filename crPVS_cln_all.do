@@ -1327,6 +1327,7 @@ recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7
 recode q6_za q37_za (. = .a) if country != 9
 recode q6_la q14_la q15_la q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
 		(. = .a) if country != 11
+recode q14 q15 (. = .a) if country == 11 //Mia: 4/5 added this line
 recode q18 q20 q64 q65 (. = .a) if country == 11 //Mia: dropped q6 since we will do it later with other countries
 recode q6_it q19_it q43_it (. = .a) if country != 14
 recode q19_mx q43_mx q56a_mx q56b_mx q62_mx (. = .a) if country != 13
@@ -1342,6 +1343,7 @@ recode q6 (. = .a) if inlist(country,9,11,14,15)
 recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
 recode q37_in (. = .a) if country != 4
+recode q64 q65 q46_refused q47_refused (. = .a) if country == 15 //Mia: 4/5 added
 	   
 * Country-specific value labels -edit for ssrs-
 lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
@@ -1359,12 +1361,14 @@ lab var language "Language"
 * Other value label modifcations
 lab def q4_label .a "NA" .r "Refused", modify
 lab def q5_label .a "NA" .r "Refused", modify
+lab def q6_kr .a "NA" , modify
 lab def q7_label .a "NA" .r "Refused", modify
 lab def q8_label .a "NA" .r "Refused", modify
+lab def covid_vacc_la .a "NA" , modify
 lab def q20_label .a "NA" .r "Refused", modify
 lab def q44_label .a "NA" .r "Refused", modify
 lab def q62_label .a "NA" .r "Refused", modify
-lab def q63_label .a "NA" .r "Refused", modify
+lab def q63_label .a "NA" .r "Refused" .d "Don't know", modify
 lab def labels16 .a "NA" .r "Refused", modify
 lab def labels24 .a "NA" .r "Refused", modify
 lab def labels22 .a "NA" .r "Refused", modify
@@ -1415,33 +1419,95 @@ time respondent_num q1_codes
 drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et rim_age province county sublocation rim_region_ke rim_educ ecs_id rim_gender rim_region rim_education rim_eduction interviewerid_recoded
 
 
-order q*, sequential
-order respondent_serial respondent_id mode country language date ///
-	  int_length psu_id_for_svy_cmds weight 
-
-
 **** Other Specify Recode ****
 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
-*All (Laos, Argentina, India pending)	
+
+*All (Laos and Argentina pending)
+
+gen q7_other_original = q7_other
+label var q7_other_original "Q7_other. Other type of health insurance?"
+gen q13e_other_co_pe_uy_ar_original = q13e_other_co_pe_uy_ar
+label var q13e_other_co_pe_uy_ar_original "Q13E. CO/PE/UY only: Other"
+	
+gen q19_other_original = q19_other
+label var q19_other_original "Q19. Other"
+
+gen q19_q20a_other_original = q19_q20a_other
+label var q19_q20a_other_original "Q19A. LA only: Other"
+
+gen q19_q20b_other_original = q19_q20b_other
+label var q19_q20b_other_original "Q19B. LA only: Other"
+
+gen q20_other_original = q20_other
+label var q20_other_original "Q20. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q43_other_original = q43_other
+label var q43_other_original "Q43. Other"
+
+gen q44_other_original = q44_other
+label var q44_other_original "Q44. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"	
+
+gen q62_other_original = q62_other
+label var q62_other_original "Q62. Other"	
+
+gen q62b_other_us_original = q62b_other_us
+label var q62b_other_us_original "Q62B. US only: Other"	
+
 
 *Remove "" from responses for macros to work
 replace q19_other = subinstr(q19_other,`"""',  "", .)
 replace q43_other = subinstr(q43_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 
-foreach i in 2 3 4 5 7 9 10 12 13 14 15 {
+
+foreach i in 2 3 5 7 9 10 12 13 14 15 16 {
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_id)	
  
 }	
-	
 
+order q*, sequential
+order respondent_serial respondent_id mode country language date ///
+	  int_length psu_id_for_svy_cmds weight 	
+
+drop q7_other q13e_other_co_pe_uy_ar q19_other q19_q20a_other_la q19_q20b_other_la q20_other ///
+	 q21_other q42_other q43_other q44_other q45_other q62_other q62b_other_us
+	 
+ren q7_other_original q7_other
+ren q13e_other_co_pe_uy_ar_original q13e_other_co_pe_uy_ar
+ren q19_other_original q19_other
+ren q19_q20a_other_original q19_q20a_other_la
+ren q19_q20b_other_original q19_q20b_other_la
+ren q20_other_original q20_other
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43_other_original q43_other
+ren q44_other_original q44_other
+ren q45_other_original q45_other
+ren q62_other_original q62_other
+ren q62b_other_us_original q62b_other_us
+
+
+* Reorder variables
+order q*, sequential
+order respondent_serial respondent_id mode country language date ///
+	  int_length psu_id_for_svy_cmds weight 
+	
 *Save recoded data
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
 

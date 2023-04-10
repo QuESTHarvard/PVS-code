@@ -79,14 +79,16 @@ ren P18 q18
 ren P19 q19_ar
 ren P19_4 q19_other
 
-*3/27:
+*4/6: Mia changed this
 recode P20 (1 = 1 "Doctor's office / Health Center / 'Salita'") /// 
 			(2 = 2 "Hospital") ///
 			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
-			(7 12 20 = 4 "Clinic / Sanatorium / Hospital / OSEP Central") ///
-			(11 19 24 = 5 "Health Center / Policlinic / Doctor's Office") ///
+			(7 = 4 "Clinic / Sanatorium / Hospital / OSEP Central") ///
+			(11 = 5 "Health Center / Policlinic") ///
 			(3 8 13 16 21 25 = 6 "Other primary care facility") ///
 			(4 9 14 17 22 26  = 7  "Other secondary care facility or higher") ///
+			(12 20 = 8 "Clinic / Sanatorium / Hospital") ///
+			(19 24 = 9 "Health Center / Policlinic / Doctor's Office") ///
 			(5 10 15 18 23 27 = .r "Refused"), gen(q20)
 
 *q20_other 
@@ -170,12 +172,14 @@ ren P43 q43_ar
 ren P43_4 q43_other
 
 *q44:
+* 4/6: Mia changed this
 recode P44 (1 = 1 "Health Center / 'Salita'") /// 
-			(2 7 12 20 = 2 "Clinic / Hospital / Sanatorium") ///
+			(2 = 2 "Hospital") ///
 			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
 			(11 19 24 = 4 "Health Center / Policlinic / Doctor's Office") ///
 			(3 8 13 16 21 25 = 5 "Other primary care facility") ///
 			(4 9 14 17 22 26 = 6  "Other secondary care facility or higher") ///
+			(7 12 20 = 7 "Clinic / Hospital / Sanatorium") ///
 			(5 10 15 18 23 27 = .r "Refused"), gen(q44)
 
 *q44_other:
@@ -187,18 +191,20 @@ recode P46 P46_Minutos (. = 0) if P46 < . | P46_Minutos < .
 gen q46 = P46*60 + P46_Minutos
 replace q46 = .r if P46_Minutos_Codes == 96
 
-*confirm- added .r to P46
-*gen q46_refused = .
-*replace q46_refused = 1 if P46_Minutos_Codes == 96
-*replace q46_refused = 0 if q46 >= 0 & q46 < . // check with Neena for the case where q46 == 0
+* Mia: 4/5 added
+recode P46_Minutos_Codes (. = .a) if q23 == 0 | q24 == 1
+recode P46_Minutos_Codes (. = 0) if P46 != . | P46_Minutos != .
+recode P46_Minutos_Codes (96 = 1)
+ren P46_Minutos_Codes q46_refused
 
 ren P47 q47
 replace q4 = .r if P47_Codes == 96
 
-*confirm- added .r to P47
-*gen q47_refused = . 
-*replace q47_refused = 1 if P47_Codes == 96
-*replace q46_refused = 0 if q47 >= 0 & q47 < . // check with Neena for the case where q46 == 0
+* Mia: 4/5 added
+recode P47_Codes (. = .a) if q23 == 0 | q24 == 1
+recode P47_Codes (. = 0) if q47 >= 0
+recode P47_Codes (96 = 1)
+ren P47_Codes q47_refused
 
 ren P48_1_C q48_a
 ren P48_2_C q48_b
@@ -250,14 +256,13 @@ ren P65 q65
 generate date=mdy(CurrentMonth,CurrentDay,CurrentYear) 
 format date %tdD_M_CY
 
-* Mia: need to generate mode and int_length
 *no variables for interview length in this dataset
 
 *------------------------------------------------------------------------------*
 
 * Drop unused or other variables - dropped P1_Codes because it has no data and no label as to which question it belongs to
 
-drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P13_E P29_B P71 P72 P73 P74 P75 P76 P20 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46_Minutos_Codes P47_Codes P46 P46_Minutos P44
+drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab P2 SampleFields_SampDEPARTAMENTO SampleFields_SampZONA SampleFields_SampZONAP3A SampleFields_SampTIPO SampleFields_SampSEXO SampleFields_SampPROVINCIA_DS SampleFields_SampEDAD cr1 cr2 cr3 cr4 cr5 P13_E P29_B P71 P72 P73 P74 P75 P76 P20 P20_3 P20_4 P20_8 P20_9 P20_13 P20_14 P20_16 P20_17 P20_21 P20_22 P20_25 P20_26 P21 P42 P44_3 P44_4 P44_8 P44_9 P44_13 P44_14 P44_16 P44_17 P44_21 P44_22 P44_25 P44_26 CurrentMonth CurrentDay CurrentYear P1_Codes P23_Codes P25_B_Codes P27_Codes1 P27_Codes2 P28_Codes1 P28_Codes2 P28_B_Codes1 P28_B_Codes2 P65_Codes1 P65_Codes2 P46 P46_Minutos P44 P63
  
 *------------------------------------------------------------------------------*
 
@@ -357,7 +362,7 @@ foreach q in q4 q5 q8 q20 q44 q63{
 
 label define q4_label .r "Refused", add
 label define q8_label .r "Refused", add
-*label define q20_label .a "NA" .r "Refused", add
+label define q20_label .a "NA" .r "Refused", add
 label define q44_label .a "NA" .r "Refused", add
 label define q63_label .r "Refused", add
 
@@ -479,12 +484,12 @@ recode q15 (. = .a) if inrange(q14,3,5) | q14 == .r
 
 
 *q19-22 
-recode q19_ar q20 q21 q22 (. = .a) if q18 == 2 | q18 ==.r // no usual source of care
+recode q19_ar recq20 q21 q22 (. = .a) if q18 == 2 | q18 ==.r // no usual source of care
 
 
 * NA's for q24-28 - redo for AR
 recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . 
-recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
+recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == . // *Shalom added q23 == . per Mia's email but it didn't change anything
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r 
@@ -747,7 +752,9 @@ lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides the one I am calling you on?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 *lab var q66 "Q66. Which political party did you vote for in the last election?"
-
+* 4/6: Mia added
+lab var q46_refused "Q46. Refused"
+lab var q47_refused "Q47. Refused"
 
 
 
