@@ -807,12 +807,6 @@ lab var conf_getafford "Confidence in receiving and affording healthcare if beca
 save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 
-*rm "$data_mc/02 recoded data/pvs_appended.dta"
-*rm "$data_mc/02 recoded data/pvs_ke.dta"
-*rm "$data_mc/02 recoded data/pvs_et.dta"
-*rm "$data_mc/02 recoded data/pvs_lac.dta"
-*rm "$data_mc/02 recoded data/pvs_la.dta"
-
 * ONLY RUN COMMAND BELOW WHEN SHARING TO ALL
 * save "$data/Multi-country (shared)/pvs_all_countries.dta", replace 
 
