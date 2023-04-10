@@ -19,7 +19,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 clear all
 set more off 
 
-*********************** ETHIOPIA, KENYA, SOUTH AFRICA, & India ***********************
+*********************** ETHIOPIA, KENYA, SOUTH AFRICA, & INDIA ***********************
 
 * NOTE: Ipsos has been sharing combined data in different ways. These are interim 
 *		work-arounds to obtain complete data until we receive final data (late March)
@@ -55,7 +55,9 @@ append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
 qui do `label0'
 * Mia: correct some value labels
 label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
-	
+label define Interviewer_Language 21 "Sesotho" 22 "isiXhosa" 23 "isiZulu" 24 "Setswana" 25 "siSwati" ///
+								  26 "Sepedi" 27 "Xitsonga" 28 "Afrikaans" 29 "Portuguese", modify
+
 *Shalom- edited income orders
 recode Q63 (1 = 1 "< Ksh 15,572") ///
 		   (2 = 2 "Ksh 15,573 - 23,500") ///
@@ -82,17 +84,56 @@ recode Q63 (1 = 1 "< Ksh 15,572") ///
 		   (996 = 996 "Refused") (997 = 997 "Don't know"), gen(q63)
 		   
 drop Q63
+ren q63 Q63
+
+*Save to merge later so we won't lose India's value labels for some questions
+tempfile label1
+label save Language Q4 Q5 q63 using `label1'
+label drop Language Q4 Q5 q63							  
+								  
+* India - new weighted India data from 4-5: 
+append using "$data/India/01 raw data/PVS_India weighted.dta"
+qui do `label1'
 
 *Change all variable names to lower case
-rename *, lower //Mia: move this early
+rename *, lower 
 
-* India - load in India data 
+*Shalom- corect value labels
+label define Q2 2 "18-29", modify
+label define q63 24 "<3000 Indian National Rupee (INR)" ///
+			     25 "3000-10,000 INR" 26 "10,001-20,000 INR" ///
+				 27 "20,001-30,000 INR" 28 "30,001-40,000 INR" ///
+				 29 "40,001-50,000 INR" 30 ">50,000 INR", modify
+
+*Shalom-India had "interviewer language in 13 different vars": named starting at 30
+replace interviewer_language = 30 if interviewer_language01 == 1
+replace interviewer_language = 31 if interviewer_language02 == 1
+replace interviewer_language = 32 if interviewer_language03 == 1
+replace interviewer_language = 33 if interviewer_language04 == 1
+replace interviewer_language = 34 if interviewer_language05 == 1
+replace interviewer_language = 35 if interviewer_language06 == 1
+replace interviewer_language = 36 if interviewer_language07 == 1
+replace interviewer_language = 37 if interviewer_language08 == 1
+replace interviewer_language = 38 if interviewer_language09 == 1
+replace interviewer_language = 39 if interviewer_language10 == 1
+replace interviewer_language = 40 if interviewer_language11 == 1
+replace interviewer_language = 41 if interviewer_language12 == 1
+replace interviewer_language = 42 if interviewer_language13 == 1
+
+label define Interviewer_Language 30 "English" 31 "Hindi" 32 "Marathi" 33 "Kannada" 34 "Tamil" ///
+								  35 "Telegu" 36 "Bengali" 37 "Assamese" 38 "Gujarati" 39 "Bhojpuri" ///
+								  40 "Punjabi" 41 "Urdu" 42 "Oriya", modify
+								  
+drop interviewer_language01 interviewer_language02 interviewer_language03 interviewer_language04 ///
+	 interviewer_language05 interviewer_language06 interviewer_language07 interviewer_language08 ///
+	interviewer_language09 interviewer_language10 interviewer_language11 interviewer_language12 ///
+	interviewer_language13
 
 * Fix append issues
 * Mia: changed to 16 since 16 is mobile clinic
 recode q20 q44 (23 = 16) if country == 9 
 
-*** Mia changed this part ***
+
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 996
 gen reclanguage = country*1000 + language 
@@ -116,7 +157,7 @@ replace recq63 = .r if q63== 996
 replace recq63 = .d if q63== 997
 
 * Mia: relabel some variables now so we can use the orignal label values
-label define country_short 2 "CO" 3 "ET" 5 "KE" 7 "PE" 9 "ZA" 10 "UY"
+label define country_short 2 "CO" 3 "ET" 4 "IN" 5 "KE" 7 "PE" 9 "ZA" 10 "UY"
 qui elabel list country_short
 local countryn = r(k)
 local countryval = r(values)
@@ -129,7 +170,7 @@ local q8l Q8
 local q20l Q20
 local q44l Q44
 local q62l Q62
-local q63l q63
+local q63l Q63
 
 foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
@@ -159,8 +200,6 @@ foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	label val rec`q' `q'_label
 }
 *****************************
-
-label define q63_label .r "Refused" .d "Don't Know", add
 
 *------------------------------------------------------------------------------*
 
@@ -217,11 +256,11 @@ recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 ///
 * Mia: dropped q4 q5 q7 q8 q44 q62 q63 since we already recoded them
 recode q1 q2 q3 q6 q6_za q9 q10 q11 q12 q13 q14_new q15_new q16 q17 /// 
 	   q18 q19 recq20 q21 q22 q23 q23_q24 q24 q25_a q25_b q26 q27 q28 q28_new q29 q30 /// 
-	   q31 q32 q33 q34 q35 q36 q37_za q38 q39 q40 q41 q42 q43 q45 q46 q47 ///
+	   q31 q32 q33 q34 q35 q36 q37_za q37_in q38 q39 q40 q41 q42 q43 q45 q46 q47 ///
 	   q46_refused q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
 	   q56 q57 q58 q59 q60 q61 q66 q67 (996 = .r)	
-
+	   
 *------------------------------------------------------------------------------*
 
 * Check for implausible values 
@@ -353,7 +392,7 @@ recode q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 ///
 * Mia: moved q46_refused q47_refused here
 lab val q46_refused q47_refused yes_no
 
-recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q66 ///
+recode q30 q31 q32 q33 q34 q35 q36 q38 q37_za q37_in q66 ///
 	   (1 = 1 Yes) (2 = 0 No) (.r = .r Refused) (3 .d = .d "Don't know") /// 
 	   (.a = .a NA), ///
 	   pre(rec) label(yes_no_dk)
@@ -451,16 +490,43 @@ recode q57 ///
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf 
 
+
+*Shalom added:
+label define Q45 4 "Other, specify", modify
+*add .a/.r labels for q21,q42/q43/q44/q45/q19/q20
+label define Q19 .a "NA" .r "Refused", add
+label define q20_label .a "NA" .r "Refused", add
+label define Q21 .a "NA" .r "Refused", add
+label define Q42 .a "NA" .r "Refused", add
+label define Q43 .a "NA" .r "Refused", add
+label define q44_label .a "NA" .r "Refused", add
+label define Q45 .a "NA" .r "Refused", add
+*add .r for q62
+label define q62_label .r "Refused", add
+*add .d/.r for q63
+label define q63_label .d "Don't Know" .r "Refused", add
+
+*Shalom added: language loses value labels when it's being generated with country code - is there a better fix for this above?
+*what is 5001/9001? - i think english combined for multiple countries? tab country with language
+*this section does not match data dictionary
+label define language 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
+					  4011 "IN: Hindi" 4012 "IN: Kannada" 4013 "IN: Tamil" 4014 "IN: Bengali" ///
+					  5001 "KE: English" 5002 "KE: Swahili" ///
+					  9001 "ZA: English" 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA :Afrikaans" ///
+					  9009 "ZA: Sepedi" 9010 "ZA: isiXhosa"
+
+label val reclanguage language
+
+
+
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-* Mia: q15_new instead of q15
-* Mia: added language, q5, q4, q7, q8, q20, q44, q62, and q63
 drop interviewer_gender q2 q3 q6 q6_za q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 /// 
-	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q48_a q48_b q48_c q48_d ///
+	 q32 q33 q34 q35 q36 q38 q66 q39 q40 q9 q10 q22 q37_za q37_in q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
 	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_new q15_new q24 q49 q57 q46 q47 ///
 	 language q5 q4 q8 q44 q62 q63 q20 q7
@@ -490,7 +556,6 @@ order q*, after(interviewer_id) //Mia: changed to interviewer_id since we alread
 * Drop other unecessary variables 
 drop intlength 
 * Note: mode2 seems to be missing for Kenya data, but there is mode var 
-
 
 *------------------------------------------------------------------------------*
 
@@ -545,6 +610,7 @@ lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
 lab var q37_za "Q37. ZA only: Had a test for HIV in the past 12 months"
+lab var q37_in "Q37. IN only: Have you received any of the following health services in the past 12 months?"
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
@@ -597,7 +663,7 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Save data
 
-save "$data_mc/02 recoded data/pvs_et_ke_za.dta", replace
+save "$data_mc/02 recoded data/pvs_et_in_ke_za.dta", replace
 
 
 *------------------------------------------------------------------------------*
@@ -1197,7 +1263,7 @@ tempfile label1
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label1'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label 
 
-append using "$data_mc/02 recoded data/pvs_et_ke_za.dta"
+append using "$data_mc/02 recoded data/pvs_et_in_ke_za.dta"
 
 qui do `label1'
 
@@ -1238,13 +1304,13 @@ lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Repub
 
 
 * Kenya/Ethiopia variables 
-ren q19 q19_et_ke_za
-lab var q19_et_ke_za "Q19. ET/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
-ren q43 q43_et_ke_za_la
-lab var q43_et_ke_za_la "Q43. ET/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
+ren q19 q19_et_in_ke_za
+lab var q19_et_in_ke_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
+ren q43 q43_et_in_ke_za_la
+lab var q43_et_in_ke_za_la "Q43. ET/IN/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
 * NOTE: Q43 also asked like this in Laos
-ren q56 q56_et_ke_za 
-lab var q56_et_ke_za "Q56. ET/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+ren q56 q56_et_in_ke_za 
+lab var q56_et_in_ke_za "Q56. ET/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 
 * Mode
 recode mode (3 = 1) (4 = 3)
@@ -1253,8 +1319,8 @@ label val mode mode
 lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 
 * Country-specific skip patterns - check this 
-recode q19_et_ke_za q56_et_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
-recode q43_et_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
+recode q19_et_in_ke_za q56_et_in_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
+recode q43_et_in_ke_za_la (. = .a) if country != 5 | country != 3  | country != 9 | country != 11
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
@@ -1276,10 +1342,12 @@ recode q7 (. = .a) if country == 15 //Mia: dropped q6 since we will do it later 
 recode q6 (. = .a) if inlist(country,9,11,14,15) 
 recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
+recode q37_in (. = .a) if country != 4
 recode q64 q65 q46_refused q47_refused (. = .a) if country == 15 //Mia: 4/5 added
 	   
 * Country-specific value labels -edit for ssrs-
 lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
+				 4011 "IN: Hindi" 4012 "IN: Kannada" 4013 "IN: Tamil" 4014 "IN: Bengali" ///
 				 5001 "KE: English" 5002 "KE: Swahili" 7011 "PE: Spanish" 9001 "ZA: English" ///
 				 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA: Afrikaans" ///
 				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
@@ -1357,6 +1425,7 @@ drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit n_
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
+
 *All (Laos and Argentina pending)
 
 gen q7_other_original = q7_other
@@ -1396,12 +1465,13 @@ label var q62_other_original "Q62. Other"
 
 gen q62b_other_us_original = q62b_other_us
 label var q62b_other_us_original "Q62B. US only: Other"	
-	
+
 
 *Remove "" from responses for macros to work
 replace q19_other = subinstr(q19_other,`"""',  "", .)
 replace q43_other = subinstr(q43_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
+
 
 foreach i in 2 3 5 7 9 10 12 13 14 15 16 {
 
@@ -1450,13 +1520,14 @@ save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 ***************************** Data quality checks *****************************
 
-use "$data_mc\02 recoded data\pvs_appended.dta", clear
+use "$data_mc/02 recoded data/pvs_appended.dta", clear
 
 * Macros for these commands
 gl inputfile	"$data_mc/03 test output/Input/dq_inputs.xlsm"	
 gl inputfile_2	"$data_mc/03 test output/Input/dq_inputs_2.xlsm"
 gl inputfile_3	"$data_mc/03 test output/Input/dq_inputs_3.xlsm"	
-gl inputfile_4	"$data_mc/03 test output/Input/dq_inputs_5.xlsm"
+gl inputfile_4	"$data_mc/03 test output/Input/dq_inputs_4.xlsm"
+gl inputfile_5	"$data_mc/03 test output/Input/dq_inputs_5.xlsm"
 gl inputfile_7	"$data_mc/03 test output/Input/dq_inputs_7.xlsm"		
 gl inputfile_9	"$data_mc/03 test output/Input/dq_inputs_9.xlsm"	
 gl inputfile_10	"$data_mc/03 test output/Input/dq_inputs_10.xlsm"	
@@ -1467,6 +1538,7 @@ gl dq_output	"$output/dq_output.xlsx"
 gl dq_output_2	"$output/dq_output_2.xlsx"	
 gl dq_output_3	"$output/dq_output_3.xlsx"	
 gl dq_output_4	"$output/dq_output_4.xlsx"	
+gl dq_output_5	"$output/dq_output_5.xlsx"
 gl dq_output_7	"$output/dq_output_7.xlsx"	
 gl dq_output_9	"$output/dq_output_9.xlsx"	
 gl dq_output_10	"$output/dq_output_10.xlsx"	
@@ -1481,7 +1553,7 @@ gl time			"time"
 gl duration		"int_length"
 gl keepvars 	"country"
 global all_dk 	"q13b q13e q23 q25_a q25_b q27 q28_a q28_b q30 q31 q32 q33 q34 q35 q36 q38 q50_a q50_b q50_c q50_d q63 q64 q65"
-global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q19_ke_et q19_co q19_pe q19_uy q20 q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_ke_et q43_co q43_pe q43_uy q44 q45 q46 q47 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 q62 q63 q64 q65"
+global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q19_et_in_ke_za q19_co q19_pe q19_uy q20 q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_et_in_ke_za q43_co q43_pe q43_uy q44 q45 q46 q47 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 q62 q63 q64 q65"
 
 
 *====================== Check start/end date of survey ======================* 
@@ -1537,7 +1609,7 @@ ipacheckoutliers using "${inputfile}",			///
 * This command lists all other, specify values
 * This command requires an input file that lists all the variables with other, specify text 
 
-use "$data_mc\02 recoded data\pvs_appended.dta", clear
+use "$data_mc/02 recoded data/pvs_appended.dta", clear
 
 gen interviewer_id = respondent_serial
 replace q19_other=trim(q19_other)
@@ -1550,7 +1622,7 @@ replace q45_other=trim(q45_other)
 replace q62_other=trim(q62_other)
 replace q7_other=trim(q7_other)
 
-foreach i in 2 3 5 7 9 10 11 12 13 14 15 {
+foreach i in 2 3 4 5 7 9 10 11 12 13 14 15 {
 
  preserve
  keep if country == `i'
