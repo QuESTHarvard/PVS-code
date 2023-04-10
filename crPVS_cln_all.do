@@ -1466,13 +1466,7 @@ label var q62_other_original "Q62. Other"
 gen q62b_other_us_original = q62b_other_us
 label var q62b_other_us_original "Q62B. US only: Other"	
 
-
-*Remove "" from responses for macros to work
-replace q19_other = subinstr(q19_other,`"""',  "", .)
-replace q43_other = subinstr(q43_other,`"""',  "", .)
-replace q45_other = subinstr(q45_other,`"""',  "", .)
-
-
+**Numbers correspond to the value labels for each country.
 foreach i in 2 3 5 7 9 10 12 13 14 15 16 {
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
@@ -1511,7 +1505,6 @@ order respondent_serial respondent_id mode country language date ///
 *Save recoded data
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
-
 /*
 *------------------------------------------------------------------------------*
 
@@ -1524,27 +1517,7 @@ use "$data_mc/02 recoded data/pvs_appended.dta", clear
 
 * Macros for these commands
 gl inputfile	"$data_mc/03 test output/Input/dq_inputs.xlsm"	
-gl inputfile_2	"$data_mc/03 test output/Input/dq_inputs_2.xlsm"
-gl inputfile_3	"$data_mc/03 test output/Input/dq_inputs_3.xlsm"	
-gl inputfile_4	"$data_mc/03 test output/Input/dq_inputs_4.xlsm"
-gl inputfile_5	"$data_mc/03 test output/Input/dq_inputs_5.xlsm"
-gl inputfile_7	"$data_mc/03 test output/Input/dq_inputs_7.xlsm"		
-gl inputfile_9	"$data_mc/03 test output/Input/dq_inputs_9.xlsm"	
-gl inputfile_10	"$data_mc/03 test output/Input/dq_inputs_10.xlsm"	
-gl inputfile_11	"$data_mc/03 test output/Input/dq_inputs_11.xlsm"	
-gl inputfile_13	"$data_mc/03 test output/Input/dq_inputs_13.xlsm"
-gl inputfile_14	"$data_mc/03 test output/Input/dq_inputs_14.xlsm"		
-gl dq_output	"$output/dq_output.xlsx"
-gl dq_output_2	"$output/dq_output_2.xlsx"	
-gl dq_output_3	"$output/dq_output_3.xlsx"	
-gl dq_output_4	"$output/dq_output_4.xlsx"	
-gl dq_output_5	"$output/dq_output_5.xlsx"
-gl dq_output_7	"$output/dq_output_7.xlsx"	
-gl dq_output_9	"$output/dq_output_9.xlsx"	
-gl dq_output_10	"$output/dq_output_10.xlsx"	
-gl dq_output_11	"$output/dq_output_11.xlsx"	
-gl dq_output_13	"$output/dq_output_13.xlsx"	
-gl dq_output_14	"$output/dq_output_14.xlsx"						
+gl dq_output	"$output/dq_output.xlsx"				
 gl id 			"respondent_id"	
 gl key			"respondent_serial"	
 gl enum			"interviewer_id"
@@ -1611,7 +1584,9 @@ ipacheckoutliers using "${inputfile}",			///
 
 use "$data_mc/02 recoded data/pvs_appended.dta", clear
 
+*The code below generates a non-relevant interviewer id for the code to run, however it is not accurate because the interviewer id is deleted at a previous stage of data cleaning.
 gen interviewer_id = respondent_serial
+*This section trims those "other specify" responses that just have a space and should be empty
 replace q19_other=trim(q19_other)
 replace q20_other=trim(q20_other)
 replace q21_other=trim(q21_other)
@@ -1622,7 +1597,12 @@ replace q45_other=trim(q45_other)
 replace q62_other=trim(q62_other)
 replace q7_other=trim(q7_other)
 
-foreach i in 2 3 4 5 7 9 10 11 12 13 14 15 {
+*Remove "" from responses for macros to work
+replace q19_other = subinstr(q19_other,`"""',  "", .)
+replace q43_other = subinstr(q43_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+foreach i in 2 3 4 5 7 9 10 11 12 13 14 15 16 {
 
  preserve
  keep if country == `i'
