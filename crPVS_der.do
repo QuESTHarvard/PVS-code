@@ -674,7 +674,7 @@ save "$data_mc/03 test output/Input/Policial alignment variable/pol_align.dta", 
 
 merge m:m q5 using "$data_mc/03 test output/Input/Policial alignment variable/pol_align.dta" 
 drop _merge
-lab def pol_align 0 "Not aligned (out of favor)" 1 "Aligned (in favor)"
+lab def pol_align 0 "Aligned (in favor)" 1 "Not aligned (out of favor)"
 lab val pol_align pol_align
 
 
