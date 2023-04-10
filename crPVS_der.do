@@ -575,9 +575,9 @@ lab val last_type fac_own_lvl
 recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
 		   3026 3027 3028 3029 3030 3031 3032 7044 7045 7049 2081 11002 11003 ///
 		   15002 9035 9036 9037 9038 9041 9044 2995 3995 5995 11995 3995 9995 ///
-       4055 4062 4063 4064 4066 4068 4070 4071 4072 4073 = 1 "Minority group") /// 
+       4055 4062 4063 4064 4066 4068 4070 4071 4072 4073 4995 = 1 "Minority group") /// 
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 11001 15001 9033 ///
-		   9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065  = 0 "Majority group") /// 
+		   9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 = 0 "Majority group") /// 
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 		   
 *US:
@@ -806,12 +806,6 @@ lab var conf_getafford "Confidence in receiving and affording healthcare if beca
 
 save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
-
-*rm "$data_mc/02 recoded data/pvs_appended.dta"
-*rm "$data_mc/02 recoded data/pvs_ke.dta"
-*rm "$data_mc/02 recoded data/pvs_et.dta"
-*rm "$data_mc/02 recoded data/pvs_lac.dta"
-*rm "$data_mc/02 recoded data/pvs_la.dta"
 
 * ONLY RUN COMMAND BELOW WHEN SHARING TO ALL
 * save "$data/Multi-country (shared)/pvs_all_countries.dta", replace 
