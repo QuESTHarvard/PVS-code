@@ -24,7 +24,6 @@ rename *, lower
 ren idx respondent_serial
 format time_diff %tcHH:MM:SS
 gen int_length = (hh(time_diff)*60 + mm(time_diff) + ss(time_diff)/60) 
-* Mia: updated date and time vars
 generate date = dofc(startdate)
 format date %tdD_M_CY
 clonevar time = startdate
@@ -45,7 +44,7 @@ ren tq42_10 q42_other
 ren q43 q43_kr
 ren tq43_4 q43_other
 ren tq45_4 q45_other 
-ren q46a q46a // check this - remove underscore or keep? 
+ren q46a q46a 
 * combine all q46b like in US/IT/MX, check this 
 recode q46b_1 q46b_2 q46b_3 (. = 0) if q46b_1 < . | q46b_2 < . |q46b_3< .
 gen q46b = (q46b_1/24) + q46b_2 + (q46b_3*7)								
@@ -167,7 +166,7 @@ lab	val q19_kr q43_kr q19_43
 
 lab def q20_label 15001 "KR: Health center" 15002 "KR: Clinic" 15003 "KR: Hospital or secondary hospital" ///
 			   15004 "KR: Tertiary general hospital" .a "NA" .r "Refused"
-lab	val recq20 q20_label //Mia: dropped recq44 here
+lab	val recq20 q20_label 
 
 lab def q44_label 15001 "KR: Health center" 15002 "KR: Clinic" 15003 "KR: Hospital or secondary hospital" ///
 			   15004 "KR: Tertiary general hospital" .a "NA" .r "Refused"
@@ -195,45 +194,40 @@ list q1 q2 if q2 == 1| q1 < 18
 
 * Q25_b
 list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
-* Note: okay in these data
+* Note: okay in these data (2.5 is mid-point value)
 
 * Q26, Q27 
 list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
 * Note: okay in these data (2.5 is mid-point value)
 
-list q26 q27 country if q27 == 0 | q27 == 1
-* Some implasuible values of 1
-* Recode 1 values to 2, because respondent likely meant 1 additional facility 
-recode q27 (1 = 2) 
+list q26 q27 country if q27 == 0 | q27 == 1 // 4/11: Okay in data
 
 list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
 
 * Q39, Q40 
 egen visits_total = rowtotal(q23_q24 q28_a q28_b)
 
-*** Mia changed this part ***
-* add this part since there are participants who answered 3 for q39/q40
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
 list visits_total q39 q40 country if q39 == 3 & visits_total > 0 & visits_total < . /// 
 							  | q40 == 3 & visits_total > 0 & visits_total < .
-* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
-* but they have visit values in past 12 months 
-recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
-*Mia: 1 changes made to q39, 1 changes made to q40					  
-*****************************
 
+recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
+*1 changes made to q39, 1 changes made to q40					  
+
+* List if missing for q39/q40 but does have a visit
 list visits_total q39 q40 if q39 == .a & visits_total > 0 & visits_total < . /// 
 							  | q40 == .a & visits_total > 0 & visits_total < .
+							  *Ok in data
 							  
-* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months"
-* but they have visit values in past 12 months 
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
 recode q39 q40 (.a = .r) if visits_total > 0 & visits_total < .
-
 list visits_total q39 q40 if q39 == .a & visits_total > 0 & visits_total < . /// 
 							 | q40 == .a & visits_total > 0 & visits_total < .
 * this is fine
 							  
 list visits_total q39 q40 if q39 != .a & visits_total == 0 /// 
 							  | q40 != .a & visits_total == 0
+							  *Ok since everyeone has q39 or q40 == 3 "I did not get healthcare in 12 months" - should this be added into the code?
 							  
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
 * but they have no visit values in past 12 months 
@@ -262,7 +256,7 @@ recode recq20 (. = .a) if q19_kr == 4 | q19_kr == .r
 
 * NA's for q24-28 
 recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . 
-recode q25_a (. = .a) if q23 != 1 & q23 != . //Mia: add the case that q23 == .
+recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 ==. 
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r 
@@ -279,7 +273,7 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 * q43-49 na's
 recode q43_kr recq44 q45 q46 q46a q46b q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
-recode q48_k (. = .a) if q46a == 2 | q46a == .r //Mia: add the case that 46a == .r
+recode q48_k (. = .a) if q46a == 2 | q46a == .r | q46 == .r
 
 recode recq44 (. = .a) if q43_kr == 4 | q43_kr == .r
 recode q46b (. = .a) if q46a == 2 | q46a == .r 
