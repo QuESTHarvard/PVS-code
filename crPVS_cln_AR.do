@@ -190,17 +190,11 @@ recode P46_Minutos_Codes (. = .a) if q23 == 0 | q24 == 1
 recode P46_Minutos_Codes (. = 0) if P46 != . | P46_Minutos != .
 recode P46_Minutos_Codes (96 = 1)
 ren P46_Minutos_Codes q46_refused
-
 ren P47 q47
-
-*4/11 Shalom removed - not sure why we would recode q4 based off of P47_Codes? - confirm with Mia
-*replace q4 = .r if P47_Codes == 96
-
 recode P47_Codes (. = .a) if q23 == 0 | q24 == 1
 recode P47_Codes (. = 0) if q47 >= 0
 recode P47_Codes (96 = 1)
 ren P47_Codes q47_refused
-
 ren P48_1_C q48_a
 ren P48_2_C q48_b
 ren P48_3_C q48_c
@@ -474,7 +468,7 @@ recode q15 (. = .a) if inrange(q14,3,5) | q14 == .r
 recode q19_ar recq20 q21 q22 (. = .a) if q18 == 2 | q18 ==.r // no usual source of care
 
 
-* NA's for q24-28 - redo for AR
+* NA's for q24-28
 recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . 
 recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == . 
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
