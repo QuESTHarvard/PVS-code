@@ -14,12 +14,9 @@ use "$data/Argentina (Mendoza)/01 raw data/PVS_Mendoza_Data_23.01.27.dta", clear
 
 ren LanguageID language
 ren Respondent_Serial respondent_serial
-*ren P46_Minutos int_length // Mia: P46_Minutos is the minutes of q46
 ren pond weight_educ 
 ren P1 q1
 
-*needs to be recoded from P1 - confirm categories:
-* Mia: set all q2 to be .a since everyone answered q1, the derive variable program will take care of this
 gen q2= .a
 
 ren P3_A q3
@@ -34,11 +31,10 @@ replace q7 =16002 if P72 == 1
 replace q7 = 16003 if P73 == 1
 replace q7 = 16004 if P74 == 1
 replace q7 = 16005 if P75 == 1
-replace q7 = .r if P76 == 1 //no response changed from .a to .r
+replace q7 = .r if P76 == 1 
 *16007 = "No insurance" - 0 people with no insurance - check no accross as well
 replace q7 = 16007 if (P71==0 & P72==0 & P73==0 & P74==0 & P75==0 & P76==0)
 
-* Mia: moved this part here 
 label define q7_label 16001 "AR: Public" 16002 "AR: OSEP" 16003 "AR: Other 'obras sociales' (Example: OSPE, OSDIPP)" ///
                       16004 "AR: PAMI" 16005 "AR: Prepaid/private (Example: OSDE, GALENO, or similar)" 16007 "AR: No insurance", add
 			   			    					
@@ -58,7 +54,7 @@ ren P12 q12
 ren P13 q13
 ren P13_B q13b_co_pe_uy_ar
 
-*3/27 Shalom: changed q13e_co_pe_uy_ar to make Other = 995 
+*changed q13e_co_pe_uy_ar to make Other = 995 
 recode P13_E (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
 			(2 = 2 "Far distance (e.g., too far to walk or drive, transport not readily available)") ///
 			(3 = 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)") ///
@@ -70,7 +66,7 @@ recode P13_E (1 = 1 "High cost (e.g., high out of pocket payment, not covered by
 			(9 = 9 "COVID-19 fear") ///
 			(10 = 995 "Other, specify") , gen(q13e_co_pe_uy_ar)
 
-ren P13_E_10 q13e_other_co_pe_uy_ar // Mia: added _co_pe_uy_ar
+ren P13_E_10 q13e_other_co_pe_uy_ar
 ren P14 q14
 ren P15 q15
 ren P16 q16
@@ -79,7 +75,6 @@ ren P18 q18
 ren P19 q19_ar
 ren P19_4 q19_other
 
-*4/6: Mia changed this
 recode P20 (1 = 1 "Doctor's office / Health Center / 'Salita'") /// 
 			(2 = 2 "Hospital") ///
 			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
@@ -94,7 +89,7 @@ recode P20 (1 = 1 "Doctor's office / Health Center / 'Salita'") ///
 *q20_other 
 gen q20_other = P20_3 + P20_4 + P20_8 + P20_9 + P20_13 + P20_14 + P20_16 + P20_17 + P20_21 + P20_22 + P20_25 + P20_26
 
-*change q21for additional AR var:
+*change q21 for additional AR var:
 recode P21 (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
 			(3 = 10 "AR: Short waiting time to get appointments") ///
@@ -172,7 +167,6 @@ ren P43 q43_ar
 ren P43_4 q43_other
 
 *q44:
-* 4/6: Mia changed this
 recode P44 (1 = 1 "Health Center / 'Salita'") /// 
 			(2 = 2 "Hospital") ///
 			(6 = 3 "OSEP Cerca / Delegación / Doctor's Office") ///
@@ -187,25 +181,20 @@ gen q44_other = P44_3 + P44_4 + P44_8 + P44_9 + P44_13 + P44_14 + P44_16 + P44_1
 ren P45 q45
 ren P45_4 q45_other
 
-recode P46 P46_Minutos (. = 0) if P46 < . | P46_Minutos < . 
+*note: P46 is the time in hours and P46_Minutos is the time in minutes
+
+recode P46 P46_Minutos (. = 0) if P46 < . | P46_Minutos < .
 gen q46 = P46*60 + P46_Minutos
 replace q46 = .r if P46_Minutos_Codes == 96
-
-* Mia: 4/5 added
 recode P46_Minutos_Codes (. = .a) if q23 == 0 | q24 == 1
 recode P46_Minutos_Codes (. = 0) if P46 != . | P46_Minutos != .
 recode P46_Minutos_Codes (96 = 1)
 ren P46_Minutos_Codes q46_refused
-
 ren P47 q47
-replace q4 = .r if P47_Codes == 96
-
-* Mia: 4/5 added
 recode P47_Codes (. = .a) if q23 == 0 | q24 == 1
 recode P47_Codes (. = 0) if q47 >= 0
 recode P47_Codes (96 = 1)
 ren P47_Codes q47_refused
-
 ren P48_1_C q48_a
 ren P48_2_C q48_b
 ren P48_3_C q48_c
@@ -267,7 +256,7 @@ drop Respondent_ID P2 DataCollection_Status1 introduccion confidencial Auto_grab
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
-* In raw data, coding "No response" as refused 	- ADD Q44 (6,10,13) and the other one  
+* In raw data, coding "No response" as refused  
 recode q3a_co_pe_uy_ar q4 q36 q39 q57 q58 q64 (4 = .r)	
 recode q8 q63 (8 = .r)
 recode q9 q10 q14 q54 q56a_ar q56b_ar q56c_ar q55 q59 q60 q61 (6 = .r)
@@ -275,21 +264,17 @@ recode q11 q12 q13 q13b_co_pe_uy_ar q15 q18 q26 q29 q41 (3 = .r)
 recode q16 q17 q19_ar q24 q43_ar q45 q51 q52 q53 (5 = .r)
 recode q22 q50_a q50_b q50_c q50_d (7 = .r)
 recode q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j (96 = .r)
-*recode q21 (11 = .r) // Mia: already recode this
-*recode q44 q20 (5 = .r) (10 = .r) (15 = .r) (18 = .r) (23 = .r) (27 = .r)
 
 *"Don't Know" vars
 recode q30 q31 q32 q35 q36 q38 (3 = .d)
 
 *"NA" vars - 6 is "No había hecho consultas o exámenes previos" = He had not made previous consultations or examinations and 7 is "El lugar no tenía otro personal" = the place had no other staff
-*double check q48_c data, 6 should not be an option according to the instrument
 recode q48_e (6 = .a) 
 recode q48_j (7 = .a)
 *recode q48_c option 6 to = . should not have been a response option
 recode q48_c (6 = .)
 
-*for these, recoding to NA as well but 6 is " No podría juzgar" = Couldn't judge
-* Mia: in other datasets this was coded to be .d
+*for these, recoding " No podría juzgar" = Couldn't judge to .d  
 recode q50_a q50_b q50_c q50_d (6 = .d)
 
 *q22 6 "No se atendió en ese lugar en los últimos 12 meses." = You have not been seen at that location in the last 12 months which is .a in main data dictionary
@@ -307,7 +292,6 @@ lab val country country
 gen mode = 1
 lab def mode 1 "CATI"
 lab val mode mode
-* Mia changed here
 replace language = 16001 if language == 2
 lab define lang 16001 "AR: Spanish" 
 lab val language lang
@@ -325,8 +309,6 @@ replace recq44 = .r if q44 == .r
 gen recq63 = country*1000 + q63
 replace recq63 = .r if q63 == .r
 
-* Mia: added q20
-*Shalom updated q20 and q44 labels to match recode at the top
 local q4l labels9
 local q5l labels10
 local q8l labels11
@@ -367,7 +349,7 @@ label define q44_label .a "NA" .r "Refused", add
 label define q63_label .r "Refused", add
 
 * Q23/Q24 mid-point var 
-* Mia: changed this part since q24 categories starts with 0 visits
+* Note: in this dataset, q24 categories starts with 0 visits
 gen q23_q24 = q23 
 recode q23_q24 (.r = 0) (.d = 0) if q24 == 1
 recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 2
@@ -377,10 +359,7 @@ recode q23_q24 (.d = .r) if q24 == .r
 
 *------------------------------------------------------------------------------*
 
-* Value labels  - every variable came with its own set of value labels?
-
-* Mia: commented this out since we for now don't need to generate q2
-*label define q2_label 0 "18-29" 1 "30-39" 2 "40-49" 3 "50-59" 4 "60-69" 5 "70-79" 6 "80 or older"
+* Value labels
 
 * q3a_co_pe_uy_ar
 label define labels8 3 "AR: Other gender", modify
@@ -390,19 +369,20 @@ label define q4_label 16001 "AR: City" 16002 "AR: Town" 16003 "AR: Countryside",
 label define q8_label 16001 "AR: None" 16002 "AR: Initial/preschool" 16003 "AR: Elementary" ///
 					  16004 "AR: Secondary(basic cycle and 4th to 6th)" 16005 "AR: Non-university higher education" ///
 					  16006 "AR: University superior" 16007 "AR: Postgraduate", modify
-					  
+
+*q19_ar
 label define labels24 1 "Public" 2 "OSEP" 3 "Prepaid/private (Example OSDE, GALENO, OMINT, MEDIFÉ or similar ones)" ///
 					  4 "Other" 6 "PAMI" 7 "Other 'obras sociales' (Example: OSPE, OSDIPP)", modify
 					  					  				 
-
+*q43_ar
 label define labels50 1 "Public" 2 "OSEP" 3 "Prepaid or private (Example OSDE, GALENO, OMINT, MEDIFÉ or similar ones)" ///
 					  4 "Other" 6 "PAMI" 7 "Other 'obras sociales' (Example: OSPE, OSDIPP)", modify
-					  
+
+*q45
 label define labels52 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" ///
 					  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
 					  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)", modify
 
-*3/27 Shalom: do we want to recode q63? - no but add AR pre-code: change to comma - did No Income need a precode?
 label define q63_label 16001 "AR: No income" ///
 					   16002 "AR: 0 to 34,999 pesos" ///
 					   16003 "AR: 35,000 to 59,999 pesos" ///
@@ -410,13 +390,14 @@ label define q63_label 16001 "AR: No income" ///
 					   16005 "AR: 100,000 to 129,999 pesos" ///
 					   16006 "AR: 130,000 to 199,999 pesos" ///
 					   16007 "AR: 200,000 or more pesos", modify
-		  
+
+*q58
 label define labels79 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 					  2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
 					  3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better.", modify
-					  
+
+*q64 
 label define labels84 1 "Yes" 2 "No/No other numbers", modify		  
-				
 
 *------------------------------------------------------------------------------*
 
@@ -438,7 +419,7 @@ list q23_q24 q27 country if q27 > q23_q24 & q27 < .
 list q26 q27 country if q27 == 0 | q27 == 1
 recode q26 (2 = 1) if q27 == 0 // 1 change
 recode q27 (0 = .a)  // 1 change
-recode q27 (1 = 2) // 3 changes
+recode q27 (1 = 2) // 3 changes - Shalom: why are we doing this step? Is it just so the data makes sense?
 
 list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
 * This is okay 
@@ -448,6 +429,7 @@ egen visits_total = rowtotal(q23_q24 q28_a q28_b)
 
 list visits_total q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
 							  | q40 == .a & visits_total > 0 & visits_total < .
+							  
 * Recoding Q39 and Q40 to refused if it is .a
 * but they have visit values in past 12 months 
 recode q39 q40 (.a = .r) if visits_total > 0 & visits_total < .
@@ -471,7 +453,6 @@ drop visits_total
 *q6
 gen q6 = .a
 
-*** Mia changed this part ***
 *q13b_co_pe_uy_ar  & q13e_co_pe_uy_ar
 
 recode q13 (. = .a) if q12 == 2 | q12 == .r 
@@ -487,45 +468,43 @@ recode q15 (. = .a) if inrange(q14,3,5) | q14 == .r
 recode q19_ar recq20 q21 q22 (. = .a) if q18 == 2 | q18 ==.r // no usual source of care
 
 
-* NA's for q24-28 - redo for AR
+* NA's for q24-28
 recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . 
-recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == . // *Shalom added q23 == . per Mia's email but it didn't change anything
+recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == . 
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r 
 
 * q31 & q32
-recode q31 (. = .a) if q3 != 2 | q1 < 50 // Mia: dropped q2 realted since we don't haae q2 here
-recode q32 (. = .a) if q3 != 2  // Mia: dropped q1 == .r and q2 related, everyone is > 18
+recode q31 (. = .a) if q3 != 2 | q1 < 50 
+recode q32 (. = .a) if q3 != 2  
 
 * q42
-recode q42 (. = .a) if q41 == 2 // Mia: this skip pattern is different from other countries, q42 was asked even if q41 == r
+recode q42 (. = .a) if q41 == 2 // Mia: this skip pattern is different from other countries, q42 was asked even if q41 == .r (Shalom following up with Neena)
 
 * q43-49 na's
 recode q43_ar recq44 q45 q46 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 
-* Mia: I'm not sure about the skip pattern here, the tool doesn't seem to indicate any skip pattern
-*      and there are people who answered q44 but refused q43
-*recode recq44 (. = .a) if q43_ar == 4 | q43_ar == .r 
- 
+* Options for q44 were filtered based on the answer to q43_ar (e.g., people who chose "public" had access to a different set of options than those who chose OSEP), however the options themeselves for the different health insurance were not too different so above we recoded a few options to collapse multiple duplicate options
+* However, there are people who answered q44 but refused q43 and should be recoded as missing in q44 
+replace recq44 = .a if q43_ar == .r //*Shalom to confirm with Neena: q43_ar == 4 |
+
 *q62
 gen q62 = .a
  
 *q65
-recode q65 (. = .a) if q64 == 2 | q64 == .r | q64 == .d // Mia: added the case q64 == .d
+recode q65 (. = .a) if q64 == 2 | q64 == .r | q64 == .d 
 
- 
 *------------------------------------------------------------------------------*
 
 * Recode values and value labels so that their values and direction make sense
-
 
 recode q11 q12 q13 q18 q25_a q26 q29 q41 /// 
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r Refused) (.a = .a NA), ///
 	   pre(rec) label(yes_no)
 
-* I put q13b here to match other programs but for this dataset there's only yes, no and refused
+* Note: q13b only has yes, no and refused in AR data but left here to match other programs
 recode q13b_co_pe_uy_ar q30 q31 q32 q33 q34 q35 q36 q38 q64 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r Refused) (.d = .d "Don't Know") /// 
 	   (.a = .a NA), ///
@@ -578,16 +557,13 @@ recode q16 q17 q51 q52 q53 ///
 	   pre(rec) label(vc_nc)
 
 * Miscellaneous questions with unique answer options
-* Mia: note - different from other countries
 recode q3 ///
 	(1 = 0 "Male") (2 = 1 "Female") (.r = .r Refused), ///
 	pre(rec) label(gender)
 
-* Mia: note - different from other countries
 recode q3a_co_pe_uy_ar ///
 	(1 = 0 "Man") (2 = 1 "Woman") (3 = 3 "AR: Other gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
-
 
 recode q14 ///
 	(1 = 0 "0 – no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
@@ -605,7 +581,6 @@ recode q24 ///
 	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(number_visits)
 
-* Mia: added this to match other programs
 recode q49 ///
 	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
 	(7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
@@ -616,8 +591,6 @@ recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 
-* Mia: added the following parts
-* q19_ar q43_ar q45
 label define labels24 .a "NA" .r "Refused", add
 label define labels52 .a "NA" .r "Refused", add
 label define labels50 .a "NA" .r "Refused", add
@@ -626,7 +599,6 @@ label define labels50 .a "NA" .r "Refused", add
 label define labels79 .r "Refused", add
 
 * Numeric questions needing NA and Refused value labels 
-* Mia: added q65
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q47 q65 na_rf
 
@@ -636,7 +608,7 @@ lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b q46 q47 q65 na_rf
 * Rename variables to match question numbers in current survey 
 
 ***Drop all the ones that were recoded, then drop the recode, and rename then according to the documents
-* Mia: added q49 and q64
+
 drop q3 q3a_co_pe_uy_ar q4 q5 q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q14 q15 q16 q17 q18 q20 q22 q24 q25_a q26 q29 q30 q31 q32 q33 q34 q35 q36 q38  ///
 q39 q40 q41 q44 q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56a_ar q56b_ar ///
 q56c_ar q57 q59 q60 q61 q63 q64
@@ -649,8 +621,6 @@ order q*, after(language)
 
 *------------------------------------------------------------------------------*
 * Label variables
-*q2, q6, q20_other, q42_other, q62 not in data but .a so i still added a variable label
-
 
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
@@ -712,11 +682,11 @@ lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
-*lab var q46_refused "Q46. Refused"
+lab var q46_refused "Q46. Refused"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 *lab var q46a "Q46A Was this a scheduled visit or did you go without an appt.?"
 *lab var q46b "Q46B In days: how long between scheduling and seeing provider?"
-*lab var q47_refused "Q47. Refused"
+lab var q47_refused "Q47. Refused"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
@@ -752,15 +722,10 @@ lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides the one I am calling you on?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 *lab var q66 "Q66. Which political party did you vote for in the last election?"
-* 4/6: Mia added
-lab var q46_refused "Q46. Refused"
-lab var q47_refused "Q47. Refused"
 
 
-
-
-*** Mia changed this part ***
-*Mia: dropped the following value labels so the dataset won't get messed up when merging
+*------------------------------------------------------------------------------*
+*Dropping the following value labels so the dataset won't get messed up when merging
 label drop labels18
 label value q13e_co_pe_uy_ar
 

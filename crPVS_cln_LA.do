@@ -37,17 +37,17 @@ ren hs1210 q10
 ren hs1211 q11
 ren hs1212 q12
 ren hs1213 q13 
-ren hs1214 q14_la // Mia: added la in the variable name
-ren hs1215b q15_la // Mia: added la in the variable name
+ren hs1214 q14_la
+ren hs1215b q15_la 
 ren pa1316 q16 
 ren pa1317 q17
 
 ren usc2118 q18a_la
 ren usc2119 q19_q20a_la
-ren usc2119a q19_q20a_other_la // Mia: added la in the variable name
+ren usc2119a q19_q20a_other_la 
 ren usc2120a q18b_la
 ren usc2120b q19_q20b_la
-ren usc2120a1 q19_q20b_other_la // Mia: added la in the variable name
+ren usc2120a1 q19_q20b_other_la 
 ren usc2121 q21
 ren usc2121_oth q21_other
 ren usc2122 q22
@@ -140,7 +140,7 @@ ren wgt weight_educ
 * Outliers are because of call backs  
 
 format timestamp_start %tcHH:MM:SS
-format timestamp_finalsec %tcHH:MM:SS // Mia: added this line
+format timestamp_finalsec %tcHH:MM:SS 
 gen start_min = (hh(timestamp_start)*3600 + mm(timestamp_start)*60 + ss(timestamp_start)) / 3600
 gen end_min = (hh(timestamp_finalsec)*3600 + mm(timestamp_finalsec)*60 + ss(timestamp_finalsec)) / 3600
 gen int_length = (end_min - start_min)*60
@@ -194,13 +194,12 @@ gen q23_q24 = q23
 recode q23_q24 (.r = 2.5) (.d = 2.5) if q24 == 1
 recode q23_q24 (.r = 7) (.d = 7) if q24 == 2
 recode q23_q24 (.r = 10) (.d = 10) if q24 == 3
-recode q23_q24 (.d = .r) if q24 == .r // Mia: added this line
+recode q23_q24 (.d = .r) if q24 == .r 
 
 *------------------------------------------------------------------------------*
 
 * Country-specific values and value labels 
 
-*** Mia changed this part ***
 gen reclanguage = country*1000 +language
 gen recq5 = country*1000 + q5  
 gen recq4 = country*1000 + q4
@@ -219,9 +218,8 @@ replace recq63 = .d if q63== .d
 
 * Q6/Q7 - LA specific
 recode q6_la (1 = 11001 "LA: Additional private insurance") (2 = 11002 "LA: Only public insurance") (99 = .r "Refused"), gen(q7) label(q7_label)
-* NOTE to self: check this 
 
-* Mia: relabel some variables now so we can use the orignal label values
+
 local q4l place
 local q5l province
 local q8l educ
@@ -255,9 +253,10 @@ foreach q in q4 q5 q8 q44 q62 q63{
 	label val rec`q' `q'_label
 }
 
-label define q62_label 11995 "LA: Other", add
-label define q44_label 11995 "LA: Other", add
-
+label define q8_label .r "Refused", add
+label define q44_label 11995 "LA: Other" .r "Refused", add
+label define q62_label 11995 "LA: Other".r "Refused", add
+label define q63_label .r "Refused", add
 
 *------------------------------------------------------------------------------*
 
@@ -271,17 +270,15 @@ label define q44_label 11995 "LA: Other", add
 list q1 q2 if q2 == 0 | q1 < 18
 
 * Q25
-list q23 q24 q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
-replace q25_b = . if q25_b > q23_q24 & q25_b < .
 * Note: q23/q24 was supposed to be inclusive of COVID, so these are errors.
+list q23 q24 q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . // *Note: 2 implausible errors identified
+replace q25_b = . if q25_b > q23_q24 & q25_b < .
 
 * Q26/Q27
-list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
-* One potentially implausible value, where number of facilities is higher than number of visits
+list q23_q24 q27 country if q27 > q23_q24 & q27 < . // * One potentially implausible value, where number of facilities is higher than number of visits
 recode q27 (9 = 8) if q23_q24 == 8 & q27 == 9
 
 list q26 q27 country if q27 == 0 | q27 == 1
-
 list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
 * This is okay 
 
@@ -290,24 +287,21 @@ egen visits_total = rowtotal(q23_q24 q28_a q28_b)
 
 list q23_q24 q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
 							  | q40 == .a & visits_total > 0 & visits_total < .
-* Recoding Q39 and Q40 to refused if it is .a
-* but they have visit values in past 12 months 
+* Recoding Q39 and Q40 to refused if it is .a but they have visit values in past 12 months 
 recode q39 q40 (.a = .r) if visits_total > 0 & visits_total < .
 * 85 changes made to q39; 86 changes made to q40
 
+* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
 list q23_q24 q39 q40 country if q39 != .a & visits_total == 0 /// 
 							  | q40 != .a & visits_total == 0
 							  
-* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
-* but they have no visit values in past 12 months 
 recode q39 q40 (1 = .a) (2 = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
 * Note: 114 changes made to q39; 116 changes made to q40
 
 drop visits_total
-* did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
+
 *****************************
 
-*** Mia add this part ***
 * recode any answer to .a if they said they had 0 visits in the past 12 months in q23
 * note: their answers will be kept if they refused both q23 and q24
 recode q43 recq44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
@@ -337,14 +331,11 @@ recode q43 recq44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q4
 
 *------------------------------------------------------------------------------*
 
-* Recode missing values to NA for questions respondents would not have been asked 
-* due to skip patterns
+* Recode missing values to NA for questions respondents would not have been asked due to skip patterns
 
-*** Mia changed this part ***
 *q1/q2 
-recode q2 (. = .a) if q1 > 0 & q1 < . // Mia: change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
-recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r // Mia: added .r to match with other programs even though now there's no .r in the data
-*****************************
+recode q2 (. = .a) if q1 > 0 & q1 < . // *change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
+recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r 
 
 * q13 
 recode q13 (. = .a) if q12 == 2  | q12==.r
@@ -359,51 +350,41 @@ recode q19_q20a_la q18b_la q19_q20b_la q21 q22 (. = .a) if q18a_la == 2 // no us
 recode q18b_la q19_q20b_la (. = .a) if inrange(q19_q20a_la,1,4) | q19_q20a_la == 6  // questions about a second usual source of care were only asked if the first usual source of care was a pharmacy, traditional healer, or other
 
 recode q21 q22 q19_q20b_la (. = .a) if q18b_la == 2 // no usual source of care other than pharmacy or traditional healer 
-recode q21 q22 q19_q20b_la (. = .a) if q18a_la==.r | q18b_la == .r // refused to answer about usual source of care, so not eligible for this sequence of questions (EC added this on 26 Jan)
+recode q21 q22 q19_q20b_la (. = .a) if q18a_la==.r | q18b_la == .r // refused to answer about usual source of care, so not eligible for this sequence of questions 
 
 * NOTE: People who answered pharmacy, traditional healer, or OTH to usc2119
 *		were asked usc2120a. Those with empty usc2120a means that the person either
 *		refused or did not answer the question.*/
 
-
-*** Mia changed this part ***
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != . & q23 != .d & q23 != .r // Mia: added the case that q23 == .d/.r to be consistant with other programs
-recode q25_a (. = .a) if q23 != 1 & q23 != . // Mia: add the case that q23 == .
-recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == .r // Mia: added q24 == .r to be consistant with other programs
-* Mia: commented out this line. q24 can be 1-3 even if q23 == .r, if q24 in 1-3 and q23 == .r, we probably don't want to change . to .a
-*recode q25_b q26 (. = .a) if q23==.r // refused to answer q23 --> did not answer this sequence of questions
+recode q24 (. = .a) if q23 != . & q23 != .d & q23 != .r 
+recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == .
+recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == .r 
  
 * No 0 for q24  
-recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == .r // Mia: added q24 == .r to be consistant with other programs
-recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a // Mia: changed to q26 == .a
-*****************************
+recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == .r 
+recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a 
 
 * EC Note: We are missing 11 responses for q23, q24, q25_b, q26, q27, q28b, and q29 because people were randomized not to answer this section. (We meant to turn this off after the pilot, but made a mistake when we first started full data collection)
 
-
-*** Mia changed this part ***
 * q31 & q32
-recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
-recode q32 (. = .a) if q3 != 2 | q2 == .r //dropped q1 == .r, and make it so that question is asked only if q3 == 2 (female)
-*****************************
+recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r // *Shalom-there is no "1" for q2 in this dataset.. it starts from 2 (18-29),should i update the inrange command or does this not matter?
+
+recode q32 (. = .a) if q3 != 2 | q2 == .r 
 
 * q42
 recode q42 (. = .a) if q41 == 2 | q41==.r
 
 * q43-49 na's
-* Mia: there are 22 people who have . for both q23 and 24 but answered questions
+* Mia: there are 22 people who have . for both q23 and 24 but answered questions -Shalom only seeing 11 people, ask Mia to confirm if she also sees N=11 now
 recode q43 recq44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == .r 
-	   
-*** Mia changed this part ***	   
-recode q46 (. = .r) if q46_refused==1 // Mia: changed the variable name to q46_min
-recode q47 (. = .r) if q47_refused==1 // Mia: changed the variable name to q47_min
 
-* add the part to recode q46_refused q47_refused to match other programs
+*Q46/q47
+recode q46 (. = .r) if q46_refused==1 
+recode q47 (. = .r) if q47_refused==1
 recode q46_refused (. = 0) if q46 != .
 recode q47_refused (. = 0) if q47 != .
-*****************************
 
 *Q43/Q44
 recode q43 (. = .a) if recq44 != 1
@@ -432,8 +413,6 @@ recode q39 q40 ///
 	   (.r = .r Refused), ///
 	   pre(rec) label(yes_no_na)
 	   
-* EC Note: I'm confused by why we see a lot of "I did not get healthcare in past 12 months" for ppl who had healthcare visits. (e.g., if you enter "tab q23 if q39==.a")
-* NK Note: recoded these to refused 
 	   
 * All Excellent to Poor scales
 
@@ -486,18 +465,15 @@ recode q3 ///
 	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
 
-* NOTE: This vaccine question is slightly different - looks like asked up to 5 and more
-* Other countries asked 3 and more 
+* NOTE: This vaccine question is slightly different - looks like asked up to 5 and more, no data for beyond 4 doses as of 4/11
 
-* Mia: changed value labels to match the document: 1 - Laos PVS_adaptations to PVS version v3 09_May_2022 and the original value labels
 recode q14_la ///
 	(1 = 0 "0- no doses received") (2 = 1 "1 dose") (3 = 2 "2 doses") ///
-	(4 = 3 "3 doses") (5 = 4 "4 doses") (6 = 5 "More than 4 doses") (7 = .r Refused) (.r = .r Refused) , ///
+	(4 = 3 "3 doses") (5 = 4 "4 doses") (6 = 5 "More than 4 doses") (7 = .r "Refused") (.r = .r "Refused"), ///
 	pre(rec) label(covid_vacc_la)
 	
 * NOTE: This was potentially only asked to people with 0 doses - other countries asked for 0 or 1 
 
-* Mia: changed value labels to match the document: 1 - Laos PVS_adaptations to PVS version v3 09_May_2022
 recode q15_la /// 
 	   (1 = 1 "Yes") ///
 	   (2 = 0 "No") ///
@@ -527,17 +503,12 @@ recode q57 ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 	
 ******** COUNTRY-SPECIFIC items for append ********
-* NOTE: We have only received data from Ipsos so far, so the value labels are programmed
-* to include all of countries being fielded by Ipsos 
-* For Laos, for now, recoded the values to start after Ipsos countries and then 
-* re-label the values on append 
+* NOTE: We have only received data from Ipsos so far, so the value labels are programmed to include all of countries being fielded by Ipsos 
+* For Laos, for now, recoded the values to start after Ipsos countries and then re-label the values on append 
 
-*** Mia changed this part ***
 * Q21
-recode q21 (10 = 9) (90 = .r)
+recode q21 (10 = 9) (90 = .r) // *why are we recoding "other(10)" to "know someone at the facility?(9)" - should we do what we did for AR and add a LA-specific value ("LA:Know someone at the facility")? If not, we would need to do the same for AR and recode the AR specific value to "Other"
 label define fac_choose 9 "Other", modify
-*****************************
-
 
 *------------------------------------------------------------------------------*
 
@@ -572,8 +543,8 @@ lab var q10 "Q10. In general, would you say your mental health is?"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
 lab var q13 "Q13. Was it confirmed by a test?"
-lab var q14_la "Q14. LA only: How many doses of COVID-19 vaccine have you received?" //Mia: changed the variable label
-lab var q15_la "Q15. LA only: If a vaccine becomes available, do you plan to get vaccinated?" //Mia: changed the variable label
+lab var q14_la "Q14. LA only: How many doses of COVID-19 vaccine have you received?" 
+lab var q15_la "Q15. LA only: If a vaccine becomes available, do you plan to get vaccinated?" 
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18a_la "Q18A. LA only: Is there one place you usually...? (incl pharm, traditional)"
