@@ -45,6 +45,9 @@ replace q46 = . if q46 > 720 & q46 < . & country == 15
 ***4/6: Mia added this, please double check the cut-off 
 replace q46 = . if q46 > 720 & q46 < . & country == 16
 *2 values recoded in Argentina (Mendoza)
+***4/11: Mia added this, please double check the cut-off 
+replace q46 = . if q46 > 720 & q46 < . & country == 4
+*2 values recoded in India
 
 * q47
 replace q47 = . if q47 > 300 & q47 < . & country == 3
@@ -65,6 +68,9 @@ replace q47 = . if q47 > 300 & q47 < . & country == 14
 *7 values recoded in Italy
 replace q47 = . if q47 > 300 & q47 < . & country == 15
 *15 values recoded in South Korea
+***4/11: Mia added this, please double check the cut-off 
+replace q47 = . if q47 > 300 & q47 < . & country == 4
+*12 values recoded in India
 
 * q46b
 replace q46b = . if q46b > 365 & q46b < . & country == 12
@@ -471,13 +477,14 @@ recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 */       
 
 * 4/6: Mia added 16008 and 16009
+* 4/11: Mia - IN - added 4995
 recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
 			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 = 0 "Primary") /// 
 		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 ///
 		   12005 12006 15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
-		   (.a = .a "NA") (3995 9995 12995 .r = .r "Refused"), gen(usual_type_lvl)
+		   (.a = .a "NA") (3995 9995 12995 4995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if inlist(q19_q20a_la,2,4,6) | ///
 								  inlist(q19_q20b_la,2,4,6)
@@ -649,6 +656,10 @@ recode visits_covid (80 = .) if country == 15
 replace visits = . if visits > 60 & visits < . & country == 16
 * Argentina (Mendoza) visits_tele, 1 value recoded 
 recode visits_tele (96 = .) if country == 16
+***4/11: Mia added this, please double check the cut-off 
+replace visits = . if visits > 60 & visits < . & country == 4
+replace visits_home = . if visits_home > 60 & visits_home < . & country == 4
+* India 2 visits value and 3 visit_home value
 
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///

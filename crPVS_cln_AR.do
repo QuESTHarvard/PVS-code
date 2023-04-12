@@ -191,6 +191,11 @@ recode P46_Minutos_Codes (. = 0) if P46 != . | P46_Minutos != .
 recode P46_Minutos_Codes (96 = 1)
 ren P46_Minutos_Codes q46_refused
 ren P47 q47
+
+replace q47 = .r if P47_Codes == 96
+
+* Mia: 4/5 added
+
 recode P47_Codes (. = .a) if q23 == 0 | q24 == 1
 recode P47_Codes (. = 0) if q47 >= 0
 recode P47_Codes (96 = 1)
