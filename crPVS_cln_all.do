@@ -1430,6 +1430,7 @@ drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit n_
 
 gen q7_other_original = q7_other
 label var q7_other_original "Q7_other. Other type of health insurance?"
+
 gen q13e_other_co_pe_uy_ar_original = q13e_other_co_pe_uy_ar
 label var q13e_other_co_pe_uy_ar_original "Q13E. CO/PE/UY only: Other"
 	
@@ -1468,12 +1469,22 @@ label var q62b_other_us_original "Q62B. US only: Other"
 
 
 *Remove "" from responses for macros to work
+replace q7_other = subinstr(q7_other,`"""',  "", .)
+replace q13e_other_co_pe_uy_ar = subinstr(q13e_other_co_pe_uy_ar,`"""',  "", .)
 replace q19_other = subinstr(q19_other,`"""',  "", .)
+replace q19_q20a_other = subinstr(q19_q20a_other,`"""',  "", .)
+replace q19_q20b_other = subinstr(q19_q20b_other,`"""',  "", .)
+replace q20_other = subinstr(q20_other,`"""',  "", .)
+replace q21_other = subinstr(q21_other,`"""',  "", .)
+replace q42_other = subinstr(q42_other,`"""',  "", .)
 replace q43_other = subinstr(q43_other,`"""',  "", .)
+replace q44_other = subinstr(q44_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
+replace q62_other = subinstr(q62_other,`"""',  "", .)
+replace q62b_other_us = subinstr(q62b_other_us,`"""',  "", .)
 
 
-foreach i in 2 3 5 7 9 10 12 13 14 15 16 {
+foreach i in 2 3 4 5 7 9 10 12 13 14 15 16 {
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
 	sheet(other_specify_recode)							///	
@@ -1511,6 +1522,92 @@ order respondent_serial respondent_id mode country language date ///
 *Save recoded data
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
+
+**************=Save individual datasets to recoded data folder****************
+
+*Colombia
+preserve
+keep if country == 2
+save "$data/Colombia/02 recoded data/pvs_colombia_recoded"
+restore
+
+*Ethiopia
+preserve
+keep if country == 3
+save "$data/Ethiopia/02 recoded data/pvs_ethiopia_recoded"
+restore
+
+*India
+preserve
+keep if country == 4
+save "$data/India/02 recoded data/pvs_india_recoded"
+restore
+
+*Kenya
+preserve
+keep if country == 5
+save "$data/Kenya/02 recoded data/pvs_kenya_recoded"
+restore
+
+*Peru
+preserve
+keep if country == 7
+save "$data/Peru/02 recoded data/pvs_peru_recoded"
+restore
+
+*South Africa
+preserve
+keep if country == 9
+save "$data/South Africa/02 recoded data/pvs_za_recoded"
+restore
+
+*Uruguay
+preserve
+keep if country == 10
+save "$data/Uruguay/02 recoded data/pvs_uruguay_recoded"
+restore
+
+*Lao PDR
+preserve
+keep if country == 11
+save "$data/Laos/02 recoded data/pvs_laos_recoded"
+restore
+
+*United States - saved in multi country recoded folder
+preserve
+keep if country == 12
+save "$data_mc/02 recoded data/pvs_us_recoded"
+restore
+
+*Mexico - saved in multi country recoded folder
+preserve
+keep if country == 13
+save "$data_mc/02 recoded data/pvs_mx_recoded"
+restore
+
+*Italy - saved in multi country recoded folder
+preserve
+keep if country == 14
+save "$data_mc/02 recoded data/pvs_it_recoded"
+restore
+
+*South Korea
+preserve
+keep if country == 15
+save "$data/South Korea/02 recoded data/pvs_korea_recoded"
+restore
+
+*Argentina
+preserve
+keep if country == 16
+save "$data/Argentina/02 recoded data/pvs_argentina_recoded"
+restore
+
+*United Kingdown
+*preserve
+*keep if country == 17
+*save "$data/United Kingdom/02 recoded data/pvs_uk_recoded"
+*restore
 
 /*
 *------------------------------------------------------------------------------*
