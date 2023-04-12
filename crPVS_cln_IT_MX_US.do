@@ -982,7 +982,7 @@ order q*, sequential
 
 * Label variables 
 lab var int_length "Interview length (in minutes)" 
-lab var date "Date of interview" /
+lab var date "Date of interview" 
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
