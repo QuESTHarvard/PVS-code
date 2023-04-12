@@ -27,8 +27,9 @@ replace c = "Argentina" if country==16
 			  
 	egen fullvax = rowmax(fullvax2d fullvax3d* )	
 
-	rename q14 nb_doses
-
+	recode q14 (1/4=1), gen(onedose)
+	replace onedose=. if country==2 | country==4 | country==7 | country>9
+	
 * Health system variables
 	recode visits_cat (1/2=1), gen(anyvisit)
 						
@@ -44,7 +45,9 @@ replace c = "Argentina" if country==16
 	recode last_type_own (0=1) (1/2=0), gen(last_public)
 
 	recode usual_type_own (0=1) (1/2=0), gen(usual_public_fac)
-
+	replace usual_public_fac= 1 if country==10 & usual_type_own==2 // incl. mutuales as public in Uruguay
+ 	
+	recode system_reform (1/2=0) (3=1), gen(workswell)
 
 * Demographics
 	recode age_cat (0/2=0) (3/6=1), gen(age2)
@@ -64,7 +67,7 @@ replace c = "Argentina" if country==16
 	
 	
 	lab var fullvax "Received 2+ or 3+ doses of a COVID vaccine"
-	lab var nb_doses "Number of COVID vacicne doses received"
+	lab var onedose "Received at least 1 dose of a COVID vaccine"
 	lab var anyvisit "Had at least 1 healthcare visit in last year"
 	lab var preventive "Received at leat 3 other preventive health services"
 	lab var urban "Urban residence"
