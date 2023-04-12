@@ -27,20 +27,14 @@ ren Surveymode mode
 *ren BIDENT_COUNTRY country
 ren Q1_1 q1
 *ren Q1_2 q2
-ren Q1_3UK q5_uk
-ren Q1_3IT q5_it
-ren Q1_3_OTHER_997 q5_other_it 
+*ren Q1_3_OTHER_997 q5_other_it 
 ren Q1_4 q3 
 ren Q1_5 q4 
-ren Q1_9IT q6_it
-ren Q1_9US q6
-ren Q1_10US q7_us
-ren Q1_10US_7_OTHER q7_other_us
-ren Q1_10MX q7_mx
-ren Q1_10MX_6_OTHER q7_other_mx
-ren Q1_11US q8_us
-ren Q1_11MX q8_mx
-ren Q1_11IT q8_it 
+ren Q1_3UK q5
+ren Q1_9UK q6_uk
+ren Q1_10MX q7
+ren Q1_10MX_6_OTHER q7_other
+ren Q1_11 q8
 ren Q1_12 q9
 ren Q1_13 q10
 ren Q1_14 q11
@@ -51,20 +45,18 @@ ren Q1_18 q15
 ren Q1_15 q12
 ren Q1_16 q13
 ren Q2_1 q18
-ren Q2_2MX q19_mx
-ren Q2_2MX_7_OTHER q19_other_mx
-ren Q2_3MX q20_mx
-ren Q2_3MX_21_OTHER q20_other_mx
-ren Q2_2IT q19_it
-ren Q2_2IT_4_OTHER q19_other_it
-ren Q2_3IT q20_it
-ren Q2_3IT_5_OTHER q20_other_it
-ren Q2_3US q20_us
-ren Q2_3US_8_OTHER q20_other_us
+*Shalom confirm this with Neena/Mia:
+ren Q2_2UK q19a_uk
+ren Q2_UK_3 q19_other_uk
+ren Q2_2NI q19b_uk
+
+ren Q2_3 q20
+*ren Q2_3MX_21_OTHER q20_other_mx
 ren Q2_4 q21
-ren Q2_4_9_OTHER q21_other
+ren Q2_4_9 q21_other
 ren Q2_5 q22
-ren Q2_6_1 q23
+ren Q2_6 q23
+
 ren Q2_7 q24
 ren Q2_8A q25_a
 ren Q2_8B_1 q25_b
@@ -144,17 +136,12 @@ ren Q4_9 q58
 ren Q4_10 q59
 ren Q4_11 q60
 ren Q4_12 q61
-ren Q1_6MX q62_mx 
-ren Q1_6A q62a_us 
-ren Q4_13US q66a_us 
-ren PARTYLEAN q66b_us 
+ren Q1_6UK q62_uk 
 ren Q4_14IT q63_it
-ren Q4_14MX q63_mx
-ren Q4_14US q63_us
 ren Q4_13MX q66_mx 
-ren Q4_13IT q66_it 
 
-ren WEIGHT weight_educ
+*Shalom - Needs to be updated with weight_educ when we get that weight var
+ren WEIGHT weight
 ren LANGUAGE lang
 ren LOIMINUTES int_length 
 
