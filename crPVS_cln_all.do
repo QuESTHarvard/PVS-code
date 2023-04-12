@@ -27,8 +27,7 @@ set more off
 * Import raw data 
 
 * Kenya: import latest data / weight 
-*u "$data_mc/01 raw data/PVS_all countries weighted.dta"
-use "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\BGC Projects\BGC - Mia Yu - Misc tasks\Harvard\Data\PVS_all countries weighted.dta", clear
+u "$data_mc/01 raw data/PVS_all countries weighted.dta"
 
 drop if qc_short == 1
 drop qc_short
