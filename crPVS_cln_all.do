@@ -1522,7 +1522,7 @@ order respondent_serial respondent_id mode country language date ///
 *Save recoded data
 save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
-
+/*
 **************=Save individual datasets to recoded data folder****************
 
 *Colombia
@@ -1609,7 +1609,7 @@ restore
 *save "$data/United Kingdom/02 recoded data/pvs_uk_recoded"
 *restore
 
-/*
+\*
 *------------------------------------------------------------------------------*
 
 * NOTE: Optional data quality checks 
