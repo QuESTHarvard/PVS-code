@@ -27,11 +27,11 @@ set more off
 * Import raw data 
 
 * Kenya: import latest data / weight 
-u "$data_mc/01 raw data/PVS_ET and KE weighted_22.12.22.dta"
-keep if Country == 5
+u "$data_mc/01 raw data/PVS_all countries weighted.dta"
 
-* Add back QC_short from previous data 
-merge 1:1 ECS_ID Country using "$data/Kenya/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
+drop if qc_short == 1
+drop qc_short
+
 
 * Drop interviews that are short and could be low-quality 
 * Ipsos provided qc_short var that identifies short interviews that might be low-quality 
@@ -58,6 +58,12 @@ label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)"
 label define Interviewer_Language 21 "Sesotho" 22 "isiXhosa" 23 "isiZulu" 24 "Setswana" 25 "siSwati" ///
 								  26 "Sepedi" 27 "Xitsonga" 28 "Afrikaans" 29 "Portuguese", modify
 
+* Mia: correct some value labels
+* label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)" 15 "Some secondary education" 16 "Secondary education completed" 17 "Tertiary education", modify
+* label define Language 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali", modify
+* label define Q2 2 "18-29", modify
+
+
 *Edited income orders
 recode Q63 (1 = 1 "< Ksh 15,572") ///
 		   (2 = 2 "Ksh 15,573 - 23,500") ///
@@ -81,22 +87,21 @@ recode Q63 (1 = 1 "< Ksh 15,572") ///
 		   (20 = 21 "R11001-R27000") ///
 		   (21 = 22 "R27001-R45000") ///
 		   (22 = 23 "R>45000") ///
+		   (24 = 24 "<3000 Indian National Rupee (INR)") ///
+		   (25 = 25 "3000-10,000 INR") ///
+		   (26 = 26 "10,001-20,000 INR") ///
+		   (27 = 27 "20,001-30,000 INR") ///
+		   (28 = 28 "30,001-40,000 INR") ///
+		   (29 = 29 "40,001-50,000 INR") ///
+		   (30 = 30 ">50,000 INR") ///
 		   (996 = 996 "Refused") (997 = 997 "Don't know"), gen(q63)
 		   
 drop Q63
 ren q63 Q63
 
-*Save to merge later so we won't lose India's value labels for some questions
-tempfile label1
-label save Language Q4 Q5 q63 using `label1'
-label drop Language Q4 Q5 q63							  
-								  
-* India - new weighted India data from 4-5: 
-append using "$data/India/01 raw data/PVS_India weighted.dta"
-qui do `label1'
-
 *Change all variable names to lower case
 rename *, lower 
+
 
 *Correct value labels
 label define Q2 2 "18-29", modify
@@ -105,7 +110,9 @@ label define q63 24 "<3000 Indian National Rupee (INR)" ///
 				 27 "20,001-30,000 INR" 28 "30,001-40,000 INR" ///
 				 29 "40,001-50,000 INR" 30 ">50,000 INR", modify
 
-*India had "interviewer language in 13 different vars": named starting at 30
+*India had "interviewer language in 13 different vars": named starting at 30				 
+*Shalom-India had "interviewer language in 13 different vars": named starting at 30
+
 replace interviewer_language = 30 if interviewer_language01 == 1
 replace interviewer_language = 31 if interviewer_language02 == 1
 replace interviewer_language = 32 if interviewer_language03 == 1
@@ -119,25 +126,30 @@ replace interviewer_language = 39 if interviewer_language10 == 1
 replace interviewer_language = 40 if interviewer_language11 == 1
 replace interviewer_language = 41 if interviewer_language12 == 1
 replace interviewer_language = 42 if interviewer_language13 == 1
-
-label define Interviewer_Language 30 "English" 31 "Hindi" 32 "Marathi" 33 "Kannada" 34 "Tamil" ///
+*/
+label define Interviewer_Language 21 "Sesotho" 22 "isiXhosa" 23 "isiZulu" 24 "Setswana" 25 "siSwati" ///
+								  26 "Sepedi" 27 "Xitsonga" 28 "Afrikaans" 29 "Portuguese" ///
+								  30 "English" 31 "Hindi" 32 "Marathi" 33 "Kannada" 34 "Tamil" ///
 								  35 "Telegu" 36 "Bengali" 37 "Assamese" 38 "Gujarati" 39 "Bhojpuri" ///
-								  40 "Punjabi" 41 "Urdu" 42 "Oriya", modify
-								  
+								  40 "Punjabi" 41 "Urdu" 42 "Oriya", modify				 
+
+/*
 drop interviewer_language01 interviewer_language02 interviewer_language03 interviewer_language04 ///
 	 interviewer_language05 interviewer_language06 interviewer_language07 interviewer_language08 ///
-	interviewer_language09 interviewer_language10 interviewer_language11 interviewer_language12 ///
-	interviewer_language13
+	 interviewer_language09 interviewer_language10 interviewer_language11 interviewer_language12 ///
+	 interviewer_language13
+*/
 
 * Fix append issues
 * Changed to 16 since 16 is mobile clinic
 recode q20 q44 (23 = 16) if country == 9 
-
+label define Q44 23 "NGO/Faith-based hospital", modify
+label define Q20 23 "NGO/Faith-based hospital", modify
 
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 996
 gen reclanguage = country*1000 + language 
-gen interviewer_id = country*1000 + interviewerid_recoded
+gen interviewer_id = country*1000 + interviewerid // 4/10 Mia: changed from interviewerid_recoded to interviewerid
 gen recq5 = country*1000 + q5  
 replace recq5 = .r if q5 == 996
 gen recq4 = country*1000 + q4
@@ -1314,7 +1326,7 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 
 				 
 lab val language Language
-lab var language "Language"
+lab var language "Language of interview"
 
 * Other value label modifcations
 lab def q4_label .a "NA" .r "Refused", modify
@@ -1369,12 +1381,9 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 * svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
 
 * Keep variables relevant for data sharing and analysis  
-* Dropping q37_in and time for now 
-drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ ///
-interviewer_language psu_id interviewer_gender interviewer_id ///
-time respondent_num q1_codes
-
-drop region_stratum kebele matrix sum_size_region total dw_psu n_unit dw_unit n_elig dw_ind dw_overall dw_overall_relative rim_region_et rim_age province county sublocation rim_region_ke rim_educ ecs_id rim_gender rim_region rim_education rim_eduction interviewerid_recoded
+* Dropping time for now 
+* 4/10: Mia removed region_stratum kebele matrix sum_size_region dw_psu n_unit dw_unit n_elig sublocation rim_region_ke rim_educ rim_gender rim_region rim_education rim_eduction dw_overall dw_ind dw_overall_relative rim_region_et rim_age province county total
+drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ respondent_num interviewer_language interviewer_gender interviewer_id time q1_codes interviewerid 
 
 
 **** Other Specify Recode ****
