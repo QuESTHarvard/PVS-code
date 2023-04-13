@@ -817,6 +817,95 @@ lab var conf_getafford "Confidence in receiving and affording healthcare if beca
 
 save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
+/*
+**************=Save individual datasets to recoded data folder****************
+
+*Colombia
+preserve
+keep if country == 2
+save "$data/Colombia/02 recoded data/pvs_colombia_recoded"
+restore
+
+*Ethiopia
+preserve
+keep if country == 3
+save "$data/Ethiopia/02 recoded data/pvs_ethiopia_recoded"
+restore
+
+*India
+preserve
+keep if country == 4
+save "$data/India/02 recoded data/pvs_india_recoded"
+restore
+
+*Kenya
+preserve
+keep if country == 5
+save "$data/Kenya/02 recoded data/pvs_kenya_recoded"
+restore
+
+*Peru
+preserve
+keep if country == 7
+save "$data/Peru/02 recoded data/pvs_peru_recoded"
+restore
+
+*South Africa
+preserve
+keep if country == 9
+save "$data/South Africa/02 recoded data/pvs_za_recoded"
+restore
+
+*Uruguay
+preserve
+keep if country == 10
+save "$data/Uruguay/02 recoded data/pvs_uruguay_recoded"
+restore
+
+*Lao PDR
+preserve
+keep if country == 11
+save "$data/Laos/02 recoded data/pvs_laos_recoded"
+restore
+
+*United States - saved in multi country recoded folder
+preserve
+keep if country == 12
+save "$data_mc/02 recoded data/pvs_us_recoded"
+restore
+
+*Mexico - saved in multi country recoded folder
+preserve
+keep if country == 13
+save "$data_mc/02 recoded data/pvs_mx_recoded"
+restore
+
+*Italy - saved in multi country recoded folder
+preserve
+keep if country == 14
+save "$data_mc/02 recoded data/pvs_it_recoded"
+restore
+
+*South Korea
+preserve
+keep if country == 15
+save "$data/South Korea/02 recoded data/pvs_korea_recoded"
+restore
+
+*Argentina
+preserve
+keep if country == 16
+save "$data/Argentina/02 recoded data/pvs_argentina_recoded"
+restore
+
+*United Kingdown
+*preserve
+*keep if country == 17
+*save "$data/United Kingdom/02 recoded data/pvs_uk_recoded"
+*restore
+
+*/
+
 
 * ONLY RUN COMMAND BELOW WHEN SHARING TO ALL
 * save "$data/Multi-country (shared)/pvs_all_countries.dta", replace 
