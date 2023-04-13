@@ -21,17 +21,11 @@ set more off
 
 *********************** ETHIOPIA, KENYA, SOUTH AFRICA, & INDIA ***********************
 
-* NOTE: Ipsos has been sharing combined data in different ways. These are interim 
-*		work-arounds to obtain complete data until we receive final data (late March)
-
 * Import raw data 
+*As of 4/13 all country dataset for ET,KE,ZA,IN/KE/ZA
+u "$data_mc/01 raw data/PVS_all countries_weighted.dta"
 
-* Kenya: import latest data / weight 
-u "$data_mc/01 raw data/PVS_all countries weighted.dta"
-
-drop if qc_short == 1
-drop qc_short
-
+merge 1:1 ECS_ID using "$data_mc/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
 
 * Drop interviews that are short and could be low-quality 
 * Ipsos provided qc_short var that identifies short interviews that might be low-quality 
@@ -39,28 +33,10 @@ drop qc_short
 drop if QC_short == 2
 drop QC_short _merge  
 
-* Ethiopia: import latest data / weight
-append using "$data_mc/01 raw data/PVS_ET weighted_03.02.23.dta"
+*Interviewer_Language is in 31 different variables - Mia to create loop here 
 
-drop Respondent_ID mode2
-ren ECS_ID Respondent_ID 
 
-* Save to merge later so we won't lose ZA's value labels for some questions
-tempfile label0
-label save Q7 Q20 Q44 using `label0'
-label drop Q7 Q8 Q20 Q44
-
-* South Africa 
-append using "$data_mc/01 raw data/PVS_SA weighted_03.02.23.dta"
-qui do `label0'
-* Correct some value labels
-label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)", modify
-label define Interviewer_Language 21 "Sesotho" 22 "isiXhosa" 23 "isiZulu" 24 "Setswana" 25 "siSwati" ///
-								  26 "Sepedi" 27 "Xitsonga" 28 "Afrikaans" 29 "Portuguese", modify
-
-* Mia: correct some value labels
-* label define Q8 1 "None" 2 "No formal education" 3 "Primary school (Grades 1-8)" 4 "Secondary school (Grades 9-12)" 15 "Some secondary education" 16 "Secondary education completed" 17 "Tertiary education", modify
-* label define Language 2 "Swahili" 3 "Amharic" 4 "Oromo" 5 "Somali", modify
+*Ask Neena if we should correct this in the data dictionary
 * label define Q2 2 "18-29", modify
 
 
@@ -102,46 +78,9 @@ ren q63 Q63
 *Change all variable names to lower case
 rename *, lower 
 
-
-*Correct value labels
-label define Q2 2 "18-29", modify
-label define q63 24 "<3000 Indian National Rupee (INR)" ///
-			     25 "3000-10,000 INR" 26 "10,001-20,000 INR" ///
-				 27 "20,001-30,000 INR" 28 "30,001-40,000 INR" ///
-				 29 "40,001-50,000 INR" 30 ">50,000 INR", modify
-
-*India had "interviewer language in 13 different vars": named starting at 30				 
-*Shalom-India had "interviewer language in 13 different vars": named starting at 30
-
-replace interviewer_language = 30 if interviewer_language01 == 1
-replace interviewer_language = 31 if interviewer_language02 == 1
-replace interviewer_language = 32 if interviewer_language03 == 1
-replace interviewer_language = 33 if interviewer_language04 == 1
-replace interviewer_language = 34 if interviewer_language05 == 1
-replace interviewer_language = 35 if interviewer_language06 == 1
-replace interviewer_language = 36 if interviewer_language07 == 1
-replace interviewer_language = 37 if interviewer_language08 == 1
-replace interviewer_language = 38 if interviewer_language09 == 1
-replace interviewer_language = 39 if interviewer_language10 == 1
-replace interviewer_language = 40 if interviewer_language11 == 1
-replace interviewer_language = 41 if interviewer_language12 == 1
-replace interviewer_language = 42 if interviewer_language13 == 1
-*/
-label define Interviewer_Language 21 "Sesotho" 22 "isiXhosa" 23 "isiZulu" 24 "Setswana" 25 "siSwati" ///
-								  26 "Sepedi" 27 "Xitsonga" 28 "Afrikaans" 29 "Portuguese" ///
-								  30 "English" 31 "Hindi" 32 "Marathi" 33 "Kannada" 34 "Tamil" ///
-								  35 "Telegu" 36 "Bengali" 37 "Assamese" 38 "Gujarati" 39 "Bhojpuri" ///
-								  40 "Punjabi" 41 "Urdu" 42 "Oriya", modify				 
-
-/*
-drop interviewer_language01 interviewer_language02 interviewer_language03 interviewer_language04 ///
-	 interviewer_language05 interviewer_language06 interviewer_language07 interviewer_language08 ///
-	 interviewer_language09 interviewer_language10 interviewer_language11 interviewer_language12 ///
-	 interviewer_language13
-*/
-
 * Fix append issues
 * Changed to 16 since 16 is mobile clinic
+* Confirm with Neena - don't know if mobile clinic is 16 (like in ET) or truly 23. What should 23 be?
 recode q20 q44 (23 = 16) if country == 9 
 label define Q44 23 "NGO/Faith-based hospital", modify
 label define Q20 23 "NGO/Faith-based hospital", modify
@@ -149,7 +88,7 @@ label define Q20 23 "NGO/Faith-based hospital", modify
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 996
 gen reclanguage = country*1000 + language 
-gen interviewer_id = country*1000 + interviewerid // 4/10 Mia: changed from interviewerid_recoded to interviewerid
+gen interviewer_id = country*1000 + interviewerid_recoded
 gen recq5 = country*1000 + q5  
 replace recq5 = .r if q5 == 996
 gen recq4 = country*1000 + q4
@@ -547,10 +486,13 @@ ren (q46_min q47_min) (q46 q47)
 order q*, sequential
 order q*, after(interviewer_id) 
 
-
 * Drop other unecessary variables 
 drop intlength 
 * Note: mode2 seems to be missing for Kenya data, but there is mode var 
+
+*4/13: dropping interviewer language for now until we're able to clean and recode:
+
+drop interviewer_language01 interviewer_language02 interviewer_language03 interviewer_language04 interviewer_language05 interviewer_language06 interviewer_language21 interviewer_language22 interviewer_language23 interviewer_language24 interviewer_language25 interviewer_language26 interviewer_language27 interviewer_language28 interviewer_language29 interviewer_language11 interviewer_language12 interviewer_language13 interviewer_language14 interviewer_language15 interviewer_language16 interviewer_language17 interviewer_language18 interviewer_language19 interviewer_language20 interviewer_language30 interviewer_language31
 
 *------------------------------------------------------------------------------*
 
@@ -1273,7 +1215,6 @@ qui do `label5'
 * Country
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)", modify
 
-
 * Kenya/Ethiopia variables 
 ren q19 q19_et_in_ke_za
 lab var q19_et_in_ke_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
@@ -1383,7 +1324,7 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 * Keep variables relevant for data sharing and analysis  
 * Dropping time for now 
 * 4/10: Mia removed region_stratum kebele matrix sum_size_region dw_psu n_unit dw_unit n_elig sublocation rim_region_ke rim_educ rim_gender rim_region rim_education rim_eduction dw_overall dw_ind dw_overall_relative rim_region_et rim_age province county total
-drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ respondent_num interviewer_language interviewer_gender interviewer_id time q1_codes interviewerid 
+drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded 
 
 
 **** Other Specify Recode ****
@@ -1491,6 +1432,7 @@ save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
 *------------------------------------------------------------------------------*
 
+/*
 * NOTE: Optional data quality checks 
 
 

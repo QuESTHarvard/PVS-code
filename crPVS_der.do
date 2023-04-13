@@ -270,7 +270,6 @@ gen health_chronic = q11
 gen ever_covid = q12
 gen covid_confirmed = q13 
 gen usual_source = q18
-* Mia: used inlist here
 recode usual_source (.a = 1) if (q18a_la == 1 & inlist(q19_q20a_la,1,2,3,4,6)) | q18b_la == 1
 recode usual_source (.a = 0) if q18a_la == 0 | q18a_la == 1 & q18b_la == 0
 recode usual_source (.a = .r) if q18b_la == .r
@@ -311,7 +310,7 @@ gen last_explain = q48_f
 gen last_decisions = q48_g
 gen last_visit_rate = q48_h 
 gen last_wait_rate = q48_i 
-gen last_sched_rate = q48_k // Mia: added this new derived variable
+gen last_sched_rate = q48_k 
 gen vignette_poor = q60
 gen vignette_good = q61
 lab val health health_mental last_qual last_skills last_supplies last_respect /// 
@@ -432,8 +431,8 @@ recode q19_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
 		
-* Mia updated variable to q19_co_pe
-* Mia: changed the values of q20
+
+* Mia: changed the values of q20 - shalom to review
 recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
@@ -441,8 +440,8 @@ recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  inlist(q20,12003,12004) | q19_kr == 1 | ///
 								  inlist(q19_ar,1,2,6,7)
 								  
-* Mia updated variable to q19_co_pe 
-* Mia: changed the values of q20								  
+
+* Mia: changed the values of q20 - shalom to review								  
 recode usual_type_own (.a = 1) if q19_co_pe == 2 | q19_uy == 2 | ///
 								  inlist(q19_q20a_la,3,4,6) | ///
 								  inlist(q19_q20b_la,3,4,6) | ///
@@ -450,7 +449,7 @@ recode usual_type_own (.a = 1) if q19_co_pe == 2 | q19_uy == 2 | ///
 								  inlist(q20,12001,12002,12005,12006) ///
 								  | q19_kr == 3 | q19_ar == 3
 								  
-* Mia: changed the values of q20							  
+* Mia: changed the values of q20 - shalom to review							  
 recode usual_type_own (.a = 2) if inlist(q19_uy,5,995) | ///
 								  q19_q20a_la == 9 | q19_q20b_la == 7 | ///
 								  q19_it == 4 | q19_mx == 7 | ///
@@ -476,8 +475,6 @@ recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
 */       
 
-* 4/6: Mia added 16008 and 16009
-* 4/11: Mia - IN - added 4995
 recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
 			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 = 0 "Primary") /// 
@@ -549,7 +546,6 @@ recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
 */
 
-* 4/6: Mia added 16007
 recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 		   2080 2085 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
 		   14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
@@ -600,7 +596,6 @@ recode minority (.a = 0) if q62_mx == 0
 
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
-*Why did we remove "No Income" from value label - Shalom
 
 recode q63 (2039 2040 2041 3009 5001 7031 7032 9015 9016 9017 10049 ///
 		   10050 10051 10052 11001 11002 12001 12002 13001 14001 14002 15001 15002 ///
@@ -667,7 +662,7 @@ recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 
 			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (12 = 13 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
-*** Mia changed this part ***
+
 * Drop trimmed q27 q46 q47 and get back the orignal var
 drop q27 q46 q47 q46b
 rename q27_original  q27
@@ -688,10 +683,6 @@ drop _merge
 lab def pol_align 0 "Aligned (in favor)" 1 "Not aligned (out of favor)"
 lab val pol_align pol_align
 
-
-*shalom dropped political alignment until we can fix
-
-drop pol_align
 
 *****************************
 
@@ -817,85 +808,85 @@ lab var conf_getafford "Confidence in receiving and affording healthcare if beca
 
 save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
-/*
+
 **************=Save individual datasets to recoded data folder****************
 
 *Colombia
 preserve
 keep if country == 2
-save "$data/Colombia/02 recoded data/pvs_colombia_recoded"
+save "$data/Colombia/02 recoded data/pvs_colombia_recoded", replace
 restore
 
 *Ethiopia
 preserve
 keep if country == 3
-save "$data/Ethiopia/02 recoded data/pvs_ethiopia_recoded"
+save "$data/Ethiopia/02 recoded data/pvs_ethiopia_recoded", replace
 restore
 
 *India
 preserve
 keep if country == 4
-save "$data/India/02 recoded data/pvs_india_recoded"
+save "$data/India/02 recoded data/pvs_india_recoded", replace
 restore
 
 *Kenya
 preserve
 keep if country == 5
-save "$data/Kenya/02 recoded data/pvs_kenya_recoded"
+save "$data/Kenya/02 recoded data/pvs_kenya_recoded", replace
 restore
 
 *Peru
 preserve
 keep if country == 7
-save "$data/Peru/02 recoded data/pvs_peru_recoded"
+save "$data/Peru/02 recoded data/pvs_peru_recoded", replace
 restore
 
 *South Africa
 preserve
 keep if country == 9
-save "$data/South Africa/02 recoded data/pvs_za_recoded"
+save "$data/South Africa/02 recoded data/pvs_za_recoded", replace
 restore
 
 *Uruguay
 preserve
 keep if country == 10
-save "$data/Uruguay/02 recoded data/pvs_uruguay_recoded"
+save "$data/Uruguay/02 recoded data/pvs_uruguay_recoded", replace
 restore
 
 *Lao PDR
 preserve
 keep if country == 11
-save "$data/Laos/02 recoded data/pvs_laos_recoded"
+save "$data/Laos/02 recoded data/pvs_laos_recoded", replace
 restore
 
 *United States - saved in multi country recoded folder
 preserve
 keep if country == 12
-save "$data_mc/02 recoded data/pvs_us_recoded"
+save "$data_mc/02 recoded data/pvs_us_recoded", replace
 restore
 
 *Mexico - saved in multi country recoded folder
 preserve
 keep if country == 13
-save "$data_mc/02 recoded data/pvs_mx_recoded"
+save "$data_mc/02 recoded data/pvs_mx_recoded", replace
 restore
 
 *Italy - saved in multi country recoded folder
 preserve
 keep if country == 14
-save "$data_mc/02 recoded data/pvs_it_recoded"
+save "$data_mc/02 recoded data/pvs_it_recoded", replace
 restore
 
 *South Korea
 preserve
 keep if country == 15
-save "$data/South Korea/02 recoded data/pvs_korea_recoded"
+save "$data/South Korea/recoded data/pvs_korea_recoded", replace
 restore
 
 *Argentina
 preserve
 keep if country == 16
-save "$data/Argentina/02 recoded data/pvs_argentina_recoded"
+save "$data/Argentina (Mendoza)/02 recoded data/pvs_argentina_recoded", replace
 restore
 
 *United Kingdown
