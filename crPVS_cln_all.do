@@ -33,8 +33,18 @@ merge 1:1 ECS_ID using "$data_mc/01 raw data/HARVARD_Main KE CATI and F2F_weight
 drop if QC_short == 2
 drop QC_short _merge  
 
+/*
 *Interviewer_Language is in 31 different variables - Mia to create loop here 
+gen Interviewer_Language = .
 
+forvalues i = 1/6 {
+	replace Interviewer_Language = `i' if Interviewer_Language0`i' == 1
+}
+
+forvalues i = 11/31 {
+	replace Interviewer_Language = `i' if Interviewer_Language`i' == 1
+}
+*/
 
 *Ask Neena if we should correct this in the data dictionary
 * label define Q2 2 "18-29", modify
@@ -77,13 +87,6 @@ ren q63 Q63
 
 *Change all variable names to lower case
 rename *, lower 
-
-* Fix append issues
-* Changed to 16 since 16 is mobile clinic
-* Confirm with Neena - don't know if mobile clinic is 16 (like in ET) or truly 23. What should 23 be?
-recode q20 q44 (23 = 16) if country == 9 
-label define Q44 23 "NGO/Faith-based hospital", modify
-label define Q20 23 "NGO/Faith-based hospital", modify
 
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 996
@@ -239,7 +242,7 @@ list q23_q24 q39 q40 country if q39 == 3 & visits_total > 0 & visits_total < . /
 							  
 * Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
 recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
-* Total of 38 changes made to q39 and 36 changes made to q40 - shalom to confirm with Mia: i got 70 changes to q39 and 63 changes to q40
+* 70 changes to q39 and 63 changes to q40
 
 * list if it is .a but they have visit values in past 12 months 
 list q23_q24 q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
@@ -252,7 +255,7 @@ list q23_q24 q39 q40 country if q39 != 3 & visits_total == 0 ///
 							  
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
 recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
-* Total of 1477 changes made to q39, 1482 changes made to q40 - shalom to confirm with Mia, i have 2,244 changes to q30 and 2,255 changes to q40
+* 2,244 changes to q30 and 2,255 changes to q40
 
 drop visits_total
 * did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
@@ -430,6 +433,10 @@ lab val q1 q23 q23_q24 q25_b q27 q28 q28_new q46 q46_min q47 q47_min q67 na_rf
 
 label define Q45 4 "Other, specify", modify
 *add .a/.r labels for q21,q42/q43/q44/q45/q19/q20
+label define q4_label .a "NA" .r "Refused", add
+label define q5_label .a "NA" .r "Refused", add
+label define q7_label .a "NA" .r "Refused", add
+label define q8_label .a "NA" .r "Refused", add
 label define Q19 .a "NA" .r "Refused", add
 label define q20_label .a "NA" .r "Refused", add
 label define Q21 .a "NA" .r "Refused", add
@@ -444,7 +451,7 @@ label define q63_label .d "Don't Know" .r "Refused", add
 
 *language loses value labels when it's being generated with country code - is there a better fix for this above?
 label define language 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
-					  4011 "IN: Hindi" 4012 "IN: Kannada" 4013 "IN: Tamil" 4014 "IN: Bengali" ///
+					  4001 "IN: English" 4011 "IN: Hindi" 4012 "IN: Kannada" 4013 "IN: Tamil" 4014 "IN: Bengali" 4015 "IN: Telugu" ///
 					  5001 "KE: English" 5002 "KE: Swahili" ///
 					  9001 "ZA: English" 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA :Afrikaans" ///
 					  9009 "ZA: Sepedi" 9010 "ZA: isiXhosa"
@@ -487,8 +494,7 @@ order q*, sequential
 order q*, after(interviewer_id) 
 
 * Drop other unecessary variables 
-drop intlength 
-* Note: mode2 seems to be missing for Kenya data, but there is mode var 
+drop intlength qc_short
 
 *4/13: dropping interviewer language for now until we're able to clean and recode:
 
@@ -1258,7 +1264,7 @@ recode q64 q65 q46_refused q47_refused (. = .a) if country == 15
 	   
 * Country-specific value labels -edit for ssrs-
 lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
-				 4011 "IN: Hindi" 4012 "IN: Kannada" 4013 "IN: Tamil" 4014 "IN: Bengali" ///
+				 4001 "IN: English" 4011 "IN: Hindi" 4012 "IN: Kannada" 4013 "IN: Tamil" 4014 "IN: Bengali" 4015 "IN: Telugu" ///
 				 5001 "KE: English" 5002 "KE: Swahili" 7011 "PE: Spanish" 9001 "ZA: English" ///
 				 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA: Afrikaans" ///
 				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
