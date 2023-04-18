@@ -119,6 +119,7 @@ ren Q4_14 q63
 ren Q4_13 q66_uk 
 
 ren weight weight_educ 
+ren PV27_LengthInMinutes int_length //4/18: Mia added.
 
 generate double start_time = dofc(DataCollection_FinishTime)
 format start_time %tdD_M_CY
@@ -153,21 +154,21 @@ gen recq20 = reccountry*1000 + q20
 replace recq20 = .r if q20 == 999
 gen recq44 = reccountry*1000 + q44
 replace recq44 = .r if q44 == 999
-gen recq62 = reccountry*1000 + q62_uk
+gen recq62_uk = reccountry*1000 + q62_uk
 replace recq62 = .r if q62_uk == 999
 gen recq63 = reccountry*1000 + q63
 replace recq63 = .r if q63 == 999
 
-
+* Mia changed this part
 local q4l labels5
 local q5l labels3
-local q8l labels10
-local q20l labels26
-local q44l labels53
-local q62l labels6
-local q63l labels87
+local q8l labels9
+local q20l labels25
+local q44l labels52
+local q62_ukl labels87
+local q63l labels85
 
-foreach q in q4 q5 q8 q20 q44 q62 q63{
+foreach q in q4 q5 q8 q20 q44 q62_uk q63{
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -194,6 +195,13 @@ foreach q in q4 q5 q8 q20 q44 q62 q63{
 	label val rec`q' `q'_label
 }
 
+label define q8_label .a "NA" .r "Refused" , modify
+label define q20_label .a "NA" .r "Refused" , modify
+label define q44_label .a "NA" .r "Refused" , modify
+label define q62_label .a "NA" .r "Refused" , modify
+label define q63_label .a "NA" .r "Refused" , modify
+label define q62_uk_label .a "NA" .r "Refused" , modify
+
 *****************************
 
 **** Combining/recoding some variables ****
@@ -219,6 +227,7 @@ recode q46b_dys q46b_hrs q46b_mth q46b_wks (. = 0) if q46b_dys < . | ///
 														  q46b_wks < . 
 gen q46b = (q46b_hrs/24) + q46b_dys + (q46b_wks*7) + (q46b_mth*30)
 recode q46b (. = .r) if q46b_refused == 1 
+recode q46b_refused (. = 0) if q46b != . //4/18: Mia added. Add this to IT_MX_US to?
 
 *------------------------------------------------------------------------------*
 
@@ -228,7 +237,8 @@ drop NUMOFCHILDREN Q1_7B* CHILD*AGE DataCollection_FinishTime DataCollection_Sta
      Q1_6UK Q1_21_A Q1_21_B Q1_21_C Q2_25 Q2_28 Q2_27 Q2_26 Q2_29 Q2_30_A Q2_30_B Q2_31 ///
 	 Q3_4B_1 Q3_4B_2 Q3_4B_3 Q3_4B_4 Q3_4_1 Q3_4_2 Q3_5_1 Q3_5_2 ///
      q46_min q46_hrs q47_min q47_hrs ///
-	 q46b_dys q46b_hrs q46b_mth q46b_wks q4 start_time end_time strata
+	 q46b_dys q46b_hrs q46b_mth q46b_wks start_time end_time strata ///
+	 PV27_DataCollectionDate PV27_LengthInSeconds CS_WorkingStatus KANTARDEVICE //4/18: Mia added
 
 	 
 * FLAG:
@@ -319,6 +329,9 @@ recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit 
 drop visits_total
 
 *------------------------------------------------------------------------------*
+* 4/18 Mia add this
+list q1 if q1 < 18
+drop if q1 < 18
 
 * q13 
 recode q13 (. = .a) if q12 == 2  | q12==.r
@@ -329,16 +342,18 @@ recode q13 (. = .a) if q12 == 2  | q12==.r
 *q19-22
 recode q19a_uk q19b_uk q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
 
+* 4/18 Mia add this
+recode q19a_uk (. = .a) if q5 == 12
+recode q19b_uk (. = .a) if q5 != 12
+
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . | q23 == . 
-recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == .
-recode q25_b q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+recode q24 (. = .a) if q23 != .d & q23 != .r
+recode q25_a (. = .a) if q23 != 1
+recode q25_b q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r
 recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a
 
-* br q23 q24 q23_q24 q26 q27 if q27 == . 
-
 *q28_c
-recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r 
+recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r
 
 * q31 & q32
 recode q31 (. = .a) if q3 != 2 
@@ -352,9 +367,13 @@ recode q43a_uk q43b_uk q44 q45 q46 q46_refused q46a ///
 	   q46b q46b_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r 
 
+* 4/18 Mia add this
+recode q43a_uk (. = .a) if q5 == 12
+recode q43b_uk (. = .a) if q5 != 12
+
 recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
-recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r 
+recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r
 
 *q64/q65 - are there variarbles on number of phone numbers? 
 
@@ -486,30 +505,28 @@ recode q6_uk (1 = 1 "Additional private insurance") ///
 gen recq7 = reccountry*1000 + q7_uk
 replace recq7 = .a if q7_uk == .a
 replace recq7 = .r if q7_uk == .r
+label def q7_label 17001 "UK: Additional private insurance" 17002 "UK: Only public insurance" .a "NA" .r "Refused"
+label values recq7 q7_label
 
-lab def labels8 .a "NA" .r "Refused" .d "Don't know",modify
- 
 lab def labels23 .a "NA" .r "Refused" .d "Don't know",modify
-
 lab def labels24 .a "NA" .r "Refused" .d "Don't know",modify
-
+lab def labels26 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels41 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels50 .a "NA" .r "Refused" .d "Don't know",modify
-
 lab def labels51 .a "NA" .r "Refused" .d "Don't know",modify
- 
-lab def labels87 .a "NA" .r "Refused" .d "Don't know",modify
-
+lab def labels53 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels69 .a "NA" .r "Refused" .d "Don't know",modify
 		  
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q7_uk q8 q5 q28_c q20 q44 q62 q63 ///
-	 q46b_refused q6_uk q11 q12 q13 q18 q25_a q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 ///
-	 q40 q46a q9 q10 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
+drop q7_uk q4 q5 q8 q20 q44 q62 q63 q11 q12 q13 q18 q25_a q26 q29 ///
+	 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q46a q46b_refused q6_uk ///
+	 q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q3 q14 q15 q24 q57 q7 KANTARDEVICE CS_WorkingStatus
+	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q3 q14 q15 q24 q57 q62_uk
 	 
 ren rec* *
 
@@ -517,9 +534,13 @@ ren rec* *
 order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
 
-* Label variables 
-*lab var int_length "Interview length (in minutes)" 
-*lab var date "Date of interview"
+* Label variables
+* Mia added
+lab var country "Country"
+lab var int_length "Interview length (in minutes)" 
+lab var date "Date of interview"
+lab var respondent_id "Respondent ID"
+*
 lab var q1 "Q1. Respondent еxact age"
 *lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
