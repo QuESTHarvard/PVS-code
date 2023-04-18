@@ -22,7 +22,7 @@ qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
 	
-	if inrange(`i',12,15) {
+	if inlist(`i',12,13, 14, 15, 17) {
 		extremes q46b country if country == `i', high
 	}
 
@@ -37,48 +37,60 @@ clonevar q46_original = q46
 clonevar q47_original = q47
 clonevar q46b_origial = q46b
 
-* all q27 seems fine
+* All q27 seems fine
 
 * q46
-replace q46 = . if q46 > 720 & q46 < . & country == 15
-*3 values recoded in South Korea
-***4/6: Mia added this, please double check the cut-off 
-replace q46 = . if q46 > 720 & q46 < . & country == 16
-*2 values recoded in Argentina (Mendoza)
-***4/11: Mia added this, please double check the cut-off 
-replace q46 = . if q46 > 720 & q46 < . & country == 4
-*2 values recoded in India
+* Colombia okay
+* Ethiopia - 3 values recoded 
+replace q46 = . if q46 > 600 & q46 < . & country == 3
+* India - 1 value recoded 
+replace q46 = . if q46 > 730 & q46 < . & country == 4 
+* Kenya - 1 value recoded 
+replace q46 = . if q46 > 720 & q46 < . & country == 5
+* Peru okay
+* South Africa - 2 values recoded 
+replace q46 = . if q46 > 600 & q46 < . & country == 9
+* Uruguay okay, Lao okay, US okay, Mexico okay, Italy okay 
+* Korea - 1 value recoded 
+replace q46 = . if q46 > 780 & q46 < . & country == 15
+* Mendoza - 2 values recoded
+replace q46 = . if q46 > 540 & q46 < . & country == 16
+* UK - 3 values recoded
+replace q46 = . if q46 > 780 & q46 < . & country == 17
 
 * q47
-replace q47 = . if q47 > 300 & q47 < . & country == 3
-*7 values recoded in Ethiopia
-replace q47 = . if q47 > 300 & q47 < . & country == 5
-*3 values recoded in Kenya
-replace q47 = . if q47 > 300 & q47 < . & country == 9
-*4 values recoded in South Africa
-replace q47 = . if q47 > 300 & q47 < . & country == 2
-*2 values recoded in Colombia
-replace q47 = . if q47 > 300 & q47 < . & country == 7
-*2 values recoded in Peru
-replace q47 = . if q47 > 300 & q47 < . & country == 10
-*10 values recoded in Uruguay
-replace q47 = . if q47 > 300 & q47 < . & country == 12
-*9 values recoded in US
-replace q47 = . if q47 > 300 & q47 < . & country == 14
-*7 values recoded in Italy
-replace q47 = . if q47 > 300 & q47 < . & country == 15
-*15 values recoded in South Korea
-***4/11: Mia added this, please double check the cut-off 
-replace q47 = . if q47 > 300 & q47 < . & country == 4
-*12 values recoded in India
+* Colombia okay 
+* Ethiopia - 6 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 3 
+* India - 8 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 4 
+* Kenya - 3 values recoded
+replace q47 = . if q47 > 600 & q47 < . & country == 5
+* Peru okay 
+* South Africa - 2 values recoded 
+replace q47 = . if q47 > 600 & q47 < . & country == 9 
+* Uruguay okay, Lao okay 
+* United States - 5 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 12
+* Mexico okay 
+* Italy - 2 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 14
+* Korea - 13 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 15
+* Mendoza okay 
+* UK - 1 value recoded
+replace q47 = . if q47 > 560 & q47 < . & country == 17 
 
 * q46b
+* US - 4 values recoded 
 replace q46b = . if q46b > 365 & q46b < . & country == 12
-*4 values recoded in US
+* Mexico okay 
+* Italy - 2 values recoded
 replace q46b = . if q46b > 365 & q46b < . & country == 14
-*2 values recoded in Italy
+* Korea - 1 value recoded
 replace q46b = . if q46b > 365 & q46b < . & country == 15
-*1 values recoded in South Korea
+* UK - 2 values recoded 
+replace q46b = . if q46b > 365 & q46b < . & country == 17
 
 *****************************
 
@@ -620,7 +632,7 @@ qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
 	
-	if !inlist(`i', 12, 13, 14) {
+	if !inlist(`i', 12, 13, 14, 17) {
 		extremes visits_home country if country == `i', high
 	}
 	
@@ -631,32 +643,33 @@ foreach i in `countrylev' {
 	}
 }
 
+* Colombia q28_b values seem implausible
+recode visits_tele (80 = .) if country == 2 
 * Ethiopia: 92 visits for q28 
-recode visits_home (92 = .) if country == 3
+recode visits_home (92 = .) if country == 3 
+* India 2 visits value and 3 visit_home value
+replace visits = . if visits > 60 & visits < . & country == 4 
+replace visits_home = . if visits_home > 60 & visits_home < . & country == 4 
 *South Africa: 120 visits for q28
-recode visits_home (120 = .) if country == 9
+recode visits_home (120 = .) if country == 9 
 * South Africa; 144 visits for q23
 recode visits (144 = .) if country == 9 
-* Colombia q28_b values seem implausible
-recode visits_tele (80 = .) if country == 2
 * Uruguay: q23 values seem implausible 
-recode visits (200 = .) (156 = .) if country == 10
+recode visits (200 = .) (156 = .) if country == 10 
 * US visits, 4 values recoded
-replace visits = . if visits > 60 & visits < . & country == 12
+replace visits = . if visits > 60 & visits < . & country == 12 
 * Italy visits, 1 value recoded 
-replace visits = . if visits > 60 & visits < . & country == 14
-* Korea, 1 visit_home and 1 visit_covid value 
-recode visits_home (68 = .) if country == 15
-recode visits_covid (80 = .) if country == 15
-***4/6: Mia added this, please double check the cut-off 
-* Argentina (Mendoza) visits, 4 value recoded 
-replace visits = . if visits > 60 & visits < . & country == 16
-* Argentina (Mendoza) visits_tele, 1 value recoded 
-recode visits_tele (96 = .) if country == 16
-***4/11: Mia added this, please double check the cut-off 
-replace visits = . if visits > 60 & visits < . & country == 4
-replace visits_home = . if visits_home > 60 & visits_home < . & country == 4
-* India 2 visits value and 3 visit_home value
+replace visits = . if visits > 60 & visits < . & country == 14 
+* Korea, 1 visit_home and 1 visit_covid value, 5 visit values
+recode visits_home (68 = .) if country == 15 
+recode visits_covid (80 = .) if country == 15 
+replace visits = . if visits > 60 & visits < . & country == 15 
+* Argentina (Mendoza) visits, 4 value recoded, visits_tele, 1 value recoded 
+replace visits = . if visits > 50 & visits < . & country == 16 
+recode visits_tele (96 = .) if country == 16 
+* UK 
+recode visits (150 = .) if country == 17
+recode visits_tele (100 = .) if country == 17
 
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
