@@ -1212,8 +1212,18 @@ append using "$data_mc/02 recoded data/pvs_ar.dta"
 
 qui do `label5'
 
+tempfile label6
+label save q4_label q5_label q7_label q8_label q20_label q44_label q63_label using `label6'
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q63_label
+
+append using "$data_mc/02 recoded data/pvs_uk.dta"
+
+qui do `label6'
+
+
 * Country
-lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)", modify
+lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
+				17 "United Kingdom", modify
 
 * Kenya/Ethiopia variables 
 ren q19 q19_et_in_ke_za
@@ -1255,6 +1265,8 @@ recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
 recode q37_in (. = .a) if country != 4
 recode q64 q65 q46_refused q47_refused (. = .a) if country == 15 
+recode q6_uk q19a_uk q19b_uk q43a_uk q43b_uk q62_uk q66_uk (. = .a) if country != 17
+
 	   
 * Country-specific value labels -edit for ssrs-
 lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
