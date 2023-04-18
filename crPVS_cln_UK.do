@@ -161,10 +161,10 @@ replace recq63 = .r if q63 == 999
 
 local q4l labels5
 local q5l labels3
-local q8l labels10
-local q20l labels26
-local q44l labels53
-local q62l labels6
+local q8l labels9
+local q20l labels25
+local q44l labels52
+local q62l labels87
 local q63l labels85
 
 foreach q in q4 q5 q8 q20 q44 q62 q63{
