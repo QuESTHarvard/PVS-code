@@ -165,7 +165,7 @@ local q8l labels10
 local q20l labels26
 local q44l labels53
 local q62l labels6
-local q63l labels87
+local q63l labels85
 
 foreach q in q4 q5 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
