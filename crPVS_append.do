@@ -372,7 +372,7 @@ replace q19_other = subinstr(q19_other,`"""',  "", .)
 replace q43_other = subinstr(q43_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 
-foreach i in 2 3 4 5 7 9 10 11 12 13 14 15 16 {
+foreach i in 2 3 4 5 7 9 10 11 12 13 14 15 16 17 {
 
  preserve
  keep if country == `i'
