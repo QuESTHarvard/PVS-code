@@ -183,7 +183,7 @@ recode q23_q24 (997 = 996) if q24 == 996
 * Generate new var for insurance in ZA since question asked differently
 gen q6_za = q6 if country == 9
 replace q6 = .a if country == 9
-
+recode q6_za (. = .a) if country != 9
 *------------------------------------------------------------------------------*
 
 *NOTE: May update and remove this code in the future, as it could be recoded in
