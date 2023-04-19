@@ -3,7 +3,7 @@
 * C.Arsenault
 
 global user "/Users/catherine.arsenault/Dropbox"
-global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country/02 recoded data"
+global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country (shared)"
 global analysis "SPH Kruk Active Projects/Vaccine hesitancy/Analyses/Paper 7 vaccination/Results"
 
 clear all
@@ -20,16 +20,19 @@ replace c = "Argentina" if country==16
 
 * COVID vaccination: 2+ or 3+ doses and continuous number of doses
 	recode q14 (0/1=0) (2/4=1) if c=="Ethiopia" | c=="Kenya" | c=="SouthAfrica", gen(fullvax2dose)
-	recode q14 (0/2=0) (3/4=1) if country ==2 | country==7 | country==10 | country==12 | ///
+	recode q14 (0/2=0) (3/4=1) if country ==2 | country==4 | country==7 | country==10 | country==12 | ///
 								  country ==13 | country ==14 | country ==15  | country ==16, gen(fullvax3dose)
-								  
-	recode q14_la (0/2=0) (3/4=1) if country ==11, gen(fullvax3d_la)			
-			  
+	recode q14_la (0/2=0) (3/4=1) if country ==11, gen(fullvax3d_la)					  
 	egen fullvax = rowmax(fullvax2d fullvax3d* )	
-
-	recode q14 (1/4=1), gen(onedose)
-	replace onedose=. if country==2 | country==4 | country==7 | country>9
 	
+	recode q14 (1/4=1), gen(onedose)
+	replace onedose=. if country==2 | country==4 | country==7 | country>9 // only in SSA
+	gen nb_doses=q14
+	
+	recode q14 (0/1=0) (2/4=1) , gen(twodoses)
+	recode q14_la (0/1=0) (2/4=1), gen(twodosesla)
+	replace twodoses= twodosesla if twodoses==.a 
+	drop twodosesla
 * Health system variables
 	recode visits_cat (1/2=1), gen(anyvisit)
 	// use the last facility rating if respondent has no usual source	
@@ -45,9 +48,7 @@ replace c = "Argentina" if country==16
 	*replace usual_type_own = last_type_own if usual_type_own==. | usual_type_own==.a  
 	recode usual_type_own (0=1) (1/2=0), gen(usual_public_fac)
 	replace usual_public_fac= 1 if country==10 & usual_type_own==2 // incl. mutuales as public in Uruguay
- 	
-	recode system_reform (1/2=0) (3=1), gen(workswell)
-
+	
 * Demographics
 	recode age_cat (0/2=0) (3/6=1), gen(age2)
 	lab def age2  1"18-49" 2"50+"
