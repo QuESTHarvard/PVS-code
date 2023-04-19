@@ -89,7 +89,7 @@ recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
 recode q6_za q37_za (. = .a) if country != 9
-recode q6_la q14_la q15_la q18a_la q19_q20a_la q18b_la q19_q20b_la ///		
+recode q6_la q14_la q15_la q18a_la q19_q20a_la q18b_la q19_q20b_la q62a_la ///		
 		(. = .a) if country != 11
 recode q14 q15 (. = .a) if country == 11 
 recode q18 q20 q64 q65 (. = .a) if country == 11 
@@ -134,6 +134,7 @@ lab def covid_vacc_la .a "NA" , modify
 lab def q20_label .a "NA" .r "Refused", modify
 lab def q44_label .a "NA" .r "Refused", modify
 lab def q62_label .a "NA" .r "Refused", modify
+lab def q62a_la_label .a "NA" .r "Refused", modify
 lab def q63_label .a "NA" .r "Refused" .d "Don't know", modify
 lab def labels16 .a "NA" .r "Refused", modify
 lab def labels24 .a "NA" .r "Refused", modify

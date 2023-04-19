@@ -170,8 +170,6 @@ local q5l labels3
 local q8l labels9
 local q20l labels25
 local q44l labels52
-local q62l labels87
-local q62_ukl labels87
 local q63l labels85
 
 foreach q in q4 q5 q8 q20 q44 q63{
@@ -206,7 +204,7 @@ label define q20_label .a "NA" .r "Refused" , modify
 label define q44_label .a "NA" .r "Refused" , modify
 label define q62_label .a "NA" .r "Refused" , modify
 label define q63_label .a "NA" .r "Refused" , modify
-label define q62_uk_label .a "NA" .r "Refused" , modify
+label define labels87 .a "NA" .r "Refused" , modify
 
 *****************************
 

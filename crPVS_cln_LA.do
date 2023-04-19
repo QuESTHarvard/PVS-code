@@ -234,7 +234,7 @@ replace recq63 = .d if q63== .d
 
 * Q6/Q7 - LA specific
 recode q6_la (1 = 11001 "LA: Additional private insurance") (2 = 11002 "LA: Only public insurance") (99 = .r "Refused"), gen(q7) label(q7_label)
-recode bd1102b (1 = 11001 "LA: Lao-Tai") (2 = 11002 "LA: Mon-Khmer") (3 = 11003 "LA: Hmong-Mien") (4 = 11004 "LA: Chinese-Tibetan") (5 = 11005 "LA: Other"), gen(q62a_la) label(ethnicity)
+recode bd1102b (1 = 11001 "LA: Lao-Tai") (2 = 11002 "LA: Mon-Khmer") (3 = 11003 "LA: Hmong-Mien") (4 = 11004 "LA: Chinese-Tibetan") (5 = 11005 "LA: Other"), gen(q62a_la) label(q62a_la_label)
 
 label define language 11001 "LA: Lao" 11002 "LA: Khmou" 11003 "LA: Hmong", add
 lab val reclanguage language
@@ -371,7 +371,7 @@ recode q15_la (. = .a) if q14_la != 1
 *q19-22
 recode q19_q20a_la q18b_la (.=.r) if q18a_la == .r // refused to answer this sequence of questions
 recode q19_q20a_la q18b_la q19_q20b_la q21 q22 (. = .a) if q18a_la == 2 // no usual source of care
-recode q18b_la q19_q20b_la (. = .a) if inrange(q19_q20a_la,1,4) | q19_q20a_la == 6  // questions about a second usual source of care were only asked if the first usual source of care was a pharmacy, traditional healer, or other
+recode q18b_la q19_q20b_la (. = .a) if inrange(q19_q20a_la,1,4) | q19_q20a_la == 6 | q19_q20a_la  == .r // questions about a second usual source of care were only asked if the first usual source of care was a pharmacy, traditional healer, or other
 
 recode q21 q22 q19_q20b_la (. = .a) if q18b_la == 2 // no usual source of care other than pharmacy or traditional healer 
 recode q21 q22 q19_q20b_la (. = .a) if q18a_la==.r | q18b_la == .r // refused to answer about usual source of care, so not eligible for this sequence of questions 
