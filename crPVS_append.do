@@ -67,15 +67,6 @@ qui do `label6'
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom", modify
 
-* Kenya/Ethiopia variables 
-ren q19 q19_et_in_ke_za
-lab var q19_et_in_ke_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
-ren q43 q43_et_in_ke_za_la
-lab var q43_et_in_ke_za_la "Q43. ET/IN/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
-* NOTE: Q43 also asked like this in Laos
-ren q56 q56_et_in_ke_za 
-lab var q56_et_in_ke_za "Q56. ET/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
-
 * Mode
 recode mode (3 = 1) (4 = 3)
 lab def mode 1 "CATI" 2 "F2F" 3 "CAWI", replace

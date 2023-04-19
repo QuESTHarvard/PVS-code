@@ -484,9 +484,11 @@ ren (q46_min q47_min) (q46 q47)
 order q*, sequential
 order q*, after(interviewer_id) 
 
-* Drop other unecessary variables 
-*drop intlength qc_short
 
+* Country-specific vars for append 
+ren q19 q19_et_in_ke_za
+ren q43 q43_et_in_ke_za_la
+ren q56 q56_et_in_ke_za 
 
 *4/13: dropping interviewer language for now until we're able to clean and recode:
 
@@ -519,7 +521,7 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19 "Q19. Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q19_et_in_ke_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
 lab var q19_other "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q20_other "Q20. Other"
@@ -551,7 +553,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43 "Q43. Last healthcare visit in a public, private, or NGO/faith-based facility?"
+lab var q43_et_in_ke_za_la "Q43. ET/IN/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
@@ -581,7 +583,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56 "Q56. How would you rate the quality of the NGO or faith-based healthcare?"
+lab var q56_et_in_ke_za "Q56. ET/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -595,9 +597,20 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 *------------------------------------------------------------------------------*
 
+* Other specify recode 
+
+foreach i in 3 4 5 9 {
+
+ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+ 
+}	
+
+*------------------------------------------------------------------------------*
+
 * Save data
 
 save "$data_mc/02 recoded data/pvs_et_in_ke_za.dta", replace
-
 
 *------------------------------------------------------------------------------*

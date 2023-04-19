@@ -547,6 +547,9 @@ drop q2 q3 q4 q5 q6_la q8 q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 q45 q30 
 
 ren rec* *
 
+* For multi-country data
+ren q43 q43_et_in_ke_za_la
+
 
 * Label variables 
 
@@ -602,7 +605,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43 "Q43. Last healthcare visit in a public, private, or NGO/faith-based facility?"
+lab var q43_et_in_ke_za_la "Q43. ET/IN/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
 *lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
@@ -648,65 +651,19 @@ lab var q63 "Q63. Total monthly household income"
 
 order respondent_serial respondent_id country language date int_length interviewer_id mode weight q1 q2 q3 q4 q5 q6_la q7 q8 q9 q10 q11 q12 q13 q14_la q15_la q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43 q44 q44_other q45 q45_other q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q62a_la q62a_other_la q63 
 
+*------------------------------------------------------------------------------*
+
+* Other specify recode 
+
+ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_11.xlsm",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+ 
+*------------------------------------------------------------------------------*
+
+* Save data 
+
 save "$data_mc/02 recoded data/pvs_la.dta", replace
 save "$data/Laos/02 recoded data/pvs_harmonized_la.dta", replace
 *save "J:\HEHS\HE\QuEST Laos\Data\Lao PVS\Clean data\Harmonized version\pvs_laos_harmonized.dta", replace 
-
-
-/*
-*------------------------------------------------------------------------------*
-
-* Missing data check 
-
-* Below I summarize NA (.a), Don't know (.d), Refused (.r) and true Missing (.) 
-* across the numeric variables(only questions) in the dataset by country
-
-global all_dk 	"q23 q25_a q25_b q27 q28_a q28_b q30 q31 q32 q33 q34 q35 q36 q38 q50_a q50_b q50_c q50_d q63"
-global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q63"
-gl dq_output	"$output/dq_output_la.xlsx"
-   
-* Count number of NA, Don't know, and refused across the row 
-ipaanycount $all_num, gen(na_count) numval(.a)
-ipaanycount $all_dk, gen(dk_count) numval(.d)
-ipaanycount $all_num, gen(rf_count) numval(.r)
-
-* Count of total true missing 
-egen all_missing_count = rowmiss($all_num)
-gen missing_count = all_missing_count  - (na_count + dk_count + rf_count)
-
-
-* Denominator for percent of NA and Refused 
-egen nonmissing_count = rownonmiss($all_num)
-gen total_miss = all_missing_count + nonmissing_count
-
-* Denominator for percent of Don't know 
-egen dk_nonmiss_count = rownonmiss($all_dk) 
-egen dk_miss_count = rowmiss($all_dk) 
-gen total_dk = dk_nonmiss_count + dk_miss_count 
-
-
-preserve
-
-collapse (sum) na_count dk_count rf_count missing_count total_miss total_dk, by(country)
-gen na_perc = na_count/total_miss
-gen dk_perc = dk_count/total_dk
-gen rf_perc = rf_count/total_miss
-gen miss_perc = missing_count/total_miss 
-lab var na_perc "NA (%)" 
-lab var dk_perc "Don't know (%)"
-lab var rf_perc "Refused (%)"
-lab var miss_perc "Missing (%)"
-export exc country na_perc dk_perc rf_perc miss_perc using "$dq_output", sh(missing, replace) first(varl)
-
-restore 
-
-* EC note: reviewing which variables have unexplained missings:
-foreach var in q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18a_la q19_q20a_la q18b_la q19_q20b_la  q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43 q44 q45 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q63 {
-	egen `var'_missing =  total(`var'==.)
-}
-
-tab1 *_missing
-drop *_missing
-
-* EC note: the remaining unexplained missings almost all have to do with the randomization error (affecting 11 observations for q23, q24, q25_b, q26, q27, q28a, q28b, and q29). I'm not sure how to explain the unexplained missings for q7 and q16, but there are very few of them (between 1 and 3 per variable).
 
