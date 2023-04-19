@@ -646,11 +646,9 @@ order q*, after(language)
 
 *------------------------------------------------------------------------------*
 * Label variables
-* Mia added
 lab var country "Country"
 lab var date "Date of interview"
 lab var respondent_id "Respondent ID"
-*
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
