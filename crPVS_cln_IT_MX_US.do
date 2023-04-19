@@ -1102,6 +1102,12 @@ lab var q66 "Q66. Which political party did you vote for in the last election?"
 
 *------------------------------------------------------------------------------*
 
+* Other, specify data recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+
 foreach i in 12 13 14 {
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///

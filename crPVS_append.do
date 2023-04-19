@@ -174,15 +174,6 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded 
 
 
-**** Other Specify Recode ****
-
-* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
-* This command requires an input file that lists all the variables to be recoded and their new values
-* The command in data quality checks below extracts other, specify values 
-
-
-*All (Laos and Argentina pending)
-
 gen q7_other_original = q7_other
 label var q7_other_original "Q7_other. Other type of health insurance?"
 
@@ -221,33 +212,6 @@ label var q62_other_original "Q62. Other"
 
 gen q62b_other_us_original = q62b_other_us
 label var q62b_other_us_original "Q62B. US only: Other"	
-
-
-*Remove "" from responses for macros to work
-replace q7_other = subinstr(q7_other,`"""',  "", .)
-replace q13e_other_co_pe_uy_ar = subinstr(q13e_other_co_pe_uy_ar,`"""',  "", .)
-replace q19_other = subinstr(q19_other,`"""',  "", .)
-*replace q19_q20a_other = subinstr(q19_q20a_other,`"""',  "", .)
-*replace q19_q20b_other = subinstr(q19_q20b_other,`"""',  "", .)
-replace q20_other = subinstr(q20_other,`"""',  "", .)
-replace q21_other = subinstr(q21_other,`"""',  "", .)
-replace q42_other = subinstr(q42_other,`"""',  "", .)
-replace q43_other = subinstr(q43_other,`"""',  "", .)
-replace q44_other = subinstr(q44_other,`"""',  "", .)
-replace q45_other = subinstr(q45_other,`"""',  "", .)
-replace q62_other = subinstr(q62_other,`"""',  "", .)
-replace q62b_other_us = subinstr(q62b_other_us,`"""',  "", .)
-
-**Numbers correspond to the value labels for each country.
-gl id 			"respondent_id"	
-
-foreach i in 2 3 4 5 7 9 10 11 12 13 14 15 16 17 {
-
-ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
-	sheet(other_specify_recode)							///	
-	id(respondent_id)	
- 
-}	
 
 order q*, sequential
 order respondent_serial respondent_id mode country language date ///

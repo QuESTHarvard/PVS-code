@@ -580,6 +580,10 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 *------------------------------------------------------------------------------*
 
 * Other specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
 
 foreach i in 2 7 10 {
 

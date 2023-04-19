@@ -540,6 +540,20 @@ lab var q63 "Q63. Total monthly household income"
 lab var q66 "Q66. Which political party did you vote for in the last election?"
 
 *------------------------------------------------------------------------------*
+
+* Other, specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+
+ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_15.xlsm",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+
+
+*------------------------------------------------------------------------------*
+
 * Save data
 
 save "$data_mc/02 recoded data/pvs_kr.dta", replace
