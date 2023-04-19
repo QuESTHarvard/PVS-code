@@ -1,3 +1,8 @@
+
+* Analysis: Health system quality and COVID vaccination in 14 countries
+* Created by C.Arsenault, April 2023
+
+********************************************************************************
 global user "/Users/catherine.arsenault/Dropbox"
 global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country/02 recoded data"
 global analysis "SPH Kruk Active Projects/Vaccine hesitancy/Analyses/Paper 7 vaccination/Results"
@@ -53,8 +58,7 @@ foreach x in Argentina Colombia Korea  Uruguay Italy {
 				high_income female urban  if c=="`x'", vce(robust)
 				
 	putexcel (A15) = etable
-	}
-	
+	}	
 import excel using "$user/$analysis/country-specific regressions.xlsx", sheet(Ethiopia) firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="Ethiopia"
@@ -114,8 +118,7 @@ foreach x in  Argentina Colombia Korea  Uruguay Italy   {
 	export excel using "$user/$analysis/supp table 3.xlsx", sheet(Sheet1) firstrow(variable) replace 
 	
 ********************************************************************************
-* GRAPHS
-* FIGURE 2
+* GRAPHS FIGURE 2
 	twoway (rspike UCL LCL co if A=="usual_source", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="usual_source", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
@@ -149,7 +152,7 @@ foreach x in  Argentina Colombia Korea  Uruguay Italy   {
 	 
 	graph export "$user/$analysis/unmet_need.pdf", replace 
 
-* FIGURE 3
+* GRAPHS FIGURE 3
 	twoway (rspike UCL LCL co if A=="usual_public_fac", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="usual_public_fac", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
@@ -183,45 +186,44 @@ foreach x in  Argentina Colombia Korea  Uruguay Italy   {
 	 
 	graph export "$user/$analysis/discrim.pdf", replace 
 	
-	
 ********************************************************************************
 * Check for collinearity
 foreach x in  Ethiopia India Kenya LaoPDR Mexico Peru SouthAfrica USA  {			
-				logistic fullvax usual_source  preventive unmet_need ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban minority if c=="`x'", vce(robust) 
-				
-				collin fullvax usual_source preventive unmet_need age2 ///
-				health_chronic ever_covid post_seconda high_income female urban  if c=="`x'" & e(sample)==1
+					logistic fullvax usual_source  preventive unmet_need ///
+					age2 health_chronic ever_covid post_secondary ///
+					high_income female urban minority if c=="`x'", vce(robust) 
+					
+					collin fullvax usual_source preventive unmet_need age2 ///
+					health_chronic ever_covid post_seconda high_income female urban  if c=="`x'" & e(sample)==1
 
-				logistic fullvax usual_public_fac vgusual_quality discrim  ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban  minority if c=="`x'", vce(robust)
-				
-				collin fullvax usual_public_fac vgusual_quality discrim ///
-				health_chronic ever_covid post_seconda high_income female urban  if c=="`x'" & e(sample)==1
-	}
+					logistic fullvax usual_public_fac vgusual_quality discrim  ///
+					age2 health_chronic ever_covid post_secondary ///
+					high_income female urban  minority if c=="`x'", vce(robust)
+					
+					collin fullvax usual_public_fac vgusual_quality discrim ///
+					health_chronic ever_covid post_seconda high_income female urban  if c=="`x'" & e(sample)==1
+			}
 foreach x in Argentina Colombia Korea  Uruguay Italy {		
-				logistic fullvax usual_source preventive unmet_need ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban  if c=="`x'", vce(robust) 
-				
-				collin fullvax usual_source preventive unmet_need ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban if c=="`x'" & e(sample)==1
+					logistic fullvax usual_source preventive unmet_need ///
+					age2 health_chronic ever_covid post_secondary ///
+					high_income female urban  if c=="`x'", vce(robust) 
+					
+					collin fullvax usual_source preventive unmet_need ///
+					age2 health_chronic ever_covid post_secondary ///
+					high_income female urban if c=="`x'" & e(sample)==1
 
-				logistic fullvax usual_public_fac vgusual_quality discrim  ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban  if c=="`x'", vce(robust)
-				
-				collin fullvax usual_public_fac vgusual_quality discrim ///
-				health_chronic ever_covid post_seconda high_income ///
-				female urban  if c=="`x'" & e(sample)==1
-	}
+					logistic fullvax usual_public_fac vgusual_quality discrim  ///
+					age2 health_chronic ever_covid post_secondary ///
+					high_income female urban  if c=="`x'", vce(robust)
+					
+					collin fullvax usual_public_fac vgusual_quality discrim ///
+					health_chronic ever_covid post_seconda high_income ///
+					female urban  if c=="`x'" & e(sample)==1
+			}
 ********************************************************************************	
 * META ANALYSIS
 
-	* Model 1 - by income groups
+	* TABLE 2 Model 1 - by income groups
 	local row = 1
 	
 	putexcel set "$user/$analysis/pooled estimate metan.xlsx", sheet("Model1")  modify
@@ -237,7 +239,7 @@ foreach x in Argentina Colombia Korea  Uruguay Italy {
 	local row = `row' + 9
 	}
 	
-	* Model 2 - by income groups
+	* TABLE 2 Model 2 - by income groups
 	local row = 1
 	
 	putexcel set "$user/$analysis/pooled estimate metan.xlsx", sheet("Model2")  modify
@@ -253,7 +255,7 @@ foreach x in Argentina Colombia Korea  Uruguay Italy {
 	local row = `row' + 9
 	}
 
-	* Model 1 - by regional groups
+	* SUPPLEMENTAL MATERIALS Model 1 - by regional groups
 	local row = 1
 	
 	putexcel set "$user/$analysis/pooled estimate metan.xlsx", sheet("Model1reg")  modify
@@ -269,7 +271,7 @@ foreach x in Argentina Colombia Korea  Uruguay Italy {
 	local row = `row' + 9
 	}
 	
-	* Model 2 - by regional groups
+	* SUPPLEMENTAL MATERIALS Model 2 - by regional groups
 	local row = 1
 	
 	putexcel set "$user/$analysis/pooled estimate metan.xlsx", sheet("Model2reg")  modify
@@ -286,6 +288,7 @@ foreach x in Argentina Colombia Korea  Uruguay Italy {
 	}
 ********************************************************************************
 *SENSITIVITY ANALYSIS at least 1 dose in low-supply countries
+* SUPPLEMENTAL MATERIALS 
 
 	u "$user/$analysis/pvs_vacc_analysis.dta", clear
 	
