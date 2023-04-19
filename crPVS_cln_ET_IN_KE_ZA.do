@@ -23,7 +23,7 @@ set more off
 
 * Import raw data 
 *As of 4/13 all country dataset for ET,KE,ZA,IN/KE/ZA
-u "$data_mc/01 raw data/PVS_all countries_weighted[10].dta"
+u "$data_mc/01 raw data/PVS_all countries_weighted_4-18-2023.dta"
 
 merge 1:1 ECS_ID using "$data_mc/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
 

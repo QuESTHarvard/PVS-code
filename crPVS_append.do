@@ -237,7 +237,7 @@ replace q62b_other_us = subinstr(q62b_other_us,`"""',  "", .)
 **Numbers correspond to the value labels for each country.
 gl id 			"respondent_id"	
 
-foreach i in 2 3 4 5 7 9 10 11 12 13 14 15 16 {
+foreach i in 2 3 4 5 7 9 10 11 12 13 14 15 16 17 {
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
 	sheet(other_specify_recode)							///	
