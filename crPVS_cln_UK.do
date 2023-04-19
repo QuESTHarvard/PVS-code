@@ -671,23 +671,13 @@ label value q43a_uk q43a_uk_label
 
 
 *Remove "" from responses for macros to work
-replace q7_other = subinstr(q7_other,`"""',  "", .)
-replace q13e_other_co_pe_uy_ar = subinstr(q13e_other_co_pe_uy_ar,`"""',  "", .)
-replace q19_other = subinstr(q19_other,`"""',  "", .)
-*replace q19_q20a_other = subinstr(q19_q20a_other,`"""',  "", .)
-*replace q19_q20b_other = subinstr(q19_q20b_other,`"""',  "", .)
-replace q20_other = subinstr(q20_other,`"""',  "", .)
 replace q21_other = subinstr(q21_other,`"""',  "", .)
 replace q42_other = subinstr(q42_other,`"""',  "", .)
-replace q43_other = subinstr(q43_other,`"""',  "", .)
-replace q44_other = subinstr(q44_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
-replace q62_other = subinstr(q62_other,`"""',  "", .)
-replace q62b_other_us = subinstr(q62b_other_us,`"""',  "", .)
 
-ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_17.xlsm",	///
+ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_17 v2.xlsm",	///
 	sheet(other_specify_recode)							///	
-	id(respondent_id)	
+	id(respondent_serial)	
 
 
 *------------------------------------------------------------------------------*
