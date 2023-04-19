@@ -1,11 +1,11 @@
 * People's Voice Survey derived variable creation
-* Date of last update: Jan 25, 2023
-* Last updated by: N Kapoor
+* Date of last update: April 2023
+* N Kapoor, S Sabwa, M Yu
 
 /*
 
-This file loads creates derived variables for analysis from the multi-country 
-dataset created in the cr01_pvs_clin.do file. 
+	This file creates derived variables for analysis from the multi-country 
+	dataset after append in the crPVS_append.do file. 
 
 */
 

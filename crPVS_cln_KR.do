@@ -1,6 +1,22 @@
 * People's Voice Survey data cleaning for South Korea
 * Last updated: March 2023
-* Neena Kapoor, Hwa-Young Lee
+* N Kapor, HY Lee, S Sabwa, M Yu
+
+
+/*
+
+This file cleans KSTAT data for Korea.
+ 
+Cleaning includes:
+	- Recoding implausible values 
+	- Recoding skip patterns, refused, and don't know 
+	- Creating new variables (e.g., time variables), renaming variables, labeling variables 
+	- Correcting any values and value labels and their direction 
+	
+Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true missing 
+
+*/
+
 
 ************************************* South Korea ************************************
 

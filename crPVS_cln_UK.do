@@ -1,16 +1,19 @@
 * People's Voice Survey data cleaning for United Kingdom
-* Last updated: April 12 2023
-* N. Kapoor, S. Sabwa
+* Last updated: April 2023
+* N. Kapoor, S. Sabwa, M. Yu
 
 /*
-This file cleans SSRS data (US, Italy Mexico). 
+
+This file cleans SSRS data for UK.
+ 
 Cleaning includes:
+	- Recoding implausible values 
 	- Recoding skip patterns, refused, and don't know 
 	- Creating new variables (e.g., time variables), renaming variables, labeling variables 
 	- Correcting any values and value labels and their direction 
-	- Recoding outliers to missing 
 	
 Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true missing 
+
 */
 
 ******************************** United Kingdom ************************************

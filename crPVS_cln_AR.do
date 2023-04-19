@@ -1,6 +1,22 @@
-* People's Voice Survey data cleaning for Argentina
-* Last updated: March 14 2023
-* N. Kapoor, S. Sabwa
+* People's Voice Survey data cleaning for Argentina (province of Mendoza )
+* Last updated: March  2023
+* N. Kapoor, S. Sabwa, M. Yu
+
+
+/*
+
+This file cleans Ipsos data for Argentina (province of Mendoza).
+ 
+Cleaning includes:
+	- Recoding implausible values 
+	- Recoding skip patterns, refused, and don't know 
+	- Creating new variables (e.g., time variables), renaming variables, labeling variables 
+	- Correcting any values and value labels and their direction 
+	
+Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true missing 
+
+*/
+
 
 ************************************* Argentina ************************************
 

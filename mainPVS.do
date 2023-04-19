@@ -1,12 +1,17 @@
 * People's Voice Survey main code file 
-* Date of last update: February 2023
-* Last updated by: N Kapoor
+* Date of last update: April 2023
+* Last updated by: N Kapoor, S Sabwa, M Yu
 
 /* Purpose of code file: 
-	This file sets all macros and runs all cleaning and analysis files for the 
-	People's Voice Survey.
 	
-	Countries included: Colombia, Ethiopia, Kenya, Laos, Peru, South Africa, Uruguay
+	This file sets all macros and runs all data cleaning files for the 
+	People's Voice Survey. The files create a combined multi-country dataset for 
+	analysis. 
+	
+	Countries included: Ethiopia, India, Kenya, South Africa, Colombia, Peru, 
+	Uruguay, Italy, Mexico, United States, United Kingdom, Lao PDR, Rep. of Korea, 
+	Argentina (Mendoza province)
+	
 */
 
 * Setting up files and macros
@@ -52,16 +57,18 @@ ssc install extremes
 
 ************************************************
 
-* Initial data cleaning to create multi-country dataset 
-run "$github/crPVS_cln_all.do"
+* Clean each dataset separately 
+run "$github/crPVS_cln_ET_IN_KE_ZA.do"
+run "$github/crPVS_cln_CO_PE_UY.do"
 run "$github/crPVS_cln_LA.do"
-run "$github/crPVS_cln_KR.do"
 run "$github/crPVS_cln_IT_MX_US.do"
+run "$github/crPVS_cln_KR.do"
 run "$github/crPVS_cln_AR.do"
+run "$github/crPVS_cln_UK.do"
+
+* Append datasets 
+run "$github/crPVS_append.do"
 
 * Adding derived variables for analysis
 run "$github/crPVS_der.do"
-
-* Creating megatable 
-* run "$github/anPVS_mtbl.do"
 

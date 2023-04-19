@@ -1,5 +1,22 @@
+* People's Voice Survey data cleaning for Colombia, Peru, Uruguay  
+* Date of last update: April 2023
+* Last updated by: N Kapoor, S Sabwa, M Yu
 
-************************************* LAC **************************************
+/*
+
+This file cleans Ipsos data for Colombia, Uruguay, Peru. 
+
+Cleaning includes:
+	- Recoding implausible values 
+	- Recoding skip patterns, refused, and don't know 
+	- Creating new variables (e.g., time variables), renaming variables, labeling variables 
+	- Correcting any values and value labels and their direction 
+	
+Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true missing 
+
+*/
+
+*************************** Colombia, Peru, Uruguay ****************************
 
 clear all
 

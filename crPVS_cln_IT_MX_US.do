@@ -1,15 +1,16 @@
-* PVS cleaning for appending datasets
-* February 2023
-* File for Italy, Mexico and US
-* N. Kapoor, T. Lewis
+* PVS data cleaning for Italy, Mexico and US
+* April 2023
+* N. Kapoor, T. Lewis, S. Sabwa, M. Yu 
 
 /*
+
 This file cleans SSRS data (US, Italy Mexico). 
+
 Cleaning includes:
+	- Recoding implausible values 
 	- Recoding skip patterns, refused, and don't know 
 	- Creating new variables (e.g., time variables), renaming variables, labeling variables 
 	- Correcting any values and value labels and their direction 
-	- Recoding outliers to missing 
 	
 Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true missing 
 */

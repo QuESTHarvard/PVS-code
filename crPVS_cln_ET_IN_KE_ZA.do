@@ -1,6 +1,6 @@
-* People's Voice Survey data cleaning and appending
-* Date of last update: February 2023
-* Last updated by: N Kapoor
+* People's Voice Survey data cleaning for Ethiopia, India, Kenya and South Africa  
+* Date of last update: April 2023
+* Last updated by: N Kapoor, S Sabwa, M Yu
 
 /*
 This file cleans data by country and appends data into a multi-country dataset.
@@ -22,10 +22,8 @@ set more off
 *********************** ETHIOPIA, KENYA, SOUTH AFRICA, & INDIA ***********************
 
 * Import raw data 
-*As of 4/13 all country dataset for ET,KE,ZA,IN/KE/ZA
 u "$data_mc/01 raw data/PVS_all countries_weighted_4-18-2023.dta"
 
-*merge 1:1 ECS_ID using "$data_mc/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
 
 /*
 *Interviewer_Language is in 31 different variables - Mia to create loop here 
