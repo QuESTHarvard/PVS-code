@@ -1102,6 +1102,18 @@ lab var q66 "Q66. Which political party did you vote for in the last election?"
 
 *------------------------------------------------------------------------------*
 
+foreach i in 12 13 14 {
+
+ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+ 
+}	
+
+
+*------------------------------------------------------------------------------*
+
+
 * Save data
 
 save "$data_mc/02 recoded data/pvs_it_mx_us.dta", replace

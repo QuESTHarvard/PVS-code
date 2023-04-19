@@ -577,6 +577,21 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 * Note: Variables not in these data: PSU_ID Interviewer_Language Language, and others 
 
+*------------------------------------------------------------------------------*
+
+* Other specify recode 
+
+foreach i in 2 7 10 {
+
+ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+ 
+}	
+
+*------------------------------------------------------------------------------*
+
+
 save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
 
 *------------------------------------------------------------------------------*
