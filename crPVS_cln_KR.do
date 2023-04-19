@@ -442,7 +442,6 @@ order q*, after(language)
 
 *------------------------------------------------------------------------------*
 * Label variables 
-* Mia added
 lab var country "Country"
 lab var int_length "Interview length (in minutes)" 
 lab var date "Date of interview"
