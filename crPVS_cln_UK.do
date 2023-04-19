@@ -18,7 +18,9 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 
 ******************************** United Kingdom ************************************
 * Import data -confirm Path
-import spss using "$data/United Kingdom/01 raw data/HSPH Health Systems Survey_UK Final_04142023.sav", clear
+u "$data/United Kingdom/01 raw data/pvs_uk.dta", replace
+
+
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
