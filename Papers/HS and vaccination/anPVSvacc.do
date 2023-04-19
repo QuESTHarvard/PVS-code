@@ -6,8 +6,10 @@ clear all
 set more off
 
 cd "$user/$analysis/"
-u "$user/$analysis/pvs_vacc_analysis.dta", clear
 
+net install collin
+
+u "$user/$analysis/pvs_vacc_analysis.dta", clear
 ********************************************************************************
 * FIGURE 1 COVID DOSES
 ta nb_doses c  [aw=weight] , nofreq col
@@ -17,22 +19,16 @@ summtab, catvars(usual_source  preventive unmet_need anyvisit ///
 				 usual_public_fac vgusual_quality discrim  ///
 				 health_chronic ever_covid post_secondary high_income female urban minority) ///
 		         contvars(age ) by(country) mean meanrow catrow wts(weight) ///
-		         replace excel excelname(Table_1)  
-** For risk ratios:
-			quietly logit fullvax i.usual_source  preventive unmet_need ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban minority if c=="Kenya", vce(robust)
-				margins i.usual_source, atmeans post
-				nlcom _b[1.usual_source] / _b[0.usual_source]
+		         replace excel excelname(Table_1)  				
 ********************************************************************************
 * COUNTRY-SPECIFIC LOGISTIC REGRESSIONS
-foreach x in   Ethiopia Kenya LaoPDR Mexico Peru SouthAfrica USA  {
+foreach x in   Ethiopia India Kenya LaoPDR Mexico Peru SouthAfrica USA  {
 
 	putexcel set "$user/$analysis/country-specific regressions.xlsx", sheet("`x'")  modify
 			
 	logistic fullvax usual_source  preventive unmet_need ///
 				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban minority if c=="`x'", vce(robust)
+				high_income female urban minority if c=="`x'", vce(robust) // countries with the variable minority
 				
 	putexcel (A1) = etable	
 
@@ -48,7 +44,7 @@ foreach x in Argentina Colombia Korea  Uruguay Italy {
 			
 	logistic fullvax usual_source preventive unmet_need ///
 				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban  if c=="`x'", vce(robust)
+				high_income female urban  if c=="`x'", vce(robust) // countries without the variable minority
 				
 	putexcel (A1) = etable	
 
@@ -65,7 +61,7 @@ import excel using "$user/$analysis/country-specific regressions.xlsx", sheet(Et
 	gen model=2 in 13/24
 	save "$user/$analysis/graphs.dta", replace
 	
-foreach x in  Kenya LaoPDR Mexico Peru SouthAfrica USA  { 
+foreach x in  India Kenya LaoPDR Mexico Peru SouthAfrica USA  { 
 	import excel using  "$user/$analysis/country-specific regressions.xlsx", sheet("`x'") firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="`x'"
@@ -96,7 +92,7 @@ foreach x in  Argentina Colombia Korea  Uruguay Italy   {
 	replace A="post_secondary" if A=="post_secon~y"
 	
 * Income groups	
-	gen inc_group = 1 if country=="LaoPDR" | countr=="Kenya" | count=="Ethiopia"
+	gen inc_group = 1 if country=="LaoPDR" | countr=="Kenya" | count=="Ethiopia" | country=="India"
 	replace inc_group = 2 if count=="SouthAfrica" | count=="Peru" | count=="Mexico" | ///
 						     count=="Argentina" | count=="Colombia"
 	replace inc_group = 3 if count=="Uruguay" | count=="USA" | count=="Korea" | count=="Italy" | count=="UK"
@@ -123,8 +119,8 @@ foreach x in  Argentina Colombia Korea  Uruguay Italy   {
 	twoway (rspike UCL LCL co if A=="usual_source", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="usual_source", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" ///
-				   9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) xtitle("") ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"USA" 13"URY", labsize(vsmall)) xtitle("") ///
 			ylabel(0.20(0.2)3.2, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Has a usual source of care", size(medium))
@@ -134,8 +130,8 @@ foreach x in  Argentina Colombia Korea  Uruguay Italy   {
 		twoway (rspike UCL LCL co if A=="preventive", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="preventive", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" ///
-				   9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) xtitle("") ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"USA" 13"URY", labsize(vsmall)) xtitle("") ///
 			ylabel(0.2(0.2)3.2, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Received at least 3 other preventive" "health care services in last year", size(medi))
@@ -145,22 +141,20 @@ foreach x in  Argentina Colombia Korea  Uruguay Italy   {
 	twoway (rspike UCL LCL co if A=="unmet_need", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="unmet_need", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" ///
-				   9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) xtitle("") ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"USA" 13"URY", labsize(vsmall)) xtitle("") ///
 			ylabel(0.2(0.2)3.2, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Had unmet health care needs in last year", size(medi))
 	 
 	graph export "$user/$analysis/unmet_need.pdf", replace 
 
-
-	
 * FIGURE 3
 	twoway (rspike UCL LCL co if A=="usual_public_fac", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="usual_public_fac", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" ///
-				   9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) xtitle("") ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"USA" 13"URY", labsize(vsmall)) xtitle("") ///
 			ylabel(0.2(0.2)3, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Usual facility is public or government-owned", size(med))
@@ -170,8 +164,8 @@ foreach x in  Argentina Colombia Korea  Uruguay Italy   {
 	twoway (rspike UCL LCL co if A=="vgusual_quality", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="vgusual_quality", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" ///
-				   9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) xtitle("") ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"USA" 13"URY", labsize(vsmall)) xtitle("") ///
 			ylabel(0.2(0.2)3, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Rates quality of usual provider as" "very good or excellent" , size(medi))
@@ -181,13 +175,49 @@ foreach x in  Argentina Colombia Korea  Uruguay Italy   {
 	twoway (rspike UCL LCL co if A=="discrim", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="discrim", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"ITA" 5"KEN" 6"KOR" 7"LAO" 8"MEX" ///
-				   9"PER" 10"ZAF" 11"USA" 12"URY", labsize(vsmall)) xtitle("") ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"USA" 13"URY", labsize(vsmall)) xtitle("") ///
 			ylabel(0.2(0.2)3, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Experienced discrimination in the" "health system in the last year", size(med))
 	 
 	graph export "$user/$analysis/discrim.pdf", replace 
+	
+	
+********************************************************************************
+* Check for collinearity
+foreach x in  Ethiopia India Kenya LaoPDR Mexico Peru SouthAfrica USA  {			
+				logistic fullvax usual_source  preventive unmet_need ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban minority if c=="`x'", vce(robust) 
+				
+				collin fullvax usual_source preventive unmet_need age2 ///
+				health_chronic ever_covid post_seconda high_income female urban  if c=="`x'" & e(sample)==1
+
+				logistic fullvax usual_public_fac vgusual_quality discrim  ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban  minority if c=="`x'", vce(robust)
+				
+				collin fullvax usual_public_fac vgusual_quality discrim ///
+				health_chronic ever_covid post_seconda high_income female urban  if c=="`x'" & e(sample)==1
+	}
+foreach x in Argentina Colombia Korea  Uruguay Italy {		
+				logistic fullvax usual_source preventive unmet_need ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban  if c=="`x'", vce(robust) 
+				
+				collin fullvax usual_source preventive unmet_need ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban if c=="`x'" & e(sample)==1
+
+				logistic fullvax usual_public_fac vgusual_quality discrim  ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban  if c=="`x'", vce(robust)
+				
+				collin fullvax usual_public_fac vgusual_quality discrim ///
+				health_chronic ever_covid post_seconda high_income ///
+				female urban  if c=="`x'" & e(sample)==1
+	}
 ********************************************************************************	
 * META ANALYSIS
 
