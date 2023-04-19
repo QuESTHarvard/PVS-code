@@ -3,10 +3,10 @@
 * Last updated by: N Kapoor, S Sabwa, M Yu
 
 /*
-This file cleans data by country and appends data into a multi-country dataset.
+
+This file cleans Ipsos data for Ethiopia, India, Kenya and South Africa. 
 
 Cleaning includes:
-	- Dropping any unusable records 
 	- Recoding outliers to missing 
 	- Recoding skip patterns, refused, and don't know 
 	- Creating new variables (e.g., time variables), renaming variables, labeling variables 

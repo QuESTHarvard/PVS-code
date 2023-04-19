@@ -13,6 +13,7 @@ Cleaning includes:
 	- Correcting any values and value labels and their direction 
 	
 Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true missing 
+
 */
 
 * Import data 
