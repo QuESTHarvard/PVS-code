@@ -30,8 +30,8 @@ merge 1:1 ECS_ID using "$data_mc/01 raw data/HARVARD_Main KE CATI and F2F_weight
 * Drop interviews that are short and could be low-quality 
 * Ipsos provided qc_short var that identifies short interviews that might be low-quality 
 * for Kenya data (dropped 165 interviews previously with QC_short, 197 with qc_short2)
-drop if QC_short == 2
-drop QC_short _merge  
+*drop if QC_short == 2
+*drop QC_short _merge  
 
 /*
 *Interviewer_Language is in 31 different variables - Mia to create loop here 
