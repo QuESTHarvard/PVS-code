@@ -121,15 +121,16 @@ recode q61 (. = 3) if ohsa4373_m == 3
 recode q61 (. = 4) if ohsa4373_m == 4
 recode q61 (. = 5) if ohsa4373_m == 5
 lab val q61 qlty_rate 
-
 ren ig4474 q62
 ren ig4474_oth q62_other
+*ren bd1102b q62a_la
+ren bd1102btext q62a_other_la
 ren ig4475 q63
 ren wgt weight_educ
 
 * NOTE: Education, urban/rural, and native language were asked twice to measure 
 *		if people were alert 
-*		bd1104A is urban/rural, bd1108 is education, bd1102b is native language
+*		bd1104A is urban/rural, bd1108 is education, bd1102b is ethnicity
 
 
 *------------------------------------------------------------------------------*
@@ -156,7 +157,7 @@ format date %tdD_M_CY
 drop if consent == .
 
 drop cal_int SubmissionDate today deviceid o_lang new_lang consent ///
-hs1211a bd1102b bd1102btext bd1105A hs1211b usc2120c1 usc2120d1 usc2120e1 up2223 /// 
+hs1211a bd1105A hs1211b usc2120c1 usc2120d1 usc2120e1 up2223 /// 
 up2225b up2227 up2228 sc2340A sc2340A_oth ue2443a1 ue2443a3 ue2443b1 ue24431 ////
 ue2448b1 ue2448b10 ue2448b11 ue2448b12 ue2448b2 ue2448b3 ue2448b4 ue2448b5 ///
 ue2448b6 ue2448b7 ue2448b8 ue2448b9 ue2448b99 ue2448b_oth ue3258b ue3258b1 /// 
@@ -218,7 +219,10 @@ replace recq63 = .d if q63== .d
 
 * Q6/Q7 - LA specific
 recode q6_la (1 = 11001 "LA: Additional private insurance") (2 = 11002 "LA: Only public insurance") (99 = .r "Refused"), gen(q7) label(q7_label)
+recode bd1102b (1 = 11001 "LA: Lao-Tai") (2 = 11002 "LA: Mon-Khmer") (3 = 11003 "LA: Hmong-Mien") (4 = 11004 "LA: Chinese-Tibetan") (5 = 11005 "LA: Other"), gen(q62a_la) label(ethnicity)
 
+label define language 11001 "LA: Lao" 11002 "LA: Khmou" 11003 "LA: Hmong", add
+lab val reclanguage language
 
 local q4l place
 local q5l province
@@ -254,9 +258,14 @@ foreach q in q4 q5 q8 q44 q62 q63{
 }
 
 label define q8_label .r "Refused", add
-label define q44_label 11995 "LA: Other" .r "Refused", add
+label define q44_label 11995 "LA: Other" .a "NA" .r "Refused", add
 label define q62_label 11995 "LA: Other".r "Refused", add
 label define q63_label .r "Refused", add
+label define fac_owner .a "NA" .r "Refused", add 
+label define fac_choose .a "NA" .r "Refused", add
+label define fac_type1 .a "NA" .r "Refused", add
+label define place_type .a "NA" .r "Refused", add
+label define hsys_trend .r "Refused", add
 
 *------------------------------------------------------------------------------*
 
@@ -519,7 +528,7 @@ drop q2 q3 q4 q5 q6_la q8 q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 q45 q30 
 	 q32 q33 q34 q35 q36 q38 q39 q40 q44 q9 q10 q22 q48_a q48_b q48_c q48_d ///
 	 q48_f q48_g q48_h q48_i q54 q55 q56 q59 q60 q61 q48_e q48_j q50_a q50_b ///
 	 q50_c q50_d q16 q17 q51 q52 q53 q3 q14_la q15_la q24 q49 q57 language q62 q63 ///
-	 interviewerid q46_refused q47_refused
+	 interviewerid q46_refused q47_refused bd1102b
 
 ren rec* *
 
@@ -616,11 +625,13 @@ lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, op
 lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
 lab var q62 "Q62. Respondent's mother tongue or native language"
 lab var q62_other "Q62. Other"
+lab var q62a_la "Q62a. LA ONLY: What is your ethnicity?"
+lab var q62a_other_la "Q62a. LA only: Other"
 lab var q63 "Q63. Total monthly household income"
 *lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 *lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
-order respondent_id respondent_serial language interviewer_id weight q1 q2 q3 q4 q5 q6_la q7 q8 q9 q10 q11 q12 q13 q14_la q15_la q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43 q44 q44_other q45 q45_other q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q63 
+order respondent_serial respondent_id country language date int_length interviewer_id mode weight q1 q2 q3 q4 q5 q6_la q7 q8 q9 q10 q11 q12 q13 q14_la q15_la q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43 q44 q44_other q45 q45_other q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56 q57 q58 q59 q60 q61 q62 q62_other q62a_la q62a_other_la q63 
 
 save "$data_mc/02 recoded data/pvs_la.dta", replace
 save "$data/Laos/02 recoded data/pvs_harmonized_la.dta", replace
