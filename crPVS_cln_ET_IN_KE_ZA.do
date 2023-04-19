@@ -283,12 +283,11 @@ recode q19 recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r
 recode recq20 (. = .a) if q19 == 4 | q19 == .r
 
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != .d | q23 != .r | q23 != . | q23 == . 
-recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == .
+recode q24 (. = .a) if q23 != .d & q23 != .r 
+recode q25_a (. = .a) if q23 != 1
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r | q26 == .r 
-
+recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r
 
 * q31 & q32
 recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r 
@@ -494,7 +493,7 @@ order q*, sequential
 order q*, after(interviewer_id) 
 
 * Drop other unecessary variables 
-drop intlength qc_short
+drop intlength
 
 *4/13: dropping interviewer language for now until we're able to clean and recode:
 

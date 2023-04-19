@@ -119,7 +119,11 @@ ren Q4_14 q63
 ren Q4_13 q66_uk 
 
 ren weight weight_educ 
-ren PV27_LengthInMinutes int_length //4/18: Mia added.
+* 4/19: Mia added.
+gen int_length = PV27_LengthInSeconds / 60
+gen reclanguage = 17001
+lab def lang 17001 "UK: English" 
+lab values reclanguage lang
 
 generate double start_time = dofc(DataCollection_FinishTime)
 format start_time %tdD_M_CY
@@ -154,8 +158,6 @@ gen recq20 = reccountry*1000 + q20
 replace recq20 = .r if q20 == 999
 gen recq44 = reccountry*1000 + q44
 replace recq44 = .r if q44 == 999
-gen recq62_uk = reccountry*1000 + q62_uk
-replace recq62 = .r if q62_uk == 999
 gen recq63 = reccountry*1000 + q63
 replace recq63 = .r if q63 == 999
 
@@ -169,7 +171,7 @@ local q62l labels87
 local q62_ukl labels87
 local q63l labels85
 
-foreach q in q4 q5 q8 q20 q44 q62_uk q63{
+foreach q in q4 q5 q8 q20 q44 q63{
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -239,7 +241,7 @@ drop NUMOFCHILDREN Q1_7B* CHILD*AGE DataCollection_FinishTime DataCollection_Sta
 	 Q3_4B_1 Q3_4B_2 Q3_4B_3 Q3_4B_4 Q3_4_1 Q3_4_2 Q3_5_1 Q3_5_2 ///
      q46_min q46_hrs q47_min q47_hrs ///
 	 q46b_dys q46b_hrs q46b_mth q46b_wks start_time end_time strata ///
-	 PV27_DataCollectionDate PV27_LengthInSeconds CS_WorkingStatus KANTARDEVICE //4/18: Mia added
+	 PV27_DataCollectionDate PV27_LengthInSeconds CS_WorkingStatus KANTARDEVICE PV27_LengthInMinutes PV27_Mode //4/18: Mia added
 
 	 
 * FLAG:
@@ -253,6 +255,7 @@ drop NUMOFCHILDREN Q1_7B* CHILD*AGE DataCollection_FinishTime DataCollection_Sta
 * Generate variables 
 gen respondent_id = "UK" + string(respondent_serial)
 
+gen q2 = .a
 gen q28_a = .a 
 gen q56 = .a
 gen q62 = .a // asked differently 
@@ -332,7 +335,8 @@ drop visits_total
 *------------------------------------------------------------------------------*
 * 4/18 Mia add this
 list q1 if q1 < 18
-drop if q1 < 18
+
+recode q1 (0 = .r) 
 
 * q13 
 recode q13 (. = .a) if q12 == 2  | q12==.r
@@ -357,8 +361,9 @@ recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a
 recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r
 
 * q31 & q32
-recode q31 (. = .a) if q3 != 2 
-recode q32 (. = .a) if q3 != 2 
+* Mia added q1 == .r 
+recode q31 (. = .a) if q3 != 2 | q1 == .r 
+recode q32 (. = .a) if q3 != 2 | q1 == .r
 
 * q42
 recode q42 (. = .a) if q41 == 2 | q41 == .r
@@ -523,11 +528,11 @@ lab def labels69 .a "NA" .r "Refused" .d "Don't know",modify
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q7_uk q4 q5 q8 q20 q44 q62 q63 q11 q12 q13 q18 q25_a q26 q29 ///
-	 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q46a q46b_refused q6_uk ///
+drop q7_uk q4 q5 q8 q20 q44 q63 q11 q12 q13 q18 q25_a q26 q29 q6_uk ///
+	 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q46a q46b_refused ///
 	 q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q3 q14 q15 q24 q57 q62_uk
+	 q50_b q50_c q50_d q16 q17 q51 q52 q53 q3 q14 q15 q24 q57
 	 
 ren rec* *
 
@@ -642,8 +647,21 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 lab var q66_uk "Q66. Which political party did you vote for in the last election?"
 
 *------------------------------------------------------------------------------*
+* Mia added
+*Dropping the following value labels so the dataset won't get messed up when merging
+label copy labels23 q19a_uk_label
+label drop labels23  
+label value q19a_uk q19a_uk_label
+label copy labels24 q19b_uk_label
+label drop labels24  
+label value q19b_uk q19b_uk_label
+label copy labels50 q43a_uk_label
+label drop labels50   
+label value q43a_uk q43a_uk_label
+
+*------------------------------------------------------------------------------*
 
 * Save data
-
+compress
 save "$data_mc/02 recoded data/pvs_uk.dta", replace
  

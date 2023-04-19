@@ -354,7 +354,7 @@ recode q15_la (. = .a) if q14_la != 1
 * NOTE: ONLY ASKED TO PEOPLE WHO SAID 0 DOSES 
 
 *q19-22
-recode q19_q20a_la q18b_la (.=.r) if q18a_la==.r // refused to answer this sequence of questions
+recode q19_q20a_la q18b_la (.=.r) if q18a_la == .r // refused to answer this sequence of questions
 recode q19_q20a_la q18b_la q19_q20b_la q21 q22 (. = .a) if q18a_la == 2 // no usual source of care
 recode q18b_la q19_q20b_la (. = .a) if inrange(q19_q20a_la,1,4) | q19_q20a_la == 6  // questions about a second usual source of care were only asked if the first usual source of care was a pharmacy, traditional healer, or other
 
@@ -366,12 +366,11 @@ recode q21 q22 q19_q20b_la (. = .a) if q18a_la==.r | q18b_la == .r // refused to
 *		refused or did not answer the question.*/
 
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != . & q23 != .d & q23 != .r 
-recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == .
-recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == .r 
- 
-* No 0 for q24  
-recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == .r 
+recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != .
+recode q25_a (. = .a) if q23 != 1 & q23 != .
+* No 0 for q24  (option 1)
+recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == .r
+recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == .r
 recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a 
 
 * EC Note: We are missing 11 responses for q23, q24, q25_b, q26, q27, q28b, and q29 because people were randomized not to answer this section. (We meant to turn this off after the pilot, but made a mistake when we first started full data collection)
