@@ -25,7 +25,7 @@ set more off
 *As of 4/13 all country dataset for ET,KE,ZA,IN/KE/ZA
 u "$data_mc/01 raw data/PVS_all countries_weighted_4-18-2023.dta"
 
-merge 1:1 ECS_ID using "$data_mc/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
+*merge 1:1 ECS_ID using "$data_mc/01 raw data/HARVARD_Main KE CATI and F2F_weighted_171122.dta", keepusing(QC_short)
 
 * Drop interviews that are short and could be low-quality 
 * Ipsos provided qc_short var that identifies short interviews that might be low-quality 
@@ -494,7 +494,7 @@ order q*, sequential
 order q*, after(interviewer_id) 
 
 * Drop other unecessary variables 
-drop intlength qc_short
+*drop intlength qc_short
 
 *4/13: dropping interviewer language for now until we're able to clean and recode:
 
