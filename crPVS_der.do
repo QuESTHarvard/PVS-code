@@ -447,9 +447,9 @@ recode q19_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
-								  q19_it == 1 | inrange(q19_mx,1,5) | ///
+								  q19_it == 1 | inlist(q19_mx,3,4) | ///
 								  inlist(q20,12003,12004) | q19_kr == 1 | ///
-								  inlist(q19_ar,1,2,6,7) ///
+								  q19_ar == 1 ///
 								  | q19a_uk == 1 | q19b_uk == 1
 								  
 
@@ -465,8 +465,8 @@ recode usual_type_own (.a = 1) if q19_co_pe == 2 | q19_uy == 2 | ///
 * Mia: changed the values of q20 - shalom to review							  
 recode usual_type_own (.a = 2) if inlist(q19_uy,5,995) | ///
 								  q19_q20a_la == 9 | q19_q20b_la == 7 | ///
-								  q19_it == 4 | q19_mx == 7 | ///
-								  q20 == 12995 | q19_kr == 4 | q19_ar == 4 ///
+								  q19_it == 4 | inlist(q19_mx,1,2,5,7) | ///
+								  q20 == 12995 | q19_kr == 4 | inlist(q19_ar2,4,6,7) ///
 								  | q19a_uk == 3
 								  
 recode usual_type_own (.a = .r) if q19_co_pe == .r | q19_uy == .r | ///
@@ -530,9 +530,9 @@ recode q43_et_in_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 
 * Mia updated variable to q43_co_pe
 recode last_type_own (.a = 0) if q43_co_pe == 1 | q43_uy == 1 | ///
-								 q43_it == 1 | inrange(q43_mx,1,5) | ///
+								 q43_it == 1 | inlist(q43_mx,3,4) | ///
 								 inlist(q44,12003,12004,12005) | q43_kr == 1 | ///
-								 inlist(q43_ar,1,2,6,7) ///
+								 q43_ar == 1 ///
 								 | q43a_uk == 1 | q43b_uk == 1
 
 * Mia updated variable to q43_co_pe
@@ -541,8 +541,8 @@ recode last_type_own (.a = 1) if q43_co_pe == 2 | q43_uy == 2 | ///
 								 inlist(q44,12001,12002,12006,12007) | q43_kr == 3 | ///
 								 q43_ar == 3 | q43a_uk == 2 | q43b_uk == 2
  
-recode last_type_own (.a = 2) if inlist(q43_uy,5,995) | q43_it == 4 | q43_mx == 7 | ///
-								 q44 == 12995 | q43_kr == 4 | q43_ar ==4 ///
+recode last_type_own (.a = 2) if inlist(q43_uy,5,995) | q43_it == 4 | inlist(q43_mx,1,2,5,7) | ///
+								 q44 == 12995 | q43_kr == 4 | inlist(q43_ar,2,4,6,7) ///
 								 | q43a_uk == 3
 								 
 recode last_type_own (.a = .r) if q43_co_pe == .r | q43_uy == .r | ///
