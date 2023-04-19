@@ -91,7 +91,7 @@ recode q66 (. = .a) if country != 13 | country != 14 | country != 15
 recode q6_kr q7_kr q19_kr q43_kr (. = .a) if country != 15
 recode q7 (. = .a) if country == 15 
 * Add the line to recode q6 to .a if the country has country specific q6. This might have been done in each individual cleaning program but do it again here to be sure
-recode q6 (. = .a) if inlist(country,9,11,14,15) 
+recode q6 (. = .a) if inlist(country,9,11,14,15,17) 
 recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
 recode q37_in (. = .a) if country != 4
@@ -106,7 +106,8 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA: Afrikaans" ///
 				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
 				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
-				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish"
+				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish" ///
+				 17001 "UK: English"
 				 
 				 
 lab val language Language
@@ -128,9 +129,10 @@ lab def labels24 .a "NA" .r "Refused", modify
 lab def labels22 .a "NA" .r "Refused", modify
 lab def labels23 .a "NA" .r "Refused", modify
 lab def labels26 .a "NA" .r "Refused", modify
-lab def labels37 11 " AR: Delay to get a turn " .a "NA" .r "Refused", modify
+lab def labels37 11 "AR: Delay to get a turn " .a "NA" .r "Refused", modify
 lab def labels39 .a "NA" .r "Refused", modify
 lab def labels40 .a "NA" .r "Refused", modify
+lab def labels84 .a "NA" .r "Refused", modify
 lab def labels50 .r "Refused", modify
 lab def Q19 .a "NA" .r "Refused", modify
 lab def Q43 .a "NA" .r "Refused", modify

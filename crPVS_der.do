@@ -16,7 +16,7 @@ u "$data_mc/02 recoded data/pvs_appended.dta", clear
 *------------------------------------------------------------------------------*
 
 *** Mia changed this part ***
-* Mia: trim extreme values for for q27, q46 and q47; q46b for IT, MX, US and KR
+* Mia: trim extreme values for for q27, q46 and q47; q46b for IT, MX, US, KR and UK
 
 qui levelsof country, local(countrylev)
 
@@ -381,15 +381,14 @@ recode q4 (1 2 3 6 7 9 10 12 13 18 20 31 32 33 = 1 "Urban") (4 8 11 14 19 34 = 0
 
 
 * Mia: 4/5 moved 16002 to Urban as the codebook suggested
-recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 4015 4016 = 1 "Urban") ///
-          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 4017 = 0 "Rural") ///
+recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 4015 4016 17001 17002 17003 = 1 "Urban") ///
+          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 4017 17004 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
 gen insured = q6 
-recode insured (.a = 1) if country == 9 | country == 11 | country == 14 | country == 16
-* Note: All are insured in South Africa, Laos, and Italy, correct? 
-*Shalom: All people are insured in Mendoza as well
+recode insured (.a = 1) if country == 9 | country == 11 | country == 14 | country == 16 | country == 17
+* Note: All are insured in South Africa, Laos, taly, Mendoza and UK, correct? 
 * Mia: recode this with new q7 values
 recode insured (.a = 0) if inlist(q7,7014,13014) | inlist(q6_kr, 3)
 recode insured (.a = 1) if inlist(q7,2015,2016,2017,2018,2028,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005) | inlist(q6_kr, 1, 2)
@@ -409,8 +408,8 @@ recode q7 (1 3 17 18 10 11 12 19 20 22 29 31 33 34 35 36 39 40 42 = 0 Public) //
 *Mia: for now 2015 2016 coded to be Private
 
 * Mia: 4/5 added 16007 to NA
-recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 16001 16002 16003 16004 4023 4024 4025 4026 = 0 Public) ///
-		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 16005 4027 = 1 Private) /// 
+recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 16001 16002 16003 16004 4023 4024 4025 4026 17002 = 0 Public) ///
+		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 16005 4027 17001 = 1 Private) /// 
 		  (2995 9995 12995 13995 4995 = 2 Other) ///
 		  (.r = .r "Refused") (7014 13014 16007 .a = .a NA), gen(insur_type)
 
@@ -430,11 +429,11 @@ recode q8 (1 2 7 12 13 25 26 18 19 32 33 45 51 58 65 = 0 "None (or no formal edu
 		  
 */
 
-recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 14001 12001 15001 16001 16002 4039 = 0 "None (or no formal education)") ///
-          (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 4040 = 1 "Primary") ///
-		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 15003 15004 16004 4041 = 2 "Secondary") ///
+recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 14001 12001 15001 16001 16002 4039 17001 = 0 "None (or no formal education)") ///
+          (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 4040 17002 = 1 "Primary") ///
+		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 15003 15004 16004 4041 17003 = 2 "Secondary") ///
           (3005 5010 5011 9017 2029 2030 2031 7022 7023 7024 10036 10037 10038 11005 11006 14006 14007 ///
-		  13005 13006 13007 12005 12006 15005 15006 15007 16005 16006 16007 4042 4043 4044 = 3 "Post-secondary") ///
+		  13005 13006 13007 12005 12006 15005 15006 15007 16005 16006 16007 4042 4043 4044 17004 17005 = 3 "Post-secondary") ///
           (.r = .r "Refused"), gen(education)
 
 * usual_type_own
@@ -450,7 +449,8 @@ recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
 								  q19_it == 1 | inrange(q19_mx,1,5) | ///
 								  inlist(q20,12003,12004) | q19_kr == 1 | ///
-								  inlist(q19_ar,1,2,6,7)
+								  inlist(q19_ar,1,2,6,7) ///
+								  | q19a_uk == 1 | q19b_uk == 1
 								  
 
 * Mia: changed the values of q20 - shalom to review								  
@@ -459,19 +459,21 @@ recode usual_type_own (.a = 1) if q19_co_pe == 2 | q19_uy == 2 | ///
 								  inlist(q19_q20b_la,3,4,6) | ///
 								  q19_it == 2 | q19_it == 3 | q19_mx == 6 | ///
 								  inlist(q20,12001,12002,12005,12006) ///
-								  | q19_kr == 3 | q19_ar == 3
+								  | q19_kr == 3 | q19_ar == 3 ///
+								  | q19a_uk == 2 | q19b_uk == 2
 								  
 * Mia: changed the values of q20 - shalom to review							  
 recode usual_type_own (.a = 2) if inlist(q19_uy,5,995) | ///
 								  q19_q20a_la == 9 | q19_q20b_la == 7 | ///
 								  q19_it == 4 | q19_mx == 7 | ///
-								  q20 == 12995 | q19_kr == 4 | q19_ar == 4
+								  q20 == 12995 | q19_kr == 4 | q19_ar == 4 ///
+								  | q19a_uk == 3
 								  
 recode usual_type_own (.a = .r) if q19_co_pe == .r | q19_uy == .r | ///
 								   q19_q20a_la == .r | q19_q20b_la == .r | ///
 								   q19_it == .r | q19_mx == .r | ///
 								   (q20 == .r & country == 12) | q19_kr == .r | ///
-								   q19_ar == .r
+								   q19_ar == .r | q19a_uk == .r | q19b_uk == .r
 
 * NOTE: Check Laos
 								   
@@ -490,10 +492,10 @@ recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 * 4/13: Mia changed 9016 to 9023, 3023 to 3021 as the data got updated 
 recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
-			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 = 0 "Primary") /// 
+			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 17006 = 0 "Primary") /// 
 		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 ///
-		   12005 12006 15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
+		   12005 12006 15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 17007 17008 17009 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 12995 4995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if inlist(q19_q20a_la,2,4,6) | ///
@@ -530,21 +532,23 @@ recode q43_et_in_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 recode last_type_own (.a = 0) if q43_co_pe == 1 | q43_uy == 1 | ///
 								 q43_it == 1 | inrange(q43_mx,1,5) | ///
 								 inlist(q44,12003,12004,12005) | q43_kr == 1 | ///
-								 inlist(q43_ar,1,2,6,7)
+								 inlist(q43_ar,1,2,6,7) ///
+								 | q43a_uk == 1 | q43b_uk == 1
 
 * Mia updated variable to q43_co_pe
 recode last_type_own (.a = 1) if q43_co_pe == 2 | q43_uy == 2 | ///
 								 q43_it == 2 | q43_it == 3 | q43_mx == 6 | ///
 								 inlist(q44,12001,12002,12006,12007) | q43_kr == 3 | ///
-								 q43_ar == 3
+								 q43_ar == 3 | q43a_uk == 2 | q43b_uk == 2
  
 recode last_type_own (.a = 2) if inlist(q43_uy,5,995) | q43_it == 4 | q43_mx == 7 | ///
-								 q44 == 12995 | q43_kr == 4 | q43_ar ==4
+								 q44 == 12995 | q43_kr == 4 | q43_ar ==4 ///
+								 | q43a_uk == 3
 								 
 recode last_type_own (.a = .r) if q43_co_pe == .r | q43_uy == .r | ///
 								  q43_it == .r | q43_mx == .r | ///
 								  (q44 == .r & country == 12) | q43_kr == .r | ///
-								  q43_ar == .r
+								  q43_ar == .r | q43a_uk == .r | q43b_uk == .r
 
 
 * last_type_lvl 
@@ -563,10 +567,10 @@ recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 		   2080 2085 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
 		   14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
-		   15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074= 0 "Primary") /// 
+		   15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 17006 = 0 "Primary") /// 
 		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 13019 13020 ///
-		   12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
+		   12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 4075 4076 17007 17008 17009 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 11995 12995 13995 4995 .r = .r "Refused"), gen(last_type_lvl)
 
 		      
@@ -597,7 +601,7 @@ recode q62 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
 		   9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 = 0 "Majority group") /// 
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 		   
-*US:
+*US & MX:
 recode minority (.a = 1) if q62_mx == 1		   
 recode minority (.a = 1) if q62a_us == 1
 recode minority (.a = 1) if inlist(q62b_us,1,2,3,4,6,995)
@@ -607,6 +611,10 @@ recode minority (.a = 0) if (q62b_us == 5 & q62a_us == 2)
 
 *Mexico majority group (doesn't speak indigenous language)
 recode minority (.a = 0) if q62_mx == 0
+
+*UK
+recode minority (.a = 1) if inlist(q62_uk,1,2,3,5)
+recode minority (.a = 0) if q62_uk == 4	   
 
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
@@ -674,7 +682,7 @@ recode visits_tele (100 = .) if country == 17
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
 			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (16 = 8 "Argentina") (11 = 9 "Lao PDR") ///
-			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (12 = 13 "United States"), gen(country_reg)
+			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (17 = 13 "United Kingdom") (12 = 14 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
 
@@ -718,21 +726,20 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q7 q7_kr ///
+	  vignette_good minority income q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q6_uk q7 q7_kr ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
-	  q18a_la q18b_la q19_co q19_et_in_ke_za q19_it q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
+	  q18a_la q18b_la q19_co q19_et_in_ke_za q19_it  q19a_uk q19b_uk q19_other_uk q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
 	  q37_za q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_in_ke_za_la q43_it q43_kr q43_mx ///
-	   q43_uy q43_ar q43_other q44 ///
+	   q43_uy q43_ar q43_other q43a_uk q43b_uk q43_other_uk q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_in_ke_za q56_pe q56_uy q56a_mx q56b_mx q56a_ar q56b_ar q56c_ar q57 q58 q59 ///
-	  q60 q61 q62 q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66 q66a_us q66b_us
-	  
-	  
+	  q60 q61 q62 q62_uk q62_other q62_mx q62a_us q62b_us q62b_other_us q63 q64 q65 q66 q66a_us q66b_us q66_uk
+	   	  
 ***************************** Labeling variables ***************************** 
  
 lab var age "Exact respondent age or midpoint of age range (Q1/Q2)"
