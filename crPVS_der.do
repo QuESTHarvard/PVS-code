@@ -22,7 +22,7 @@ qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
 	
-	if inrange(`i',12,15) {
+	if inlist(`i',12,13, 14, 15, 17) {
 		extremes q46b country if country == `i', high
 	}
 
@@ -37,48 +37,60 @@ clonevar q46_original = q46
 clonevar q47_original = q47
 clonevar q46b_origial = q46b
 
-* all q27 seems fine
+* All q27 seems fine
 
 * q46
-replace q46 = . if q46 > 720 & q46 < . & country == 15
-*3 values recoded in South Korea
-***4/6: Mia added this, please double check the cut-off 
-replace q46 = . if q46 > 720 & q46 < . & country == 16
-*2 values recoded in Argentina (Mendoza)
-***4/11: Mia added this, please double check the cut-off 
-replace q46 = . if q46 > 720 & q46 < . & country == 4
-*2 values recoded in India
+* Colombia okay
+* Ethiopia - 3 values recoded 
+replace q46 = . if q46 > 600 & q46 < . & country == 3
+* India - 1 value recoded 
+replace q46 = . if q46 > 730 & q46 < . & country == 4 
+* Kenya - 1 value recoded 
+replace q46 = . if q46 > 720 & q46 < . & country == 5
+* Peru okay
+* South Africa - 2 values recoded 
+replace q46 = . if q46 > 600 & q46 < . & country == 9
+* Uruguay okay, Lao okay, US okay, Mexico okay, Italy okay 
+* Korea - 1 value recoded 
+replace q46 = . if q46 > 780 & q46 < . & country == 15
+* Mendoza - 2 values recoded
+replace q46 = . if q46 > 540 & q46 < . & country == 16
+* UK - 3 values recoded
+replace q46 = . if q46 > 780 & q46 < . & country == 17
 
 * q47
-replace q47 = . if q47 > 300 & q47 < . & country == 3
-*7 values recoded in Ethiopia
-replace q47 = . if q47 > 300 & q47 < . & country == 5
-*3 values recoded in Kenya
-replace q47 = . if q47 > 300 & q47 < . & country == 9
-*4 values recoded in South Africa
-replace q47 = . if q47 > 300 & q47 < . & country == 2
-*2 values recoded in Colombia
-replace q47 = . if q47 > 300 & q47 < . & country == 7
-*2 values recoded in Peru
-replace q47 = . if q47 > 300 & q47 < . & country == 10
-*10 values recoded in Uruguay
-replace q47 = . if q47 > 300 & q47 < . & country == 12
-*9 values recoded in US
-replace q47 = . if q47 > 300 & q47 < . & country == 14
-*7 values recoded in Italy
-replace q47 = . if q47 > 300 & q47 < . & country == 15
-*15 values recoded in South Korea
-***4/11: Mia added this, please double check the cut-off 
-replace q47 = . if q47 > 300 & q47 < . & country == 4
-*12 values recoded in India
+* Colombia okay 
+* Ethiopia - 6 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 3 
+* India - 8 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 4 
+* Kenya - 3 values recoded
+replace q47 = . if q47 > 600 & q47 < . & country == 5
+* Peru okay 
+* South Africa - 2 values recoded 
+replace q47 = . if q47 > 600 & q47 < . & country == 9 
+* Uruguay okay, Lao okay 
+* United States - 5 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 12
+* Mexico okay 
+* Italy - 2 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 14
+* Korea - 13 values recoded
+replace q47 = . if q47 >= 600 & q47 < . & country == 15
+* Mendoza okay 
+* UK - 1 value recoded
+replace q47 = . if q47 > 560 & q47 < . & country == 17 
 
 * q46b
+* US - 4 values recoded 
 replace q46b = . if q46b > 365 & q46b < . & country == 12
-*4 values recoded in US
+* Mexico okay 
+* Italy - 2 values recoded
 replace q46b = . if q46b > 365 & q46b < . & country == 14
-*2 values recoded in Italy
+* Korea - 1 value recoded
 replace q46b = . if q46b > 365 & q46b < . & country == 15
-*1 values recoded in South Korea
+* UK - 2 values recoded 
+replace q46b = . if q46b > 365 & q46b < . & country == 17
 
 *****************************
 
@@ -475,10 +487,11 @@ recode q20 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(usual_type_lvl)
 */       
 
-recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
+* 4/13: Mia changed 9016 to 9023, 3023 to 3021 as the data got updated 
+recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
 			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 = 0 "Primary") /// 
-		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
+		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 ///
 		   12005 12006 15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 12995 4995 .r = .r "Refused"), gen(usual_type_lvl)
@@ -546,11 +559,12 @@ recode q44 (1 2 3 6 7 11 23 12 14 15 17 18 20 23 24 25 26 27 28 31 32 33 36 38 /
 		   (.a = .a "NA") (995 .r = .r "Refused"), gen(last_type_lvl)
 */
 
-recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9016 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
+* 4/13: Mia changed 9016 to 9023, 3023 to 3021 as the data got updated 
+recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 		   2080 2085 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
 		   14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
 		   15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074= 0 "Primary") /// 
-		   (3004 3005 3009 3023 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 ///
+		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 13019 13020 ///
 		   12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 4075 4076 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 11995 12995 13995 4995 .r = .r "Refused"), gen(last_type_lvl)
@@ -618,7 +632,7 @@ qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
 	
-	if !inlist(`i', 12, 13, 14) {
+	if !inlist(`i', 12, 13, 14, 17) {
 		extremes visits_home country if country == `i', high
 	}
 	
@@ -629,32 +643,33 @@ foreach i in `countrylev' {
 	}
 }
 
+* Colombia q28_b values seem implausible
+recode visits_tele (80 = .) if country == 2 
 * Ethiopia: 92 visits for q28 
-recode visits_home (92 = .) if country == 3
+recode visits_home (92 = .) if country == 3 
+* India 2 visits value and 3 visit_home value
+replace visits = . if visits > 60 & visits < . & country == 4 
+replace visits_home = . if visits_home > 60 & visits_home < . & country == 4 
 *South Africa: 120 visits for q28
-recode visits_home (120 = .) if country == 9
+recode visits_home (120 = .) if country == 9 
 * South Africa; 144 visits for q23
 recode visits (144 = .) if country == 9 
-* Colombia q28_b values seem implausible
-recode visits_tele (80 = .) if country == 2
 * Uruguay: q23 values seem implausible 
-recode visits (200 = .) (156 = .) if country == 10
+recode visits (200 = .) (156 = .) if country == 10 
 * US visits, 4 values recoded
-replace visits = . if visits > 60 & visits < . & country == 12
+replace visits = . if visits > 60 & visits < . & country == 12 
 * Italy visits, 1 value recoded 
-replace visits = . if visits > 60 & visits < . & country == 14
-* Korea, 1 visit_home and 1 visit_covid value 
-recode visits_home (68 = .) if country == 15
-recode visits_covid (80 = .) if country == 15
-***4/6: Mia added this, please double check the cut-off 
-* Argentina (Mendoza) visits, 4 value recoded 
-replace visits = . if visits > 60 & visits < . & country == 16
-* Argentina (Mendoza) visits_tele, 1 value recoded 
-recode visits_tele (96 = .) if country == 16
-***4/11: Mia added this, please double check the cut-off 
-replace visits = . if visits > 60 & visits < . & country == 4
-replace visits_home = . if visits_home > 60 & visits_home < . & country == 4
-* India 2 visits value and 3 visit_home value
+replace visits = . if visits > 60 & visits < . & country == 14 
+* Korea, 1 visit_home and 1 visit_covid value, 5 visit values
+recode visits_home (68 = .) if country == 15 
+recode visits_covid (80 = .) if country == 15 
+replace visits = . if visits > 60 & visits < . & country == 15 
+* Argentina (Mendoza) visits, 4 value recoded, visits_tele, 1 value recoded 
+replace visits = . if visits > 50 & visits < . & country == 16 
+recode visits_tele (96 = .) if country == 16 
+* UK 
+recode visits (150 = .) if country == 17
+recode visits_tele (100 = .) if country == 17
 
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///

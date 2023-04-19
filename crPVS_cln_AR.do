@@ -291,6 +291,7 @@ recode q39 q40 (3 = .a)
 *------------------------------------------------------------------------------*
 * Generate variables
 gen respondent_id = "AR" + string(respondent_serial)
+drop respondent_serial
 gen country=16
 lab def country 16 "Argentina" 
 lab val country country
@@ -471,13 +472,14 @@ recode q15 (. = .a) if inrange(q14,3,5) | q14 == .r
 
 *q19-22 
 recode q19_ar recq20 q21 q22 (. = .a) if q18 == 2 | q18 ==.r // no usual source of care
+* Mia added:
+label def q21 .a "NA", modify
 
-
-* NA's for q24-28
-recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . 
-recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == . 
-recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+* NA's for q24-27
+recode q24 (. = .a) if q23 != .d & q23 != .r
+recode q25_a (. = .a) if q23 != 1
+recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r
+recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r 
 
 * q31 & q32
@@ -486,6 +488,8 @@ recode q32 (. = .a) if q3 != 2
 
 * q42
 recode q42 (. = .a) if q41 == 2 // Mia: this skip pattern is different from other countries, q42 was asked even if q41 == .r (Shalom following up with Neena)
+* Mia added:
+label def q42 .a "NA", modify
 
 * q43-49 na's
 recode q43_ar recq44 q45 q46 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
@@ -626,7 +630,11 @@ order q*, after(language)
 
 *------------------------------------------------------------------------------*
 * Label variables
-
+* Mia added
+lab var country "Country"
+lab var date "Date of interview"
+lab var respondent_id "Respondent ID"
+*
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"

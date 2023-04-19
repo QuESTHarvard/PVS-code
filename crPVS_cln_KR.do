@@ -255,13 +255,14 @@ recode q19_kr recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r
 recode recq20 (. = .a) if q19_kr == 4 | q19_kr == .r
 
 * NA's for q24-28 
-recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . 
-recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 ==. 
-recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
-recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
+recode q24 (. = .a) if q23 != .d & q23 != .r
+recode q25_a (. = .a) if q23 != 1
+recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r
+recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r 
-recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r 
 
+*q28_c
+recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r 
 
 * q31 & q32
 recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r
@@ -273,10 +274,10 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 * q43-49 na's
 recode q43_kr recq44 q45 q46 q46a q46b q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
-recode q48_k (. = .a) if q46a == 2 | q46a == .r | q46 == .r
+recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
 recode recq44 (. = .a) if q43_kr == 4 | q43_kr == .r
-recode q46b (. = .a) if q46a == 2 | q46a == .r 
+recode q46b (. = .a) if q46a == 2 | q46a == .r
 
 
 *------------------------------------------------------------------------------*
@@ -425,7 +426,12 @@ order q*, after(language)
 
 *------------------------------------------------------------------------------*
 * Label variables 
-
+* Mia added
+lab var country "Country"
+lab var int_length "Interview length (in minutes)" 
+lab var date "Date of interview"
+lab var respondent_id "Respondent ID"
+*
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"

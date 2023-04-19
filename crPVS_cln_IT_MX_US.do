@@ -216,6 +216,8 @@ foreach q in q4 {
 	label val rec`q' `q'_label
 }
 
+lab def q4_label .a "NA" .r "Refused", modify
+
 *****************************
 
 **** Combining/recoding some variables ****
@@ -406,8 +408,8 @@ recode q20_mx (. = .a) if q19_mx == 7 | q18 ! = 1 | q18 == 1
 * 37 changes made to q20_mx
 
 * NA's for q24-27 
-recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != . | q23 == . 
-recode q25_a (. = .a) if q23 != 1 & q23 != . | q23 == .
+recode q24 (. = .a) if q23 != .d & q23 != .r
+recode q25_a (. = .a) if q23 != 1
 recode q25_b q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a
 * FLAG - some missing in q27 - maybe refusal? or skip pattern I missed?
@@ -432,7 +434,7 @@ recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
 recode q44_it (. = .a) if q43_it == 4 // different from above 
 recode q44_mx (. = .a) if q43_mx == 7 
-recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r 
+recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r
 
 *q64/q65 - are there variarbles on number of phone numbers? 
 
@@ -442,7 +444,7 @@ recode q66b_us (. = .a) if q66a_us == 1 | q66a_us == 2
 * Country-specific skip pattern - may not be needed as some of these are later merged 
 recode q5_it q6_it q8_it q19_it q20_it q43_it q44_it q63_it q66_it (. = .a) if country != 3
 recode q5_mx q7_mx q8_mx q19_mx q20_mx q43_mx q44_mx q56a_mx q56b_mx q62_mx q63_mx q66_mx (. = .a) if country != 2
-recode q5_us q6 q7_us q8_us q20_us q44_us q62b_us q63_us q66a_us q66b_us (. = .a) if country != 1
+recode q5_us q6 q7_us q8_us q20_us q44_us q62a_us q62b_us q63_us q66a_us q66b_us (. = .a) if country != 1 //added q62a_us
 
 *------------------------------------------------------------------------------*
 * Recode values and value labels:
@@ -619,7 +621,7 @@ forvalues o = 1/`countryn' {
 	}
 }
 
-label define q5_label 14995 "IT: Other", add
+label define q5_label 14995 "IT: Other" .a "NA" .r "Refused", add
 label val q5 q5_label
 
 
@@ -696,7 +698,7 @@ forvalues o = 1/`countryn' {
 }
 
 
-label define q7_label 12995 "US: Other" 13995 "MX: Other" 13014 "MX: None", add
+label define q7_label 12995 "US: Other" 13995 "MX: Other" 13014 "MX: None" .a "NA" .r "Refused", add
 label val q7 q7_label 
 
 * Q7_other 
@@ -741,7 +743,7 @@ forvalues o = 1/`countryn' {
 	}
 }
 
-label define q8_label .r "Refused", add
+label define q8_label .a "NA" .r "Refused", add
 label define q8_label 14001 "IT: Mai frequentato la scuola o solo Nido e Scuola dell infanzia", add 
 label val q8 q8_label
 
@@ -801,7 +803,7 @@ forvalues o = 1/`countryn' {
 	}
 }
 
-label define q20_label 12995 "US: Other" 13995 "MX: Other", add
+label define q20_label 12995 "US: Other" 13995 "MX: Other" .a "NA" .r "Refused", add
 lab val q20 q20_label
 
 * Q20 Other
@@ -857,7 +859,7 @@ forvalues o = 1/`countryn' {
 		}                 
 	}
 }
-label define q44_label 12995 "US: Other" 13995 "MX: Other", add
+label define q44_label 12995 "US: Other" 13995 "MX: Other" .a "NA" .r "Refused", add
 lab val q44 q44_label
 
 * Q44 Other
@@ -906,7 +908,7 @@ forvalues o = 1/`countryn' {
 	}
 }
 lab val q63 q63_label
-
+lab def q63_label .a "NA" .r "Refused", add
 
 * Q66 - combine Mexico and Italy 
 *		Keep Italy values, recode Mexico's values
@@ -951,9 +953,11 @@ recode q66 (. = .a) if reccountry == 12
 lab def q66_label .a "NA" .r "Refused", add
 
 * Value labels for NA/Refused for other vars
-lab def labels12 .a "NA" .r "Refused", modify 
-lab def labels14 .a "NA" .r "Refused", modify 
-lab def labels45 .a "NA" .r "Refused", modify 
+lab def labels12 .a "NA" .r "Refused", modify
+lab def labels39 .a "NA" .r "Refused", modify
+lab def labels50 .a "NA" .r "Refused", modify
+lab def labels62 .a "NA" .r "Refused", modify 
+lab def labels65 .a "NA" .r "Refused", modify 
 lab def labels72 .a "NA" .r "Refused", modify 
 lab def labels73 .a "NA" .r "Refused", modify 
 		  
@@ -981,6 +985,10 @@ order respondent_serial mode language weight_educ respondent_id country
 order q*, sequential
 
 * Label variables 
+* Mia added
+lab var country "Country"
+lab var respondent_id "Respondent ID"
+* respondent_serial
 lab var int_length "Interview length (in minutes)" 
 lab var date "Date of interview" 
 lab var q1 "Q1. Respondent еxact age"
