@@ -704,6 +704,8 @@ ren q42_other_original q42_other
 ren q43_other_original q43_other_uk
 ren q45_other_original q45_other
 
+order q*, sequential
+order respondent_serial respondent_id mode country language date int_length weight_educ
 *------------------------------------------------------------------------------*
 
 * Save data
