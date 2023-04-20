@@ -127,7 +127,6 @@ recode q14 ///
 	(2 3 4 = 2 "Fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
 	gen(covid_vax)
 	
-*** Mia changed this part ***	
 recode q14_la ///
 	(0 = 0 "Unvaccinated (0 doses)") (1 = 1 "Partial vaccination (1 dose)") /// 
 	(2 3 4 = 2 "Fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
@@ -138,7 +137,7 @@ drop covid_vax_la
 	
 * covid_vax_intent 
 gen covid_vax_intent = q15 
-replace covid_vax_intent = q15_la if country == 11 // Mia: added this line to merge q15_la with others
+replace covid_vax_intent = q15_la if country == 11
 lab val covid_vax_intent yes_no_doses
 * Note: In Laos, q15 was only asked to those who said 0 doses 
 
@@ -389,7 +388,7 @@ recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11
 gen insured = q6 
 recode insured (.a = 1) if country == 9 | country == 11 | country == 14 | country == 16 | country == 17
 * Note: All are insured in South Africa, Laos, taly, Mendoza and UK, correct? 
-* Mia: recode this with new q7 values
+
 recode insured (.a = 0) if inlist(q7,7014,13014) | inlist(q6_kr, 3)
 recode insured (.a = 1) if inlist(q7,2015,2016,2017,2018,2028,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005) | inlist(q6_kr, 1, 2)
 recode insured (.a = .r) if q7 == .r | inlist(q7,2995,13995) | q6_kr == .r
@@ -405,9 +404,6 @@ recode q7 (1 3 17 18 10 11 12 19 20 22 29 31 33 34 35 36 39 40 42 = 0 Public) //
 		  (.r = .r "Refused") (14 .a = .a NA), gen(insur_type)
 */
 
-*Mia: for now 2015 2016 coded to be Private
-
-* Mia: 4/5 added 16007 to NA
 recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 16001 16002 16003 16004 4023 4024 4025 4026 17002 = 0 Public) ///
 		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 16005 4027 17001 = 1 Private) /// 
 		  (2995 9995 12995 13995 4995 = 2 Other) ///
@@ -442,8 +438,6 @@ recode q19_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
 		
-
-* Mia: changed the values of q20 - shalom to review
 recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
@@ -451,9 +445,7 @@ recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  inlist(q20,12003,12004) | q19_kr == 1 | ///
 								  q19_ar == 1 ///
 								  | q19a_uk == 1 | q19b_uk == 1
-								  
-
-* Mia: changed the values of q20 - shalom to review								  
+								  							  
 recode usual_type_own (.a = 1) if q19_co_pe == 2 | q19_uy == 2 | ///
 								  inlist(q19_q20a_la,3,4,6) | ///
 								  inlist(q19_q20b_la,3,4,6) | ///
@@ -461,8 +453,7 @@ recode usual_type_own (.a = 1) if q19_co_pe == 2 | q19_uy == 2 | ///
 								  inlist(q20,12001,12002,12005,12006) ///
 								  | q19_kr == 3 | q19_ar == 3 ///
 								  | q19a_uk == 2 | q19b_uk == 2
-								  
-* Mia: changed the values of q20 - shalom to review							  
+						  
 recode usual_type_own (.a = 2) if inlist(q19_uy,5,995) | ///
 								  q19_q20a_la == 9 | q19_q20b_la == 7 | ///
 								  q19_it == 4 | inlist(q19_mx,1,2,5,7) | ///
