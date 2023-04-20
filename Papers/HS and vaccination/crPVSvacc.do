@@ -3,8 +3,10 @@
 * C.Arsenault
 
 global user "/Users/catherine.arsenault/Dropbox"
-global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country (shared)"
+*global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country (shared)"
 global analysis "SPH Kruk Active Projects/Vaccine hesitancy/Analyses/Paper 7 vaccination/Results"
+
+global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country/02 recoded data"
 
 clear all
 set more off
@@ -17,11 +19,13 @@ replace c = "SouthAfrica" if country==9
 replace c = "USA" if country==12
 replace c = "Korea" if country==15
 replace c = "Argentina" if country==16
+replace c ="UK" if country==17
 
 * COVID vaccination: 2+ or 3+ doses and continuous number of doses
 	recode q14 (0/1=0) (2/4=1) if c=="Ethiopia" | c=="Kenya" | c=="SouthAfrica", gen(fullvax2dose)
 	recode q14 (0/2=0) (3/4=1) if country ==2 | country==4 | country==7 | country==10 | country==12 | ///
-								  country ==13 | country ==14 | country ==15  | country ==16, gen(fullvax3dose)
+								  country ==13 | country ==14 | country ==15  | ///
+								  country ==16 | country==17 , gen(fullvax3dose)
 	recode q14_la (0/2=0) (3/4=1) if country ==11, gen(fullvax3d_la)					  
 	egen fullvax = rowmax(fullvax2d fullvax3d* )	
 	
