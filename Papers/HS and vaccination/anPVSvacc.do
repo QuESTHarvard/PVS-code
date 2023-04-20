@@ -27,7 +27,7 @@ summtab, catvars(usual_source  preventive unmet_need anyvisit ///
 		         replace excel excelname(Table_1)  				
 ********************************************************************************
 * COUNTRY-SPECIFIC LOGISTIC REGRESSIONS
-foreach x in   Ethiopia India Kenya LaoPDR Mexico Peru SouthAfrica USA  {
+foreach x in   Ethiopia India Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
 
 	putexcel set "$user/$analysis/country-specific regressions.xlsx", sheet("`x'")  modify
 			
@@ -65,7 +65,7 @@ import excel using "$user/$analysis/country-specific regressions.xlsx", sheet(Et
 	gen model=2 in 13/24
 	save "$user/$analysis/graphs.dta", replace
 	
-foreach x in  India Kenya LaoPDR Mexico Peru SouthAfrica USA  { 
+foreach x in  India Kenya LaoPDR Mexico Peru SouthAfrica USA UK { 
 	import excel using  "$user/$analysis/country-specific regressions.xlsx", sheet("`x'") firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="`x'"
