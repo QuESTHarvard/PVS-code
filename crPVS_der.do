@@ -15,8 +15,7 @@ u "$data_mc/02 recoded data/pvs_appended.dta", clear
 
 *------------------------------------------------------------------------------*
 
-*** Mia changed this part ***
-* Mia: trim extreme values for for q27, q46 and q47; q46b for IT, MX, US, KR and UK
+* Trim extreme values for for q27, q46 and q47; q46b for IT, MX, US, KR and UK
 
 qui levelsof country, local(countrylev)
 
