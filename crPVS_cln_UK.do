@@ -17,7 +17,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 */
 
 ******************************** United Kingdom ************************************
-* Import data -confirm Path
+* Import data 
 u "$data/United Kingdom/01 raw data/pvs_raw_uk.dta", replace
 
 
