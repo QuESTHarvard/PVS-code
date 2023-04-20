@@ -399,7 +399,7 @@ recode q32 (. = .a) if q3 != 2 | q2 == .r
 recode q42 (. = .a) if q41 == 2 | q41==.r
 
 * q43-49 na's
-* Mia: there are 22 people who have . for both q23 and 24 but answered questions -Shalom only seeing 11 people, ask Mia to confirm if she also sees N=11 now
+* There are people who have . for both q23 and 24 but answered questions 
 recode q43 recq44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == .r 
 
