@@ -258,7 +258,8 @@ drop NUMOFCHILDREN Q1_7B* CHILD*AGE DataCollection_FinishTime DataCollection_Sta
 	 Q3_4B_1 Q3_4B_2 Q3_4B_3 Q3_4B_4 Q3_4_1 Q3_4_2 Q3_5_1 Q3_5_2 ///
      q46_min q46_hrs q47_min q47_hrs ///
 	 q46b_dys q46b_hrs q46b_mth q46b_wks start_time end_time strata ///
-	 PV27_DataCollectionDate PV27_LengthInSeconds CS_WorkingStatus KANTARDEVICE PV27_LengthInMinutes PV27_Mode //4/18: Mia added
+	 PV27_DataCollectionDate PV27_LengthInSeconds CS_WorkingStatus KANTARDEVICE PV27_LengthInMinutes PV27_Mode /// 
+	 Q3_7
 
 	 
 * FLAG:
