@@ -997,7 +997,7 @@ lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
-lab var q5_other "Q5. Other"
+lab var q5_other "Q5. IT only: Other"
 * Note this other variable is only in Italy/US/Mexico 
 lab var q6 "Q6. Do you have health insurance?"
 lab var q6_it "Q6. IT only: In addition to... are you covered by private health insurance...?"

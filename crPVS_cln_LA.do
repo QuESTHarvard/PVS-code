@@ -642,7 +642,7 @@ lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, op
 lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
 lab var q62 "Q62. Respondent's mother tongue or native language"
 lab var q62_other "Q62. Other"
-lab var q62a_la "Q62a. LA ONLY: What is your ethnicity?"
+lab var q62a_la "Q62a. LA only: What is your ethnicity?"
 lab var q62a_other_la "Q62a. LA only: Other"
 lab var q63 "Q63. Total monthly household income"
 *lab var q64 "Q64. Do you have another mobile phone number besides this one?"
