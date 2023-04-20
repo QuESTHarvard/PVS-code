@@ -682,7 +682,7 @@ label var q62_other_original "Q62. Other"
 gen q62a_other_la_original = q62a_other_la
 label var q62a_other_la_original "Q62a. LA only: Other"	
 
-ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_11.xlsm",	///
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_11.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_id)	
 	

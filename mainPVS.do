@@ -20,7 +20,7 @@
 clear all
 set more off
 
-* Dropping existing macros
+* Dropping any existing macros
 macro drop _all
 
 * Setting user globals 
@@ -38,8 +38,8 @@ global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core
 * Path to multi-country data folder (includes input and output folders for data checks)
 global data_mc "$data/Multi-country"
 
-* Path to data check output folders (TBD)
-global output "$data_mc/03 test output/Output"
+* Path to data input/output folders 
+global in_out "$data_mc/03 input output"
 
 * Path to GitHub folder 
 global github "$user/Documents/GitHub/PVS-code"

@@ -1138,7 +1138,7 @@ label var q62b_other_us_original "Q62B. US only: Other"
 
 foreach i in 12 13 14 {
 
-ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_id)	
  

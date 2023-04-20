@@ -803,7 +803,7 @@ gen q45_other_original = q45_other
 label var q45_other_original "Q45. Other"	
 
 
-ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_16.xlsm",	///
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_16.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_id)	
 	
