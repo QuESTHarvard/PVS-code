@@ -585,6 +585,34 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 * The command in data quality checks below extracts other, specify values 
 
 
+gen q7_other_original = q7_other
+label var q7_other_original "Q7_other. Other type of health insurance?"
+
+gen q13e_other_co_pe_uy_ar_original = q13e_other_co_pe_uy_ar
+label var q13e_other_co_pe_uy_ar_original "Q13E. CO/PE/UY/AR only: Other"
+	
+gen q19_other_original = q19_other
+label var q19_other_original "Q19. Other"
+
+gen q20_other_original = q20_other
+label var q20_other_original "Q20. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q43_other_original = q43_other
+label var q43_other_original "Q43. Other"
+
+gen q44_other_original = q44_other
+label var q44_other_original "Q44. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"	
+
+
 foreach i in 2 7 10 {
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
@@ -592,6 +620,20 @@ ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/
 	id(respondent_id)	
  
 }	
+
+drop q7_other q13e_other_co_pe_uy_ar q19_other q20_other ///
+	 q21_other q42_other q43_other q44_other q45_other  
+	 
+ren q7_other_original q7_other
+ren q13e_other_co_pe_uy_ar_original q13e_other_co_pe_uy_ar
+ren q19_other_original q19_other
+ren q20_other_original q20_other
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43_other_original q43_other
+ren q44_other_original q44_other
+ren q45_other_original q45_other
+
 
 *------------------------------------------------------------------------------*
 

@@ -18,7 +18,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 
 ******************************** United Kingdom ************************************
 * Import data -confirm Path
-u "$data/United Kingdom/01 raw data/pvs_uk.dta", replace
+u "$data/United Kingdom/01 raw data/pvs_raw_uk.dta", replace
 
 
 
@@ -670,15 +670,39 @@ label value q43a_uk q43a_uk_label
 * The command in data quality checks below extracts other, specify values 
 
 
+gen q19_other_original = q19_other_uk
+label var q19_other_original "Q19. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q43_other_original = q43_other_uk
+label var q43_other_original "Q43. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"	
+
+
 *Remove "" from responses for macros to work
 replace q21_other = subinstr(q21_other,`"""',  "", .)
 replace q42_other = subinstr(q42_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 
+
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_17 v2.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_serial)	
-
+	
+drop q19_other_uk q21_other q42_other q43_other_uk q45_other
+	 
+ren q19_other_original q19_other_uk
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43_other_original q43_other_uk
+ren q45_other_original q45_other
 
 *------------------------------------------------------------------------------*
 

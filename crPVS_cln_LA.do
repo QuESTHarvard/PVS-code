@@ -658,10 +658,44 @@ order respondent_serial respondent_id country language date int_length interview
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
+gen q19_q20a_other_original = q19_q20a_other
+label var q19_q20a_other_original "Q19A. LA only: Other"
+
+gen q19_q20b_other_original = q19_q20b_other
+label var q19_q20b_other_original "Q19B. LA only: Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q44_other_original = q44_other
+label var q44_other_original "Q44. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"	
+
+gen q62_other_original = q62_other
+label var q62_other_original "Q62. Other"	
+
+gen q62a_other_la_original = q62a_other_la
+label var q62a_other_la_original "Q62a. LA only: Other"	
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_11.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_id)	
+	
+drop q19_q20a_other_la q19_q20b_other_la q21_other q42_other q44_other q45_other q62_other q62a_other_la
+	 
+ren q19_q20a_other_original q19_q20a_other_la
+ren q19_q20b_other_original q19_q20b_other_la
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q44_other_original q44_other
+ren q45_other_original q45_other
+ren q62_other_original q62_other
+ren q62a_other_la_original q62a_other_la
  
 *------------------------------------------------------------------------------*
 

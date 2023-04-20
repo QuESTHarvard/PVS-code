@@ -545,12 +545,34 @@ lab var q66 "Q66. Which political party did you vote for in the last election?"
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
+	
+gen q19_other_original = q19_other
+label var q19_other_original "Q19. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q43_other_original = q43_other
+label var q43_other_original "Q43. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"	
 
 
 ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_15.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_id)	
-
+	
+drop q19_other q21_other q42_other q43_other q45_other
+	 
+ren q19_other_original q19_other
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43_other_original q43_other
+ren q45_other_original q45_other
 
 *------------------------------------------------------------------------------*
 
