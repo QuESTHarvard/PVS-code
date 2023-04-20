@@ -191,7 +191,7 @@ list q23_q24 q39 q40 country if q39 == 3 & visits_total > 0 & visits_total < . /
 							  
 * Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
 recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
-* Total of 38 changes made to q39 and 36 changes made to q40 - shalom to confirm with mia I got 4 changes to q30 and 1 change to q40
+* Total of 4 changes to q30 and 1 change to q40
 
 * list if it is .a but they have visit values in past 12 months  
 list q23_q24 q39 q40 country if q39 == .a & visits_total > 0 & visits_total < . /// 
@@ -205,7 +205,7 @@ list q23_q24 q39 q40 country if q39 != 3 & visits_total == 0 ///
 							  
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
 recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
-* Total of 1477 changes made to q39, 1482 changes made to q40 - shalom to confirm with Mia, I got 284 changes to q39 and 295 changes to q40
+* Total of 284 changes to q39 and 295 changes to q40
 
 drop visits_total
 * did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
