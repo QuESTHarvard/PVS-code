@@ -628,12 +628,12 @@ rename q46b_origial  q46b
 *** Political alignment***
 
 **Import excel as updatas and save it as .dta
-/*import excel "$data_mc/03 test output/Input/Policial alignment variable/Pol_align_recode_all.xlsx", sheet("pol_al") firstrow clear
+/*import excel "$data_mc/03 input output/Input/Policial alignment variable/Pol_align_recode_all.xlsx", sheet("pol_al") firstrow clear
 destring q5 pol_align, replace float
-save "$data_mc/03 test output/Input/Policial alignment variable/pol_align.dta", replace
+save "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta", replace
 */
 
-merge m:m q5 using "$data_mc/03 test output/Input/Policial alignment variable/pol_align.dta" 
+merge m:m q5 using "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta" 
 drop _merge
 lab def pol_align 0 "Aligned (in favor)" 1 "Not aligned (out of favor)"
 lab val pol_align pol_align
