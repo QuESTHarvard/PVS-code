@@ -147,7 +147,6 @@ lab def gender2 3 "AR: Other gender", modify
 lab def labels26 10 "AR: Short waiting time to get appointments", modify
  
 *** weights ***
-drop weight
 ren weight_educ weight
 lab var weight "Final weight (based on gender, age, region, education)"
 
@@ -171,8 +170,7 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 
 * Keep variables relevant for data sharing and analysis  
 * Dropping time for now 
-* 4/10: Mia removed region_stratum kebele matrix sum_size_region dw_psu n_unit dw_unit n_elig sublocation rim_region_ke rim_educ rim_gender rim_region rim_education rim_eduction dw_overall dw_ind dw_overall_relative rim_region_et rim_age province county total
-drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded 
+drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id  
 
 
 * Reorder variables

@@ -260,7 +260,6 @@ gen respondent_id = "UK" + string(respondent_serial)
 
 gen q2 = .a
 gen q28_a = .a 
-gen q56 = .a
 gen q62 = .a // asked differently 
 gen q64 = .a 
 gen q65 = .a
@@ -287,7 +286,7 @@ recode q1 q3 q5 q6_uk q8 q9 q10 q11 q12 ///
 	   q34 q35 q36 q38 q39 q40 q41 q42 q43a_uk q43b_uk q44 ///
 	   q45 q46* q47 q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
-	   q56 q57 q58 q59 q60 q61 q62_uk q63 q66_uk (999 = .r)	
+	   q57 q58 q59 q60 q61 q62_uk q63 q66_uk (999 = .r)	
 	  
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for questions respondents would not have been asked 
