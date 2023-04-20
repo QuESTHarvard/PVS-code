@@ -17,7 +17,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 */
 
 * Import data 
-import spss using "/$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_3.8.23_confidential.sav", clear
+import spss using "$data_mc/01 raw data/HSPH Health Systems Survey_Final US Italy Mexico Weighted Data_3.8.23_confidential.sav", clear
 *------------------------------------------------------------------------------*
 * Rename all variables, and some recoding if variable will be dropped 
 ren RESPID respondent_serial
@@ -1134,6 +1134,9 @@ label var q45_other_original "Q45. Other"
 gen q62b_other_us_original = q62b_other_us
 label var q62b_other_us_original "Q62B. US only: Other"	
 
+replace q19_other = subinstr(q19_other, `"""',  "", .)
+replace q43_other = subinstr(q43_other, `"""',  "", .)
+replace q45_other = subinstr(q45_other, `"""',  "", .)
 
 foreach i in 12 13 14 {
 
