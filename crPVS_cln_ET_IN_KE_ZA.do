@@ -156,6 +156,7 @@ foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 
 * Converting interview length to minutes so it can be summarized
 gen int_length = intlength / 60
+drop intlength
 
 * Converting Q46 and Q47 to minutes so it can be summarized
 gen q46_min = q46 / 60
