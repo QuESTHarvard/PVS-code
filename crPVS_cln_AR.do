@@ -820,7 +820,8 @@ ren q43_other_original q43_other
 ren q44_other_original q44_other
 ren q45_other_original q45_other
 
-
+order q*, sequential
+order respondent_id mode country language date weight_educ
 *------------------------------------------------------------------------------*
 
 save "$data_mc/02 recoded data/pvs_ar.dta", replace

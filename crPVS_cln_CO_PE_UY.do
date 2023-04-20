@@ -455,7 +455,7 @@ order q*, sequential
 order q*, after(interviewer_id)
 
 * Drop other unecessary variables 
-drop intlength interviewerid_recoded
+drop intlength interviewerid_recoded rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ weight
 
 
 *combining q19_pe/q19_co
@@ -634,7 +634,8 @@ ren q43_other_original q43_other
 ren q44_other_original q44_other
 ren q45_other_original q45_other
 
-
+order q*, sequential
+order respondent_serial respondent_id mode country language date time int_length weight_educ
 *------------------------------------------------------------------------------*
 
 

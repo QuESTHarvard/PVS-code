@@ -696,7 +696,9 @@ ren q44_other_original q44_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other
 ren q62a_other_la_original q62a_other_la
- 
+
+order q*, sequential
+order respondent_serial respondent_id mode country language date int_length weight_educ
 *------------------------------------------------------------------------------*
 
 * Save data 
