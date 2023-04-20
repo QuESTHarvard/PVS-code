@@ -828,6 +828,8 @@ lab var pol_align "Political alignment in respondent's region / district / state
 
 **************************** Save data *****************************
 
+notes drop _all
+compress 
 save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 

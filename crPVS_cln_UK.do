@@ -18,9 +18,9 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 
 ******************************** United Kingdom ************************************
 * Import data 
-u "$data/United Kingdom/01 raw data/pvs_raw_uk.dta", replace
+import spss using "$data/United Kingdom/01 raw data/HSPH Health Systems Survey_UK Final_04142023.sav", clear
 
-
+notes drop _all
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
@@ -707,6 +707,5 @@ ren q45_other_original q45_other
 *------------------------------------------------------------------------------*
 
 * Save data
-compress
 save "$data_mc/02 recoded data/pvs_uk.dta", replace
  
