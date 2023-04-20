@@ -692,7 +692,7 @@ replace q42_other = subinstr(q42_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 
 
-ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_17 v2.xlsm",	///
+ipacheckspecifyrecode using "$data_mc/03 test output/Input/specifyrecode_inputs/specifyrecode_inputs_17.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_serial)	
 	
