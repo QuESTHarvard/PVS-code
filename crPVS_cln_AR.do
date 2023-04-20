@@ -515,6 +515,9 @@ recode q43_ar recq44 q45 q46 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f ///
 * However, there are people who answered q44 but refused q43 and should be recoded as missing in q44 
 replace recq44 = .a if q43_ar == .r //*Shalom to confirm with Neena: q43_ar == 4 |
 
+* q49 - strange value in q49
+recode q49 (12 = .r)
+
 *q62
 gen q62 = .a
  
