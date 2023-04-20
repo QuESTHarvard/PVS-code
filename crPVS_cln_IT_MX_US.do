@@ -987,7 +987,6 @@ order respondent_serial mode language weight_educ respondent_id country
 order q*, sequential
 
 * Label variables 
-* Mia added
 lab var country "Country"
 lab var respondent_id "Respondent ID"
 * respondent_serial
