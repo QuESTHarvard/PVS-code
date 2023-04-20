@@ -494,6 +494,8 @@ ren q56 q56_et_in_ke_za
 
 drop interviewer_language01 interviewer_language02 interviewer_language03 interviewer_language04 interviewer_language05 interviewer_language06 interviewer_language21 interviewer_language22 interviewer_language23 interviewer_language24 interviewer_language25 interviewer_language26 interviewer_language27 interviewer_language28 interviewer_language29 interviewer_language11 interviewer_language12 interviewer_language13 interviewer_language14 interviewer_language15 interviewer_language16 interviewer_language17 interviewer_language18 interviewer_language19 interviewer_language20 interviewer_language30 interviewer_language31
 
+drop weight
+
 *------------------------------------------------------------------------------*
 
 * Labeling variables 
@@ -652,7 +654,8 @@ ren q44_other_original q44_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other
 
-
+order q*, sequential
+order respondent_serial respondent_id mode country language date time int_length weight_educ
 *------------------------------------------------------------------------------*
 
 * Save data
