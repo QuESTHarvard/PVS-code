@@ -158,7 +158,7 @@ lab val activation pa
 recode q21 (2 = 1 "Convenience (short distance)") /// 
 			(1 8 = 2 "Cost (low cost, covered by insurance)") ///
 			(4 = 3 "Techincal quality (provider skills)") ///
-			(3 5 = 4 "Interpersonal quality (short waiting time, respect)") ///
+			(3 5 10 = 4 "Interpersonal quality (short waiting time, respect)") ///
 			(6 = 5 "Service readiness (medicines and equipment available)") ///
 			(7 = 6 "Only facility available") ///
 			(.r 9 = .r "Other or Refused") ///
@@ -212,7 +212,7 @@ lab val visits visits_covid visits_total visits_home visits_tele na_rf
 * unmet_reason 
 recode q42 (1 = 1 "Cost (High cost)") ///
 			(2 = 2 "Convenience (Far distance)") ///
-			(3 5 = 3 "Interpersonal quality (Long waiting time, Respect)") ///
+			(3 5 11 = 3 "Interpersonal quality (Long waiting time, Respect)") ///
 			(4 = 4 "Technical quality (Poor provider skills)") ///
 			(6 = 5 "Service readiness (Medicines and equipment not available)") ///
 			(8 9 = 6 "COVID (COVID restritions or COVID fear)") ///
@@ -253,7 +253,7 @@ lab val last_visit_time lvt
 gen last_promote = 0 if q49 < 8
 recode last_promote (. = 1) if q49 == 8 | q49 == 9 | q49 == 10
 recode last_promote (. = .a) if q49 == .a
-recode last_promote (. = .r) if q49 == .r
+recode last_promote (. = .r) if q49 == .r | q49 == 12
 lab def lp 0 "Detractor" 1 "Promoter" .r "Refused" .a "NA"
 lab val last_promote lp
 
@@ -359,7 +359,7 @@ ren (derq51 derq52) (conf_sick conf_afford)
 gen conf_getafford = .
 replace conf_getafford=1 if conf_sick==1 & conf_afford==1
 replace conf_getafford=0 if conf_sick==0 | conf_afford==0
-replace conf_getafford=.r if conf_sick==.r & conf_afford==.r
+replace conf_getafford=.r if conf_sick==.r | conf_afford==.r
 lab val conf_getafford vc_nc_der
 
 *urban/rural
@@ -643,7 +643,7 @@ save "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta",
 
 merge m:m q5 using "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta" 
 drop _merge
-lab def pol_align 0 "Aligned (in favor)" 1 "Not aligned (out of favor)"
+lab def pol_align 0 "Aligned (in favor)" 1 "Not aligned (out of favor)" .a "NA"
 lab val pol_align pol_align
 
 
