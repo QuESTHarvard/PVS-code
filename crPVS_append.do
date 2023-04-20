@@ -175,67 +175,6 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 drop rim1_gender rim2_age rim3_region w_des w_des_uncapped rim4_educ respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded 
 
 
-gen q7_other_original = q7_other
-label var q7_other_original "Q7_other. Other type of health insurance?"
-
-gen q13e_other_co_pe_uy_ar_original = q13e_other_co_pe_uy_ar
-label var q13e_other_co_pe_uy_ar_original "Q13E. CO/PE/UY only: Other"
-	
-gen q19_other_original = q19_other
-label var q19_other_original "Q19. Other"
-
-gen q19_q20a_other_original = q19_q20a_other
-label var q19_q20a_other_original "Q19A. LA only: Other"
-
-gen q19_q20b_other_original = q19_q20b_other
-label var q19_q20b_other_original "Q19B. LA only: Other"
-
-gen q20_other_original = q20_other
-label var q20_other_original "Q20. Other"
-
-gen q21_other_original = q21_other
-label var q21_other_original "Q21. Other"
-
-gen q42_other_original = q42_other
-label var q42_other_original "Q42. Other"
-
-gen q43_other_original = q43_other
-label var q43_other_original "Q43. Other"
-
-gen q44_other_original = q44_other
-label var q44_other_original "Q44. Other"
-	
-gen q45_other_original = q45_other
-label var q45_other_original "Q45. Other"	
-
-gen q62_other_original = q62_other
-label var q62_other_original "Q62. Other"	
-
-gen q62b_other_us_original = q62b_other_us
-label var q62b_other_us_original "Q62B. US only: Other"	
-
-order q*, sequential
-order respondent_serial respondent_id mode country language date ///
-	  int_length psu_id_for_svy_cmds weight 	
-
-drop q7_other q13e_other_co_pe_uy_ar q19_other q19_q20a_other_la q19_q20b_other_la q20_other ///
-	 q21_other q42_other q43_other q44_other q45_other q62_other q62b_other_us
-	 
-ren q7_other_original q7_other
-ren q13e_other_co_pe_uy_ar_original q13e_other_co_pe_uy_ar
-ren q19_other_original q19_other
-ren q19_q20a_other_original q19_q20a_other_la
-ren q19_q20b_other_original q19_q20b_other_la
-ren q20_other_original q20_other
-ren q21_other_original q21_other
-ren q42_other_original q42_other
-ren q43_other_original q43_other
-ren q44_other_original q44_other
-ren q45_other_original q45_other
-ren q62_other_original q62_other
-ren q62b_other_us_original q62b_other_us
-
-
 * Reorder variables
 order q*, sequential
 order respondent_serial respondent_id mode country language date ///
