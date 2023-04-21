@@ -488,7 +488,7 @@ order q*, after(interviewer_id)
 
 * Country-specific vars for append 
 ren q19 q19_et_in_ke_za
-ren q43 q43_et_in_ke_za_la
+ren q43 q43_et_in_ke_za
 ren q56 q56_et_in_ke_za 
 
 *4/13: dropping interviewer language for now until we're able to clean and recode:
@@ -556,7 +556,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_et_in_ke_za_la "Q43. ET/IN/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_et_in_ke_za "Q43. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
