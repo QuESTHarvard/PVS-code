@@ -467,10 +467,13 @@ lab val usual_type fac_own_lvl
 
 * last_type_own
 
-recode q43_et_in_ke_za_la (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
+recode q43_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
 
+*Laos
+recode last_type_own (.a = 0) if q43_la == 1 | q44 == 11002
+recode last_type_own (.a = 1) if q43_la == 2 | q44 == 11003
 
 recode last_type_own (.a = 0) if q43_co_pe == 1 | q43_uy == 1 | ///
 								 q43_it == 1 | inlist(q43_mx,3,4) | ///
@@ -492,6 +495,8 @@ recode last_type_own (.a = .r) if q43_co_pe == .r | q43_uy == .r | ///
 								  q43_it == .r | q43_mx == .r | ///
 								  (q44 == .r & country == 12) | q43_kr == .r | ///
 								  q43_ar == .r | q43a_uk == .r | q43b_uk == .r
+								  
+								  
 
 * last type level
 								  
@@ -671,7 +676,7 @@ order respondent_serial respondent_id country country_reg language date ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q37_za q37_in q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_in_ke_za_la q43_it q43_kr q43_mx ///
+	  q37_za q37_in q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_in_ke_za q43_la q43_it q43_kr q43_mx ///
 	   q43_uy q43_ar q43_other q43a_uk q43b_uk q43_other_uk q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///

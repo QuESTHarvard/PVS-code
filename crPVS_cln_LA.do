@@ -547,7 +547,7 @@ drop q2 q3 q4 q5 q6_la q8 q11 q12 q13 q18a_la q18b_la q25_a q26 q29 q41 q45 q30 
 ren rec* *
 
 * For multi-country data
-ren q43 q43_et_in_ke_za_la
+ren q43 q43_la
 
 
 * Label variables 
@@ -604,7 +604,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_et_in_ke_za_la "Q43. ET/IN/KE/ZA/LA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_la "Q43. LA only: Is this a public or private hospital?"
 *lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
@@ -648,7 +648,7 @@ lab var q63 "Q63. Total monthly household income"
 *lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 *lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
-order respondent_serial respondent_id country language date int_length interviewer_id mode weight q1 q2 q3 q4 q5 q6_la q7 q8 q9 q10 q11 q12 q13 q14_la q15_la q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43 q44 q44_other q45 q45_other q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q62_other q62a_la q62a_other_la q63 
+order respondent_serial respondent_id country language date int_length interviewer_id mode weight q1 q2 q3 q4 q5 q6_la q7 q8 q9 q10 q11 q12 q13 q14_la q15_la q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43_la q44 q44_other q45 q45_other q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q62_other q62a_la q62a_other_la q63 
 
 *------------------------------------------------------------------------------*
 
