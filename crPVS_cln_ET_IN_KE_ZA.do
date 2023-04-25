@@ -255,7 +255,11 @@ drop visits_total
 
 
 *cleaning up "other specify" data
-replace q6 = 2 if q7_other == "no health insurance" | q7_other == "I Don't know" | q7_other == "I don't know" | q7_other == "I don;t know"
+**add "lic" based on prashant's comment in the other specify data that this is life insurance schemes and not health insurance
+replace q6 = 2 if q7_other == "no health insurance" | q7_other == "I Don't know" | q7_other == "I don't know" | ///
+				  q7_other == "I don;t know" | q7_other == "LIC" | q7_other == "LIC Insurance" | ///
+				  q7_other == "LIC JEEVAN BIMA" | q7_other == "LIC Jeevan Bima" | q7_other == "LIC Life Insurance" | ///
+				  q7_other == "jeevan jyoti" | q7_other == "lic" | q7_other == "LIFE COVER"
 
 *------------------------------------------------------------------------------*
 
