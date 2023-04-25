@@ -371,8 +371,8 @@ recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11
 * Note: All are insured in South Africa, Laos, taly, Mendoza and UK
 gen insured = q6 
 recode insured (.a = 1) if country == 9 | country == 11 | country == 14 | country == 16 | country == 17
-recode insured (.a = 0) if inlist(q7,7014,13014) | inlist(q6_kr, 3)
-recode insured (.a = 1) if inlist(q7,2015,2016,2017,2018,2028,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005) | inlist(q6_kr, 1, 2)
+recode insured (.a = 0) if inlist(q7,7014,13014, 2030) | inlist(q6_kr, 3) 
+recode insured (.a = 1) if inlist(q7,2015,2016,2017,2018,2028,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005, 2015,2016,2017,2018) | inlist(q6_kr, 1, 2)
 recode insured (.a = .r) if q7 == .r | inlist(q7,2995,13995) | q6_kr == .r
 lab val insured yes_no
 
