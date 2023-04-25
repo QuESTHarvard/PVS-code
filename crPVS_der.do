@@ -404,9 +404,10 @@ recode q19_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 		gen(usual_type_own)
 
 * Ethiopia recode
-recode usual_type_own (.a = 0) if country == 2 & insur_type == 0
-recode usual_type_own (.a = 1) if country == 2 & insur_type == 1
-recode usual_type_own (.a = .r) if country == 2 & insur_type == .r
+recode usual_type_own (.a = 1) if country == 2 & q7 == 2028
+recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018)
+recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
+recode usual_type_own (.a = .r) if country == 2 & q7 == .r
 
 		
 recode usual_type_own (.a = 0) if (q19_co_pe == 1 & country == 7) | q19_uy == 1 | ///
@@ -437,7 +438,9 @@ recode usual_type_own (.a = .r) if (q19_co_pe  == .r & country == 7)| q19_uy == 
 								   (q20 == .r & country == 12) | q19_kr == .r | ///
 								   q19_ar == .r | q19a_uk == .r | q19b_uk == .r
 								   
-
+*Peru recode 
+recode usual_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
+recode usual_type_own (0 = 1) if country == 7 & q7 == 7013
 								   
 * usual type level								  
 
@@ -480,9 +483,10 @@ recode q43_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 		gen(last_type_own)
 		
 * Ethiopia recode
-recode last_type_own (.a = 0) if country == 2 & insur_type == 0
-recode last_type_own (.a = 1) if country == 2 & insur_type == 1
-recode last_type_own (.a = .r) if country == 2 & insur_type == .r
+recode last_type_own (.a = 1) if country == 2 & q7 == 2028
+recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018)
+recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
+recode last_type_own (.a = .r) if country == 2 & q7 == .r
 
 *Laos
 recode last_type_own (.a = 0) if q43_la == 1 | q44 == 11002
@@ -493,7 +497,8 @@ recode last_type_own (.a = 0) if (q43_co_pe == 1 & country == 7) | q43_uy == 1 |
 								 inlist(q44,12003,12004,12005) | q43_kr == 1 | ///
 								 q43_ar == 1 ///
 								 | q43a_uk == 1 | q43b_uk == 1
-
+*Peru recode
+recode last_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
 
 recode last_type_own (.a = 1) if (q43_co_pe == 2 & country == 7) | q43_uy == 2 | ///
 								 q43_it == 2 | q43_it == 3 | q43_mx == 6 | ///
@@ -509,7 +514,9 @@ recode last_type_own (.a = .r) if (q43_co_pe == .r & country == 7) | q43_uy == .
 								  (q44 == .r & country == 12) | q43_kr == .r | ///
 								  q43_ar == .r | q43a_uk == .r | q43b_uk == .r
 								  
-								  
+*Peru recode 
+recode last_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
+recode last_type_own (0 = 1) if country == 7 & q7 == 7013								  
 
 * last type level
 								  
