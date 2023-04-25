@@ -55,13 +55,7 @@ replace c ="UK" if country==17
 	egen preventive_score=rowtotal(blood_press blood_chol blood_sugar eyes teeth), m 
 	recode preventive_score (0/2=0) (3/5=1), gen(preventive) 
 	
-	// use the last facility type if respondent has no usual source
-	*replace usual_type_own = last_type_own if usual_type_own==. | usual_type_own==.a  
-	recode usual_type_own (0=1) (1/2=0), gen(usual_public_fac)
-	replace usual_public_fac= 1 if country==10 & usual_type_own==2 // incl. mutuales as public in Uruguay
-	replace usual_public_fac=1 if country==16 & usual_type_own==2 // incl. obras sociales as public in Argentina
-	replace usual_public_fac=1 if country==13 & usual_type_own==2 // incl. IMSS, ISSTE, PEMEX etc. as public
-* Demographics
+	* Demographics
 	recode age_cat (0/2=0) (3/6=1), gen(age2)
 	lab def age2  1"18-49" 2"50+"
 	lab val age2 age2
@@ -85,6 +79,5 @@ replace c ="UK" if country==17
 	lab var health_chronic "Has a longstanding illness or chronic health problem"
 	lab var ever_covid "Had COVID-19"
 	lab var vgusual_quality "Rates quality of usual facility as very good or excellent"
-	lab var usual_public_fac "Usual facility is public or government owned"
 
 save "$user/$analysis/pvs_vacc_analysis.dta", replace
