@@ -3,10 +3,8 @@
 * C.Arsenault
 
 global user "/Users/catherine.arsenault/Dropbox"
-*global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country (shared)"
+global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country (shared)"
 global analysis "SPH Kruk Active Projects/Vaccine hesitancy/Analyses/Paper 7 vaccination/Results"
-
-global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country/02 recoded data"
 
 clear all
 set more off
@@ -32,6 +30,7 @@ replace c ="UK" if country==17
 	recode q14 (1/4=1), gen(onedose)
 	replace onedose=. if country==2 | country==4 | country==7 | country>9 // only in SSA
 	gen nb_doses=q14
+	replace nb_doses = q14_la if nb_doses==.a
 	
 	recode q14 (0/1=0) (2/4=1) , gen(twodoses)
 	recode q14_la (0/1=0) (2/4=1), gen(twodosesla)
@@ -39,11 +38,15 @@ replace c ="UK" if country==17
 	drop twodosesla
 * Health system variables
 	recode visits_cat (1/2=1), gen(anyvisit)
-	// use the last facility rating if respondent has no usual source	
-	*replace usual_quality = last_qual if usual_quality==. | usual_quality==.a
-	foreach v in last_qual usual_quality {
+	recode visits_total (1/2=1) (2.5/4.5=2) (5/250=3), gen(visits4)
+	lab def visits4 0"No visits" 1"1-2 visits" 2"3-4 visits" 3"5 or more visits"
+	lab val visits4 visits4
+	
+	foreach v in last_qual usual_quality qual_public covid_manage {
 		recode `v' (1/2=0) (3/4=1), gen(vg`v') 
 		}
+		
+	recode conf_opinion (0/1=0) (2/3=1), gen(vconf_opinion)
 
 	egen preventive_score=rowtotal(blood_press blood_chol blood_sugar eyes teeth), m 
 	recode preventive_score (0/2=0) (3/5=1), gen(preventive) 
@@ -52,7 +55,8 @@ replace c ="UK" if country==17
 	*replace usual_type_own = last_type_own if usual_type_own==. | usual_type_own==.a  
 	recode usual_type_own (0=1) (1/2=0), gen(usual_public_fac)
 	replace usual_public_fac= 1 if country==10 & usual_type_own==2 // incl. mutuales as public in Uruguay
-	
+	replace usual_public_fac=1 if country==16 & usual_type_own==2 // incl. obras sociales as public in Argentina
+	replace usual_public_fac=1 if country==13 & usual_type_own==2 // incl. IMSS, ISSTE, PEMEX etc. as public
 * Demographics
 	recode age_cat (0/2=0) (3/6=1), gen(age2)
 	lab def age2  1"18-49" 2"50+"
@@ -67,7 +71,7 @@ replace c ="UK" if country==17
 	recode gender (2=1), gen(female)
 
 	recode minority (2=1) 
-	replace minority = . if c=="Colombia" | c=="Korea"
+	replace minority = . if c=="Colombia" | c=="Korea" | c=="India"
 	
 	
 	lab var fullvax "Received 2+ or 3+ doses of a COVID vaccine"
