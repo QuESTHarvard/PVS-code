@@ -70,7 +70,6 @@ ren Q2_8B_1 q25_b
 ren Q2_9 q26
 ren Q2_10_1 q27 
 ren Q2_11_1 q28_b 
-lab var q28_b "q2_11 How many virtual or telemedicine visits did you have?"
 ren Q2_11B q28_c 
 ren Q2_12 q29
 ren Q2_13_A q30
@@ -270,7 +269,7 @@ lab def race 1 "Black or African American" 2 "Asian" 3 "Native Hawaiian or Other
 			 4 "American Indian or Alaska Native" 5 "White" 6 "Mixed race" ///
 			 995 "Other" .r "Refused" .a "NA"
 lab val q62b_us race
-ren Q1_6B_6_OTHER q62b_other_us //*Ask Neena/Mia if this should be q62_other
+ren Q1_6B_6_OTHER q62b_other_us
 
 
 * Note: other country-specific variables combined below 
@@ -401,7 +400,6 @@ recode q7_us (. = .a) if q6 == 2 | q6 == .r
 recode q13 (. = .a) if q12 == 2  | q12==.r
 
 * q15 - No skip pattern everyone was asked q14 and q15 
-* recode q15 (. = .a) if q14 == 3 | q14 == 4 | q14 == 5 | q14 == .r 
 
 *q19-22
 recode q19_it q19_mx q20_it q20_mx q20_us q21 q22 (. = .a) if q18 == 2 | q18 == .r 

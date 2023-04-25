@@ -107,8 +107,6 @@ recode q1 q2 q3 q4 q5 q6_kr q7_kr q8 q9 q10 q11 q12 ///
 	   q45 q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
 	   q57 q58 q59 q60 q61 q62 q63 q66 (996 = .r)	
-* add back q23_q24
-* what about q46* q47* ?
 
 *------------------------------------------------------------------------------*
 
@@ -192,10 +190,10 @@ lab def q62_label 15001 "KR: Korean"  15002 "KR: Other" .r "Refused"
 lab val recq62 q62_label
 
 lab def q63_label 15001 "KR: <50(10,000KW)" 15002 "KR:≥50 and <100(10,000KW)" ///
-				 15003 "KR: ≥100 and <200(10,000KW)" 15004 "KR: ≥200 and <300(10,000KW)" ///
-				 15005 "KR: ≥300 and <400(10,000KW)" 15006 "KR: ≥400 and <500(10,000KW)" ///
-				 15007 "KR: ≥500 and <600(10,000KW)" 15008 "KR: ≥600(10,000KW)"  ///
-				 .r"Refused"
+				  15003 "KR: ≥100 and <200(10,000KW)" 15004 "KR: ≥200 and <300(10,000KW)" ///
+				  15005 "KR: ≥300 and <400(10,000KW)" 15006 "KR: ≥400 and <500(10,000KW)" ///
+				  15007 "KR: ≥500 and <600(10,000KW)" 15008 "KR: ≥600(10,000KW)"  ///
+				  .r"Refused"
 lab val recq63 q63_label
 
 lab def q66_label 15001 "KR: Democratic Party of Korea" 15002 "KR: People Power Party" ///
@@ -216,7 +214,8 @@ list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < .
 list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
 * Note: okay in these data (2.5 is mid-point value)
 
-list q26 q27 country if q27 == 0 | q27 == 1 // 4/11: Okay in data
+list q26 q27 country if q27 == 0 | q27 == 1 
+* Note: Okay in data
 
 list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
 
@@ -395,9 +394,9 @@ lab def q45 1 "Care for an urgent or acute health problem (accident or injury, f
 lab val q45 q45
 	
 lab def q58 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
-	    2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
-	    3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." ///
-	    .r "Refused"
+	        2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
+	        3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." ///
+	        .r "Refused"
 lab val q58 q58
 	
 lab def q21 1 "Low cost" 2 "Short distance" 3 "Short waiting time" ///
