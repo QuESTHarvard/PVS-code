@@ -387,7 +387,6 @@ recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit 
 drop visits_total
 
 *cleaning up "other specify" data
-*Shalom needs to recode this in the otherspecify sheet to .a 
 replace q6 = 2 if q7_other_us == "No tengo" | q7_other_mx== "NIGUHNO" | ///
                   q7_other_mx == "NIGUNO" | q7_other_mx == "NINGUNA" | ///
 				  q7_other_mx == "NINGUNO" | q7_other_mx == "NINGUNO." | q7_other_mx == "NO TENGO" | ///
