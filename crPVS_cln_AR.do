@@ -211,7 +211,6 @@ ren P47 q47
 replace q47 = .r if P47_Codes == 96
 
 * Mia: 4/5 added
-
 recode P47_Codes (. = .a) if q23 == 0 | q24 == 1
 recode P47_Codes (. = 0) if q47 >= 0
 recode P47_Codes (96 = 1)
@@ -488,7 +487,6 @@ recode q15 (. = .a) if inrange(q14,3,5) | q14 == .r
 
 *q19-22 
 recode q19_ar recq20 q21 q22 (. = .a) if q18 == 2 | q18 ==.r // no usual source of care
-* Mia added:
 label def q21 .a "NA", modify
 
 * NA's for q24-27
@@ -503,8 +501,7 @@ recode q31 (. = .a) if q3 != 2 | q1 < 50
 recode q32 (. = .a) if q3 != 2  
 
 * q42
-recode q42 (. = .a) if q41 == 2 // Mia: this skip pattern is different from other countries, q42 was asked even if q41 == .r (Shalom following up with Neena)
-* Mia added:
+recode q42 (. = .a) if q41 == 2 // Mia: this skip pattern is different from other countries, q42 was asked even if q41 == .r (3 in the original coding, per toll). (Shalom following up with Neena)
 label def q42 .a "NA", modify
 
 * q43-49 na's
@@ -673,7 +670,6 @@ lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
 lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
-*lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
 lab var q19_ar "Q19. AR only: Is this...Public, OSEP, Other 'obras sociales', PAMI, or private?"
 lab var q19_other "Q19. Other"
@@ -687,7 +683,6 @@ lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q2
 lab var q24 "Q24. Total number of healthcare visits in the past 12 months (range)"
 lab var q25_a "Q25_A. Was this visit for COVID-19?"
 lab var q25_b "Q25_B. How many of these visits were for COVID-19?"
-*lab var q28_c "Q28_C. How would you rate the overall quality of your last telemedicine visit?"
 lab var q26 "Q26. Were all of the visits you made to the same healthcare facility?"
 lab var q27 "Q27. How many different healthcare facilities did you go to?"
 lab var q28_a "Q28_A. How many visits did you have with a healthcare provider at your home?"
@@ -714,8 +709,6 @@ lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 lab var q46_refused "Q46. Refused"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
-*lab var q46a "Q46A Was this a scheduled visit or did you go without an appt.?"
-*lab var q46b "Q46B In days: how long between scheduling and seeing provider?"
 lab var q47_refused "Q47. Refused"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
@@ -747,11 +740,9 @@ lab var q59 "Q59. How would you rate the government's management of the COVID-19
 lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
 lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
 lab var q62 "Q62. Respondent's mother tongue or native language"
-*lab var q62_other "Q62. Other"
 lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides the one I am calling you on?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
-*lab var q66 "Q66. Which political party did you vote for in the last election?"
 
 
 *------------------------------------------------------------------------------*

@@ -293,6 +293,8 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 * There is one case where both q23 and q24 are missing, but they answered q43-49
 recode q43 recq44 q45 q46 q46_min q46_refused q47 q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
+recode q43 recq44 q45 q46 q46_min q46_refused q47 q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+	   q48_g q48_h q48_i q48_j q49 (nonmissing = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
 recode recq44 (. = .a) if q43 == 4 | q43 == .r
 

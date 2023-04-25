@@ -252,7 +252,7 @@ lab val last_visit_time lvt
 gen last_promote = 0 if q49 < 8
 recode last_promote (. = 1) if q49 == 8 | q49 == 9 | q49 == 10
 recode last_promote (. = .a) if q49 == .a
-recode last_promote (. = .r) if q49 == .r | q49 == 12
+recode last_promote (. = .r) if q49 == .r
 lab def lp 0 "Detractor" 1 "Promoter" .r "Refused" .a "NA"
 lab val last_promote lp
 
@@ -402,8 +402,14 @@ recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 
 recode q19_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(usual_type_own)
+
+* Ethiopia recode
+recode usual_type_own (.a = 0) if country == 2 & insur_type == 0
+recode usual_type_own (.a = 1) if country == 2 & insur_type == 1
+recode usual_type_own (.a = .r) if country == 2 & insur_type == .r
+
 		
-recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
+recode usual_type_own (.a = 0) if (q19_co_pe == 1 & country == 7) | q19_uy == 1 | ///
 								  q19_q20a_la == 1 | q19_q20a_la == 2 |  ///
 								  q19_q20b_la == 1 | q19_q20b_la == 2 | ///
 								  q19_it == 1 | inlist(q19_mx,3,4) | ///
@@ -411,7 +417,7 @@ recode usual_type_own (.a = 0) if q19_co_pe == 1 | q19_uy == 1 | ///
 								  q19_ar == 1 ///
 								  | q19a_uk == 1 | q19b_uk == 1
 								  							  
-recode usual_type_own (.a = 1) if q19_co_pe == 2 | q19_uy == 2 | ///
+recode usual_type_own (.a = 1) if (q19_co_pe == 2 & country == 7) | q19_uy == 2 | ///
 								  inlist(q19_q20a_la,3,4,6) | ///
 								  inlist(q19_q20b_la,3,4,6) | ///
 								  q19_it == 2 | q19_it == 3 | q19_mx == 6 | ///
@@ -425,11 +431,13 @@ recode usual_type_own (.a = 2) if inlist(q19_uy,5,995) | ///
 								  q20 == 12995 | q19_kr == 4 | inlist(q19_ar,2,4,6,7) ///
 								  | q19a_uk == 3
 								  
-recode usual_type_own (.a = .r) if q19_co_pe == .r | q19_uy == .r | ///
+recode usual_type_own (.a = .r) if (q19_co_pe  == .r & country == 7)| q19_uy == .r | ///
 								   q19_q20a_la == .r | q19_q20b_la == .r | ///
 								   q19_it == .r | q19_mx == .r | ///
 								   (q20 == .r & country == 12) | q19_kr == .r | ///
 								   q19_ar == .r | q19a_uk == .r | q19b_uk == .r
+								   
+
 								   
 * usual type level								  
 
@@ -470,19 +478,24 @@ lab val usual_type fac_own_lvl
 recode q43_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
+		
+* Ethiopia recode
+recode last_type_own (.a = 0) if country == 2 & insur_type == 0
+recode last_type_own (.a = 1) if country == 2 & insur_type == 1
+recode last_type_own (.a = .r) if country == 2 & insur_type == .r
 
 *Laos
 recode last_type_own (.a = 0) if q43_la == 1 | q44 == 11002
 recode last_type_own (.a = 1) if q43_la == 2 | q44 == 11003
 
-recode last_type_own (.a = 0) if q43_co_pe == 1 | q43_uy == 1 | ///
+recode last_type_own (.a = 0) if (q43_co_pe == 1 & country == 7) | q43_uy == 1 | ///
 								 q43_it == 1 | inlist(q43_mx,3,4) | ///
 								 inlist(q44,12003,12004,12005) | q43_kr == 1 | ///
 								 q43_ar == 1 ///
 								 | q43a_uk == 1 | q43b_uk == 1
 
 
-recode last_type_own (.a = 1) if q43_co_pe == 2 | q43_uy == 2 | ///
+recode last_type_own (.a = 1) if (q43_co_pe == 2 & country == 7) | q43_uy == 2 | ///
 								 q43_it == 2 | q43_it == 3 | q43_mx == 6 | ///
 								 inlist(q44,12001,12002,12006,12007) | q43_kr == 3 | ///
 								 q43_ar == 3 | q43a_uk == 2 | q43b_uk == 2
@@ -491,7 +504,7 @@ recode last_type_own (.a = 2) if inlist(q43_uy,5,995) | q43_it == 4 | inlist(q43
 								 q44 == 12995 | q43_kr == 4 | inlist(q43_ar,2,4,6,7) ///
 								 | q43a_uk == 3
 								 
-recode last_type_own (.a = .r) if q43_co_pe == .r | q43_uy == .r | ///
+recode last_type_own (.a = .r) if (q43_co_pe == .r & country == 7) | q43_uy == .r | ///
 								  q43_it == .r | q43_mx == .r | ///
 								  (q44 == .r & country == 12) | q43_kr == .r | ///
 								  q43_ar == .r | q43a_uk == .r | q43b_uk == .r

@@ -475,10 +475,6 @@ recode q16 q17 q51 q52 q53 ///
 	   
 * Miscellaneous questions with unique answer options
 
-*recode interviewer_gender ///
-*	(1 = 0 Male) (2 = 1 Female), ///
-*	pre(rec) label(int_gender)
-
 recode q2 (2 = 0 "18 to 29") (3 = 1 "30-39") (4 = 2 "40-49") (5 = 3 "50-59") ///
 		  (6 = 4 "60-69") (7 = 5 "70-79") (8 = 6 "80+") (.r = .r "Refused") ///
 		  (.a = .a "NA"), pre(rec) label(age_cat)
@@ -552,8 +548,7 @@ ren q43 q43_la
 
 * Label variables 
 
-* lab var int_length "Interview length (in minutes)"
-* lab var interviewer_gender "Interviewer gender"
+lab var int_length "Interview length (in minutes)"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
@@ -561,7 +556,6 @@ lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6_la "Q6. LA only: Do you have private health insurance that you or your family...?"
 lab var q7 "Q7. What type of health insurance do you have?"
-* lab var q7_other "Q7_other. Other type of health insurance"
 lab var q8 "Q8. Highest level of education completed by the respondent"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health is?"
@@ -605,7 +599,6 @@ lab var q41 "Q41. Have you needed medical attention but you did not get it in pa
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
 lab var q43_la "Q43. LA only: Is this a public or private hospital?"
-*lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
@@ -634,7 +627,6 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-*lab var q56 "Q56. How would you rate the quality of the NGO or faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -645,8 +637,6 @@ lab var q62_other "Q62. Other"
 lab var q62a_la "Q62a. LA only: What is your ethnicity?"
 lab var q62a_other_la "Q62a. LA only: Other"
 lab var q63 "Q63. Total monthly household income"
-*lab var q64 "Q64. Do you have another mobile phone number besides this one?"
-*lab var q65 "Q65. How many other mobile phone numbers do you have?"
 
 order respondent_serial respondent_id country language date int_length interviewer_id mode weight q1 q2 q3 q4 q5 q6_la q7 q8 q9 q10 q11 q12 q13 q14_la q15_la q16 q17 q18a_la q19_q20a_la q19_q20a_other q18b_la q19_q20b_la q19_q20b_other q21 q21_other q22 q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q42_other q43_la q44 q44_other q45 q45_other q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q58 q59 q60 q61 q62 q62_other q62a_la q62a_other_la q63 
 

@@ -107,8 +107,6 @@ recode q1 q2 q3 q4 q5 q6_kr q7_kr q8 q9 q10 q11 q12 ///
 	   q45 q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
 	   q57 q58 q59 q60 q61 q62 q63 q66 (996 = .r)	
-* add back q23_q24
-* what about q46* q47* ?
 
 *------------------------------------------------------------------------------*
 
@@ -192,10 +190,10 @@ lab def q62_label 15001 "KR: Korean"  15002 "KR: Other" .r "Refused"
 lab val recq62 q62_label
 
 lab def q63_label 15001 "KR: <50(10,000KW)" 15002 "KR:≥50 and <100(10,000KW)" ///
-				 15003 "KR: ≥100 and <200(10,000KW)" 15004 "KR: ≥200 and <300(10,000KW)" ///
-				 15005 "KR: ≥300 and <400(10,000KW)" 15006 "KR: ≥400 and <500(10,000KW)" ///
-				 15007 "KR: ≥500 and <600(10,000KW)" 15008 "KR: ≥600(10,000KW)"  ///
-				 .r"Refused"
+				  15003 "KR: ≥100 and <200(10,000KW)" 15004 "KR: ≥200 and <300(10,000KW)" ///
+				  15005 "KR: ≥300 and <400(10,000KW)" 15006 "KR: ≥400 and <500(10,000KW)" ///
+				  15007 "KR: ≥500 and <600(10,000KW)" 15008 "KR: ≥600(10,000KW)"  ///
+				  .r"Refused"
 lab val recq63 q63_label
 
 lab def q66_label 15001 "KR: Democratic Party of Korea" 15002 "KR: People Power Party" ///
@@ -216,7 +214,8 @@ list q23_q24 q25_b country if q25_b > q23_q24 & q25_b < .
 list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
 * Note: okay in these data (2.5 is mid-point value)
 
-list q26 q27 country if q27 == 0 | q27 == 1 // 4/11: Okay in data
+list q26 q27 country if q27 == 0 | q27 == 1 
+* Note: Okay in data
 
 list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
 
@@ -233,17 +232,11 @@ recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
 * List if missing for q39/q40 but does have a visit
 list visits_total q39 q40 if q39 == .a & visits_total > 0 & visits_total < . /// 
 							  | q40 == .a & visits_total > 0 & visits_total < .
+							  *Ok in data							 
+							  
+list visits_total q39 q40 if q39 != 3 & visits_total == 0 /// 
+							  | q40 != 3 & visits_total == 0
 							  *Ok in data
-							  
-* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
-recode q39 q40 (.a = .r) if visits_total > 0 & visits_total < .
-list visits_total q39 q40 if q39 == .a & visits_total > 0 & visits_total < . /// 
-							 | q40 == .a & visits_total > 0 & visits_total < .
-* this is fine
-							  
-list visits_total q39 q40 if q39 != .a & visits_total == 0 /// 
-							  | q40 != .a & visits_total == 0
-							  *Ok since everyeone has q39 or q40 == 3 "I did not get healthcare in 12 months" - should this be added into the code?
 							  
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
 * but they have no visit values in past 12 months 
@@ -395,9 +388,9 @@ lab def q45 1 "Care for an urgent or acute health problem (accident or injury, f
 lab val q45 q45
 	
 lab def q58 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
-	    2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
-	    3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." ///
-	    .r "Refused"
+	        2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
+	        3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." ///
+	        .r "Refused"
 lab val q58 q58
 	
 lab def q21 1 "Low cost" 2 "Short distance" 3 "Short waiting time" ///
@@ -446,7 +439,6 @@ lab var country "Country"
 lab var int_length "Interview length (in minutes)" 
 lab var date "Date of interview"
 lab var respondent_id "Respondent ID"
-*
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
@@ -469,7 +461,6 @@ lab var q18 "Q18. Is there one healthcare facility or provider's group you usual
 lab var q19_kr "Q19. KR only: Is this...public, private, or non-profit/religious medical...?"
 lab var q19_other "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
-* lab var q20_other "Q20. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
 lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
@@ -500,14 +491,11 @@ lab var q42_other "Q42. Other"
 lab var q43_kr "Q43. KR only: Is this...public, private, or non-profit/religious medical...?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
-*lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
-*lab var q46_refused "Q46. Refused"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var q46a "Q46A Was this a scheduled visit or did you go without an appt.?"
 lab var q46b "Q46B In days: how long between scheduling and seeing provider?"
-*lab var q47_refused "Q47. Refused"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
@@ -535,7 +523,6 @@ lab var q59 "Q59. How would you rate the government's management of the COVID-19
 lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
 lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
 lab var q62 "Q62. Respondent's mother tongue or native language"
-*lab var q62_other "Q62. Other"
 lab var q63 "Q63. Total monthly household income"
 lab var q66 "Q66. Which political party did you vote for in the last election?"
 
