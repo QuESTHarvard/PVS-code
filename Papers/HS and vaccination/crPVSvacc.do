@@ -37,12 +37,16 @@ replace c ="UK" if country==17
 	replace twodoses= twodosesla if twodoses==.a 
 	drop twodosesla
 * Health system variables
-	recode visits_cat (1/2=1), gen(anyvisit)
 	recode visits_total (1/2=1) (2.5/4.5=2) (5/250=3), gen(visits4)
 	lab def visits4 0"No visits" 1"1-2 visits" 2"3-4 visits" 3"5 or more visits"
 	lab val visits4 visits4
 	
-	foreach v in last_qual usual_quality qual_public covid_manage {
+	gen qual_system= qual_public
+	replace qual_system = qual_private if c=="USA" | c=="Korea"
+	replace qual_system = q56a_mx if c=="Mexico"
+	lab var qual_system "Quality of main health system"
+	
+	foreach v in last_qual usual_quality  covid_manage {
 		recode `v' (1/2=0) (3/4=1), gen(vg`v') 
 		}
 		
@@ -76,7 +80,6 @@ replace c ="UK" if country==17
 	
 	lab var fullvax "Received 2+ or 3+ doses of a COVID vaccine"
 	lab var onedose "Received at least 1 dose of a COVID vaccine"
-	lab var anyvisit "Had at least 1 healthcare visit in last year"
 	lab var preventive "Received at leat 3 other preventive health services"
 	lab var urban "Urban residence"
 	lab var health_chronic "Has a longstanding illness or chronic health problem"
