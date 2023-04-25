@@ -253,6 +253,10 @@ recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit 
 drop visits_total
 * did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
 
+
+*cleaning up "other specify" data
+replace q6 = 2 if q7_other == "no health insurance" | q7_other == "I Don't know" | q7_other == "I don't know" | q7_other == "I don;t know"
+
 *------------------------------------------------------------------------------*
 
 * Recode missing values to NA for intentionally skipped questions
