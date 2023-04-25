@@ -9,7 +9,7 @@ global analysis "SPH Kruk Active Projects/Vaccine hesitancy/Analyses/Paper 7 vac
 
 cd "$user/$analysis/"
 u "$user/$analysis/pvs_vacc_analysis.dta", clear
-net install collin
+*net install collin
 clear all
 set more off
 ********************************************************************************
@@ -62,7 +62,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 		destring `v', replace
 		gen ln`v' = ln(`v')
 	}
-	rename (B E F G) (aOR p_value LCL UCL) 
+	rename (B E F G) (aOR p_value LCL UCL)
+	replace UCL=6 if UCL==6.89416 // Uruguay outlier UCL
 	
 * Income groups	
 	gen inc_group = 1 if country=="LaoPDR" | countr=="Kenya" | count=="Ethiopia" | country=="India"
@@ -92,7 +93,7 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 			graphregion(color(white)) legend(off) ///
 			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
 				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
-			ylabel(0.40(0.4)7, labsize(tiny) gstyle(minor)) ///
+			ylabel(0.40(0.4)6, labsize(tiny) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Had 1 or 2 visits in last year", size(medium))
 	 
@@ -104,7 +105,7 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 			graphregion(color(white)) legend(off) ///
 			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
 				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
-			ylabel(0.40(0.4)7, labsize(tiny) gstyle(minor)) ///
+			ylabel(0.40(0.4)6, labsize(tiny) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Had 3 or 4 visits in last year", size(medium))
 	 
@@ -116,7 +117,7 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 			graphregion(color(white)) legend(off) ///
 			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
 				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
-			ylabel(0.40(0.4)7, labsize(tiny) gstyle(minor)) ///
+			ylabel(0.40(0.4)6, labsize(tiny) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Had 5 or more visits in last year", size(medium))
 	 
@@ -134,7 +135,7 @@ foreach x in  Ethiopia  Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
 				
 	putexcel (A1) = etable	
 
-	logistic fullvax usual_public_fac vgusual_quality discrim  ///
+	logistic fullvax vgusual_quality discrim mistake  ///
 				age2 health_chronic ever_covid post_secondary ///
 				high_income female urban  minority if c=="`x'", vce(robust)
 				
@@ -150,7 +151,7 @@ foreach x in Argentina Colombia India Korea Uruguay Italy {
 				
 	putexcel (A1) = etable	
 
-	logistic fullvax usual_public_fac vgusual_quality discrim  ///
+	logistic fullvax vgusual_quality discrim mistake  ///
 				age2 health_chronic ever_covid post_secondary ///
 				high_income female urban  if c=="`x'", vce(robust)
 				
@@ -188,11 +189,10 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 	}
 	rename (B E F G) (aOR p_value LCL UCL) 
 	replace model=1 if model==.
-	replace A="usual_public_fac" if A=="usual_publ~c"
 	replace A="vgusual_quality" if A=="vgusual_qu~y"
 	replace A="health_chronic" if A=="health_chr~c"
 	replace A="post_secondary" if A=="post_secon~y"
-	
+	replace UCL=3.4 if UCL==4.543549 // Italy outlier UCL
 * Income groups	
 	gen inc_group = 1 if country=="LaoPDR" | countr=="Kenya" | count=="Ethiopia" | country=="India"
 	replace inc_group = 2 if count=="SouthAfrica" | count=="Peru" | count=="Mexico" | ///
@@ -216,7 +216,7 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 	export excel using "$user/$analysis/supp table 3.xlsx", sheet(Sheet1) firstrow(variable) replace 
 	
 ********************************************************************************
-* GRAPHS FIGURE 2
+* GRAPHS SYSTEM COMPETENCE
 	twoway (rspike UCL LCL co if A=="usual_source", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="usual_source", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
@@ -250,24 +250,14 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 	 
 	graph export "$user/$analysis/unmet_need.pdf", replace 
 
-* GRAPHS FIGURE 3
-	twoway (rspike UCL LCL co if A=="usual_public_fac", lwidth(medthick) lcolor(navy)) ///
-		   (scatter aOR co if A=="usual_public_fac", msize(medsmall) mcolor(ebblue*2)) , ///
-			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
-			ylabel(0.2(0.2)3, labsize(vsmall) gstyle(minor)) ///
-			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
-			title("Usual facility is public, government-owned," "or social-security", size(med))
-	 
-	graph export "$user/$analysis/usual_public.pdf", replace 
-
+********************************************************************************
+* GRAPHS QUALITY OF OWN CARE
 	twoway (rspike UCL LCL co if A=="vgusual_quality", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="vgusual_quality", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
 			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
 				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
-			ylabel(0.2(0.2)3, labsize(vsmall) gstyle(minor)) ///
+			ylabel(0.2(0.4)3.4, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Rates quality of usual provider as" "very good or excellent" , size(medi))
 	 
@@ -278,11 +268,131 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 			graphregion(color(white)) legend(off) ///
 			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
 				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
-			ylabel(0.2(0.2)3, labsize(vsmall) gstyle(minor)) ///
+			ylabel(0.2(0.4)3.4, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Experienced discrimination in the" "health system in the last year", size(med))
 	 
 	graph export "$user/$analysis/discrim.pdf", replace 
+	
+	twoway (rspike UCL LCL co if A=="mistake", lwidth(medthick) lcolor(navy)) ///
+		   (scatter aOR co if A=="mistake", msize(medsmall) mcolor(ebblue*2)) , ///
+			graphregion(color(white)) legend(off) ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+			ylabel(0.2(0.4)3.4, labsize(vsmall) gstyle(minor)) ///
+			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+			title("Believes medical mistake was made", size(med))
+	 
+	graph export "$user/$analysis/mistake.pdf", replace 
+********************************************************************************
+* COUNTRY-SPECIFIC  REGRESSIONS - QUALITY AND MANAGEMENT OF NATIONAL HEALTH SYSTEM
+foreach x in  Ethiopia Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
+	putexcel set "$user/$analysis/national health system models.xlsx", sheet("`x'")  modify	
+	logistic fullvax vgqual_system ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban minority if c=="`x'", vce(robust) // countries with the variable minority
+	putexcel (A1) = etable	
+	logistic fullvax vconf_opinion ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban minority if c=="`x'", vce(robust) 
+	putexcel (A15) = etable	
+	logistic fullvax vgcovid_manage ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban minority if c=="`x'", vce(robust) 
+	putexcel (A29) = etable	
+	}
+foreach x in Argentina Colombia India Korea Uruguay Italy {
+	putexcel set "$user/$analysis/national health system models.xlsx", sheet("`x'")  modify		
+	logistic fullvax vgqual_system ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban  if c=="`x'", vce(robust) // countries without the variable minority		
+	putexcel (A1) = etable	
+	logistic fullvax vconf_opinion ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban  if c=="`x'", vce(robust) 
+	putexcel (A15) = etable	
+	logistic fullvax vgcovid_manage ///
+				age2 health_chronic ever_covid post_secondary ///
+				high_income female urban  if c=="`x'", vce(robust) 
+	putexcel (A29) = etable	
+	}
+* Import estimates
+import excel using "$user/$analysis/national health system models.xlsx", sheet(Ethiopia) firstrow clear
+	drop if B=="" | B=="Odds ratio"
+	gen country="Ethiopia"
+	save "$user/$analysis/graphs.dta", replace
+foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico Peru SouthAfrica USA UK { 
+	import excel using  "$user/$analysis/national health system models.xlsx", sheet("`x'") firstrow clear
+	drop if B=="" | B=="Odds ratio"
+	gen country="`x'"
+	append using "$user/$analysis/graphs.dta"
+	save "$user/$analysis/graphs.dta", replace
+	}
+
+	keep A B E F G country 
+	encode country, gen(co)
+	foreach v in E B F G  {
+		destring `v', replace
+		gen ln`v' = ln(`v')
+	}
+	rename (B E F G) (aOR p_value LCL UCL)
+	replace A="vgqual_system" if A=="vgqual_sys~m"
+	replace A="health_chronic" if A=="health_chr~c"
+	replace A="post_secondary" if A=="post_secon~y"
+	replace A="vconf_opinion" if A=="vconf_opin~n"
+	replace A="vgcovid_manage" if A=="vgcovid_ma~e"
+	
+* Income groups	
+	gen inc_group = 1 if country=="LaoPDR" | countr=="Kenya" | count=="Ethiopia" | country=="India"
+	replace inc_group = 2 if count=="SouthAfrica" | count=="Peru" | count=="Mexico" | ///
+						     count=="Argentina" | count=="Colombia"
+	replace inc_group = 3 if count=="Uruguay" | count=="USA" | count=="Korea" | count=="Italy" | count=="UK"
+	lab def inc_group 1"LMI"  2"UMI" 3"HI"
+	lab val inc_group inc_group
+
+* Region groups
+	gen reg_group = 1 if country=="SouthAfrica" | country=="Ethiopia" | country=="Kenya"
+	replace reg_group = 2 if country=="Korea" |  country=="LaoPDR" | country=="India"
+	replace reg_group= 3 if country=="Peru" | country=="Mexico" | country=="Argentina" ///
+							| country=="Colombia" |  country=="Uruguay" 
+	replace reg_group=4 if country=="USA" | country=="Italy" | country=="UK"
+	lab def reg_group 1 "SSA" 2"Asia" 3"LATAM" 4"NAWE"	
+********************************************************************************
+* GRAPHS QUALITY OF NATIONAL HS
+	twoway (rspike UCL LCL co if A=="vgqual_system", lwidth(medthick) lcolor(navy)) ///
+		   (scatter aOR co if A=="vgqual_system", msize(medsmall) mcolor(ebblue*2)) , ///
+			graphregion(color(white)) legend(off) ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+			ylabel(0.2(0.2)4.6, labsize(vsmall) gstyle(minor)) ///
+			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+			title("Rates quality of main health system" "as very good or excellent" , size(medi))
+	 
+	graph export "$user/$analysis/vgqual_system.pdf", replace 
+
+	twoway (rspike UCL LCL co if A=="vconf_opinion", lwidth(medthick) lcolor(navy)) ///
+		   (scatter aOR co if A=="vconf_opinion", msize(medsmall) mcolor(ebblue*2)) , ///
+			graphregion(color(white)) legend(off) ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+			ylabel(0.2(0.2)4.6, labsize(vsmall) gstyle(minor)) ///
+			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+			title("Somewhat or very confident that government" "considers public opinion" , size(medi))
+	 
+	graph export "$user/$analysis/vconf_opinion.pdf", replace 
+
+	twoway (rspike UCL LCL co if A=="vgcovid_manage", lwidth(medthick) lcolor(navy)) ///
+		   (scatter aOR co if A=="vgcovid_manage", msize(medsmall) mcolor(ebblue*2)) , ///
+			graphregion(color(white)) legend(off) ///
+			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
+				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+			ylabel(0.2(0.2)4.6, labsize(vsmall) gstyle(minor)) ///
+			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+			title("Rates government's management of the COVID-19" ///
+			"pandemic as very good or excellent" , size(medi))
+	 
+	graph export "$user/$analysis/vgcovid_manage.pdf", replace 
+
 ********************************************************************************	
 * META ANALYSIS
 
@@ -352,27 +462,12 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 	
 
 		
-	logistic fullvax i.visits_cat ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban i.c, vce(robust) // countries without the variable minority
-				
-	logistic fullvax i.visits_cat ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban i.country, vce(robust) // countries without the variable minority
-		
+			
 	* QUALITY AND MANAGEMENT OF NATIONAL HEALTH SYSTEM
 	**** Quality of main health system
 	**** Government responsiveness of public opinion. trust in gov broadly - there are papers on this. does it matter in LICs?
 	**** Government management of COVID 
 		
-	logistic fullvax i.qual_public ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban i.country, vce(robust) // countries without the variable minority	
-				
-		logistic fullvax i.qual_private ///
-				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban i.country // countries without the variable minority	
-	
 		logistic fullvax i.conf_opinion ///
 				age2 health_chronic ever_covid post_secondary ///
 				high_income female urban i.country // countries without the variable minority	
