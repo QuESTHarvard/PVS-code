@@ -355,7 +355,7 @@ list q23_q24 q27 country if q27 > q23_q24 & q27 < .
 list q26 q27 country if q27 == 0 | q27 == 1
 recode q26 (2 = 1) if q27 == 0 
 recode q27 (0 = .a)  
-recode q27 (1 = 2) //*Shalom question: why are we doing this recode? 	 
+recode q27 (1 = 2)	 
 
 * list if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
 egen visits_total = rowtotal(q23_q24 q28_b) //used q23_q24 and q28_b only since there's no q28_a
@@ -434,7 +434,7 @@ recode q44_it (. = .a) if q43_it == 4 // different from above
 recode q44_mx (. = .a) if q43_mx == 7 
 recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r
 
-*q64/q65 - are there variarbles on number of phone numbers? 
+*q64/q65 - no variarbles on number of phone numbers
 
 * q66 for US
 recode q66b_us (. = .a) if q66a_us == 1 | q66a_us == 2
