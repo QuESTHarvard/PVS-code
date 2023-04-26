@@ -9,12 +9,11 @@ global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS Exte
 global analysis "SPH Kruk Active Projects/Vaccine hesitancy/Analyses/Paper 7 vaccination/Results"
 
 u "$user/$analysis/pvs_vacc_analysis.dta", clear
-*net install collin
 set more off
 ********************************************************************************
 * COUNTRY-SPECIFIC  REGRESSIONS - RATING OF OWN CARE AND SYSTEM COMPETENCE
 foreach x in  Ethiopia  Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
-	putexcel set "$user/$analysis/country-specific regressions.xlsx", sheet("`x'")  modify	
+	putexcel set "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'")  modify	
 	logistic fullvax usual_source preventive unmet_need ///
 				age2 health_chronic ever_covid post_secondary ///
 				high_income female urban minority if c=="`x'", vce(robust) // countries with the variable minority			
@@ -25,7 +24,7 @@ foreach x in  Ethiopia  Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
 	putexcel (A15) = etable
 	}
 foreach x in Argentina Colombia India Korea Uruguay Italy {
-	putexcel set "$user/$analysis/country-specific regressions.xlsx", sheet("`x'")  modify
+	putexcel set "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'")  modify
 	logistic fullvax usual_source preventive unmet_need ///
 				age2 health_chronic ever_covid post_secondary ///
 				high_income female urban  if c=="`x'", vce(robust) // countries without the variable minority		
@@ -36,14 +35,14 @@ foreach x in Argentina Colombia India Korea Uruguay Italy {
 	putexcel (A15) = etable
 	}	
 	* Import estimates
-import excel using "$user/$analysis/country-specific regressions.xlsx", sheet(Ethiopia) firstrow clear
+import excel using "$user/$analysis/country-specific regressions comp qual.xlsx", sheet(Ethiopia) firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="Ethiopia"
 	gen model=2 in 13/24
 	save "$user/$analysis/graphs.dta", replace
 	
 foreach x in   Kenya LaoPDR Mexico Peru SouthAfrica USA UK { 
-	import excel using  "$user/$analysis/country-specific regressions.xlsx", sheet("`x'") firstrow clear
+	import excel using  "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'") firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="`x'"
 	gen model=2 in 13/24
@@ -51,7 +50,7 @@ foreach x in   Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
 	save "$user/$analysis/graphs.dta", replace
 	}
 foreach x in  Argentina Colombia India Korea  Uruguay Italy   { 
-	import excel using  "$user/$analysis/country-specific regressions.xlsx", sheet("`x'") firstrow clear
+	import excel using  "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'") firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="`x'"
 	gen model=2 in 12/22
@@ -60,7 +59,20 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 	}
 
 	keep A B E F G country model
-	encode country, gen(co)
+	gen co = 1 if country=="Ethiopia"
+	replace co =2  if country=="Kenya"
+	replace co =3  if country=="India"
+	replace co =4  if country=="LaoPDR"
+	replace co =5  if country=="Peru"
+	replace co =6  if country=="SouthAfrica"
+	replace co =7  if country=="Colombia"
+	replace co =8  if country=="Mexico"
+	replace co =9  if country=="Argentina"
+	replace co =10  if country=="Uruguay"
+	replace co =11  if country=="Italy"
+	replace co =12  if country=="Korea"
+	replace co =13  if country=="UK"
+	replace co =14  if country=="USA"
 	foreach v in E B F G  {
 		destring `v', replace
 		gen ln`v' = ln(`v')
@@ -76,7 +88,6 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 	replace inc_group = 2 if count=="SouthAfrica" | count=="Peru" | count=="Mexico" | ///
 						     count=="Argentina" | count=="Colombia"
 	replace inc_group = 3 if count=="Uruguay" | count=="USA" | count=="Korea" | count=="Italy" | count=="UK"
-	
 	lab def inc_group 1"LMI"  2"UMI" 3"HI"
 	lab val inc_group inc_group
 
@@ -86,12 +97,11 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 	replace reg_group= 3 if country=="Peru" | country=="Mexico" | country=="Argentina" ///
 							| country=="Colombia" |  country=="Uruguay" 
 	replace reg_group=4 if country=="USA" | country=="Italy" | country=="UK"
-	
 	lab def reg_group 1 "SSA" 2"Asia" 3"LATAM" 4"NAWE"
 	lab val reg_group reg_group
 	
 *Supplemental table 3
-	export excel using "$user/$analysis/supp table hs competence own care.xlsx", sheet(Sheet1) firstrow(variable) replace 
+	export excel using "$user/$analysis/supp table hs comp qual.xlsx", sheet(Sheet1) firstrow(variable) replace 
 	
 ********************************************************************************
 * GRAPHS SYSTEM COMPETENCE
@@ -100,8 +110,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 		twoway (rspike UCL LCL co if A=="usual_source", lwidth(medthick) lcolor(navy)) ///
 			   (scatter aOR co if A=="usual_source", msize(medsmall) mcolor(ebblue*2)) , ///
 				graphregion(color(white)) legend(off) ///
-				xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-					   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
+				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.20(0.2)3.2, labsize(vsmall) gstyle(minor)) ///
 				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 				title("Has a usual source of care", size(medium))
@@ -111,8 +121,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 			twoway (rspike UCL LCL co if A=="preventive", lwidth(medthick) lcolor(navy)) ///
 			   (scatter aOR co if A=="preventive", msize(medsmall) mcolor(ebblue*2)) , ///
 				graphregion(color(white)) legend(off) ///
-				xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-					   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
+				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.2)3.2, labsize(vsmall) gstyle(minor)) ///
 				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 				title("Received at least 3 other preventive" "health care services in last year", size(medi))
@@ -122,8 +132,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 		twoway (rspike UCL LCL co if A=="unmet_need", lwidth(medthick) lcolor(navy)) ///
 			   (scatter aOR co if A=="unmet_need", msize(medsmall) mcolor(ebblue*2)) , ///
 				graphregion(color(white)) legend(off) ///
-				xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-					   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
+				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.2)3.2, labsize(vsmall) gstyle(minor)) ///
 				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 				title("Had unmet health care needs in last year", size(medi))
@@ -134,8 +144,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 		twoway (rspike UCL LCL co if A=="vgusual_quality", lwidth(medthick) lcolor(navy)) ///
 			   (scatter aOR co if A=="vgusual_quality", msize(medsmall) mcolor(ebblue*2)) , ///
 				graphregion(color(white)) legend(off) ///
-				xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-					   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
+				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.4)3.4, labsize(vsmall) gstyle(minor)) ///
 				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 				title("Rates quality of usual provider as" "very good or excellent" , size(medi))
@@ -145,8 +155,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 		twoway (rspike UCL LCL co if A=="discrim", lwidth(medthick) lcolor(navy)) ///
 			   (scatter aOR co if A=="discrim", msize(medsmall) mcolor(ebblue*2)) , ///
 				graphregion(color(white)) legend(off) ///
-				xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-					   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
+				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.4)3.4, labsize(vsmall) gstyle(minor)) ///
 				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 				title("Experienced discrimination in the" "health system in the last year", size(med))
@@ -156,8 +166,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 		twoway (rspike UCL LCL co if A=="mistake", lwidth(medthick) lcolor(navy)) ///
 			   (scatter aOR co if A=="mistake", msize(medsmall) mcolor(ebblue*2)) , ///
 				graphregion(color(white)) legend(off) ///
-				xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-					   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
+				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.4)3.4, labsize(vsmall) gstyle(minor)) ///
 				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 				title("Believes medical mistake was made", size(med))
