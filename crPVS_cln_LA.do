@@ -384,6 +384,7 @@ recode q24 (. = .a) if q23 != .d & q23 != .r & q23 != .
 recode q25_a (. = .a) if q23 != 1 & q23 != .
 * No 0 for q24  (option 1)
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == .r
+recode q25_b (nonmissing = .a) if q23 == 0 | q23 == 1 | q24 == .r // 41 changes
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == .r
 recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a 
 
@@ -398,7 +399,7 @@ recode q32 (. = .a) if q3 != 2 | q2 == .r
 recode q42 (. = .a) if q41 == 2 | q41==.r
 
 * q43-49 na's
-* There are people who have . for both q23 and 24 but answered questions 
+* There are people (6) who have .r for both q23 and 24 but answered questions 
 recode q43 recq44 q45 q46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == .r 
 

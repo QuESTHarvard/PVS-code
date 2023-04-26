@@ -507,6 +507,7 @@ lab var q48_g "Q48_G. How would you rate whether you were involved in your care 
 lab var q48_h "Q48_H. How would you rate the amount of time your provider spent with you?"
 lab var q48_i "Q48_I. How would you rate the amount of time you waited before being seen?"
 lab var q48_j "Q48_J. How would you rate the courtesy and helpfulness at the facility?"
+lab var q48_k "Q48_K. How would you rate how long it took for you to get this appointment?"
 lab var q49 "Q49. How likely would recommend this facility to a friend or family member?"
 lab var q50_a "Q50_A. How would you rate the quality of care provided for care for pregnancy?"
 lab var q50_b "Q50_B. How would you rate the quality of care provided for children?"

@@ -73,7 +73,7 @@ recode q23_q24 (997 = 996) if q24 == 996
 	 
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 996
-gen language = country*1000 + 11 //moved the recode language (. = 11) if country == 2 | country == 7 | country == 10  to here by just genenrating the language variable 
+gen language = country*1000 + 11 // genenrating the language variable 
 gen interviewer_id = country*1000 + interviewerid_recoded
 * Note: 16 seems like a low number of interviewers across all three countries- error? dropped later anyways
 gen recq5 = country*1000 + q5  
@@ -570,7 +570,6 @@ lab var q59 "Q59. How would you rate the government's management of the COVID-19
 lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
 lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
 lab var q62 "Q62. Respondent's mother tongue or native language"
-*lab var q62_other "q62. Other"
 lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
