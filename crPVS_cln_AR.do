@@ -501,16 +501,16 @@ recode q31 (. = .a) if q3 != 2 | q1 < 50
 recode q32 (. = .a) if q3 != 2  
 
 * q42
-recode q42 (. = .a) if q41 == 2 // Mia: this skip pattern is different from other countries, q42 was asked even if q41 == .r (3 in the original coding, per toll). (Shalom following up with Neena)
+recode q42 (. = .a) if q41 == 2 // Mia: this skip pattern is different from other countries, q42 was asked even if q41 == .r (3 in the original coding, per tool).
 label def q42 .a "NA", modify
 
 * q43-49 na's
-recode q43_ar recq44 q45 q46 q46 q47 q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_ar recq44 q45 q46 q47  q47_refused q46_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 
 * Options for q44 were filtered based on the answer to q43_ar (e.g., people who chose "public" had access to a different set of options than those who chose OSEP), however the options themeselves for the different health insurance were not too different so above we recoded a few options to collapse multiple duplicate options
 * However, there are people who answered q44 but refused q43 and should be recoded as missing in q44 
-replace recq44 = .a if q43_ar == .r //*Shalom to confirm with Neena: q43_ar == 4 |
+replace recq44 = .a if q43_ar == .r 
 
 * q49 - strange value in q49
 recode q49 (12 = .r)

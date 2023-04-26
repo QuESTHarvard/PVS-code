@@ -272,6 +272,8 @@ recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r
 
 * q7 
 recode recq7 (. = .a) if q6 == 2 | q6 == .r | q6_za == 2 | q6_za == .r
+* one person answered no to q6 but answered q7
+recode recq7 (nonmissing = .a) if q6 == 2
 
 * q13 
 recode q13 (. = .a) if q12 == 2 | q12 == .r 
@@ -286,6 +288,8 @@ recode recq20 (. = .a) if q19 == 4 | q19 == .r
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d & q23 != .r 
 recode q25_a (. = .a) if q23 != 1
+* one person answered 2 to q23 but was asked q25_a
+recode q25_a (nonmissing = .a) if q23 != 1
 recode q25_b (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .a | q26 == .r
@@ -302,7 +306,7 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 recode q43 recq44 q45 q46 q46_min q46_refused q47 q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 recode q43 recq44 q45 q46 q46_min q46_refused q47 q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
-	   q48_g q48_h q48_i q48_j q49 (nonmissing = .a) if q23 == 0 | q24 == 1 | q24 == .r
+	   q48_g q48_h q48_i q48_j q49 (nonmissing = .a) if q23 == 0 | q24 == 1
 	   
 recode recq44 (. = .a) if q43 == 4 | q43 == .r
 

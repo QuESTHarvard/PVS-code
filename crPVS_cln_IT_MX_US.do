@@ -245,8 +245,6 @@ recode q46b_dys q46b_hrs q46b_mth q46b_wks (. = 0) if q46b_dys < . | ///
 gen q46b = (q46b_hrs/24) + q46b_dys + (q46b_wks*7) + (q46b_mth*30)
 recode q46b (. = .r) if q46b_refused == 1 
 
-* Note: There are 9 values missing, after the skip pattern recoding. - 9 people who answered "Refused" in q46a are missing data in q46b, confirm with Neena if I should recode these people to .a?
-
 * Q54 (selected Secretaria de Salud in Mexico)
 egen q54 = rowmax(q54_mx q54_it q54_us)
 lab val q54 labels69
@@ -404,7 +402,7 @@ recode q13 (. = .a) if q12 == 2  | q12==.r
 *q19-22
 recode q19_it q19_mx q20_it q20_mx q20_us q21 q22 (. = .a) if q18 == 2 | q18 == .r 
 * Note: In Italy, SSRS asked q20 even if q19 was other or refused, but not the case in Mexico 
-recode q20_mx (. = .a) if q19_mx == 7 | q18 ! = 1 | q18 == 1
+recode q20_mx (. = .a) if q19_mx == 7 | q18 ! = 1
 * 37 changes made to q20_mx
 
 * NA's for q24-27 
@@ -412,7 +410,7 @@ recode q24 (. = .a) if q23 != .d & q23 != .r
 recode q25_a (. = .a) if q23 != 1
 recode q25_b q26 (. = .a) if q23 == 0 | q23 == 1 | q24 == 1 | q24 == .r 
 recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a
-* FLAG - some missing in q27 - maybe refusal? or skip pattern I missed?
+* FLAG - some missing in q27
 * br q23 q24 q23_q24 q26 q27 if q27 == .
 
 *q28_c
@@ -505,8 +503,7 @@ recode q48_e ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (6 = .a "NA") (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_visits)
-* NOTE: "I had no prior tests or visits" was not an option - was the skip pattern different? 
-* 		Can move q48_e to above recode if so
+* NOTE: "I had no prior tests or visits" was not an option
 	 
 recode q48_j ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 

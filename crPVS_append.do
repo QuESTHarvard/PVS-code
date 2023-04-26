@@ -74,17 +74,14 @@ label val mode mode
 lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 
 * Country-specific skip patterns - check this 
-recode q19_et_in_ke_za q56_et_in_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
-recode q43_et_in_ke_za (. = .a) if country != 5 | country != 3  | country != 9
-recode q43_la (. = .a) if country != 11
+recode q19_et_in_ke_za q43_et_in_ke_za q56_et_in_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
 recode q6_za q37_za (. = .a) if country != 9
-recode q6_la q14_la q15_la q18a_la q19_q20a_la q18b_la q19_q20b_la q62a_la ///		
+recode q6_la q14_la q15_la q18a_la q19_q20a_la q18b_la q19_q20b_la q43_la q62a_la ///		
 		(. = .a) if country != 11
-recode q14 q15 (. = .a) if country == 11 
-recode q18 q20 q64 q65 (. = .a) if country == 11 
+recode q14 q15 q18 q20 q64 q65 (. = .a) if country == 11 
 recode q6_it q19_it q43_it (. = .a) if country != 14
 recode q19_mx q43_mx q56a_mx q56b_mx q62_mx (. = .a) if country != 13
 recode q62a_us q62b_us q66a_us q66b_us (. = .a) if country != 12
