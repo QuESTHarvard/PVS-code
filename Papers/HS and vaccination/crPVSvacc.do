@@ -38,7 +38,7 @@ replace c ="UK" if country==17
 	drop twodosesla
 * Health system variables
 	recode visits_total (1/2=1) (2.5/4.5=2) (5/250=3), gen(visits4)
-	lab def visits4 0"No visits" 1"1-2 visits" 2"3-4 visits" 3"5 or more visits"
+	lab def visits4 0"No visits" 1"1-2visits" 2"3-4visits" 3"5ormorevisits"
 	lab val visits4 visits4
 	
 	gen qual_system= qual_public
@@ -46,14 +46,15 @@ replace c ="UK" if country==17
 	replace qual_system = q56a_mx if c=="Mexico"
 	lab var qual_system "Quality of main health system"
 	
-	foreach v in last_qual usual_quality  covid_manage {
+	foreach v in usual_quality covid_manage qual_system {
 		recode `v' (1/2=0) (3/4=1), gen(vg`v') 
 		}
-		
 	recode conf_opinion (0/1=0) (2/3=1), gen(vconf_opinion)
 
 	egen preventive_score=rowtotal(blood_press blood_chol blood_sugar eyes teeth), m 
 	recode preventive_score (0/2=0) (3/5=1), gen(preventive) 
+	
+	recode system_reform (1/2=0) (3=1), gen(workswell)
 	
 	* Demographics
 	recode age_cat (0/2=0) (3/6=1), gen(age2)
@@ -79,5 +80,6 @@ replace c ="UK" if country==17
 	lab var health_chronic "Has a longstanding illness or chronic health problem"
 	lab var ever_covid "Had COVID-19"
 	lab var vgusual_quality "Rates quality of usual facility as very good or excellent"
-
+	lab var workswell "Believes health system works well and only minor changes needed"
+	
 save "$user/$analysis/pvs_vacc_analysis.dta", replace
