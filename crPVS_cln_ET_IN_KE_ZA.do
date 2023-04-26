@@ -253,6 +253,14 @@ recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit 
 drop visits_total
 * did not check if q39 == 3 but q40 not since the previous steps should have changed 3 to .r if have visit.  
 
+
+*cleaning up "other specify" data
+**add "lic" based on prashant's comment in the other specify data that this is life insurance schemes and not health insurance
+replace q6 = 2 if q7_other == "no health insurance" | q7_other == "I Don't know" | q7_other == "I don't know" | ///
+				  q7_other == "I don;t know" | q7_other == "LIC" | q7_other == "LIC Insurance" | ///
+				  q7_other == "LIC JEEVAN BIMA" | q7_other == "LIC Jeevan Bima" | q7_other == "LIC Life Insurance" | ///
+				  q7_other == "jeevan jyoti" | q7_other == "lic" | q7_other == "LIFE COVER"
+
 *------------------------------------------------------------------------------*
 
 * Recode missing values to NA for intentionally skipped questions
