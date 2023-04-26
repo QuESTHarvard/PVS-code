@@ -407,9 +407,9 @@ recode q19_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) ///
 
 * Colombia recode
 * Recode based on insurance type (but refusal for insurance defaults to q19_co_pe)
-recode usual_type_own (.a = 1) if country == 2 & q7 == 2028
-recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030)
-recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
+recode usual_type_own (.a = 1) if country == 2 & q7 == 2028 & q18 == 1 
+recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) & q18 == 1
+recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q18 == 1
 *recode usual_type_own (.a = .r) if country == 2 & q7 == .r
 
 		
@@ -444,7 +444,6 @@ recode usual_type_own (.a = .r) if (q19_co_pe  == .r )| q19_uy == .r | ///
 *Peru recode 
 *Recode based on q19_co_pe, but those who say public and have SHI are recoded to other 
 recode usual_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
-
 								   
 * usual type level								  
 
@@ -484,11 +483,11 @@ lab val usual_type fac_own_lvl
 recode q43_et_in_ke_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
-		
+s		
 * Colombia recode
 * Recode based on insurance type (but refusal for insurance defaults to q19_co_pe)
-recode last_type_own (.a = 1) if country == 2 & q7 == 2028
-recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030)
+recode last_type_own (.a = 1) if country == 2 & q7 == 2028 
+recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) 
 recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 *recode last_type_own (.a = .r) if country == 2 & q7 == .r
 
