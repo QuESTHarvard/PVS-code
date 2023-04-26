@@ -60,7 +60,6 @@ ren Q2_8b q25_b
 ren Q2_9 q26
 ren Q2_10 q27 
 ren Q2_11 q28_b 
-lab var q28_b "q2_11 How many virtual or telemedicine visits did you have?"
 ren Q2_11b q28_c 
 ren Q2_12 q29
 ren Q2_13_A q30
@@ -141,7 +140,7 @@ ren weight weight_educ
 * 4/19: Mia added.
 gen int_length = PV27_LengthInSeconds / 60
 gen reclanguage = 17001
-lab def lang 17001 "UK: English" 
+lab def lang 17001 "GB: English" 
 lab values reclanguage lang
 
 generate double start_time = dofc(DataCollection_FinishTime)
@@ -158,15 +157,10 @@ order respondent_serial mode weight_educ //dropped lang country
 gen reccountry = 17
 lab def country 17 "United Kingdom"
 
-/*
+
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 999
-gen reclanguage = reccountry*1000 + lang 
-recode reclanguage (15058 = 13058)
-*/
 
-*gen interviewer_id = country*1000 + interviewerid_recoded //no interview id related var in the dataset
-* only q4 since others are country specific
 gen recq4 = reccountry*1000 + q4
 replace recq4 = .r if q4 == 999
 gen recq5 = reccountry*1000 + q5
@@ -206,7 +200,7 @@ foreach q in q4 q5 q8 q20 q44 q63{
 		foreach lev in ``q'level'{
 			if strmatch("`lev'", "`recvalue`q''") == 1{
 				elabel define `q'_label (= 17000+`: word `i' of ``q'val'') ///
-									    (`"UK: `gr`i''"'), modify			
+									    (`"GB: `gr`i''"'), modify			
 			}	
 		}                 
 	}
@@ -238,7 +232,6 @@ recode q47 (. = .r) if q47_refused == 1
 
 recode q46_refused (. = 0) if q46 != .
 recode q47_refused (. = 0) if q47 != .
-*****************************
 
 * Q46a, Q46b 
 recode q46b_dys q46b_hrs q46b_mth q46b_wks (. = 0) if q46b_dys < . | ///
@@ -247,7 +240,7 @@ recode q46b_dys q46b_hrs q46b_mth q46b_wks (. = 0) if q46b_dys < . | ///
 														  q46b_wks < . 
 gen q46b = (q46b_hrs/24) + q46b_dys + (q46b_wks*7) + (q46b_mth*30)
 recode q46b (. = .r) if q46b_refused == 1 
-recode q46b_refused (. = 0) if q46b != . //4/18: Mia added. Add this to IT_MX_US to?
+recode q46b_refused (. = 0) if q46b != . //4/18: Mia added.
 
 *------------------------------------------------------------------------------*
 
@@ -271,7 +264,7 @@ drop NUMOFCHILDREN Q1_7B* CHILD*AGE DataCollection_FinishTime DataCollection_Sta
 *------------------------------------------------------------------------------*
 
 * Generate variables 
-gen respondent_id = "UK" + string(respondent_serial)
+gen respondent_id = "GB" + string(respondent_serial)
 
 gen q2 = .a
 gen q28_a = .a 
@@ -359,7 +352,6 @@ recode q1 (0 = .r)
 recode q13 (. = .a) if q12 == 2  | q12==.r
 
 * q15 - No skip pattern everyone was asked q14 and q15 
-* recode q15 (. = .a) if q14 == 3 | q14 == 4 | q14 == 5 | q14 == .r 
 
 *q19-22
 recode q19a_uk q19b_uk q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
@@ -379,6 +371,7 @@ recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r
 
 * q31 & q32
 * Mia added q1 == .r 
+* Different skip pattern for q31 compare to other countries
 recode q31 (. = .a) if q3 != 2 | q1 == .r 
 recode q32 (. = .a) if q3 != 2 | q1 == .r
 
@@ -459,8 +452,7 @@ recode q48_e ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (6 = .a "NA") (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_visits)
-* NOTE: "I had no prior tests or visits" was not an option - was the skip pattern different? 
-* 		Can move q48_e to above recode if so
+* NOTE: "I had no prior tests or visits" was not an option
 	 
 recode q48_j ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
@@ -528,7 +520,7 @@ recode q6_uk (1 = 1 "Additional private insurance") ///
 gen recq7 = reccountry*1000 + q7_uk
 replace recq7 = .a if q7_uk == .a
 replace recq7 = .r if q7_uk == .r
-label def q7_label 17001 "UK: Additional private insurance" 17002 "UK: Only public insurance" .a "NA" .r "Refused"
+label def q7_label 17001 "GB: Additional private insurance" 17002 "GB: Only public insurance" .a "NA" .r "Refused"
 label values recq7 q7_label
 
 lab def labels23 .a "NA" .r "Refused" .d "Don't know",modify
@@ -558,20 +550,16 @@ order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
 
 * Label variables
-* Mia added
 lab var country "Country"
 lab var int_length "Interview length (in minutes)" 
 lab var date "Date of interview"
 lab var respondent_id "Respondent ID"
-*
 lab var q1 "Q1. Respondent еxact age"
-*lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent gender"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
-lab var q6_uk "Q6. UK only: In addition to the NHS, do you have private health insurance...?"
+lab var q6_uk "Q6. GB only: In addition to the NHS, do you have private health insurance...?"
 lab var q7 "Q7. What type of health insurance do you have?"
-*lab var q7_other "Q7_other. Other type of health insurance"
 lab var q8 "Q8. Highest level of education completed by the respondent"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health is?"
@@ -583,11 +571,10 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19a "Q19a. UK only: Is it a National Health Service (NHS) facility or a private health facility?"
-lab var q19b "Q19b. UK only: Is it a Health and Social Care (HSC) facility or a private health facility?"
+lab var q19a "Q19a. GB only: Is it a National Health Service (NHS) facility or a private health facility?"
+lab var q19b "Q19b. GB only: Is it a Health and Social Care (HSC) facility or a private health facility?"
 lab var q19_other_uk "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
-*lab var q20_other "Q20. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
 lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
@@ -615,11 +602,10 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43a_uk "Q43a. UK only: Did you go to a NHS facility or a private health care facility?"
-lab var q43b_uk "Q43a. UK only: Did you go to a HSC facility or a private health care facility?"
+lab var q43a_uk "Q43a. GB only: Did you go to a NHS facility or a private health care facility?"
+lab var q43b_uk "Q43a. GB only: Did you go to a HSC facility or a private health care facility?"
 lab var q43_other_uk "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
-*lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
@@ -655,7 +641,7 @@ lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
 lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
 lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
-lab var q62_uk "Q62. UK only: What is your race?"
+lab var q62_uk "Q62. GB only: What is your race?"
 lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
