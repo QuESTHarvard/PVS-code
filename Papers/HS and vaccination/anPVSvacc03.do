@@ -13,7 +13,7 @@ set more off
 * COUNTRY-SPECIFIC  REGRESSIONS - QUALITY AND MANAGEMENT OF NATIONAL HEALTH SYSTEM
 
 foreach x in  Ethiopia Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
-	putexcel set "$user/$analysis/national health system models.xlsx", sheet("`x'")  modify	
+	putexcel set "$user/$analysis/conf models.xlsx", sheet("`x'")  modify	
 	logistic fullvax conf_getafford ///
 				age2 health_chronic ever_covid post_secondary ///
 				high_income female urban minority if c=="`x'", vce(robust) // countries with the variable minority
@@ -28,7 +28,7 @@ foreach x in  Ethiopia Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
 	putexcel (A29) = etable	
 	}
 foreach x in Argentina Colombia India Korea Uruguay Italy {
-	putexcel set "$user/$analysis/national health system models.xlsx", sheet("`x'")  modify		
+	putexcel set "$user/$analysis/conf models.xlsx", sheet("`x'")  modify		
 	logistic fullvax conf_getafford ///
 				age2 health_chronic ever_covid post_secondary ///
 				high_income female urban  if c=="`x'", vce(robust) // countries without the variable minority		
@@ -43,20 +43,32 @@ foreach x in Argentina Colombia India Korea Uruguay Italy {
 	putexcel (A29) = etable	
 	}
 * Import estimates
-import excel using "$user/$analysis/national health system models.xlsx", sheet(Ethiopia) firstrow clear
+import excel using "$user/$analysis/conf models.xlsx", sheet(Ethiopia) firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="Ethiopia"
 	save "$user/$analysis/graphs.dta", replace
 foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico Peru SouthAfrica USA UK { 
-	import excel using  "$user/$analysis/national health system models.xlsx", sheet("`x'") firstrow clear
+	import excel using  "$user/$analysis/conf models.xlsx", sheet("`x'") firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="`x'"
 	append using "$user/$analysis/graphs.dta"
 	save "$user/$analysis/graphs.dta", replace
 	}
-
 	keep A B E F G country 
-	encode country, gen(co)
+	gen co = 1 if country=="Ethiopia"
+	replace co =2  if country=="Kenya"
+	replace co =3  if country=="India"
+	replace co =4  if country=="LaoPDR"
+	replace co =5  if country=="Peru"
+	replace co =6  if country=="SouthAfrica"
+	replace co =7  if country=="Colombia"
+	replace co =8  if country=="Mexico"
+	replace co =9  if country=="Argentina"
+	replace co =10  if country=="Uruguay"
+	replace co =11  if country=="Italy"
+	replace co =12  if country=="Korea"
+	replace co =13  if country=="UK"
+	replace co =14  if country=="USA"
 	foreach v in E B F G  {
 		destring `v', replace
 		gen ln`v' = ln(`v')
@@ -74,7 +86,6 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 	replace inc_group = 3 if count=="Uruguay" | count=="USA" | count=="Korea" | count=="Italy" | count=="UK"
 	lab def inc_group 1"LMI"  2"UMI" 3"HI"
 	lab val inc_group inc_group
-
 * Region groups
 	gen reg_group = 1 if country=="SouthAfrica" | country=="Ethiopia" | country=="Kenya"
 	replace reg_group = 2 if country=="Korea" |  country=="LaoPDR" | country=="India"
@@ -82,13 +93,17 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 							| country=="Colombia" |  country=="Uruguay" 
 	replace reg_group=4 if country=="USA" | country=="Italy" | country=="UK"
 	lab def reg_group 1 "SSA" 2"Asia" 3"LATAM" 4"NAWE"	
+	
+*Supplemental table 
+	export excel using "$user/$analysis/supp table conf.xlsx", sheet(Sheet1) firstrow(variable) replace 
+		
 ********************************************************************************
 * GRAPHS QUALITY OF NATIONAL HS
 	twoway (rspike UCL LCL co if A=="conf_getafford", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="conf_getafford", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+			xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
+				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 			ylabel(0.2(0.2)3, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Somewhat or very confident to get" "and afford quality care if sick" , size(medi))
@@ -98,8 +113,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 	twoway (rspike UCL LCL co if A=="vconf_opinion", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="vconf_opinion", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+			xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
+				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 			ylabel(0.2(0.2)3, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Somewhat or very confident that government" "considers public opinion" , size(medi))
@@ -109,8 +124,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 	twoway (rspike UCL LCL co if A=="vgcovid_manage", lwidth(medthick) lcolor(navy)) ///
 		   (scatter aOR co if A=="vgcovid_manage", msize(medsmall) mcolor(ebblue*2)) , ///
 			graphregion(color(white)) legend(off) ///
-			xlabel(1"ARG" 2"COL" 3"ETH" 4"IND" 5"ITA" 6"KEN" 7"KOR" 8"LAO" 9"MEX" ///
-				   10"PER" 11"ZAF" 12"GBR" 13"USA" 14"URY", labsize(vsmall)) xtitle("") ///
+			xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
+				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 			ylabel(0.2(0.2)4.6, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Rates government's management of the COVID-19" ///
