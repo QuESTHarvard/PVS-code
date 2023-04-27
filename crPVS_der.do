@@ -419,7 +419,7 @@ recode usual_type_own (.a = 0) if (q19_co_pe == 1) | q19_uy == 1 | ///
 								  q19_it == 1 | inlist(q19_mx,3,4) | ///
 								  inlist(q20,12003,12004) | q19_kr == 1 | ///
 								  q19_ar == 1 ///
-								  | q19a_br == 1 | q19b_br == 1
+								  | q19a_gb == 1 | q19b_gb == 1
 								  							  
 recode usual_type_own (.a = 1) if (q19_co_pe == 2) | q19_uy == 2 | ///
 								  inlist(q19_q20a_la,3,4,6) | ///
@@ -427,19 +427,19 @@ recode usual_type_own (.a = 1) if (q19_co_pe == 2) | q19_uy == 2 | ///
 								  q19_it == 2 | q19_it == 3 | q19_mx == 6 | ///
 								  inlist(q20,12001,12002,12005,12006) ///
 								  | q19_kr == 3 | q19_ar == 3 ///
-								  | q19a_br == 2 | q19b_br == 2
+								  | q19a_gb == 2 | q19b_gb == 2
 						  
 recode usual_type_own (.a = 2) if inlist(q19_uy,5,995) | ///
 								  q19_q20a_la == 9 | q19_q20b_la == 7 | ///
 								  q19_it == 4 | inlist(q19_mx,1,2,5,7) | ///
 								  q20 == 12995 | q19_kr == 4 | inlist(q19_ar,2,4,6,7) ///
-								  | q19a_br == 3
+								  | q19a_gb == 3
 								  
 recode usual_type_own (.a = .r) if (q19_co_pe  == .r )| q19_uy == .r | ///
 								   q19_q20a_la == .r | q19_q20b_la == .r | ///
 								   q19_it == .r | q19_mx == .r | ///
 								   (q20 == .r & country == 12) | q19_kr == .r | ///
-								   q19_ar == .r | q19a_br == .r | q19b_br == .r
+								   q19_ar == .r | q19a_gb == .r | q19b_gb == .r
 
 *Peru recode 
 *Recode based on q19_co_pe, but those who say public and have SHI are recoded to other 
@@ -499,21 +499,21 @@ recode last_type_own (.a = 0) if (q43_co_pe == 1) | q43_uy == 1 | ///
 								 q43_it == 1 | inlist(q43_mx,3,4) | ///
 								 inlist(q44,12003,12004,12005) | q43_kr == 1 | ///
 								 q43_ar == 1 ///
-								 | q43a_br == 1 | q43b_br == 1
+								 | q43a_gb == 1 | q43b_gb == 1
 
 recode last_type_own (.a = 1) if (q43_co_pe == 2) | q43_uy == 2 | ///
 								 q43_it == 2 | q43_it == 3 | q43_mx == 6 | ///
 								 inlist(q44,12001,12002,12006,12007) | q43_kr == 3 | ///
-								 q43_ar == 3 | q43a_br == 2 | q43b_br == 2
+								 q43_ar == 3 | q43a_gb == 2 | q43b_gb == 2
  
 recode last_type_own (.a = 2) if inlist(q43_uy,5,995) | q43_it == 4 | inlist(q43_mx,1,2,5,7) | ///
 								 q44 == 12995 | q43_kr == 4 | inlist(q43_ar,2,4,6,7) ///
-								 | q43a_br == 3
+								 | q43a_gb == 3
 								 
 recode last_type_own (.a = .r) if (q43_co_pe == .r) | q43_uy == .r | ///
 								  q43_it == .r | q43_mx == .r | ///
 								  (q44 == .r & country == 12) | q43_kr == .r | ///
-								  q43_ar == .r | q43a_br == .r | q43b_br == .r
+								  q43_ar == .r | q43a_gb == .r | q43b_gb == .r
 								  
 *Peru recode 
 *Recode based on q19_co_pe, but those who say public and have SHI are recoded to other 
@@ -573,9 +573,9 @@ recode minority (.a = 0) if q62_mx == 0
 recode minority (.a = .r) if q62_mx == .r 
 
 *UK
-recode minority (.a = 1) if inlist(q62_br,1,2,3,5)
-recode minority (.a = 0) if q62_br == 4	
-recode minority (.a = .r) if q62_br == .r   
+recode minority (.a = 1) if inlist(q62_gb,1,2,3,5)
+recode minority (.a = 0) if q62_gb == 4	
+recode minority (.a = .r) if q62_gb == .r   
 
 *Laos:
 recode minority (.a = 1) if inlist(q62a_la,11002,11003,11004,11005)
@@ -691,19 +691,19 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q6_br q7 q7_kr ///
+	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q6_gb q7 q7_kr ///
 	  q7_other q8 q9 q10 q11 q12 q13 q13b_co_pe_uy_ar q13e* q13e_other* q14 q14_la q15 q15_la q16 q17 q18 ///
-	  q18a_la q18b_la q19_co q19_et_in_ke_za q19_it q19a_br q19b_br q19_other_br q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
+	  q18a_la q18b_la q19_co q19_et_in_ke_za q19_it q19a_gb q19b_gb q19_other_gb q19_kr q19_mx q19_co_pe q19_uy q19_ar q19_other ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
 	  q37_za q37_in q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_in_ke_za q43_la q43_it q43_kr q43_mx ///
-	   q43_uy q43_ar q43_other q43a_br q43b_br q43_other_br q44 ///
+	   q43_uy q43_ar q43_other q43a_gb q43b_gb q43_other_gb q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
 	  q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_in_ke_za q56_pe q56_uy q56a_mx q56b_mx q56a_ar q56b_ar q56c_ar q57 q58 q59 ///
-	  q60 q61 q62 q62_br q62_other q62_mx q62a_la q62a_other_la q62a_us q62b_us q62b_other_us q63 q64 q65 q66 q66a_us q66b_us q66_br
+	  q60 q61 q62 q62_gb q62_other q62_mx q62a_la q62a_other_la q62a_us q62b_us q62b_other_us q63 q64 q65 q66 q66a_us q66b_us q66_gb
 	   	  
 ***************************** Labeling variables ***************************** 
  
@@ -882,7 +882,7 @@ restore
 *United Kingdown
 *preserve
 *keep if country == 17
-*save "$data/United Kingdom/02 recoded data/pvs_br_recoded"
+*save "$data/United Kingdom/02 recoded data/pvs_gb_recoded"
 *restore
 
 */

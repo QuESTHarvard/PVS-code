@@ -33,8 +33,8 @@ ren Q1_3UK q5
 ren Q1_4 q3 
 ren Q1_5 q4 
 *Neena/Todd confirmed using more granular race question and dropping Q1_6UK
-ren Q1_6R q62_br
-ren Q1_9UK q6_br
+ren Q1_6R q62_gb
+ren Q1_9UK q6_gb
 ren Q1_11 q8
 ren Q1_12 q9
 ren Q1_13 q10
@@ -46,9 +46,9 @@ ren Q1_18 q15
 ren Q1_15 q12
 ren Q1_16 q13
 ren Q2_1 q18
-ren Q2_2UK q19a_br
-ren Q2_UK_3 q19_other_br
-ren Q2_2NI q19b_br
+ren Q2_2UK q19a_gb
+ren Q2_UK_3 q19_other_gb
+ren Q2_2NI q19b_gb
 ren Q2_3 q20
 ren Q2_4 q21
 ren Q2_4_9 q21_other
@@ -75,9 +75,9 @@ ren Q2_21_B q40
 ren Q2_23 q41
 ren Q2_24 q42
 ren Q2_24_10 q42_other
-ren Q3_1UK q43a_br
-ren Q3_1UK_3 q43_other_br
-ren Q3_1NI q43b_br
+ren Q3_1UK q43a_gb
+ren Q3_1UK_3 q43_other_gb
+ren Q3_1NI q43b_gb
 ren Q3_2UK q44
 ren Q3_3 q45
 ren Q3_3_4 q45_other
@@ -134,7 +134,7 @@ ren Q4_10 q59
 ren Q4_11 q60
 ren Q4_12 q61
 ren Q4_14 q63
-ren Q4_13 q66_br 
+ren Q4_13 q66_gb 
 
 ren weight weight_educ 
 * 4/19: Mia added.
@@ -288,13 +288,13 @@ recode q23 q25_a q25_b q27 q28_b q30 q31 q32 q33 q34 q35 q36 q38 q63 ///
 	   (998 = .d) // * FLAG - potentially no don't know response option in q25_a, There was don't know options for this question in other countries 
 
 * In raw data, 999 = "refused" 
-recode q1 q3 q5 q6_br q8 q9 q10 q11 q12 ///
-	   q13 q14 q15 q16 q17 q18 q19a_br q19b_br q20 q21 q22 ///
+recode q1 q3 q5 q6_gb q8 q9 q10 q11 q12 ///
+	   q13 q14 q15 q16 q17 q18 q19a_gb q19b_gb q20 q21 q22 ///
 	   q23 q24 q23_q24 q25_a q25_b q26 q27 q28_b q28_c q29 q30 q31 q32 q33 ///
-	   q34 q35 q36 q38 q39 q40 q41 q42 q43a_br q43b_br q44 ///
+	   q34 q35 q36 q38 q39 q40 q41 q42 q43a_gb q43b_gb q44 ///
 	   q45 q46* q47 q48_a q48_b q48_c q48_d q48_e q48_f q48_g /// 
 	   q48_h q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
-	   q57 q58 q59 q60 q61 q62_br q63 q66_br (999 = .r)	
+	   q57 q58 q59 q60 q61 q62_gb q63 q66_gb (999 = .r)	
 	  
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for questions respondents would not have been asked 
@@ -354,11 +354,11 @@ recode q13 (. = .a) if q12 == 2  | q12==.r
 * q15 - No skip pattern everyone was asked q14 and q15 
 
 *q19-22
-recode q19a_br q19b_br q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
+recode q19a_gb q19b_gb q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
 
 * 4/18 Mia add this
-recode q19a_br (. = .a) if q5 == 12
-recode q19b_br (. = .a) if q5 != 12
+recode q19a_gb (. = .a) if q5 == 12
+recode q19b_gb (. = .a) if q5 != 12
 
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d & q23 != .r
@@ -379,13 +379,13 @@ recode q32 (. = .a) if q3 != 2 | q1 == .r
 recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
-recode q43a_br q43b_br q44 q45 q46 q46_refused q46a ///
+recode q43a_gb q43b_gb q44 q45 q46 q46_refused q46a ///
 	   q46b q46b_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r 
 
 * 4/18 Mia add this
-recode q43a_br (. = .a) if q5 == 12
-recode q43b_br (. = .a) if q5 != 12
+recode q43a_gb (. = .a) if q5 == 12
+recode q43b_gb (. = .a) if q5 != 12
 
 recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
@@ -428,7 +428,7 @@ recode q46b_refused ///
 		(.a = .a "NA") ///
 		, pre(rec) label(yes_no)		
 		
-recode q6_br ///
+recode q6_gb ///
 		(1 = 1 "Yes, have private insurance") ///
 		(2 = 0 "No, do not have private insurance") ///
 		(.a = .a "NA") ///
@@ -513,13 +513,13 @@ recode mode (2 3 = 1) (1 = 4)
 lab def mode 1 "CATI" 4 "CAWI"
 lab val mode mode
 	
-recode q6_br (1 = 1 "Additional private insurance") ///
+recode q6_gb (1 = 1 "Additional private insurance") ///
 			 (2 = 2 "Only public insurance") ///
-			 (.a = .a "NA") (.r = .r "Refused"), gen(q7_br) lab(q7_br_label)
+			 (.a = .a "NA") (.r = .r "Refused"), gen(q7_gb) lab(q7_gb_label)
 
-gen recq7 = reccountry*1000 + q7_br
-replace recq7 = .a if q7_br == .a
-replace recq7 = .r if q7_br == .r
+gen recq7 = reccountry*1000 + q7_gb
+replace recq7 = .a if q7_gb == .a
+replace recq7 = .r if q7_gb == .r
 label def q7_label 17001 "GB: Additional private insurance" 17002 "GB: Only public insurance" .a "NA" .r "Refused"
 label values recq7 q7_label
 
@@ -537,7 +537,7 @@ lab def labels69 .a "NA" .r "Refused" .d "Don't know",modify
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q7_br q4 q5 q8 q20 q44 q63 q11 q12 q13 q18 q25_a q26 q29 q6_br ///
+drop q7_gb q4 q5 q8 q20 q44 q63 q11 q12 q13 q18 q25_a q26 q29 q6_gb ///
 	 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q46a q46b_refused ///
 	 q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
@@ -558,7 +558,7 @@ lab var q1 "Q1. Respondent еxact age"
 lab var q3 "Q3. Respondent gender"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
-lab var q6_br "Q6. GB only: In addition to the NHS, do you have private health insurance...?"
+lab var q6_gb "Q6. GB only: In addition to the NHS, do you have private health insurance...?"
 lab var q7 "Q7. What type of health insurance do you have?"
 lab var q8 "Q8. Highest level of education completed by the respondent"
 lab var q9 "Q9. In general, would you say your health is:"
@@ -573,7 +573,7 @@ lab var q17 "Q17. Can tell a healthcare provider your concerns even when not ask
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
 lab var q19a "Q19a. GB only: Is it a National Health Service (NHS) facility or a private health facility?"
 lab var q19b "Q19b. GB only: Is it a Health and Social Care (HSC) facility or a private health facility?"
-lab var q19_other_br "Q19. Other"
+lab var q19_other_gb "Q19. Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
@@ -602,9 +602,9 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43a_br "Q43a. GB only: Did you go to a NHS facility or a private health care facility?"
-lab var q43b_br "Q43a. GB only: Did you go to a HSC facility or a private health care facility?"
-lab var q43_other_br "Q43. Other"
+lab var q43a_gb "Q43a. GB only: Did you go to a NHS facility or a private health care facility?"
+lab var q43b_gb "Q43a. GB only: Did you go to a HSC facility or a private health care facility?"
+lab var q43_other_gb "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
@@ -641,24 +641,24 @@ lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
 lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
 lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
-lab var q62_br "Q62. GB only: What is your race?"
+lab var q62_gb "Q62. GB only: What is your race?"
 lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
-lab var q66_br "Q66. Which political party did you vote for in the last election?"
+lab var q66_gb "Q66. Which political party did you vote for in the last election?"
 
 *------------------------------------------------------------------------------*
 * Mia added
 *Dropping the following value labels so the dataset won't get messed up when merging
-label copy labels23 q19a_br_label
+label copy labels23 q19a_gb_label
 label drop labels23  
-label value q19a_br q19a_br_label
-label copy labels24 q19b_br_label
+label value q19a_gb q19a_gb_label
+label copy labels24 q19b_gb_label
 label drop labels24  
-label value q19b_br q19b_br_label
-label copy labels50 q43a_br_label
+label value q19b_gb q19b_gb_label
+label copy labels50 q43a_gb_label
 label drop labels50   
-label value q43a_br q43a_br_label
+label value q43a_gb q43a_gb_label
 
 *------------------------------------------------------------------------------*
 
@@ -668,7 +668,7 @@ label value q43a_br q43a_br_label
 * The command in data quality checks below extracts other, specify values 
 
 
-gen q19_other_original = q19_other_br
+gen q19_other_original = q19_other_gb
 label var q19_other_original "Q19. Other"
 
 gen q21_other_original = q21_other
@@ -677,7 +677,7 @@ label var q21_other_original "Q21. Other"
 gen q42_other_original = q42_other
 label var q42_other_original "Q42. Other"
 
-gen q43_other_original = q43_other_br
+gen q43_other_original = q43_other_gb
 label var q43_other_original "Q43. Other"
 	
 gen q45_other_original = q45_other
@@ -694,12 +694,12 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
 	sheet(other_specify_recode)							///	
 	id(respondent_serial)	
 	
-drop q19_other_br q21_other q42_other q43_other_br q45_other
+drop q19_other_gb q21_other q42_other q43_other_gb q45_other
 	 
-ren q19_other_original q19_other_br
+ren q19_other_original q19_other_gb
 ren q21_other_original q21_other
 ren q42_other_original q42_other
-ren q43_other_original q43_other_br
+ren q43_other_original q43_other_gb
 ren q45_other_original q45_other
 
 order q*, sequential
@@ -707,5 +707,5 @@ order respondent_serial respondent_id mode country language date int_length weig
 *------------------------------------------------------------------------------*
 
 * Save data
-save "$data_mc/02 recoded data/pvs_br.dta", replace
+save "$data_mc/02 recoded data/pvs_gb.dta", replace
  

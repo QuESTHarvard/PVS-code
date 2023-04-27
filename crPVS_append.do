@@ -58,7 +58,7 @@ tempfile label6
 label save q4_label q5_label q7_label q8_label q20_label q44_label q63_label using `label6'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q63_label
 
-append using "$data_mc/02 recoded data/pvs_br.dta"
+append using "$data_mc/02 recoded data/pvs_gb.dta"
 
 qui do `label6'
 
@@ -96,7 +96,7 @@ recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
 recode q37_in (. = .a) if country != 4
 recode q64 q65 q46_refused q47_refused (. = .a) if country == 15 
-recode q6_br q19a_br q19b_br q43a_br q43b_br q62_br q66_br (. = .a) if country != 17
+recode q6_gb q19a_gb q19b_gb q43a_gb q43b_gb q62_gb q66_gb (. = .a) if country != 17
 
 	   
 * Country-specific value labels -edit for ssrs-
