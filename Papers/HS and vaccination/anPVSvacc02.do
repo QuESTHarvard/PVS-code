@@ -38,27 +38,16 @@ foreach x in Argentina Colombia India Korea Uruguay Italy {
 import excel using "$user/$analysis/country-specific regressions comp qual.xlsx", sheet(Ethiopia) firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="Ethiopia"
-	gen model=2 in 13/24
 	save "$user/$analysis/graphs.dta", replace
 	
-foreach x in   Kenya LaoPDR Mexico Peru SouthAfrica USA UK { 
+foreach x in  Argentina Colombia India Korea  Uruguay Italy Kenya LaoPDR Mexico Peru SouthAfrica USA UK { 
 	import excel using  "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'") firstrow clear
 	drop if B=="" | B=="Odds ratio"
 	gen country="`x'"
-	gen model=2 in 13/24
 	append using "$user/$analysis/graphs.dta"
 	save "$user/$analysis/graphs.dta", replace
 	}
-foreach x in  Argentina Colombia India Korea  Uruguay Italy   { 
-	import excel using  "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'") firstrow clear
-	drop if B=="" | B=="Odds ratio"
-	gen country="`x'"
-	gen model=2 in 12/22
-	append using "$user/$analysis/graphs.dta"
-	save "$user/$analysis/graphs.dta", replace
-	}
-
-	keep A B E F G country model
+	keep A B E F G country 
 	gen co = 1 if country=="Ethiopia"
 	replace co =2  if country=="Kenya"
 	replace co =3  if country=="India"
@@ -78,7 +67,6 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 		gen ln`v' = ln(`v')
 	}
 	rename (B E F G) (aOR p_value LCL UCL) 
-	replace model=1 if model==.
 	replace A="vgusual_quality" if A=="vgusual_qu~y"
 	replace A="health_chronic" if A=="health_chr~c"
 	replace A="post_secondary" if A=="post_secon~y"
@@ -90,15 +78,6 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 	replace inc_group = 3 if count=="Uruguay" | count=="USA" | count=="Korea" | count=="Italy" | count=="UK"
 	lab def inc_group 1"LMI"  2"UMI" 3"HI"
 	lab val inc_group inc_group
-
-* Region groups
-	gen reg_group = 1 if country=="SouthAfrica" | country=="Ethiopia" | country=="Kenya"
-	replace reg_group = 2 if country=="Korea" |  country=="LaoPDR" | country=="India"
-	replace reg_group= 3 if country=="Peru" | country=="Mexico" | country=="Argentina" ///
-							| country=="Colombia" |  country=="Uruguay" 
-	replace reg_group=4 if country=="USA" | country=="Italy" | country=="UK"
-	lab def reg_group 1 "SSA" 2"Asia" 3"LATAM" 4"NAWE"
-	lab val reg_group reg_group
 	
 *Supplemental table 3
 	export excel using "$user/$analysis/supp table hs comp qual.xlsx", sheet(Sheet1) firstrow(variable) replace 
@@ -107,69 +86,93 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 * GRAPHS SYSTEM COMPETENCE
 	preserve 
 	replace UCL=3.4 if UCL==4.543549 // Italy outlier UCL
-		twoway (rspike UCL LCL co if A=="usual_source", lwidth(medthick) lcolor(navy)) ///
-			   (scatter aOR co if A=="usual_source", msize(medsmall) mcolor(ebblue*2)) , ///
+		twoway (rspike UCL LCL co if A=="usual_source" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+			   (scatter aOR co if A=="usual_source" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+			   (rspike UCL LCL co if A=="usual_source" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="usual_source" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="usual_source" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="usual_source" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.20(0.2)3.2, labsize(vsmall) gstyle(minor)) ///
-				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+				yline(1, lstyle(foreground) lpattern(dash) ) xsize(1) ysize(1) ///
 				title("Has a usual source of care", size(medium))
 		 
 		graph export "$user/$analysis/usual_source.pdf", replace 
 		
-			twoway (rspike UCL LCL co if A=="preventive", lwidth(medthick) lcolor(navy)) ///
-			   (scatter aOR co if A=="preventive", msize(medsmall) mcolor(ebblue*2)) , ///
+		twoway (rspike UCL LCL co if A=="preventive" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+			   (scatter aOR co if A=="preventive" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+			   (rspike UCL LCL co if A=="preventive" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="preventive" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="preventive" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="preventive" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.2)3.2, labsize(vsmall) gstyle(minor)) ///
-				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+				yline(1, lstyle(foreground) lpattern(dash) ) xsize(1) ysize(1) ///
 				title("Received at least 3 other preventive" "health care services in last year", size(medi))
 		 
 		graph export "$user/$analysis/preventive.pdf", replace 
 
-		twoway (rspike UCL LCL co if A=="unmet_need", lwidth(medthick) lcolor(navy)) ///
-			   (scatter aOR co if A=="unmet_need", msize(medsmall) mcolor(ebblue*2)) , ///
+		twoway (rspike UCL LCL co if A=="unmet_need" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+			   (scatter aOR co if A=="unmet_need"& co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+			   (rspike UCL LCL co if A=="unmet_need" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="unmet_need"& co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="unmet_need" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="unmet_need"& co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.2)3.2, labsize(vsmall) gstyle(minor)) ///
-				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+				yline(1, lstyle(foreground) lpattern(dash) ) xsize(1) ysize(1) ///
 				title("Had unmet health care needs in last year", size(medi))
 		 
 		graph export "$user/$analysis/unmet_need.pdf", replace 
 
 	* GRAPHS QUALITY OF OWN CARE
-		twoway (rspike UCL LCL co if A=="vgusual_quality", lwidth(medthick) lcolor(navy)) ///
-			   (scatter aOR co if A=="vgusual_quality", msize(medsmall) mcolor(ebblue*2)) , ///
+		twoway (rspike UCL LCL co if A=="vgusual_quality"& co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+			   (scatter aOR co if A=="vgusual_quality" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+			   (rspike UCL LCL co if A=="vgusual_quality"& co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="vgusual_quality" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="vgusual_quality"& co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="vgusual_quality" & co>=10 & co<=14, msize(medsmall) mcolor(orange)),  ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.4)3.4, labsize(vsmall) gstyle(minor)) ///
-				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+				yline(1, lstyle(foreground) lpattern(dash) ) xsize(1) ysize(1) ///
 				title("Rates quality of usual provider as" "very good or excellent" , size(medi))
 		 
 		graph export "$user/$analysis/vgusual_qual.pdf", replace 
 		
-		twoway (rspike UCL LCL co if A=="discrim", lwidth(medthick) lcolor(navy)) ///
-			   (scatter aOR co if A=="discrim", msize(medsmall) mcolor(ebblue*2)) , ///
+		twoway (rspike UCL LCL co if A=="discrim" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+			   (scatter aOR co if A=="discrim" & co>=1 & co<=4, msize(medsmall) mcolor(pink)) ///
+			   (rspike UCL LCL co if A=="discrim" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="discrim" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="discrim" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="discrim" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.4)3.4, labsize(vsmall) gstyle(minor)) ///
-				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+				yline(1, lstyle(foreground) lpattern(dash) ) xsize(1) ysize(1) ///
 				title("Experienced discrimination in the" "health system in the last year", size(med))
 		 
 		graph export "$user/$analysis/discrim.pdf", replace 
 		
-		twoway (rspike UCL LCL co if A=="mistake", lwidth(medthick) lcolor(navy)) ///
-			   (scatter aOR co if A=="mistake", msize(medsmall) mcolor(ebblue*2)) , ///
+		twoway (rspike UCL LCL co if A=="mistake" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+			   (scatter aOR co if A=="mistake" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+			   (rspike UCL LCL co if A=="discrim" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="discrim" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="discrim" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="discrim" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.2(0.4)3.4, labsize(vsmall) gstyle(minor)) ///
-				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+				yline(1, lstyle(foreground) lpattern(dash) ) xsize(1) ysize(1) ///
 				title("Believes medical mistake was made", size(med))
 		 
 		graph export "$user/$analysis/mistake.pdf", replace 
@@ -203,4 +206,31 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy   {
 	putexcel B`row'= matrix(b), rownames 
 	local row = `row' + 9
 	}
-
+* META ANALYSIS - all countries
+	local row = 1
+	
+	putexcel set "$user/$analysis/pooled estimates.xlsx", sheet("hs_competence_all")  modify
+	foreach v in usual_source preventive unmet_need  {
+	
+		metan lnB lnF lnG if A=="`v'" ,  ///
+				eform nograph  label(namevar=country) effect(aOR)
+				 
+	putexcel A`row'="`v'"
+	matrix b= r(ovstats)
+	putexcel B`row'= matrix(b), rownames 
+	local row = `row' + 9
+	}
+	
+	local row = 1
+	
+	putexcel set "$user/$analysis/pooled estimates.xlsx", sheet("qualowncare_all")  modify
+	foreach v in vgusual_quality discrim mistake  {
+	
+		metan lnB lnF lnG if A=="`v'" ,  ///
+				eform nograph  label(namevar=country) effect(aOR)
+				 
+	putexcel A`row'="`v'"
+	matrix b= r(ovstats)
+	putexcel B`row'= matrix(b), rownames 
+	local row = `row' + 9
+	}
