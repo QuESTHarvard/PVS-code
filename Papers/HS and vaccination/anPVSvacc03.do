@@ -1,13 +1,12 @@
 * Analysis: Health system quality and COVID vaccination in 14 countries
 * Created by C.Arsenault, April 2023
-* Quality and management of national health system and Sensitivity analyses
+* Confidence and vaccination models
 ********************************************************************************
 global user "/Users/catherine.arsenault/Dropbox"
 global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country/02 recoded data"
 global analysis "SPH Kruk Active Projects/Vaccine hesitancy/Analyses/Paper 7 vaccination/Results"
 
 u "$user/$analysis/pvs_vacc_analysis.dta", clear
-*net install collin
 set more off
 ********************************************************************************
 * COUNTRY-SPECIFIC  REGRESSIONS - QUALITY AND MANAGEMENT OF NATIONAL HEALTH SYSTEM
@@ -86,21 +85,18 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 	replace inc_group = 3 if count=="Uruguay" | count=="USA" | count=="Korea" | count=="Italy" | count=="UK"
 	lab def inc_group 1"LMI"  2"UMI" 3"HI"
 	lab val inc_group inc_group
-* Region groups
-	gen reg_group = 1 if country=="SouthAfrica" | country=="Ethiopia" | country=="Kenya"
-	replace reg_group = 2 if country=="Korea" |  country=="LaoPDR" | country=="India"
-	replace reg_group= 3 if country=="Peru" | country=="Mexico" | country=="Argentina" ///
-							| country=="Colombia" |  country=="Uruguay" 
-	replace reg_group=4 if country=="USA" | country=="Italy" | country=="UK"
-	lab def reg_group 1 "SSA" 2"Asia" 3"LATAM" 4"NAWE"	
 	
 *Supplemental table 
 	export excel using "$user/$analysis/supp table conf.xlsx", sheet(Sheet1) firstrow(variable) replace 
 		
 ********************************************************************************
 * GRAPHS QUALITY OF NATIONAL HS
-	twoway (rspike UCL LCL co if A=="conf_getafford", lwidth(medthick) lcolor(navy)) ///
-		   (scatter aOR co if A=="conf_getafford", msize(medsmall) mcolor(ebblue*2)) , ///
+	twoway (rspike UCL LCL co if A=="conf_getafford" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+		   (scatter aOR co if A=="conf_getafford" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+		   (rspike UCL LCL co if A=="conf_getafford" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+		   (scatter aOR co if A=="conf_getafford" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+		   (rspike UCL LCL co if A=="conf_getafford" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+		   (scatter aOR co if A=="conf_getafford" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 			graphregion(color(white)) legend(off) ///
 			xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
@@ -110,8 +106,12 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 	 
 	graph export "$user/$analysis/conf_getafford.pdf", replace 
 
-	twoway (rspike UCL LCL co if A=="vconf_opinion", lwidth(medthick) lcolor(navy)) ///
-		   (scatter aOR co if A=="vconf_opinion", msize(medsmall) mcolor(ebblue*2)) , ///
+	twoway (rspike UCL LCL co if A=="vconf_opinion" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+		   (scatter aOR co if A=="vconf_opinion" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+		   (rspike UCL LCL co if A=="vconf_opinion" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+		   (scatter aOR co if A=="vconf_opinion" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+		   (rspike UCL LCL co if A=="vconf_opinion" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+		   (scatter aOR co if A=="vconf_opinion" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 			graphregion(color(white)) legend(off) ///
 			xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
@@ -121,12 +121,16 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 	 
 	graph export "$user/$analysis/vconf_opinion.pdf", replace 
 
-	twoway (rspike UCL LCL co if A=="vgcovid_manage", lwidth(medthick) lcolor(navy)) ///
-		   (scatter aOR co if A=="vgcovid_manage", msize(medsmall) mcolor(ebblue*2)) , ///
+	twoway (rspike UCL LCL co if A=="vgcovid_manage" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+		   (scatter aOR co if A=="vgcovid_manage" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+		   (rspike UCL LCL co if A=="vgcovid_manage" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+		   (scatter aOR co if A=="vgcovid_manage" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+		   (rspike UCL LCL co if A=="vgcovid_manage" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+		   (scatter aOR co if A=="vgcovid_manage" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 			graphregion(color(white)) legend(off) ///
 			xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
-			ylabel(0.2(0.2)4.6, labsize(vsmall) gstyle(minor)) ///
+			ylabel(0.3(0.3)4.6, labsize(vsmall) gstyle(minor)) ///
 			yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
 			title("Rates government's management of the COVID-19" ///
 			"pandemic as very good or excellent" , size(medi))
@@ -147,12 +151,20 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 	putexcel B`row'= matrix(b), rownames 
 	local row = `row' + 9
 	}
+	* META ANALYSIS - all countries
+	local row = 1
+	putexcel set "$user/$analysis/pooled estimates.xlsx", sheet("national system_all")  modify
+	foreach v in conf_getafford vconf_opinion vgcovid_manage  {
 	
-	
+		metan lnB lnF lnG if A=="`v'" ,  ///
+				eform nograph  label(namevar=country) effect(aOR)			 
+	putexcel A`row'="`v'"
+	matrix b= r(ovstats)
+	putexcel B`row'= matrix(b), rownames 
+	local row = `row' + 9
+	}
 
-		
-
-********************************************************************************
+/********************************************************************************
 *SENSITIVITY ANALYSIS at least 1 dose in low-supply countries
 * SUPPLEMENTAL MATERIALS 
 
