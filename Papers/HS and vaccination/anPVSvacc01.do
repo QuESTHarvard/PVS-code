@@ -89,54 +89,55 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 	replace inc_group = 3 if count=="Uruguay" | count=="USA" | count=="Korea" | count=="Italy" | count=="UK"
 	lab def inc_group 1"LMI"  2"UMI" 3"HI"
 	lab val inc_group inc_group
-* Region groups
-	gen reg_group = 1 if country=="SouthAfrica" | country=="Ethiopia" | country=="Kenya"
-	replace reg_group = 2 if country=="Korea" |  country=="LaoPDR" | country=="India"
-	replace reg_group= 3 if country=="Peru" | country=="Mexico" | country=="Argentina" ///
-							| country=="Colombia" |  country=="Uruguay" 
-	replace reg_group=4 if country=="USA" | country=="Italy" | country=="UK"
-	lab def reg_group 1 "SSA" 2"Asia" 3"LATAM" 4"NAWE"
-	lab val reg_group reg_group
-	
+
 *Supplemental table 
 	export excel using "$user/$analysis/supp table utilization.xlsx", sheet(Sheet1) firstrow(variable) replace 
 	
 * GRAPHS UTILIZATION MODELS
 	preserve 
 	replace UCL=6 if UCL==6.89416 // Uruguay outlier UCL
-		twoway (rspike UCL LCL co if A=="1-2visits", lwidth(medthick) lcolor(navy)) ///
-			   (scatter aOR co if A=="1-2visits", msize(medsmall) mcolor(ebblue*2)) , ///
+		twoway (rspike UCL LCL co if A=="1-2visits" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+			   (scatter aOR co if A=="1-2visits" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+			   (rspike UCL LCL co if A=="1-2visits" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="1-2visits" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="1-2visits" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="1-2visits" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.40(0.4)6, labsize(tiny) gstyle(minor)) ///
-				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+				yline(1, lstyle(foreground) lpattern(dash)) xsize(1) ysize(1) ///
 				title("Had 1 or 2 visits in last year", size(medium))
-		 
 		graph export "$user/$analysis/1-2 visits.pdf", replace 
 
 		* GRAPHS UTILIZATION MODELS
-		twoway (rspike UCL LCL co if A=="3-4visits", lwidth(medthick) lcolor(navy)) ///
-			   (scatter aOR co if A=="3-4visits", msize(medsmall) mcolor(ebblue*2)) , ///
+		twoway (rspike UCL LCL co if A=="3-4visits" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+			   (scatter aOR co if A=="3-4visits"& co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+			   (rspike UCL LCL co if A=="3-4visits" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="3-4visits"& co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="3-4visits" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="3-4visits"& co>=10 & co<=14, msize(medsmall) mcolor(orange)),  ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.40(0.4)6, labsize(tiny) gstyle(minor)) ///
-				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
-				title("Had 3 or 4 visits in last year", size(medium))
-		 
+				yline(1, lstyle(foreground) lpattern(dash) ) xsize(1) ysize(1) ///
+				title("Had 3 or 4 visits in last year", size(medium)) 
 		graph export "$user/$analysis/3-4 visits.pdf", replace 
 
 			* GRAPHS UTILIZATION MODELS
-		twoway (rspike UCL LCL co if A=="5ormorevisits", lwidth(medthick) lcolor(navy)) ///
-			   (scatter aOR co if A=="5ormorevisits", msize(medsmall) mcolor(ebblue*2)) , ///
+		twoway (rspike UCL LCL co if A=="5ormorevisits" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
+			   (scatter aOR co if A=="5ormorevisits" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
+			   (rspike UCL LCL co if A=="5ormorevisits" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="5ormorevisits" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="5ormorevisits" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="5ormorevisits" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
 				ylabel(0.40(0.4)6, labsize(tiny) gstyle(minor)) ///
-				yline(1, lstyle(foreground) lcolor(red)) xsize(1) ysize(1) ///
+				yline(1, lstyle(foreground) lpattern(dash)) xsize(1) ysize(1) ///
 				title("Had 5 or more visits in last year", size(medium))
-		 
 		graph export "$user/$analysis/5+ visits.pdf", replace 	
 	restore 
 	
@@ -153,4 +154,16 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy  Kenya LaoPDR Mexico
 	putexcel B`row'= matrix(b), rownames 
 	local row = `row' + 9
 	}
-
+	* Pooled accross all countries 
+	local row = 1
+	
+	putexcel set "$user/$analysis/pooled estimates.xlsx", sheet("utilization_all")  modify
+	foreach v in 1-2visits  3-4visits 5ormorevisits {
+	
+		metan lnB lnF lnG if A=="`v'"  ,  ///
+				eform nograph  label(namevar=country) effect(aOR) 
+	putexcel A`row'="`v'"
+	matrix b= r(ovstats)
+	putexcel B`row'= matrix(b), rownames 
+	local row = `row' + 9
+	}
