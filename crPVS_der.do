@@ -371,14 +371,16 @@ recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11
 * Note: All are insured in South Africa, Laos, taly, Mendoza and UK
 gen insured = q6 
 recode insured (.a = 1) if country == 9 | country == 11 | country == 14 | country == 16 | country == 17
-recode insured (.a = 0) if inlist(q7,7014,13014, 2030) | inlist(q6_kr, 3) 
-recode insured (.a = 1) if inlist(q7,2015,2016,2017,2018,2028,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005, 2015,2016,2017,2018) | inlist(q6_kr, 1, 2)
+recode insured (.a = 0) if inlist(q7,7014,13014) | inlist(q6_kr, 3) 
+recode insured (.a = 1) if inlist(q7,2015,2016,2017,2018,2028,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005, 2015,2016,2017,2018, 2030) | inlist(q6_kr, 1, 2)
 recode insured (.a = .r) if q7 == .r | inlist(q7,2995,13995) | q6_kr == .r
 lab val insured yes_no
 
+* For Colombia, moved "no insurance" to "yes" in insured and "public" in "insur_type"
+
 * insur_type 
 
-recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 16001 16002 16003 16004 4023 4024 4025 4026 17002 = 0 Public) ///
+recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 16001 16002 16003 16004 4023 4024 4025 4026 17002 2030 = 0 Public) ///
 		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 16005 4027 17001 = 1 Private) /// 
 		  (2995 9995 12995 13995 4995 = 2 Other) ///
 		  (.r = .r "Refused") (7014 13014 16007 .a = .a NA), gen(insur_type)
