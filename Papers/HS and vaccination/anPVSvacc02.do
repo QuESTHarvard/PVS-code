@@ -16,7 +16,7 @@ foreach x in  Ethiopia  Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
 	putexcel set "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'")  modify	
 	logistic fullvax usual_source preventive unmet_need ///
 				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban minority if c=="`x'", vce(robust) // countries with the variable minority			
+				high_income female urban minority if c=="`x'", vce(robust) // countries with minority			
 	putexcel (A1) = etable	
 	logistic fullvax vgusual_quality discrim mistake  ///
 				age2 health_chronic ever_covid post_secondary ///
@@ -27,7 +27,7 @@ foreach x in Argentina Colombia India Korea Uruguay Italy {
 	putexcel set "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'")  modify
 	logistic fullvax usual_source preventive unmet_need ///
 				age2 health_chronic ever_covid post_secondary ///
-				high_income female urban  if c=="`x'", vce(robust) // countries without the variable minority		
+				high_income female urban  if c=="`x'", vce(robust) // countries without minority		
 	putexcel (A1) = etable	
 	logistic fullvax vgusual_quality discrim mistake  ///
 				age2 health_chronic ever_covid post_secondary ///
@@ -164,10 +164,10 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy Kenya LaoPDR Mexico 
 		
 		twoway (rspike UCL LCL co if A=="mistake" & co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
 			   (scatter aOR co if A=="mistake" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
-			   (rspike UCL LCL co if A=="discrim" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
-			   (scatter aOR co if A=="discrim" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
-			   (rspike UCL LCL co if A=="discrim" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
-			   (scatter aOR co if A=="discrim" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
+			   (rspike UCL LCL co if A=="mistake" & co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
+			   (scatter aOR co if A=="mistake" & co>=5 & co<=9, msize(medsmall) mcolor(lime))  ///
+			   (rspike UCL LCL co if A=="mistake" & co>=10 & co<=14, lwidth(medthick) lcolor(orange)) ///
+			   (scatter aOR co if A=="mistake" & co>=10 & co<=14, msize(medsmall) mcolor(orange)) , ///
 				graphregion(color(white)) legend(off) ///
 				xlabel(1"ETH" 2"KEN" 3"IND" 4"LAO" 5"PER" 6"ZAF" 7"COL" 8"MEX" ///
 				9"ARG" 10"URY" 11"ITA" 12"KOR" 13"GBR" 14"USA", labsize(vsmall)) xtitle("") ///
