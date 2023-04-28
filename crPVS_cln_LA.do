@@ -138,7 +138,6 @@ recode q61 (. = 5) if ohsa4373_m == 5
 lab val q61 qlty_rate 
 ren ig4474 q62
 ren ig4474_oth q62_other
-*ren bd1102b q62a_la
 ren bd1102btext q62a_other_la
 ren ig4475 q63
 ren wgt weight_educ
@@ -391,7 +390,7 @@ recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a
 * EC Note: We are missing 11 responses for q23, q24, q25_b, q26, q27, q28b, and q29 because people were randomized not to answer this section. (We meant to turn this off after the pilot, but made a mistake when we first started full data collection)
 
 * q31 & q32
-recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r // *Shalom-there is no "1" for q2 in this dataset.. it starts from 2 (18-29),should i update the inrange command or does this not matter?
+recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r 
 
 recode q32 (. = .a) if q3 != 2 | q2 == .r 
 
@@ -526,7 +525,7 @@ recode q57 ///
 * For Laos, for now, recoded the values to start after Ipsos countries and then re-label the values on append 
 
 * Q21
-recode q21 (10 = 9) (90 = .r) // *why are we recoding "other(10)" to "know someone at the facility?(9)" - should we do what we did for AR and add a LA-specific value ("LA:Know someone at the facility")? If not, we would need to do the same for AR and recode the AR specific value to "Other"
+recode q21 (10 = 9) (90 = .r)
 label define fac_choose 9 "Other", modify
 
 *------------------------------------------------------------------------------*

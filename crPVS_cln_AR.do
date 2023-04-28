@@ -210,7 +210,6 @@ ren P47 q47
 
 replace q47 = .r if P47_Codes == 96
 
-* Mia: 4/5 added
 recode P47_Codes (. = .a) if q23 == 0 | q24 == 1
 recode P47_Codes (. = 0) if q47 >= 0
 recode P47_Codes (96 = 1)
@@ -431,7 +430,6 @@ list q1 if q1 < 18
 * Q25
 list q23 q24 q23_q24 q25_b country if q25_b > q23_q24 & q25_b < . 
 * seems all fine
-* Note: q23/q24 was supposed to be inclusive of COVID, so these are errors.
 
 * Q26/Q27
 list q23_q24 q27 country if q27 > q23_q24 & q27 < . 
@@ -440,7 +438,7 @@ list q23_q24 q27 country if q27 > q23_q24 & q27 < .
 list q26 q27 country if q27 == 0 | q27 == 1
 recode q26 (2 = 1) if q27 == 0 // 1 change
 recode q27 (0 = .a)  // 1 change
-recode q27 (1 = 2) // 3 changes - Shalom: why are we doing this step? Is it just so the data makes sense?
+recode q27 (1 = 2) // 3 changes 
 
 list q26 q27 country if q26 == 1 & q27 > 0 & q27 < .
 * This is okay 
@@ -501,7 +499,7 @@ recode q31 (. = .a) if q3 != 2 | q1 < 50
 recode q32 (. = .a) if q3 != 2  
 
 * q42
-recode q42 (. = .a) if q41 == 2 // Mia: this skip pattern is different from other countries, q42 was asked even if q41 == .r (3 in the original coding, per tool).
+recode q42 (. = .a) if q41 == 2 // Note: this skip pattern is different from other countries, q42 was asked even if q41 == .r (3 in the original coding, per tool).
 label def q42 .a "NA", modify
 
 * q43-49 na's

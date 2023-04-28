@@ -21,7 +21,7 @@ qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
 	
-	if inlist(`i',12,13, 14, 15, 17) {
+	if inlist(`i',12, 13, 14, 15, 17) {
 		extremes q46b country if country == `i', high
 	}
 

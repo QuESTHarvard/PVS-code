@@ -104,7 +104,6 @@ ren Q3_6_H q48_h
 ren Q3_6_I q48_i
 ren Q3_6_J q48_j
 ren Q3_6_K q48_k 
-*ren Q3_7 q49
 
 *recoding q49:
 recode Q3_7 (1 = 0 "0") ///
@@ -137,7 +136,6 @@ ren Q4_14 q63
 ren Q4_13 q66_gb 
 
 ren weight weight_educ 
-* 4/19: Mia added.
 gen int_length = PV27_LengthInSeconds / 60
 gen reclanguage = 17001
 lab def lang 17001 "GB: English" 
@@ -174,7 +172,6 @@ replace recq44 = .r if q44 == 999
 gen recq63 = reccountry*1000 + q63
 replace recq63 = .r if q63 == 999
 
-* Mia changed this part
 local q4l labels5
 local q5l labels3
 local q8l labels9
@@ -240,7 +237,7 @@ recode q46b_dys q46b_hrs q46b_mth q46b_wks (. = 0) if q46b_dys < . | ///
 														  q46b_wks < . 
 gen q46b = (q46b_hrs/24) + q46b_dys + (q46b_wks*7) + (q46b_mth*30)
 recode q46b (. = .r) if q46b_refused == 1 
-recode q46b_refused (. = 0) if q46b != . //4/18: Mia added.
+recode q46b_refused (. = 0) if q46b != .
 
 *------------------------------------------------------------------------------*
 
@@ -356,7 +353,6 @@ recode q13 (. = .a) if q12 == 2  | q12==.r
 *q19-22
 recode q19a_gb q19b_gb q20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
 
-* 4/18 Mia add this
 recode q19a_gb (. = .a) if q5 == 12
 recode q19b_gb (. = .a) if q5 != 12
 
@@ -370,7 +366,6 @@ recode q27 (. = .a) if q26 == 1 | q26 == .r | q26 == .a
 recode q28_c (. = .a) if q28_b == 0 | q28_b == .d | q28_b == .r
 
 * q31 & q32
-* Mia added q1 == .r 
 * Different skip pattern for q31 compare to other countries
 recode q31 (. = .a) if q3 != 2 | q1 == .r 
 recode q32 (. = .a) if q3 != 2 | q1 == .r
@@ -383,7 +378,6 @@ recode q43a_gb q43b_gb q44 q45 q46 q46_refused q46a ///
 	   q46b q46b_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r 
 
-* 4/18 Mia add this
 recode q43a_gb (. = .a) if q5 == 12
 recode q43b_gb (. = .a) if q5 != 12
 
@@ -648,7 +642,6 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 lab var q66_gb "Q66. Which political party did you vote for in the last election?"
 
 *------------------------------------------------------------------------------*
-* Mia added
 *Dropping the following value labels so the dataset won't get messed up when merging
 label copy labels23 q19a_gb_label
 label drop labels23  

@@ -464,8 +464,6 @@ label define language 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
 
 label val reclanguage language
 
-
-
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
