@@ -462,7 +462,7 @@ drop intlength interviewerid_recoded rim1_gender rim2_age rim3_region w_des w_de
 clonevar q19_co_pe = q19_co
 replace q19_co_pe = q19_pe if country == 7
 drop q19_co q19_pe
-*combining q19_pe/q19_co
+*combining q43_pe/q43_co
 clonevar q43_co_pe = q43_co
 replace q43_co_pe = q43_pe if country == 7
 drop q43_co q43_pe
