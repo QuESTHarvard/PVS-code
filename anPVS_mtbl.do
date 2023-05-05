@@ -1,5 +1,5 @@
 * PVS Descriptive Analysis 
-* Last updated: December 2022
+* Last updated: April 2023
 * N. Kapoor 
 
 clear all
@@ -8,109 +8,8 @@ set more off
  * Import clean data with derived variables 
 
 use "$data_mc/02 recoded data/pvs_all_countries.dta", replace
-*use "$data_mc/02 recoded data/pvs_all_countries 3.2.23.dta", replace
-
 
  *========================= Descriptive Analysis ============================* 
-
-
-* Survey characteristics and Part 1: basic demographics - Q1-17
-
-summtab2 , by(country) vars(int_length mode q1 q2 q3 q3a_co_pe_uy q4 q5 q6 q6_za q7 q8 q9 q10 q11 /// 
-		   q12 q13 q13b_co_pe_uy q13e_co_pe_uy q14 q15 q16 q17) /// 
-		   type(1 2 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2) /// 
-		  catmisstype(missnoperc) /// 
-		  mean median range pmiss total replace excel /// 
-		  excelname(pvs_interim_results) sheetname(demographics) directory("$output") /// 
-		  title(Survey Characteristics & Basic Demographics) 
-
-* Add back language or other interview characteristics if interested
-		  
-* Part 2: Utilization of care and system competence Q18-42
-summtab2 , by(country) vars(q18 q19_et_ke_za q19_co q19_pe q19_uy q18a_la q19_q20a_la ///
-		   q18b_la q19_q20b_la /// 
-		   q20 q21 q22 q23 ///
-		   q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b /// 
-		   q29 q30 q31 q32 q33 q34 q35 q36 q37_za q38 q39 q40 q41 q42) /// 
-		  type(2 2 2 2 2 2 2 2 2 2 2 2 1 2 1 2 1 2 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2) ///
-		  catmisstype(missnoperc) /// 
-		  mean median range pmiss total replace excel /// 
-		  excelname(pvs_interim_results) sheetname(part_2) directory("$output") /// 
-		  title(Utilization of care and system competence) 		  
-		  
-		  
-* Part 3: Care experience 
-summtab2 , by(country) vars(q43_et_ke_za_la q43_co q43_pe q43_uy q44 ///
-		  q45 q46_min q47_min ///
-		  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i /// 
-		  q48_j q49) /// 
-		  type(2 2 2 2 2 2 1 1 2 2 2 2 2 2 2 2 2 2 1) ///
-		  catmisstype(missnoperc) total /// 
-		  mean median range pmiss replace excel /// 
-		  excelname(pvs_interim_results) sheetname(part_3) directory("$output") ///
-		  title(Care experience)
-	  
-		  
-* Part 4: Health system confidence
-summtab , by(country) catvars(q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 /// 
-		  q56_et_ke_za q56_pe q56_uy q57 q58 q59 q60 q61 /// 
-		  q62 q63) ///  
-		  catmisstype(missnoperc) total /// 
-		  replace excel /// 
-		  excelname(pvs_interim_results) sheetname(part_4) directory("$output") ///
-		  title(Health system confidence)
-
-* Other items
-summtab2 , by(country) vars(q64 q65) /// 
-		  type(2 1) /// 
-		   catmisstype(missnoperc) /// 
-		  mean median range pmiss total replace excel /// 
-		  excelname(pvs_interim_results) sheetname(other_items) directory("$output") ///
-		  title(Other items)
-
-* Derived variables 
-summtab2 , by(country) vars(age_calc age_cat gender urban insured insur_type education health health_mental health_chronic ///
-		   ever_covid covid_confirmed covid_vax covid_vax_intent activation /// 
-		   usual_source usual_type_own usual_type_lvl usual_type usual_reason usual_quality visits visits_covid ///
-		   fac_number visits_home visits_tele visits_total inpatient blood_pressure mammogram ///
-		   cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
-		   system_fail unmet_need unmet_reason last_type_own last_type_lvl last_type last_reason last_wait_time ///
-		   last_visit_time last_qual last_skills last_supplies last_respect last_know ///
-		   last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
-		   last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
-		   conf_afford conf_opinion qual_public qual_private qual_ngo qual_ss_pe ///
-		   qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-		   vignette_good native_lang income) ///
-		   type(1 2 2 2 2 2 2 2 2 2 ///
-				2 2 2 2 2	 ///			
-				2 2 2 2 2 2 2 1 ///
-				2 1 1 1 2 2 2 ///
-				2 2 2 2 2 2 ///
-				2 2 2 2 2 2 2 /// 
-				2 2 2 2 2 2 2 ///
-				2 2 2 2 2 ///
-				2 2 2 2 2 2 ///  
-				2 2 2 2 2 2 ///
-				2 2 2 2 2 ///
-				2 2 2) /// 
-		  catmisstype(missnoperc) /// 
-		  mean median range pmiss total replace excel /// 
-		  excelname(pvs_interim_results) sheetname(derived variables) directory("$output") /// 
-		  title(Derived Variables) 
-
-
-
-* WEIGHTED DATA 
-clear all
-set more off 
-
- * Import clean data with derived variables 
-
-use "$data_mc/02 recoded data/pvs_all_countries.dta", replace
-
- *========================= Descriptive Analysis ============================* 
-
-
 
 * Survey characteristics and Part 1: basic demographics - Q1-17
 
@@ -167,28 +66,34 @@ summtab2 , by(country) vars(q64 q65) ///
 		  title(Other items)
 
 * Derived variables 
-summtab2 , by(country) vars(age_calc age_cat gender urban insured insur_type education health health_mental health_chronic ///
-		   ever_covid covid_confirmed covid_vax covid_vax_intent patient_activation /// 
-		   usual_source usual_type_own usual_type_lvl usual_type_own_lvl usual_reason usual_quality visits visits_covid ///
-		   fac_number visits_total inpatient blood_pressure mammogram ///
+summtab2 , by(country) vars(age age_cat gender urban insured /// 5
+		   insur_type education health health_mental health_chronic /// 5
+		   ever_covid covid_confirmed covid_vax covid_vax_intent activation /// 5 
+		   usual_source usual_type_own usual_type_lvl usual_type usual_reason /// 5
+		   usual_quality visits visits_cat visits_covid /// 4
+		   fac_number visits_total inpatient blood_pressure mammogram /// 5
 		   cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
-		   system_fail unmet_need unmet_reason last_type_own last_type_lvl last_type_own_lvl last_reason last_wait_time ///
-		   last_visit_time last_qual last_skills last_supplies last_respect last_know ///
+		   mistake discrim unmet_need unmet_reason last_type_own /// 5
+		   last_type_lvl last_type last_reason last_wait_time /// 4
+		   last_visit_time last_qual last_skills last_supplies last_respect last_know /// 6
 		   last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
 		   last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
-		   conf_afford conf_opinion qual_public qual_private qual_ngo qual_ss_pe ///
-		   qual_mut_uy system_outlook system_reform covid_manage vignette_poor /// 
-		   vignette_good native_lang income) ///
-		   type(1 2 2 2 2 2 2 2 2 2 ///
-				2 2 2 2 2	 ///			
-				2 2 2 2 2 2 2 1 ///
-				2 1 2 2 2 ///
-				2 2 2 2 2 2 ///
-				2 2 2 2 2 2 /// 
-				2 2 2 2 2 2 2 ///
-				2 2 2 2 2 2 ///
+		   conf_afford conf_getafford conf_opinion qual_public qual_private  ///
+		    system_outlook system_reform covid_manage vignette_poor /// 
+		   vignette_good minority income) ///
+		   type(1 2 2 2 2 /// 5
+				2 2 2 2 2 /// 5
+				2 2 2 2 2	 /// 5			
+				2 2 2 2 2 /// 5
+				2 1 2 1 /// 4
+				2 1 2 2 2 /// 5 
+				2 2 2 2 2 2 /// 6
+				2 2 2 2 2 /// 5
+				2 2 2 2 /// 4
+				2 2 2 2 2 2 /// 6
+				2 2 2 2 2 /// 6 
 				2 2 2 2 2 2 ///  
-				2 2 2 2 2 2 ///
+				2 2 2 2 ///
 				2 2 2 2 2 ///
 				2 2 2) /// 
 		  catmisstype(missnoperc) wts(weight) /// 
@@ -196,6 +101,45 @@ summtab2 , by(country) vars(age_calc age_cat gender urban insured insur_type edu
 		  excelname(pvs_interim_results_wt) sheetname(derived variables) directory("$output") /// 
 		  title(Derived Variables) 
 
+
+* Laos table 
+summtab2 , by(q62a_la) vars(age age_cat gender urban insured /// 5
+		   insur_type education health health_mental health_chronic /// 5
+		   ever_covid covid_confirmed covid_vax covid_vax_intent activation /// 5 
+		   usual_source usual_type_own usual_type_lvl usual_type usual_reason /// 5
+		   usual_quality visits visits_cat visits_covid /// 4
+		   fac_number visits_total inpatient blood_pressure mammogram /// 5
+		   cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol care_mental /// 
+		   mistake discrim unmet_need unmet_reason last_type_own /// 5
+		   last_type_lvl last_type last_reason last_wait_time /// 4
+		   last_visit_time last_qual last_skills last_supplies last_respect last_know /// 6
+		   last_explain last_decisions last_visit_rate last_wait_rate last_courtesy ///
+		   last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
+		   conf_afford conf_getafford conf_opinion qual_public qual_private  ///
+		    system_outlook system_reform covid_manage vignette_poor /// 
+		   vignette_good minority income) ///
+		   type(1 2 2 2 2 /// 5
+				2 2 2 2 2 /// 5
+				2 2 2 2 2	 /// 5			
+				2 2 2 2 2 /// 5
+				2 1 2 1 /// 4
+				2 1 2 2 2 /// 5 
+				2 2 2 2 2 2 /// 6
+				2 2 2 2 2 /// 5
+				2 2 2 2 /// 4
+				2 2 2 2 2 2 /// 6
+				2 2 2 2 2 /// 6 
+				2 2 2 2 2 2 ///  
+				2 2 2 2 ///
+				2 2 2 2 2 ///
+				2 2 2) /// 
+		  catmisstype(missnoperc) wts(weight) /// 
+		  mean median range total replace excel /// 
+		  excelname(pvs_results_la) sheetname(derived variables) directory("$in_out") /// 
+		  title(Derived Variables) 
+		  
+		  
+		  
  *========================= Additional Tables ============================* 
 
  summtab2 , by(country) vars(gender urban education health age_cat discrim visits) /// 
