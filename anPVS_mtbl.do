@@ -101,8 +101,12 @@ summtab2 , by(country) vars(age age_cat gender urban insured /// 5
 		  excelname(pvs_interim_results_wt) sheetname(derived variables) directory("$output") /// 
 		  title(Derived Variables) 
 
-
-* Laos table 
+		  
+		  
+		  
+ *========================= Additional Tables ============================* 
+ 
+ * Laos table 
 summtab2 , by(q62a_la) vars(age age_cat gender urban insured /// 5
 		   insur_type education health health_mental health_chronic /// 5
 		   ever_covid covid_confirmed covid_vax covid_vax_intent activation /// 5 
@@ -138,9 +142,6 @@ summtab2 , by(q62a_la) vars(age age_cat gender urban insured /// 5
 		  excelname(pvs_results_la) sheetname(derived variables) directory("$in_out") /// 
 		  title(Derived Variables) 
 		  
-		  
-		  
- *========================= Additional Tables ============================* 
 
  summtab2 , by(country) vars(gender urban education health age_cat discrim visits) /// 
 		   type(2 2 2 2 2 2 1) wts(weight) wtfreq(ceiling) /// 
