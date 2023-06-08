@@ -116,7 +116,7 @@ local q8l Q8
 local q20l Q20
 local q44l Q44
 local q62l Q62
-local q63l Q63
+local q63l q63
 
 foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'

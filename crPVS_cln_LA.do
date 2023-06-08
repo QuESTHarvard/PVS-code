@@ -528,6 +528,12 @@ recode q57 ///
 recode q21 (10 = 9) (90 = .r)
 label define fac_choose 9 "Other", modify
 
+
+* fixing formatting of specific vars:
+
+label define place_type 1 "Public/Government hospital" 2 "Public/Government health center" 3 "Private hospital" 4 "Private clinic" 5 "NGO/Faith-based hospital" 6 "NGO/Faith-based clinic" 7 "Private Pharmacy"	 8 "Traditional healer" 9 "Other, specify" 99 "Refused" .a "NA" .r "Refused", replace	
+			
+label define fac_type1 1 "Public/Government hospital" 2 "Public/Government health center" 3 "Private hospital" 4 "Private clinic" 5 "NGO/Faith-based hospital" 6 "NGO/Faith-based clinic" 7 "Other, specify" 99 "Refused [DO NOT READ]" .a "NA" .r "Refused", replace				   
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
