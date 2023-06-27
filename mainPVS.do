@@ -24,11 +24,11 @@ set more off
 macro drop _all
 
 * Setting user globals 
-global user "/Users/nek096"
+*global user "/Users/nek096"
 *global user "/Users/catherine.arsenault"
 *global user "/Users/tol145"
 *global user "/Users/rodba"
-*global user "/Users/shs8688"
+global user "/Users/shs8688"
 
 
 * Setting file path globals
