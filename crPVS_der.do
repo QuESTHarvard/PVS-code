@@ -882,10 +882,10 @@ save "$data/Argentina (Mendoza)/02 recoded data/pvs_argentina_recoded", replace
 restore
 
 *United Kingdown
-*preserve
-*keep if country == 17
-*save "$data/United Kingdom/02 recoded data/pvs_gb_recoded"
-*restore
+preserve
+keep if country == 17
+save "$data/United Kingdom/02 recoded data/pvs_gb_recoded"
+restore
 
 */
 
