@@ -610,7 +610,7 @@ order q*, sequential
 order respondent_serial respondent_id mode country language date int_length weight_educ
 *------------------------------------------------------------------------------*
 
-* Save data
+* Save data - need to do other specify checks
 
 *save "$data_mc/02 recoded data/pvs_gr.dta", replace
 
