@@ -1,5 +1,5 @@
 * People's Voice Survey data append  
-* Date of last update: April 2023
+* Date of last update: July 2023
 * Last updated by: N Kapoor, S Sabwa, M Yu
 
 /*
@@ -62,10 +62,17 @@ append using "$data_mc/02 recoded data/pvs_gb.dta"
 
 qui do `label6'
 
+tempfile label7
+label save q4_label q5_label q7_label q8_label q20_label q44_label q63_label using `label7'
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q63_label
+
+append using "$data_mc/02 recoded data/pvs_gr.dta"
+
+qui do `label7'
 
 * Country
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
-				17 "United Kingdom", modify
+				17 "United Kingdom" 18 "Greece", modify
 
 * Mode
 recode mode (3 = 1) (4 = 3)
@@ -74,7 +81,7 @@ label val mode mode
 lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 
 * Country-specific skip patterns - check this 
-recode q19_et_in_ke_za q43_et_in_ke_za q56_et_in_ke_za (. = .a) if country != 5 | country != 3  | country != 9  
+recode q19_et_in_ke_za q43_et_in_ke_za q56_et_gr_in_ke_za (. = .a) if country != 5 | country != 3  | country != 9  | country != 18 
 recode q19_uy q43_uy q56_uy (. = .a) if country != 10
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
@@ -94,9 +101,11 @@ recode q7 (. = .a) if country == 15
 recode q6 (. = .a) if inlist(country,9,11,14,15,17) 
 recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
 recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
-recode q37_in (. = .a) if country != 4
+recode q37_gr_in (. = .a) if country != 4 | country != 18
 recode q64 q65 q46_refused q47_refused (. = .a) if country == 15 
 recode q6_gb q19a_gb q19b_gb q43a_gb q43b_gb q62_gb q66_gb (. = .a) if country != 17
+recode q19_gr (. = .a) if country !=18
+recode q43_gr (. = .a) if country !=18
 
 	   
 * Country-specific value labels -edit for ssrs-
@@ -107,7 +116,7 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
 				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
 				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish" ///
-				 17001 "UK: English"
+				 17001 "UK: English" 18002 "GR: Greek"
 				 
 				 
 lab val language Language
