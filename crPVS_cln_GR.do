@@ -34,10 +34,39 @@ notes drop _all
 *ren intlength int_length
 ren q14_new q14
 ren q15_new q15
+
+*change q21 for additional GR var:
+recode q21 (1 = 1 "Low cost") /// 
+			(2 = 2 "Short distance") ///
+			(3 = 3 "Short waiting time") ///
+			(4 = 4 "Good healthcare provider skills") ///
+			(5 = 5 "Staff shows respect") ///
+			(6 = 6 "Medicines and equipment are available") ///
+			(7 = 7 "Only facility available") ///
+			(8 = 8 "Covered by insurance") ///
+			(995 = 9 "Other, specify") ///
+			(10 = 11 "GR: Preferred provider by other family members") ///
+			(11 = 12 "GR: Referred from another provider") ///
+			(996 = .r "Refused"), gen(recq21)
+
+
 ren q28 q28_a
 ren q28_new q28_b
 ren q28_gr q28_c // need to flip order of values
-ren q37_gr q37_in_gr
+ren q37_gr q37_gr_in
+
+*specific GR value added to q42:
+recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
+			(2 = 2 "Far distance (e.g., too far to walk or drive, transport not readily available)") ///
+			(3 = 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)") ///
+			(4 = 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)") ///
+			(5 = 5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)") ///
+			(6 = 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
+			(7 = 7 "Illness not serious enough") ///
+			(8 = 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)") ///
+			(9 = 9 "COVID-19 fear") (10 = 10 "Other, specify") (11 = 12 "GR: Fear or anxiety of a healthcare procedure, examination or treatment") ///
+			(996 = .r "Refused"), gen(recq42)
+
 
 *renamed q43_gr to q43 and q43 to q43_gr since the old q43_gr data isn't a part of our survey
 ren q43_gr q43b
@@ -46,7 +75,15 @@ ren q43 q43_gr
 ren q46_gr2 q46a
 ren q46_gr q46b // double check units of raw data
 ren q46_gr_refused  q46b_refused
-ren q56 q56_et_gr_in_ke_za
+
+*rename q56 vars
+recode q56 (1 = 4 "Excellent") ///
+	   (2 = 3 "Very Good") ///
+	   (3 = 2 "Good") ///
+	   (4 = 1 "Fair") ///
+	   (5 = 0 "Poor") ///
+	   (996 = .r "Refused"), gen(q56_et_gr_in_ke_za)
+
 ren q66 q64
 ren q67 q65
 
@@ -70,31 +107,35 @@ order respondent_id date int_length mode weight weight_educ //dropped country an
 
 gen reccountry = 18
 lab def country 18 "Greece"
+lab values reccountry country
 
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
-* replace the value to .r if the original one is 999
+* replace the value to .r if the original one is "Refused"
 
 gen recq4 = reccountry*1000 + q4
-replace recq4 = .r if q4 == 999
+replace recq4 = .r if q4 == 996
 gen recq5 = reccountry*1000 + q5
-replace recq5 = .r if q5 == 999
+replace recq5 = .r if q5 == 996
 gen recq8 = reccountry*1000 + q8
-replace recq8 = .r if q8 == 999
+replace recq8 = .r if q8 == 996
 gen recq20 = reccountry*1000 + q20
-replace recq20 = .r if q20 == 999
+replace recq20 = .r if q20 == 996
 gen recq44 = reccountry*1000 + q44
 replace recq44 = .r if q44 == 999
+gen recq62 = reccountry*1000 + q62
+replace recq62 = .r if q62== 996
 gen recq63 = reccountry*1000 + q63
-replace recq63 = .r if q63 == 999
+replace recq63 = .r if q63 == 996
 
-local q4l labels5
+local q4l labels9
 local q5l labels10
 local q8l labels13
 local q20l labels25
 local q44l labels25
+local q62l labels62
 local q63l labels63
 
-foreach q in q4 q5 q8 q20 q44 q63{
+foreach q in q4 q5 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -108,11 +149,11 @@ foreach q in q4 q5 q8 q20 q44 q63{
 	qui levelsof rec`q', local(`q'level)
 
 	forvalues i = 1/``q'n' {
-		local recvalue`q' = 17000+`: word `i' of ``q'val''
+		local recvalue`q' = 18000+`: word `i' of ``q'val''
 		foreach lev in ``q'level'{
 			if strmatch("`lev'", "`recvalue`q''") == 1{
-				elabel define `q'_label (= 17000+`: word `i' of ``q'val'') ///
-									    (`"GB: `gr`i''"'), modify			
+				elabel define `q'_label (= 18000+`: word `i' of ``q'val'') ///
+									    (`"GR: `gr`i''"'), modify			
 			}	
 		}                 
 	}
@@ -121,11 +162,17 @@ foreach q in q4 q5 q8 q20 q44 q63{
 	label val rec`q' `q'_label
 }
 
+label define q4_label .a "NA" .r "Refused" , modify
+label define q5_label .a "NA" .r "Refused" , modify
 label define q8_label .a "NA" .r "Refused" , modify
 label define q20_label .a "NA" .r "Refused" , modify
 label define q44_label .a "NA" .r "Refused" , modify
 label define q62_label .a "NA" .r "Refused" , modify
 label define q63_label .a "NA" .r "Refused" , modify
+
+* add label for "Refused"
+
+label define labels61 .r "Refused", add
 
 *****************************
 
@@ -143,7 +190,7 @@ recode q46b_refused (. = 0) if q46b != .
 
 * Drop unused variables 
 
-drop ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q20_b q20_b_other q20_c q20_c_other q20_d q20_d_other q43b q44 q44_b q44_b_other q44_c q44_c_other q46 q47 q63 q66_a q66_b q69 q69_codes rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall sample_type interviewer_id interviewer_gender interviewer_language country language
+drop ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q20_b q20_b_other q20_c q20_c_other q20_d q20_d_other q21 q42 q43b q44 q44_b q44_b_other q44_c q44_c_other q46 q47 q56 q62 q63 q66_a q66_b q69 q69_codes rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall sample_type interviewer_id interviewer_gender interviewer_language country language
 
 
 *------------------------------------------------------------------------------*
@@ -160,19 +207,30 @@ recode q23_q24 (996 = 7) (997 = 7) if q24 == 3
 recode q23_q24 (996 = 10) (997 = 10) if q24 == 4
 recode q23_q24 (997 = .r) if q24 == 996
 
+*Q7
+gen recq7 = reccountry*1000 + q7
+*replace recq7 = .a if q7 == .a
+replace recq7 = .r if q7 == 996
+label def q7_label 18004 "GR: Private insurance only" 18029 "GR: Public insurance only" ///
+				   18030 "GR: Both public and private insurance" 18995 "GR: Other, specify" .a "NA" .r "Refused"
+label values recq7 q7_label
+
+
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
 * In raw data, 995 = "don't know" 
-recode q12 q15 q23 q37_in_gr (995 = .d)
+recode q12 q15 q23 q37_gr_in (995 = .d)
 
-recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 (997 = .d)
+recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 (997 = .d)
 
 * In raw data, 996 = "refused" 	  
-recode q6 q7 q11 q14 q15 q16 q17 q18 q21 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
-	   q40 q42 q43_gr q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
+recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
+	   q40 q43_gr q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
-	   q56_et_gr_in_ke_za q57 (996 = .r)	
+	   q56_et_gr_in_ke_za q57 q58 q59 q60 q61 q65 q64 (996 = .r)
+	   
+recode recq63 (18996 = .r)
 
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for questions respondents would not have been asked 
@@ -245,7 +303,7 @@ recode q13 (. = .a) if q12 == 2 | q12 == .r
 recode q15 (. = .a) if inrange(q14,3,5) | q14== .r 
 
 *q19-22
-recode q19_gr recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
+recode q19_gr recq20 recq21 q22 (. = .a) if q18 == 2 | q18 == .r 
 recode recq20 (. = .a) if q19_gr == 4 | q19_gr == .r
 
 * NA's for q24-27 
@@ -265,14 +323,15 @@ recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r
 recode q32 (. = .a) if q3 != 2 | q2 == .r 
 
 * q42
-recode q42 (. = .a) if q41 == 2 | q41 == .r
+recode recq42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q43_gr recq44 q45 recq46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
-	   q48_g q48_h q48_i q48_j q49 (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
-recode q43_gr recq44 q45 recq46 q46_refused q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
-	   q48_g q48_h q48_i q48_j q49 (nonmissing = .a) if q23 == 0 | q24 == 1
+recode q43_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+	   q48_g q48_h q48_i q48_j q48_k q49 q48_k (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
+	   
+recode q43_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+	   q48_g q48_h q48_i q48_j q48_k q49 (nonmissing = .a) if q23 == 0 | q24 == 1
 	   
 recode recq44 (. = .a) if q43_gr == 4 | q43_gr == .r
 
@@ -286,6 +345,12 @@ recode recq47  (. = .r) if q47_refused == 1
 recode q46_refused (. = 0) if recq46 != .
 recode q47_refused (. = 0) if recq47 != .
 
+recode q48_k (. = .a) if q46a == 2 | q46a == .r
+
+recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r
+
+*q65
+recode q65 (. = .a) if q64 != 1
 *q66/67
 recode q66 (. = .a) if mode == 2
 
@@ -302,7 +367,7 @@ recode q11 q13 q18 q25_a q26 q29 q41 ///
 
 lab val q46_refused q47_refused yes_no
 
-recode q12 q30 q31 q32 q33 q34 q35 q36 q38 ///
+recode q12 q30 q31 q32 q33 q34 q35 q36 q37_gr_in q38 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (3 .d = .d "Don't know") /// 
 	   (.a = .a "NA"), ///
 	   pre(rec) label(yes_no_dk)
@@ -390,18 +455,27 @@ recode q57 ///
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46a q46b recq47 na_rf	
 	
-	
+label define labels47 4 "Other, specify" .a "NA" .r "Refused", modify
+
+label def q46_label .a "NA" .r "Refused"
+label values recq46 q46_label
+
 ******* Country-specific *******
 lab def labels24 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels38 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels14 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels43 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
+
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q3 q6 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
-	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q46a ///
+drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
+	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr_in q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q59 q60 q61
@@ -465,8 +539,8 @@ lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
 
-*Need to confirm wording of q37_in_gr with instrument since it's cut off in stata
-*lab var q37_in_gr "Q37_C. GR only: Have you received any of the following health services in the past 12 mon"
+*Need to confirm wording of q37_gr_in with instrument since it's cut off in stata
+lab var q37_gr_in "Q37_C. GR/IN only: Have you received any of the following health services in the past 12 mon"
 
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
@@ -476,7 +550,7 @@ lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
 
 *Need to confirm wording of q43_gr with instrument since it's cut off in stata
-lab var q43_gr " Q43. GR only: Thinking about your last healthcare visit for a new or ongoing health probl"
+lab var q43_gr "Q43. GR only: Thinking about your last healthcare visit for a new or ongoing health probl"
 
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
@@ -549,6 +623,7 @@ label value q43a_gb q43a_gb_label
 
 *------------------------------------------------------------------------------*
 
+/*
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
@@ -606,13 +681,15 @@ ren q44_other_original q44_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other
 
+*/
+
 order q*, sequential
-order respondent_serial respondent_id mode country language date int_length weight_educ
+order respondent_serial respondent_id country language date int_length mode weight_educ weight
 *------------------------------------------------------------------------------*
 
 * Save data - need to do other specify checks
 
-*save "$data_mc/02 recoded data/pvs_gr.dta", replace
+save "$data_mc/02 recoded data/pvs_gr.dta", replace
 
 *------------------------------------------------------------------------------*
 
