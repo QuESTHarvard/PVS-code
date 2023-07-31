@@ -478,7 +478,7 @@ drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr_in q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q59 q60 q61
+	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q59 q60 q61 weight
 	 
 ren rec* *
 
@@ -623,65 +623,99 @@ label value q43a_gb q43a_gb_label
 
 *------------------------------------------------------------------------------*
 
-/*
+
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
+**# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES
+**# Stata Version 18.0, 27-JUL-2023 
 
-gen q7_other_original = q7_other
-label var q7_other_original "Q7_other. Other type of health insurance?"
+* Data cleaning was focused on: 
+*(a) q8: highest level of education completed by the respondent 
+*(b) q19 & q43: public/private/contracted/NGO facility,
+*(c) q20 & q44 type of healthcare facility (help distinguish primary from secondary healthcare), 
+*(d) q21: main reason for choosing the healthcare facility of usual healthcare
+*(e) q42: reason of unmet need the last time that the respondent needed healthcare
+*(f) q45: main reason for last healthcare visit 
+ 
 
-gen q8_other_original = q8_other
-label var q8_other_original "Q8. Highest level of education completed by the respondent"
+*****************************************************************************************************************
+**# (a) q8 & q8_other: Highest level of education completed by the respondent 					
+***********************************************************************************************************
+
+* ===== CLASSIFICATION OF 152/153 "OTHER, SPECIFY" RESPONSES UNDER Q8 CATEGORIES
+ 
+replace q8=18050 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="METAPTIXIAKO" ///
+ | q8_other=="METAPTYXIAKO" | q8_other=="ΔΙΔΑΚΤΟΡΙΚΟ" | q8_other=="ΜΑΣΤΕΡ" | ///
+ q8_other=="ΜΕΤΑΠΠΤΥΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΑΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΧΙΑΚΟ" | ///
+ q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΑ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ ΣΠΟΥΔΕΣ" | ///
+ q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΟΣ" | q8_other=="ΜΕΤΑΠΥΥΧΙΑΚΟ" | ///
+ q8_other=="Μεταπτυχιακό" | q8_other=="ΝΕΤΑΠΤΥΧΙΑΚΟ" | q8_other=="ΠΟΛΥΤΕΧΝΕΙΟ" | ///
+ q8_other=="μεταπτυχιακο" 
+ 
+ 
+*****************************************************************************************************************
+**# (b) q19_gr & q19_gr_other: Is this a public, private, contracted to public, or NGO healthcare facility?  
+*****************************************************************************************************************
+* Responses of q19_gr_other (n=4) cannot be classified under q19_gr categories. The best approach is to keep them
+* as they are.  	
+
+		
+*****************************************************************************************************************
+**# (c) q20 & q20_other. What type of healthcare facility is this? 						  *****************************************************************************************************************
+
+* The majority of the responses "Other, specify" cannot be classified under q19_gr existing categories, either because 
+* they indeed do not fall under the existing categories or due to the fact that there is uncertaintly.
+
+* Only one response can be classified under public & hospital as an inpatient:
+
+replace q20=18110 if q20_other=="ΝΟΣΟΚΟΜΕΙΟ ΜΕ ΝΟΣΗΛΙΑ ΩΡΩΝ"
+
+*****************************************************************************************************************	
+**# (c) q44 & q44_other. What type of healthcare facility is this? 					*****************************************************************************************************************	
+
+* All responses under "Other, specify" cannot be classified under q44 categories, either because 
+* they indeed do not fall under the existing categories or due to the fact that the responses are unclear.				
+										
+*****************************************************************************************************************	
+**# (d) q21 & q21_other: Why did you choose this healthcare facility? 				*****************************************************************************************************************	
+
+* ===== CLASSIFICATION OF 13/42 "OTHER, SPECIFY" RESPONSES UNDER Q21 CATEGORIES
+
+replace q21=1  if q21_other=="ΕΙΝΑΙ ΔΩΡΕΑΝ Η ΠΡΩΤΟΒΑΘΜΙΑ ΦΡΟΝΤΙΔΑ ΥΓΕΙΑΣ" | q21_other=="ΜΗΔΑΜΙΝΟ ΚΟΣΤΟΣ"
+replace q21=3  if q21_other=="ΚΟΝΤΙΝΑ ΡΑΝΤΕΒΟΥ" | q21_other=="ΑΜΕΣΟΤΗΤΑ" | q21_other=="ΑΜΕΣΗ ΕΞΥΠΗΡΕΤΗΣΗ"
+replace q21=4  if q21_other=="ΝΙΩΘΩ ΑΣΦΑΛΕΙΑ ΚΑΙ ΕΜΠΙΣΤΟΣΥΝΗ ΜΕΒ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΓΙΑΤΡΟ" | q21_other=="ΕΞΙΔΕΙΚΕΥΜΕΝΟ" | ///
+q21_other=="EMPISTOSYNH STO GIATRO" | q21_other=="ΓΙΑΤΙ ΕΚΕΙ ΒΡΙΣΚΩ ΓΙΑΤΡΟΥΣ ΠΟΥ ΞΕΡΟΥΝ ΝΑ ΚΑΝΟΥΝ ΤΗ ΔΟΥΛΕΙΑ ΤΟΥΣ" | ///
+q21_other=="ΕΧΟΥΝ ΕΞΕΙΔΙΚΕΥΣΗ" | q21_other=="ΟΙ ΥΠΗΡΕΣΙΕΣ ΠΟΥ ΠΑΡΕΧΟΝΤΑΙ ΑΠΟ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΔΟΜΗ ΕΙΝΑΙ ΠΟΛΥ ΚΑΛΕΣ" | ///
+q21_other=="ΕΜΠΙΣΤΕΥΟΜΑΙ ΤΟ ΓΙΑΤΡΟ" | q21_other=="ΓΙΑ ΛΟΓΟΥΣ ΕΜΠΙΣΤΟΣΥΝΗΣ"
+replace q21=8  if q21_other=="απο τηνδουλεια τουεχει ασφαλεια" | q21_other=="ΕΙΝΑΙ ΣΥΜΒΕΒΛΗΜΕΝΟ ΜΕ ΤΗΝ ΙΔΙΩΤΙΚΗ ΑΣΦΑΛΕΙΑ ΜΟΥ"
+
+
+*****************************************************************************************************************
+**# (e) q42_other. The last time this happened what was the main reason? 
+*****************************************************************************************************************	
+* ===== CLASSIFICATION OF 5 "OTHER, SPECIFY" RESPONSES UNDER Q42 CATEGORIES
+
+replace q42=3 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΡΑΝΤΕΒΟΥ ΓΙΑ ΤΟΥΣ ΕΠΟΜΕΝΟΥΣ 7 ΜΗΝΕΣ"
+replace q42=6 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΑΣΘΕΝΟΦΟΡΟ"
+replace q42=8 if q42_other=="ΓΙΑΤΙ ΕΙΧΑ COVID KAI DEN ME ΔEXONTAN ΣΕ ΙΔΙΩΤΙΚΑ ΘΕΡΑΠΕΥΤΗΡΙΑ" | ///
+q42_other=="ΔΕΝ ΜΕ ΔΕΧΘΗΚΑΝ ΕΠΕΙΔΗ ΗΜΟΥΝ ΑΝΕΜΒΟΛΙΑΣΤΗ" |  q42_other=="ΕΙΧΑ COVID"
 	
-gen q19_gr_other_original = q19_gr_other
-label var q19_gr_other_original "Q19. GR only: Other"
+*****************************************************************************************************************	
+**# (f) q45 & q45_other What was the main reason you went?  	
+*****************************************************************************************************************	
 
-gen q20_other_original = q20_other
-label var q20_other_original "Q20. Other"
+*CLASSIFICATION OF 9/31 "OTHER, SPECIFY" RESPONSES UNDER Q45 CATEGORIES
 
-gen q21_other_original = q21_other
-label var q21_other_original "Q21. Other"
-
-gen q42_other_original = q42_other
-label var q42_other_original "Q42. Other"
-
-gen q44_other_original = q44_other
-label var q44_other_original "Q44. Other"
-	
-gen q45_other_original = q45_other
-label var q45_other_original "Q45. Other"	
-
-gen q62_other_original = q62_other
-label var q62_other_original "Q62. Other"	
+replace q45=3 if q45_other=="ΠΡΟΛΗΠΤΙΚΟΣ ΕΚΕΓΧΟΣ" | q45_other== "ΤΑΚΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other=="ΠΡΟΛΗΨΗ" | ///
+q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other=="ΠΡΟΛΗΨΗ" | q45_other=="ΕΤΗΣΙΟ ΤΣΕΚ -ΑΠ" 
+replace q45=2  if q45_other=="ΚΑΘΕΩ ΤΡΕΙΣ ΜΗΝΕΣ ΓΡΑΦΩ ΤΑ ΦΑΡΜΑΚΑ ΜΟΥ"
 
 
-*Remove "" from responses for macros to work
-*replace q21_other = subinstr(q21_other,`"""',  "", .)
-*replace q42_other = subinstr(q42_other,`"""',  "", .)
-*replace q45_other = subinstr(q45_other,`"""',  "", .)
 
-
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_18.xlsm",	///
-	sheet(other_specify_recode)							///	
-	id(respondent_serial)	
-	
-drop q7_other q8_other q19_gr_other q20_other ///
-	 q21_other q42_other q44_other q45_other q62_other
-	 
-ren q7_other_original q7_other
-ren q8_other_original q8_other
-ren q19_gr_other_original q19_gr_other
-ren q20_other_original q20_other
-ren q21_other_original q21_other
-ren q42_other_original q42_other
-ren q44_other_original q44_other
-ren q45_other_original q45_other
-ren q62_other_original q62_other
-
-*/
+*------------------------------------------------------------------------------*
 
 order q*, sequential
 order respondent_serial respondent_id country language date int_length mode weight_educ weight
