@@ -710,6 +710,7 @@ replace q45=2  if q45_other=="ΚΑΘΕΩ ΤΡΕΙΣ ΜΗΝΕΣ ΓΡΑΦΩ ΤΑ �
 
 
 *------------------------------------------------------------------------------*
+drop q8_other
 
 order q*, sequential
 order respondent_serial respondent_id country language date int_length mode weight_educ weight
