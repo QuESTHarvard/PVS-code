@@ -55,16 +55,16 @@ append using "$data_mc/02 recoded data/pvs_ar.dta"
 qui do `label5'
 
 tempfile label6
-label save q4_label q5_label q7_label q8_label q20_label q44_label q63_label using `label6'
-label drop q4_label q5_label q7_label q8_label q20_label q44_label q63_label
+label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label6'
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
 append using "$data_mc/02 recoded data/pvs_gb.dta"
 
 qui do `label6'
 
 tempfile label7
-label save q4_label q5_label q7_label q8_label q20_label q44_label q63_label using `label7'
-label drop q4_label q5_label q7_label q8_label q20_label q44_label q63_label
+label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label7'
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
 append using "$data_mc/02 recoded data/pvs_gr.dta"
 
