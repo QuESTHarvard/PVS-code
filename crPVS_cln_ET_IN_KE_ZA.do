@@ -508,8 +508,9 @@ order q*, after(interviewer_id)
 
 * Country-specific vars for append 
 ren q19 q19_et_in_ke_za
+ren q37_in q37_gr_in
 ren q43 q43_et_in_ke_za
-ren q56 q56_et_in_ke_za 
+ren q56 q56_et_gr_in_ke_za 
 
 *4/13: dropping interviewer language for now until we're able to clean and recode:
 
@@ -569,7 +570,7 @@ lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
 lab var q37_za "Q37. ZA only: Had a test for HIV in the past 12 months"
-lab var q37_in "Q37. IN only: Received an oral cancer screening, like a visual inspection of the mouth"
+lab var q37_gr_in "Q37. GR/IN only: Received an oral cancer screening, like a visual inspection of the mouth"
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
@@ -606,7 +607,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56_et_in_ke_za "Q56. ET/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_et_gr_in_ke_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
