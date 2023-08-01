@@ -609,17 +609,11 @@ lab var q66 "Q66.Which political party did you vote for in the last election?"
 
 *------------------------------------------------------------------------------*
 *Dropping the following value labels so the dataset won't get messed up when merging
-/*
-label copy labels23 q19a_gb_label
-label drop labels23  
-label value q19a_gb q19a_gb_label
-label copy labels24 q19b_gb_label
+
+label copy labels24 q19_gr_label
 label drop labels24  
-label value q19b_gb q19b_gb_label
-label copy labels50 q43a_gb_label
-label drop labels50   
-label value q43a_gb q43a_gb_label
-*/
+label value q19_gr q19_gr_label
+
 
 *------------------------------------------------------------------------------*
 
