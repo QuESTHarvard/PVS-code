@@ -4,7 +4,7 @@
 
 /*
 
-This file cleans Ipsos data for Greece and Romania. 
+This file cleans Ipsos data for Greece. 
 
 Cleaning includes:
 	- Recoding outliers to missing 
