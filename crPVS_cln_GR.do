@@ -385,7 +385,7 @@ recode q46a ///
 		(.r = .r "Refused"), pre(rec) label(yes_no_appt)
 		
 * All Excellent to Poor scales
-* Confirm it's ok to change "Neither bad nor good" to "Fair"
+* Please note that in Greece: "Neither bad nor good" was recoded to "Fair"
 
 recode q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 ///
 	   q55 q59 q60 q61 ///
