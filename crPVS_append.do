@@ -105,7 +105,8 @@ recode q37_gr_in (. = .a) if country != 4 | country != 18
 recode q64 q65 q46_refused q47_refused (. = .a) if country == 15 
 recode q6_gb q19a_gb q19b_gb q43a_gb q43b_gb q62_gb q66_gb (. = .a) if country != 17
 recode q19_gr (. = .a) if country !=18
-recode q43_gr (. = .a) if country !=18
+recode q43a_gr (. = .a) if country !=18
+recode q43b_gr (. = .a) if country !=18
 
 	   
 * Country-specific value labels -edit for ssrs-
