@@ -67,10 +67,8 @@ recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 			(9 = 9 "COVID-19 fear") (10 = 10 "Other, specify") (11 = 12 "GR: Fear or anxiety of a healthcare procedure, examination or treatment") ///
 			(996 = .r "Refused"), gen(recq42)
 
-
-*renamed q43_gr to q43 and q43 to q43_gr since the old q43_gr data isn't a part of our survey
-ren q43_gr q43b
-ren q43 q43_gr
+ren q43_gr q43b_gr
+ren q43 q43a_gr
 
 ren q46_gr2 q46a
 ren q46_gr q46b // double check units of raw data
@@ -178,19 +176,19 @@ label define labels61 .r "Refused", add
 
 **** Combining/recoding some variables ****
 
-recode q46_refused (. = 0) if q46 != .
-recode q47_refused (. = 0) if q47 != .
+recode q46_refused (. = 0) if recq46 != .
+recode q47_refused (. = 0) if recq47 != .
 
 recode q46b (. = .r) if q46b_refused == 1 
 recode q46b_refused (. = 0) if q46b != .
 
-*add for q47
+recode q64 (. = .a) if sample_type == 2
 
 *------------------------------------------------------------------------------*
 
 * Drop unused variables 
 
-drop ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q20_b q20_b_other q20_c q20_c_other q20_d q20_d_other q21 q42 q43b q44 q44_b q44_b_other q44_c q44_c_other q46 q47 q56 q62 q63 q66_a q66_b q69 q69_codes rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall sample_type interviewer_id interviewer_gender interviewer_language country language
+drop ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q20_b q20_b_other q20_c q20_c_other q20_d q20_d_other q21 q42 q44 q44_b q44_b_other q44_c q44_c_other q46 q47 q56 q62 q63 q66_a q66_b q69 q69_codes rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall sample_type interviewer_id interviewer_gender interviewer_language country language
 
 
 *------------------------------------------------------------------------------*
@@ -226,9 +224,9 @@ recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 (997 = .d)
 
 * In raw data, 996 = "refused" 	  
 recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
-	   q40 q43_gr q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
+	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
-	   q56_et_gr_in_ke_za q57 q58 q59 q60 q61 q65 q64 (996 = .r)
+	   q56_et_gr_in_ke_za q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr (996 = .r)
 	   
 recode recq63 (18996 = .r)
 
@@ -327,13 +325,15 @@ recode recq42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q43_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43a_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 q48_k (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
-recode q43_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43a_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (nonmissing = .a) if q23 == 0 | q24 == 1
 	   
-recode recq44 (. = .a) if q43_gr == 4 | q43_gr == .r
+recode q43b_gr (. = .a) if q43b_gr != 3
+	   
+recode recq44 (. = .a) if q43a_gr == 4 | q43a_gr == .r
 
 recode q45 (995 = 4)
 
@@ -510,11 +510,8 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-
-*Need to confirm wording of q19_gr with instrument - dropped q19 and q19 other because there was no data
 lab var q19_gr "Q19. GR only: Is this a public, private, contracted to public or NGO healthcare facility?"
 lab var q19_gr_other "Q19. GR only: Other"
-
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q20_other "Q20. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
@@ -538,38 +535,28 @@ lab var q33 "Q33. Had your eyes or vision checked in the past 12 months"
 lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
-
-*Need to confirm wording of q37_gr_in with instrument since it's cut off in stata
-lab var q37_gr_in "Q37_C. GR/IN only: Have you received any of the following health services in the past 12 mon"
-
+lab var q37_gr_in "Q37_C. GR/IN only: Have you received any of the following health services in the past 12 months from any healthcare provider?"
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-
-*Need to confirm wording of q43_gr with instrument since it's cut off in stata
-lab var q43_gr "Q43. GR only: Thinking about your last healthcare visit for a new or ongoing health probl"
-
+lab var q43a_gr "Q43a. GR only: Is this a public, private, contracted to public, or NGO healthcare facility?"
+lab var q43b_gr "Q43b. GR only: In your last visit did you pay part of the healthcare cost or did you not pay at all?"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 
-***********Need to confirm wording of q46 thru q47 with instrument, very confusing
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var q46_refused "Q46. Refused"
-*In data: "Was this a scheduled visit or did you go to the facilit"
-lab var q46a "Q46A. Was this a scheduled visit or did you go without an appt.?"
-*Q46b very confusing in data "Q46_GR. How long did you wait in hours, days, or weeks, between scheduling the a",
-	*Does this one var have hours, days, and weeks in it?
-*lab var q46b "Q46B. In days: how long between scheduling and seeing provider?"
+lab var q46a "Q46A. Was this a scheduled visit or did you go to the facility without an appointment?"
+*Does this one var have hours, days, and weeks in it?
+lab var q46b "Q46B. How long did you wait in hours, days, or weeks, between scheduling the appointment and seeing the health care provider?"
 lab var q46b_refused "Q46B. Refused"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
-* keeps dropping q47_refused above, unsure why
 lab var q47_refused "Q47. Refused"
-
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
 lab var q48_c "Q48_C. How would you rate the equipment and supplies that the provider had?"
@@ -591,9 +578,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-
 lab var q56_et_gr_in_ke_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
-
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
