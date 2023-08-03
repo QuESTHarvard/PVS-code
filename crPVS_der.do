@@ -501,21 +501,21 @@ recode last_type_own (.a = 0) if (q43_co_pe == 1) | q43_uy == 1 | ///
 								 q43_it == 1 | inlist(q43_mx,3,4) | ///
 								 inlist(q44,12003,12004,12005) | q43_kr == 1 | ///
 								 q43_ar == 1 ///
-								 | q43a_gb == 1 | q43b_gb == 1 | q43_gr == 1
+								 | q43a_gb == 1 | q43b_gb == 1 | q43a_gr == 1
 
 recode last_type_own (.a = 1) if (q43_co_pe == 2) | q43_uy == 2 | ///
 								 q43_it == 2 | q43_it == 3 | q43_mx == 6 | ///
 								 inlist(q44,12001,12002,12006,12007) | q43_kr == 3 | ///
-								 q43_ar == 3 | q43a_gb == 2 | q43b_gb == 2 | q43_gr == 2 | q43_gr == 3
+								 q43_ar == 3 | q43a_gb == 2 | q43b_gb == 2 | q43a_gr == 2 | q43a_gr == 3
  
 recode last_type_own (.a = 2) if inlist(q43_uy,5,995) | q43_it == 4 | inlist(q43_mx,1,2,5,7) | ///
 								 q44 == 12995 | q43_kr == 4 | inlist(q43_ar,2,4,6,7) ///
-								 | q43a_gb == 3 | q43_gr == 5
+								 | q43a_gb == 3 | q43a_gr == 5
 								 
 recode last_type_own (.a = .r) if (q43_co_pe == .r) | q43_uy == .r | ///
 								  q43_it == .r | q43_mx == .r | ///
 								  (q44 == .r & country == 12) | q43_kr == .r | ///
-								  q43_ar == .r | q43a_gb == .r | q43b_gb == .r | q43_gr == .r
+								  q43_ar == .r | q43a_gb == .r | q43b_gb == .r | q43a_gr == .r
 								  
 *Peru recode 
 *Recode based on q19_co_pe, but those who say public and have SHI are recoded to other 
@@ -650,7 +650,7 @@ recode visits_tele (100 = .) if country == 17
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") (9 = 3 "South Africa") (7 = 4 "Peru") ///
 			   (2 = 5 "Colombia") (13 = 6 "Mexico") (10 = 7 "Uruguay") (16 = 8 "Argentina") (11 = 9 "Lao PDR") ///
-			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (17 = 13 "United Kingdom") (12 = 14 "United States"), gen(country_reg)
+			   (4 = 10 "India") (15 = 11 "Rep. of Korea") (14 = 12 "Italy") (18 = 13 "Greece") (17 = 14 "United Kingdom") (12 = 15 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
 
@@ -701,8 +701,8 @@ order respondent_serial respondent_id country country_reg language date ///
 	  q19_q20a_la q19_q20a_other q19_q20b_la ///
 	  q19_q20b_other q20 q20_other q21 q21_other q22 ///
 	  q23 q24 q23_q24 q25_a q25_b q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q37_za q37_gr_in q38 q39 q40 q41 q42 q42_other q43_co_pe q43_et_in_ke_za q43_gr q43_la q43_it q43_kr q43_mx ///
-	   q43_uy q43_ar q43_gr q43_other q43a_gb q43b_gb q43_other_gb q44 ///
+	  q37_za q37_gr_in q38 q39 q40 q41 q42 q42_other q43_ar q43_co_pe q43_et_in_ke_za q43a_gr q43b_gr q43_la q43_it q43_kr q43_mx ///
+	   q43_uy q43_other q43a_gb q43b_gb q43_other_gb q44 ///
 	  q44_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
 	  q47 q47_refused ///
 	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
