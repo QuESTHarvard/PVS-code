@@ -33,9 +33,11 @@ notes drop _all
 
 ren q14_new q14
 ren q15_new q15
+ren q19 q19_et_in_ke_ro_za
 ren q28_new q28_b
 ren q28_a q28_c
 ren q28 q28_a
+ren q37 q37_gr_in_ro
 ren q43 q43_et_in_ke_ro_za
 
 recode q45 (1 = 1 "Care for an urgent or new health problem") ///
@@ -146,8 +148,8 @@ label define q63_label .a "NA" .r "Refused" , modify
 
 **** Combining/recoding some variables ****
 
-recode q46_refused (. = 0) if recq46 != .
-recode q47_refused (. = 0) if recq47 != .
+recode q46_refused (. = 0) if q46 != .
+recode q47_refused (. = 0) if q47 != .
 
 *recode q46b (. = .r) if q46b_refused == 1 
 *recode q46b_refused (. = 0) if q46b != .
@@ -186,13 +188,13 @@ label values recq7 q7_label
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
-recode q23 q25_b q27 q28_a q37 (997 = .d)
+recode q23 q25_b q27 q28_a q37_gr_in_ro (997 = .d)
 
 * Do i need this?
 recode q32 q33 q35 q36 q38 (3 = .d)
 
 * In raw data, 996 = "refused" 	  
-recode q6 q7 q11 q12 q14 q15 q16 q17 q19 q21 q22 q23 q24 q25_b q38 ///
+recode q6 q7 q11 q12 q14 q15 q16 q17 q19_et_in_ke_ro_za q21 q22 q23 q24 q25_b q38 ///
 	   q39 recq45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j ///
 	   q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_gr_in_ke_ro_za q57 q58 q59 q60 ///
 	   q61 q64 q65 (996 = .r)
@@ -213,11 +215,13 @@ list q23_q24 q25_b if q25_b > q23_q24 & q25_b < .
 
 * Q26, Q27 
 list q23_q24 q27 if q27 > q23_q24 & q27 < . 
-
+* Note: This is fine because 10 is a mid-pint value
 
 list q26 q27 if q27 == 0 | q27 == 1
 * Some implasuible values of 0 and 1
+* Recode 0 values for q27 to .a for q27 and "No" for q26
 * Recode 1 values to 2, because respondent likely meant 1 additional facility 
+recode q27 (0 = .a) 
 recode q27 (1 = 2) 
 
 * Q39, Q40 
@@ -227,21 +231,23 @@ egen visits_total = rowtotal(q23_q24 q28_a q28_b)
 * Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
 list visits_total q39 q40 if q39 == 3 & visits_total > 0 & visits_total < . /// 
 							  | q40 == 3 & visits_total > 0 & visits_total < .
-* Note: okay in these data 							  
+
+* Recoding Q39 and Q40 to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
+recode q39 q40 (3 = .r) if visits_total > 0 & visits_total < .
+* 10 changes to q39 and 6 changes to q40							  
 							  
 				 
 * List if missing for q39/q40 but does have a visit
 list visits_total q39 q40 if q39 == .a & visits_total > 0 & visits_total < . /// 
-							  | q40 == .a & visits_total > 0 & visits_total < .
+						   | q40 == .a & visits_total > 0 & visits_total < .
 							  *Ok in data							 
 							  
 list visits_total q39 q40 if q39 != 3 & visits_total == 0 /// 
-							  | q40 != 3 & visits_total == 0
+						   | q40 != 3 & visits_total == 0
 							  
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
 recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
-
-* total of 203 changes made to q39, 204 changes made to q40
+* total of 214 changes made to q39, 218 changes made to q40
 							  
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
 * but they have no visit values in past 12 months 
@@ -249,13 +255,12 @@ recode q39 q40 (.r = .a) if visits_total == 0 //recode no/yes to no visit if the
 
 drop visits_total
 
-
 *------------------------------------------------------------------------------*
  
 * Recode missing values to NA for intentionally skipped questions
 
 *q1/q2 
-recode q2 (. = .a) if q1 > 0 & q1 < . //change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
+*recode q2 (. = .a) if q1 > 0 & q1 < . //change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
 recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r 
 
 * q7 
@@ -269,8 +274,8 @@ recode q13 (. = .a) if q12 == 2 | q12 == .r
 recode q15 (. = .a) if inrange(q14,3,5) | q14== .r 
 
 *q19-22
-recode q19 recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
-recode recq20 (. = .a) if q19 == 4 | q19 == .r
+recode q19_et_in_ke_ro_za recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
+recode recq20 (. = .a) if q19_et_in_ke_ro_za == 4 | q19_et_in_ke_ro_za == .r
 
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d & q23 != .r 
@@ -293,27 +298,26 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q43_et_in_ke_ro_za recq44 recq45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_et_in_ke_ro_za recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 q48_k (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
-recode q43_et_in_ke_ro_za recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_et_in_ke_ro_za recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (nonmissing = .a) if q23 == 0 | q24 == 1
 	      
-recode recq44 (. = .a) if q43a_gr == 4 | q43a_gr == .r
+recode recq44 (. = .a) if q43_et_in_ke_ro_za == 4 | q43_et_in_ke_ro_za == .r
 
-recode q45 (995 = 4)
+recode recq45 (995 = 4)
 
 *q46/q47 refused
 recode recq46  (. = .r) if q46_refused == 1
 recode recq47  (. = .r) if q47_refused == 1
 
-* add the part to recode q46_refused q47_refused to match other programs
 recode q46_refused (. = 0) if recq46 != .
 recode q47_refused (. = 0) if recq47 != .
 
 recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
-recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r
+recode q46b (. = .a) if q46a == 2 | q46a == .r
 
 *q65
 recode q65 (. = .a) if q64 != 1
@@ -334,7 +338,7 @@ recode q11 q13 q18 q25_a q26 q29 q41 ///
 
 lab val q46_refused q47_refused yes_no
 
-recode q12 q30 q31 q32 q33 q34 q35 q36 q37_gr_in q38 ///
+recode q12 q30 q31 q32 q33 q34 q35 q36 q37 q38 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (3 .d = .d "Don't know") /// 
 	   (.a = .a "NA"), ///
 	   pre(rec) label(yes_no_dk)
@@ -422,10 +426,10 @@ recode q57 ///
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46a q46b recq47 na_rf	
 	
-label define labels47 4 "Other, specify" .a "NA" .r "Refused", modify
+*label define labels47 4 "Other, specify" .a "NA" .r "Refused", modify
 
-label def q46_label .a "NA" .r "Refused"
-label values recq46 q46_label
+*label def q46_label .a "NA" .r "Refused"
+*label values recq46 q46_label
 
 ******* Country-specific *******
 lab def labels24 .a "NA" .r "Refused" .d "Don't know",modify
@@ -433,8 +437,8 @@ lab def labels38 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels14 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels43 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
+*lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
+*lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
 
 *------------------------------------------------------------------------------*
 
@@ -442,13 +446,12 @@ lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
 * Rename variables to match question numbers in current survey
 
 drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
-	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr_in q38 q39 q40 q41 q46a ///
+	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr_in_ro q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q59 q60 q61 weight
 	 
 ren rec* *
-
 
 order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
@@ -477,8 +480,8 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_gr "Q19. GR only: Is this a public, private, contracted to public or NGO healthcare facility?"
-lab var q19_gr_other "Q19. GR only: Other"
+lab var q19_et_in_ke_ro_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q19_et_in_ke_ro_za_other "Q19. GR only: Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q20_other "Q20. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
@@ -502,15 +505,14 @@ lab var q33 "Q33. Had your eyes or vision checked in the past 12 months"
 lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
-lab var q37_gr_in "Q37_C. GR/IN only: Have you received any of the following health services in the past 12 months from any healthcare provider?"
+lab var q37_gr_in_ro "Q37. IN/GR/RO only: Have you received any of the following health services in the past 12 months?"
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43a_gr "Q43a. GR only: Is this a public, private, contracted to public, or NGO healthcare facility?"
-lab var q43b_gr "Q43b. GR only: In your last visit did you pay part of the healthcare cost or did you not pay at all?"
+lab var q43_et_in_ke_ro_za "Q43. ET/IN/RO/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
 lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
@@ -545,7 +547,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56_et_gr_in_ke_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+*lab var q56_et_gr_in_ke_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
