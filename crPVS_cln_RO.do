@@ -34,6 +34,20 @@ notes drop _all
 ren q14_new q14
 ren q15_new q15
 ren q19 q19_et_in_ke_ro_za
+
+*change q21 for additional GR var:
+recode q21 (1 = 1 "Low cost") /// 
+			(2 = 2 "Short distance") ///
+			(3 = 3 "Short waiting time") ///
+			(4 = 4 "Good healthcare provider skills") ///
+			(5 = 5 "Staff shows respect") ///
+			(6 = 6 "Medicines and equipment are available") ///
+			(7 = 7 "Only facility available") ///
+			(8 = 8 "Covered by insurance") ///
+			(995 = 9 "Other, specify") ///
+			(12 = 13 "RO: Recommended by family or friends") ///
+			(996 = .r "Refused"), gen(recq21)
+
 ren q28_new q28_b
 ren q28_a q28_c
 ren q28 q28_a
@@ -158,7 +172,7 @@ recode q47_refused (. = 0) if q47 != .
 
 * Drop unused variables 
 
-drop ecs_id time_new intlength q2 q4 q5 q8 q20 q45 q44 q46 q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
+drop ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q44 q46 q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
 
 *------------------------------------------------------------------------------*
 
@@ -194,7 +208,7 @@ recode q23 q25_b q27 q28_a q37_gr_in_ro (997 = .d)
 recode q32 q33 q35 q36 q38 (3 = .d)
 
 * In raw data, 996 = "refused" 	  
-recode q6 q7 q11 q12 q14 q15 q16 q17 q19_et_in_ke_ro_za q21 q22 q23 q24 q25_b q38 ///
+recode q6 q7 q11 q12 q14 q15 q16 q17 q19_et_in_ke_ro_za recq21 q22 q23 q24 q25_b q38 ///
 	   q39 recq45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j ///
 	   q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_gr_in_ke_ro_za q57 q58 q59 q60 ///
 	   q61 q64 q65 (996 = .r)
@@ -274,7 +288,7 @@ recode q13 (. = .a) if q12 == 2 | q12 == .r
 recode q15 (. = .a) if inrange(q14,3,5) | q14== .r 
 
 *q19-22
-recode q19_et_in_ke_ro_za recq20 q21 q22 (. = .a) if q18 == 2 | q18 == .r 
+recode q19_et_in_ke_ro_za recq20 recq21 q22 (. = .a) if q18 == 2 | q18 == .r 
 recode recq20 (. = .a) if q19_et_in_ke_ro_za == 4 | q19_et_in_ke_ro_za == .r
 
 * NA's for q24-27 
@@ -480,8 +494,8 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_et_in_ke_ro_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
-lab var q19_et_in_ke_ro_za_other "Q19. GR only: Other"
+lab var q19_et_in_ke_ro_za "Q19. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q19_et_in_ke_ro_za_other "Q19. ET/IN/KE/RO/ZA only: Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 lab var q20_other "Q20. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
@@ -517,7 +531,6 @@ lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
-
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var q46_refused "Q46. Refused"
 lab var q46a "Q46A. Was this a scheduled visit or did you go to the facility without an appointment?"
