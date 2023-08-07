@@ -458,8 +458,16 @@ recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 	
+*q64 
+recode q64 ///
+	(1 = 1 "Yes") (2 = 0 "No / No other numbers") ///
+	(.r = .r "Refused"), pre(rec) label(q64)
+
+	
+*NA/Refused/DK
+	
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46 recq46b recq47 na_rf	
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46 recq46b recq47 q66 na_rf	
 
 
 ******* Country-specific *******
@@ -470,6 +478,8 @@ label define recq21 .a "NA" .r "Refused" .d "Don't know",modify
 label define recq42 .a "NA",modify
 label define recq45 .a "NA",modify
 label define labels46 .a "NA" .r "Refused",modify
+label define labels26 .a "NA" .r "Refused" .d "Don't know",modify
+
 
 *------------------------------------------------------------------------------*
 
@@ -480,7 +490,7 @@ drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ro q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ro q57 q59 q60 q61 weight
+	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ro q57 q59 q60 q61 q64 weight
 	 
 ren rec* *
 
