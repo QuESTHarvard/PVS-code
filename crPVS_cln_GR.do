@@ -225,7 +225,7 @@ recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
 	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr (996 = .r)
 	   
-recode recq63 (18996 = .r)
+recode recq63 q64 (18996 = .r)
 
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for questions respondents would not have been asked 
