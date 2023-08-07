@@ -66,6 +66,7 @@ run "$github/crPVS_cln_KR.do"
 run "$github/crPVS_cln_AR.do"
 run "$github/crPVS_cln_GB.do"
 run "$github/crPVS_cln_GR.do"
+run "$github/crPVS_cln_RO.do"
 
 * Append datasets 
 run "$github/crPVS_append.do"

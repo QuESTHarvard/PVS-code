@@ -64,7 +64,6 @@ ren q46_a q46a
 
 * Similar to greece, q46b data is confusing
 ren q46_b q46b
-
 ren q56 q56_ro
 ren q66 q64
 ren q67 q65
@@ -177,7 +176,7 @@ recode q47_refused (. = 0) if q47 != .
 
 * Drop unused variables 
 
-drop ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q44 q46 q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
+drop ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
 
 *------------------------------------------------------------------------------*
 
@@ -203,17 +202,18 @@ label def q7_label 19031 "RO: Mandatory social health insurance only (CAS)" ///
 				   19995 "RO: Other" .a "NA" .r "Refused"
 label values recq7 q7_label
 
+drop q7
 
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
-recode q23 q25_b q27 q28_a q37_ro (997 = .d)
+recode q23 q25_b q27 q28_a q28_b q37_ro (997 = .d)
 
 * Do i need this?
 recode q32 q33 q35 q36 q38 (3 = .d)
 
 * In raw data, 996 = "refused" 	  
-recode q6 q7 q11 q12 q14 q15 q16 q17 q19_ro recq21 q22 q23 q24 q25_b q38 ///
+recode q6 recq7 q11 q12 q14 q15 q16 q17 q19_ro recq21 q22 q23 q24 q25_b q38 q43_ro ///
 	   q39 recq45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j ///
 	   q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ro q57 q58 q59 q60 ///
 	   q61 q64 q65 (996 = .r)
@@ -268,9 +268,9 @@ list visits_total q39 q40 if q39 != 3 & visits_total == 0 ///
 recode q39 q40 (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
 * total of 214 changes made to q39, 218 changes made to q40
 							  
-* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no
-* but they have no visit values in past 12 months 
+* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
 recode q39 q40 (.r = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+* total of 1 change to q39 and 0 changes to q40
 
 drop visits_total
 
@@ -279,7 +279,7 @@ drop visits_total
 * Recode missing values to NA for intentionally skipped questions
 
 *q1/q2 
-*recode q2 (. = .a) if q1 > 0 & q1 < . //change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
+recode q2 (. = .a) if q1 > 0 & q1 < . //change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
 recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r 
 
 * q7 
@@ -317,10 +317,10 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q43_ro recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_ro recq44 recq45 recq46 recq46b q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 q48_k (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
-recode q43_ro recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_ro recq44 recq45 recq46 recq46b q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (nonmissing = .a) if q23 == 0 | q24 == 1
 	      
 recode recq44 (. = .a) if q43_ro == 4 | q43_ro == .r
@@ -336,14 +336,13 @@ recode q47_refused (. = 0) if recq47 != .
 
 recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
-recode q46b (. = .a) if q46a == 2 | q46a == .r
+recode recq46b (. = .a) if q46a == 2 | q46a == .r
 
 *q65
 recode q65 (. = .a) if q64 != 1
 
 *q66/67
 recode q66 (. = .a) if mode == 2
-
 
 *------------------------------------------------------------------------------*
 * Recode values and value labels:
@@ -443,21 +442,13 @@ recode q57 ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 	
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46a q46b recq47 na_rf	
-	
-*label define labels47 4 "Other, specify" .a "NA" .r "Refused", modify
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46 recq46b recq47 na_rf	
 
-*label def q46_label .a "NA" .r "Refused"
-*label values recq46 q46_label
 
 ******* Country-specific *******
-lab def labels24 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels38 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels14 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels43 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
-*lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
-*lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
+label define labels22 .a "NA" .r "Refused" .d "Don't know",modify
+label define labels38 .a "NA" .r "Refused" .d "Don't know",modify
+label define labels13 .a "NA" .r "Refused" .d "Don't know",modify
 
 *------------------------------------------------------------------------------*
 
@@ -479,7 +470,6 @@ order q*, sequential
 * Country-specific vars for append 
 ren q37_ro q37_gr_in_ro
 ren q19_ro q19_et_in_ke_ro_za
-ren q19_ro_other q19_et_in_ke_ro_za_other
 ren q43_ro q43_et_in_ke_ro_za
 ren q56_ro q56_et_gr_in_ke_ro_za
 
@@ -494,9 +484,9 @@ lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
 lab var q7 "Q7. What type of health insurance do you have?"
-lab var q7_other "Q7. Other type of health insurance"
+*lab var q7_other "Q7. Other type of health insurance"
 lab var q8 "Q8. Highest level of education completed by the respondent"
-lab var q8_other "Q8. Other"
+*lab var q8_other "Q8. Other"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health is?"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
@@ -508,9 +498,9 @@ lab var q16 "Q16. How confident are you that you are responsible for managing yo
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
 lab var q19_et_in_ke_ro_za "Q19. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
-lab var q19_et_in_ke_ro_za_other "Q19. ET/IN/KE/RO/ZA only: Other"
+lab var q19_other "Q19. ET/IN/KE/RO/ZA only: Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
-lab var q20_other "Q20. Other"
+*lab var q20_other "Q20. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
 lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
@@ -540,8 +530,9 @@ lab var q41 "Q41. Have you needed medical attention but you did not get it in pa
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
 lab var q43_et_in_ke_ro_za "Q43. ET/IN/RO/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
-lab var q44_other "Q44. Other"
+*lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
@@ -549,7 +540,7 @@ lab var q46_refused "Q46. Refused"
 lab var q46a "Q46A. Was this a scheduled visit or did you go to the facility without an appointment?"
 *Does this one var have hours, days, and weeks in it?
 lab var q46b "Q46B. How long did you wait in hours, days, or weeks, between scheduling the appointment and seeing the health care provider?"
-lab var q46b_refused "Q46B. Refused"
+*lab var q46b_refused "Q46B. Refused"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
 lab var q47_refused "Q47. Refused"
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
@@ -604,7 +595,7 @@ order respondent_serial respondent_id country language date int_length mode weig
 
 * Save data - need to do other specify checks
 
-*save "$data_mc/02 recoded data/pvs_ro.dta", replace
+save "$data_mc/02 recoded data/pvs_ro.dta", replace
 
 *------------------------------------------------------------------------------*
 
