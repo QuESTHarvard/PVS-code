@@ -223,7 +223,7 @@ recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 (997 = .d)
 recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
-	   q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr (996 = .r)
+	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr (996 = .r)
 	   
 recode recq63 (18996 = .r)
 

@@ -177,6 +177,7 @@ label define q63_label .a "NA" .r "Refused" , modify
 
 label define labels52 .r "Refused", add
 
+
 *****************************
 
 **** Combining/recoding some variables ****
@@ -393,7 +394,7 @@ recode q46a ///
 * Please note that in Greece: "Neither bad nor good" was recoded to "Fair"
 
 recode q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 ///
-	   q55 q59 q60 q61 ///
+	   q55 q56_ro q59 q60 q61 ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
 	   (5 = 0 "Poor") (.r = .r "Refused") (.a = .a "NA"), /// 
 	   pre(rec) label(exc_poor)
@@ -466,6 +467,9 @@ label define labels22 .a "NA" .r "Refused" .d "Don't know",modify
 label define labels38 .a "NA" .r "Refused" .d "Don't know",modify
 label define labels13 .a "NA" .r "Refused" .d "Don't know",modify
 label define recq21 .a "NA" .r "Refused" .d "Don't know",modify
+label define recq42 .a "NA",modify
+label define recq45 .a "NA",modify
+label define labels46 .a "NA" .r "Refused",modify
 
 *------------------------------------------------------------------------------*
 
@@ -476,7 +480,7 @@ drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ro q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q59 q60 q61 weight
+	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ro q57 q59 q60 q61 weight
 	 
 ren rec* *
 
