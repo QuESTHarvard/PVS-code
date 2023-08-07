@@ -507,10 +507,10 @@ order q*, after(interviewer_id)
 
 
 * Country-specific vars for append 
-ren q19 q19_et_in_ke_za
-ren q37_in q37_gr_in
-ren q43 q43_et_in_ke_za
-ren q56 q56_et_gr_in_ke_za 
+ren q19 q19_et_in_ke_ro_za
+ren q37_in q37_gr_in_ro
+ren q43 q43_et_in_ke_ro_za
+ren q56 q56_et_gr_in_ke_ro_za 
 
 *4/13: dropping interviewer language for now until we're able to clean and recode:
 

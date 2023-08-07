@@ -53,7 +53,7 @@ recode q21 (1 = 1 "Low cost") ///
 ren q28 q28_a
 ren q28_new q28_b
 ren q28_gr q28_c // need to flip order of values
-ren q37_gr q37_gr_in
+
 
 *specific GR value added to q42:
 recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
@@ -80,18 +80,23 @@ recode q56 (1 = 4 "Excellent") ///
 	   (3 = 2 "Good") ///
 	   (4 = 1 "Fair") ///
 	   (5 = 0 "Poor") ///
-	   (996 = .r "Refused"), gen(q56_et_gr_in_ke_za)
+	   (996 = .r "Refused"), gen(q56_gr)
 
 ren q66 q64
 ren q67 q65
 
+*formatting some vars:
 *double check this is correct
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
-*confirm the format for q46 and q47 (is it MM:SS or HH:MM) - and q46b is in  -1.19e+13?what does this mean?
-format q46 %tcMM:SS
-gen recq46 = (mm(q46)+ ss(q46)/60) 
+*confirm the format for q46 and q47 instrument word doc says HH:MM
+format q46 %tcHH:MM
+gen recq46 = (hh(q46)*60 + mm(q46))
+
+* confirm that format for q46b is in HH:MM:SS even though question asks days, hours, minutes
+format q46b %tcHH:MM:SS
+gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
 
 format q47 %tcMM:SS
 gen recq47 = (mm(q47)+ ss(q47)/60) 
@@ -218,7 +223,7 @@ label values recq7 q7_label
 
 * Recode refused and don't know values 
 * In raw data, 995 = "don't know" 
-recode q12 q15 q23 q37_gr_in (995 = .d)
+recode q12 q15 q23 q37_gr (995 = .d)
 
 recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 (997 = .d)
 
@@ -226,7 +231,7 @@ recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 (997 = .d)
 recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
-	   q56_et_gr_in_ke_za q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr (996 = .r)
+	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr (996 = .r)
 	   
 recode recq63 (18996 = .r)
 
@@ -283,7 +288,8 @@ drop visits_total
 
 *------------------------------------------------------------------------------*
  
-* Recode missing values to NA for intentionally skipped questions
+* Recode missing values to NA for intentionally skipped questions 
+* do some of these have to be the rec version?
 
 *q1/q2 
 recode q2 (. = .a) if q1 > 0 & q1 < . //change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
@@ -367,7 +373,7 @@ recode q11 q13 q18 q25_a q26 q29 q41 ///
 
 lab val q46_refused q47_refused yes_no
 
-recode q12 q30 q31 q32 q33 q34 q35 q36 q37_gr_in q38 ///
+recode q12 q30 q31 q32 q33 q34 q35 q36 q37_gr q38 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (3 .d = .d "Don't know") /// 
 	   (.a = .a "NA"), ///
 	   pre(rec) label(yes_no_dk)
@@ -482,9 +488,14 @@ drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 
 ren rec* *
 
+*Reorder variables
 
 order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
+
+* Country-specific vars for append 
+ren q37_in q37_gr_in
+ren q56_gr q56_et_gr_in_ke_za
 
 * Label variables
 lab var country "Country"
@@ -535,7 +546,7 @@ lab var q33 "Q33. Had your eyes or vision checked in the past 12 months"
 lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
-lab var q37_gr_in "Q37_C. GR/IN only: Have you received any of the following health services in the past 12 months from any healthcare provider?"
+lab var q37_gr_in_ro "Q37_C. GR/IN/RO only: Have you received any of the following health services in the past 12 months from any healthcare provider?"
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"

@@ -33,7 +33,7 @@ notes drop _all
 
 ren q14_new q14
 ren q15_new q15
-ren q19 q19_et_in_ke_ro_za
+ren q19 q19_ro
 
 *change q21 for additional GR var:
 recode q21 (1 = 1 "Low cost") /// 
@@ -51,8 +51,8 @@ recode q21 (1 = 1 "Low cost") ///
 ren q28_new q28_b
 ren q28_a q28_c
 ren q28 q28_a
-ren q37 q37_gr_in_ro
-ren q43 q43_et_in_ke_ro_za
+ren q37 q37_ro
+ren q43 q43_ro
 
 recode q45 (1 = 1 "Care for an urgent or new health problem") ///
 		   (2 = 2 "Follow-up care for a longstanding illness or chronic disease") ///
@@ -65,7 +65,7 @@ ren q46_a q46a
 * Similar to greece, q46b data is confusing
 ren q46_b q46b
 
-ren q56 q56_et_gr_in_ke_ro_za
+ren q56 q56_ro
 ren q66 q64
 ren q67 q65
 ren q68 q66
@@ -74,9 +74,13 @@ ren q68 q66
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
-*confirm the format for q46 and q47 (is it MM:SS or HH:MM) - and q46b is in  -1.19e+13?what does this mean?
-format q46 %tcMM:SS
-gen recq46 = (mm(q46)+ ss(q46)/60) 
+*confirm the format for q46 and q47 instrument word doc says HH:MM
+format q46 %tcHH:MM
+gen recq46 = (hh(q46)*60 + mm(q46))
+
+* confirm that format for q46b is in HH:MM:SS even though question asks days, hours, minutes
+format q46b %tcHH:MM:SS
+gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
 
 format q47 %tcMM:SS
 gen recq47 = (mm(q47)+ ss(q47)/60) 
@@ -156,7 +160,7 @@ label define q63_label .a "NA" .r "Refused" , modify
 
 * add label for "Refused"
 
-*label define labels61 .r "Refused", add
+label define labels52 .r "Refused", add
 
 *****************************
 
@@ -165,6 +169,7 @@ label define q63_label .a "NA" .r "Refused" , modify
 recode q46_refused (. = 0) if q46 != .
 recode q47_refused (. = 0) if q47 != .
 
+* no q46b_refused in RO data
 *recode q46b (. = .r) if q46b_refused == 1 
 *recode q46b_refused (. = 0) if q46b != .
 
@@ -202,15 +207,15 @@ label values recq7 q7_label
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
-recode q23 q25_b q27 q28_a q37_gr_in_ro (997 = .d)
+recode q23 q25_b q27 q28_a q37_ro (997 = .d)
 
 * Do i need this?
 recode q32 q33 q35 q36 q38 (3 = .d)
 
 * In raw data, 996 = "refused" 	  
-recode q6 q7 q11 q12 q14 q15 q16 q17 q19_et_in_ke_ro_za recq21 q22 q23 q24 q25_b q38 ///
+recode q6 q7 q11 q12 q14 q15 q16 q17 q19_ro recq21 q22 q23 q24 q25_b q38 ///
 	   q39 recq45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j ///
-	   q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_et_gr_in_ke_ro_za q57 q58 q59 q60 ///
+	   q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ro q57 q58 q59 q60 ///
 	   q61 q64 q65 (996 = .r)
 	   
 recode recq44 (19996 = .r)
@@ -288,8 +293,8 @@ recode q13 (. = .a) if q12 == 2 | q12 == .r
 recode q15 (. = .a) if inrange(q14,3,5) | q14== .r 
 
 *q19-22
-recode q19_et_in_ke_ro_za recq20 recq21 q22 (. = .a) if q18 == 2 | q18 == .r 
-recode recq20 (. = .a) if q19_et_in_ke_ro_za == 4 | q19_et_in_ke_ro_za == .r
+recode q19_ro recq20 recq21 q22 (. = .a) if q18 == 2 | q18 == .r 
+recode recq20 (. = .a) if q19_ro == 4 | q19_ro == .r
 
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d & q23 != .r 
@@ -312,13 +317,13 @@ recode q42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q43_et_in_ke_ro_za recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_ro recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 q48_k (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
-recode q43_et_in_ke_ro_za recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_ro recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (nonmissing = .a) if q23 == 0 | q24 == 1
 	      
-recode recq44 (. = .a) if q43_et_in_ke_ro_za == 4 | q43_et_in_ke_ro_za == .r
+recode recq44 (. = .a) if q43_ro == 4 | q43_ro == .r
 
 recode recq45 (995 = 4)
 
@@ -352,7 +357,7 @@ recode q11 q13 q18 q25_a q26 q29 q41 ///
 
 lab val q46_refused q47_refused yes_no
 
-recode q12 q30 q31 q32 q33 q34 q35 q36 q37 q38 ///
+recode q12 q30 q31 q32 q33 q34 q35 q36 q37_ro q38 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (3 .d = .d "Don't know") /// 
 	   (.a = .a "NA"), ///
 	   pre(rec) label(yes_no_dk)
@@ -460,15 +465,23 @@ lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
 * Rename variables to match question numbers in current survey
 
 drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
-	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr_in_ro q38 q39 q40 q41 q46a ///
+	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ro q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q59 q60 q61 weight
 	 
 ren rec* *
 
+*Reorder variables
 order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
+
+* Country-specific vars for append 
+ren q37_ro q37_gr_in_ro
+ren q19_ro q19_et_in_ke_ro_za
+ren q19_ro_other q19_et_in_ke_ro_za_other
+ren q43_ro q43_et_in_ke_ro_za
+ren q56_ro q56_et_gr_in_ke_ro_za
 
 * Label variables
 lab var country "Country"
@@ -560,7 +573,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-*lab var q56_et_gr_in_ke_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_et_gr_in_ke_ro_za "Q56. ET/GR/IN/KE/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
