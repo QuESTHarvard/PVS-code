@@ -52,6 +52,22 @@ ren q28_new q28_b
 ren q28_a q28_c
 ren q28 q28_a
 ren q37 q37_ro
+
+recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
+			(2 = 2 "Far distance (e.g., too far to walk or drive, transport not readily available)") ///
+			(3 = 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)") ///
+			(4 = 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)") ///
+			(5 = 5 "Staff didn't show respect (e.g., staff is rude, impolite, dismissive)") ///
+			(6 = 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
+			(7 = 7 "Illness not serious enough") ///
+			(8 = 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)") ///
+			(995 = 10 "Other, specify") ///
+			(12 = 13 "RO: Fear of examination/medical procedure") ///
+			(13 = 14 "RO: Lack of trust in doctors/procedures") ///
+			(14 = 15 "RO: Concern about informal payments/gifts") ///
+			(996 = .r "Refused"), gen(recq42)
+
+
 ren q43 q43_ro
 
 recode q45 (1 = 1 "Care for an urgent or new health problem") ///
@@ -176,7 +192,7 @@ recode q47_refused (. = 0) if q47 != .
 
 * Drop unused variables 
 
-drop ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
+drop ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q42 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
 
 *------------------------------------------------------------------------------*
 
@@ -214,7 +230,7 @@ recode q32 q33 q35 q36 q38 (3 = .d)
 
 * In raw data, 996 = "refused" 	  
 recode q6 recq7 q11 q12 q14 q15 q16 q17 q19_ro recq21 q22 q23 q24 q25_b q38 q43_ro ///
-	   q39 recq45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j ///
+	   q39 q41 recq45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j ///
 	   q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ro q57 q58 q59 q60 ///
 	   q61 q64 q65 (996 = .r)
 	   
@@ -313,7 +329,7 @@ recode q31 (. = .a) if q3 != 2 | q1 < 50 | inrange(q2,1,4) | q2 == .r
 recode q32 (. = .a) if q3 != 2 | q2 == .r 
 
 * q42
-recode q42 (. = .a) if q41 == 2 | q41 == .r
+recode recq42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
 * There is one case where both q23 and q24 are missing, but they answered q43-49
@@ -449,6 +465,7 @@ lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46 recq46b recq47 na_rf
 label define labels22 .a "NA" .r "Refused" .d "Don't know",modify
 label define labels38 .a "NA" .r "Refused" .d "Don't know",modify
 label define labels13 .a "NA" .r "Refused" .d "Don't know",modify
+label define recq21 .a "NA" .r "Refused" .d "Don't know",modify
 
 *------------------------------------------------------------------------------*
 

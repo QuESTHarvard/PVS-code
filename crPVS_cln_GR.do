@@ -73,15 +73,7 @@ ren q43 q43a_gr
 ren q46_gr2 q46a
 ren q46_gr q46b // double check units of raw data
 ren q46_gr_refused  q46b_refused
-
-*rename q56 vars
-recode q56 (1 = 4 "Excellent") ///
-	   (2 = 3 "Very Good") ///
-	   (3 = 2 "Good") ///
-	   (4 = 1 "Fair") ///
-	   (5 = 0 "Poor") ///
-	   (996 = .r "Refused"), gen(q56_gr)
-
+ren q56 q56_gr
 ren q66 q64
 ren q67 q65
 
@@ -193,7 +185,7 @@ recode q64 (. = .a) if sample_type == 2
 
 * Drop unused variables 
 
-drop ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q20_b q20_b_other q20_c q20_c_other q20_d q20_d_other q21 q42 q44 q44_b q44_b_other q44_c q44_c_other q46 q47 q56 q62 q63 q66_a q66_b q69 q69_codes rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall sample_type interviewer_id interviewer_gender interviewer_language country language
+drop ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q20_b q20_b_other q20_c q20_c_other q20_d q20_d_other q21 q42 q44 q44_b q44_b_other q44_c q44_c_other q46 q46b q47 q62 q63 q66_a q66_b q69 q69_codes rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall sample_type interviewer_id interviewer_gender interviewer_language country language
 
 
 *------------------------------------------------------------------------------*
@@ -231,7 +223,7 @@ recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 (997 = .d)
 recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
-	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr (996 = .r)
+	   q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr (996 = .r)
 	   
 recode recq63 (18996 = .r)
 
@@ -394,7 +386,7 @@ recode q46a ///
 * Please note that in Greece: "Neither bad nor good" was recoded to "Fair"
 
 recode q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 ///
-	   q55 q59 q60 q61 ///
+	   q55 q56_gr q59 q60 q61 ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
 	   (5 = 0 "Poor") (.r = .r "Refused") (.a = .a "NA"), /// 
 	   pre(rec) label(exc_poor)
@@ -481,10 +473,10 @@ lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
 * Rename variables to match question numbers in current survey
 
 drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
-	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr_in q38 q39 q40 q41 q46a ///
+	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q59 q60 q61 weight
+	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_gr q57 q59 q60 q61 weight
 	 
 ren rec* *
 
@@ -494,8 +486,8 @@ order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
 
 * Country-specific vars for append 
-ren q37_in q37_gr_in
-ren q56_gr q56_et_gr_in_ke_za
+ren q37_gr q37_gr_in_ro
+ren q56_gr q56_et_gr_in_ke_ro_za
 
 * Label variables
 lab var country "Country"
@@ -589,7 +581,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56_et_gr_in_ke_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_et_gr_in_ke_ro_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
