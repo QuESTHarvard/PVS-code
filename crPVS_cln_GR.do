@@ -74,7 +74,6 @@ ren q46_gr2 q46a
 ren q46_gr q46b 
 ren q46_gr_refused  q46b_refused
 ren q56 q56_gr
-ren q66 q64
 ren q67 q65
 
 *Greece only vars:
@@ -88,6 +87,10 @@ ren q44_b q44a_gr
 ren q44_b_other q44a_gr_other
 ren q44_c q44b_gr 
 ren q44_c_other q44b_gr_other
+
+recode q66 (1 = 1 "Yes") ///
+		   (2 = 0 "No / No other numbers"), gen(q64)
+
 ren q66_a q66a_gr
 ren q66_b q66b_gr
 ren q69 q69_gr
@@ -206,8 +209,8 @@ recode q64 (. = .a) if sample_type == 2
 
 * Drop unused variables 
 
-drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 q46 q46b q47 q62 q63 rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall interviewer_id interviewer_gender interviewer_language country language
-
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall interviewer_id interviewer_gender interviewer_language country language
+ 
 
 *------------------------------------------------------------------------------*
 
@@ -246,7 +249,7 @@ recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
 	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr q66a_gr q66b_gr q69_codes (996 = .r)
 	   
-recode recq63 q64 (18996 = .r)
+recode recq63 (18996 = .r)
 
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for questions respondents would not have been asked 
@@ -501,6 +504,7 @@ lab def labels45 .a "NA", modify
 lab def labels46 .a "NA", modify
 lab def labels65 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels66 .a "NA" .r "Refused" .d "Don't know",modify
+lab def q64 .a "NA" .r "Refused" .d "Don't know",modify
 
 
 *------------------------------------------------------------------------------*
@@ -648,8 +652,7 @@ lab var q69_gr "Q69. GR only: Including yourself, how many people aged 18 or old
 
 label copy labels24 q19_gr_label
 label drop labels24  
-label value q19_gr q19_gr_label
-
+label value q19_gr q19_gr_label 
 
 *------------------------------------------------------------------------------*
 
