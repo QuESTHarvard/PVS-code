@@ -193,11 +193,12 @@ recode q47_refused (. = 0) if q47 != .
 
 * Drop unused variables 
 
-drop ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q42 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q42 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
 
 *------------------------------------------------------------------------------*
 
 * Generate variables 
+gen respondent_id = "RO" + string(respondent_serial)
 gen q2 = .a
 gen q66 = .a 
 
@@ -560,7 +561,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_et_in_ke_ro_za "Q43. ET/IN/RO/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_et_in_ke_ro_za "Q43. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 *lab var q44_other "Q44. Other"
@@ -815,6 +816,7 @@ replace q45=3 if q45_other=="Ingrijiri postanatale"
 
 *------------------------------------------------------------------------------*
 
+/*
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
@@ -854,6 +856,8 @@ ren q21_other_original q21_other
 ren q42_other_original q42_other
 ren q43_other_original q43_other_gb
 ren q45_other_original q45_other
+
+*/
 
 *------------------------------------------------------------------------------*
 
