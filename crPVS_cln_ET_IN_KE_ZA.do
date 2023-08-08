@@ -505,119 +505,15 @@ ren (q46_min q47_min) (q46 q47)
 order q*, sequential
 order q*, after(interviewer_id) 
 
-
-* Country-specific vars for append 
-ren q19 q19_et_in_ke_ro_za
-ren q37_in q37_gr_in_ro
-ren q43 q43_et_in_ke_ro_za
-ren q56 q56_et_gr_in_ke_ro_za 
-
 *4/13: dropping interviewer language for now until we're able to clean and recode:
 
 drop interviewer_language01 interviewer_language02 interviewer_language03 interviewer_language04 interviewer_language05 interviewer_language06 interviewer_language21 interviewer_language22 interviewer_language23 interviewer_language24 interviewer_language25 interviewer_language26 interviewer_language27 interviewer_language28 interviewer_language29 interviewer_language11 interviewer_language12 interviewer_language13 interviewer_language14 interviewer_language15 interviewer_language16 interviewer_language17 interviewer_language18 interviewer_language19 interviewer_language20 interviewer_language30 interviewer_language31
 
 drop weight
 
-*------------------------------------------------------------------------------*
-
-* Labeling variables 
-lab var country "Country"
-lab var respondent_id "Respondent ID"
-lab var interviewer_id "Interviewer ID"
-lab var int_length "Interview length (in minutes)"
-lab var q1 "Q1. Respondent еxact age"
-lab var q2 "Q2. Respondent's age group"
-lab var q3 "Q3. Respondent gender"
-lab var q4 "Q4. Type of area where respondent lives"
-lab var q5 "Q5. County, state, region where respondent lives"
-lab var q6 "Q6. Do you have health insurance?"
-lab var q6_za "Q6. ZA only: Do you have medical aid?"
-lab var q7 "Q7. What type of health insurance do you have?"
-lab var q7_other "Q7_other. Other type of health insurance"
-lab var q8 "Q8. Highest level of education completed by the respondent"
-lab var q9 "Q9. In general, would you say your health is:"
-lab var q10 "Q10. In general, would you say your mental health is?"
-lab var q11 "Q11. Do you have any longstanding illness or health problem?"
-lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
-lab var q13 "Q13. Was it confirmed by a test?"
-lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
-lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
-lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
-lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
-lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_et_in_ke_ro_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
-lab var q19_other "Q19. Other"
-lab var q20 "Q20. What type of healthcare facility is this?"
-lab var q20_other "Q20. Other"
-lab var q21 "Q21. Why did you choose this healthcare facility?"
-lab var q21_other "Q21. Other"
-lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
-lab var q23 "Q23. How many healthcare visits in total have you made in the past 12 months?"
-lab var q24 "Q24. Total number of healthcare visits in the past 12 months (range)"
-lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q24 mid-point)"
-lab var q25_a "Q25_A. Was this visit for COVID-19?"
-lab var q25_b "Q25_B. How many of these visits were for COVID-19? "
-lab var q26 "Q26. Were all of the visits you made to the same healthcare facility?"
-lab var q27 "Q27. How many different healthcare facilities did you go to?"
-lab var q28_a "Q28_A. How many visits did you have with a healthcare provider at your home?"
-lab var q28_b "Q28_B. How many virtual or telemedicine visits did you have?"
-lab var q29 "Q29. Did you stay overnight at a healthcare facility as a patient?"
-lab var q30 "Q30. Blood pressure tested in the past 12 months"
-lab var q31 "Q31. Received a mammogram in the past 12 months"
-lab var q32 "Q32. Received cervical cancer screening, like a pap test or visual inspection"
-lab var q33 "Q33. Had your eyes or vision checked in the past 12 months"
-lab var q34 "Q34. Had your teeth checked in the past 12 months"
-lab var q35 "Q35. Had a blood sugar test in the past 12 months"
-lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
-lab var q37_za "Q37. ZA only: Had a test for HIV in the past 12 months"
-lab var q37_gr_in "Q37. GR/IN only: Received an oral cancer screening, like a visual inspection of the mouth"
-lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
-lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
-lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
-lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
-lab var q42 "Q42. The last time this happened, what was the main reason?"
-lab var q42_other "Q42. Other"
-lab var q43_et_in_ke_za "Q43. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
-lab var q43_other "Q43. Other"
-lab var q44 "Q44. What type of healthcare facility is this?"
-lab var q44_other "Q44. Other"
-lab var q45 "Q45. What was the main reason you went?"
-lab var q45_other "Q45. Other"
-lab var q46_refused "Q46. Refused"
-lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
-lab var q47_refused "Q47. Refused"
-lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
-lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
-lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
-lab var q48_c "Q48_C. How would you rate the equipment and supplies that the provider had?"
-lab var q48_d "Q48_D. How would you rate the level of respect your provider showed you?"
-lab var q48_e "Q48_E. How would you rate your provider knowledge about your prior visits?"
-lab var q48_f "Q48_F. How would you rate whether your provider explained things clearly?"
-lab var q48_g "Q48_G. How would you rate whether you were involved in your care decisions?"
-lab var q48_h "Q48_H. How would you rate the amount of time your provider spent with you?"
-lab var q48_i "Q48_I. How would you rate the amount of time you waited before being seen?"
-lab var q48_j "Q48_J. How would you rate the courtesy and helpfulness at the facility?"
-lab var q49 "Q49. How likely would recommend this facility to a friend or family member?"
-lab var q50_a "Q50_A. How would you rate the quality of care provided for care for pregnancy?"
-lab var q50_b "Q50_B. How would you rate the quality of care provided for children?"
-lab var q50_c "Q50_C. How would you rate the quality of care provided for chronic conditions?"
-lab var q50_d "Q50_D. How would you rate the quality of care provided for the mental health?"
-lab var q51 "Q51. How confident are you that you'd get good healthcare if you were very sick?"
-lab var q52 "Q52. How confident are you that you'd be able to afford the care you requiered?"
-lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
-lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
-lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56_et_gr_in_ke_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
-lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
-lab var q58 "Q58. Which of these statements do you agree with the most?"
-lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
-lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
-lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
-lab var q62 "Q62. Respondent's mother tongue or native language"
-lab var q62_other "Q62. Other"
-lab var q63 "Q63. Total monthly household income"
-lab var q64 "Q64. Do you have another mobile phone number besides this one?"
-lab var q65 "Q65. How many other mobile phone numbers do you have?"
+* adding this so other specify code can run - SS 
+ren q19 q19_et_in_ke_za
+ren q43 q43_et_in_ke_za
 
 *------------------------------------------------------------------------------*
 
@@ -678,8 +574,120 @@ ren q62_other_original q62_other
 
 order q*, sequential
 order respondent_serial respondent_id mode country language date time int_length weight_educ
+
+
+
 *------------------------------------------------------------------------------*
 
+* Country-specific vars for append 
+ren q19_et_in_ke_za q19_et_in_ke_ro_za
+ren q37_in q37_gr_in_ro
+ren q43_et_in_ke_za q43_et_in_ke_ro_za
+ren q56 q56_et_gr_in_ke_ro_za 
+
+*------------------------------------------------------------------------------*
+
+* Labeling variables 
+lab var country "Country"
+lab var respondent_id "Respondent ID"
+lab var interviewer_id "Interviewer ID"
+lab var int_length "Interview length (in minutes)"
+lab var q1 "Q1. Respondent еxact age"
+lab var q2 "Q2. Respondent's age group"
+lab var q3 "Q3. Respondent gender"
+lab var q4 "Q4. Type of area where respondent lives"
+lab var q5 "Q5. County, state, region where respondent lives"
+lab var q6 "Q6. Do you have health insurance?"
+lab var q6_za "Q6. ZA only: Do you have medical aid?"
+lab var q7 "Q7. What type of health insurance do you have?"
+lab var q7_other "Q7_other. Other type of health insurance"
+lab var q8 "Q8. Highest level of education completed by the respondent"
+lab var q9 "Q9. In general, would you say your health is:"
+lab var q10 "Q10. In general, would you say your mental health is?"
+lab var q11 "Q11. Do you have any longstanding illness or health problem?"
+lab var q12 "Q12. Have you ever had COVID-19 or coronavirus?"
+lab var q13 "Q13. Was it confirmed by a test?"
+lab var q14 "Q14. How many doses of a COVID-19 vaccine have you received?"
+lab var q15 "Q15. Do you plan to receive all recommended doses if they are available to you?"
+lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
+lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
+lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
+lab var q19_et_in_ke_ro_za "Q19. ET/IN/KE/ZA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q19_other "Q19. Other"
+lab var q20 "Q20. What type of healthcare facility is this?"
+lab var q20_other "Q20. Other"
+lab var q21 "Q21. Why did you choose this healthcare facility?"
+lab var q21_other "Q21. Other"
+lab var q22 "Q22. Overall respondent's rating of the quality received in this facility"
+lab var q23 "Q23. How many healthcare visits in total have you made in the past 12 months?"
+lab var q24 "Q24. Total number of healthcare visits in the past 12 months (range)"
+lab var q23_q24 "Q23/Q24. Total mumber of visits made in past 12 months (q23, q24 mid-point)"
+lab var q25_a "Q25_A. Was this visit for COVID-19?"
+lab var q25_b "Q25_B. How many of these visits were for COVID-19? "
+lab var q26 "Q26. Were all of the visits you made to the same healthcare facility?"
+lab var q27 "Q27. How many different healthcare facilities did you go to?"
+lab var q28_a "Q28_A. How many visits did you have with a healthcare provider at your home?"
+lab var q28_b "Q28_B. How many virtual or telemedicine visits did you have?"
+lab var q29 "Q29. Did you stay overnight at a healthcare facility as a patient?"
+lab var q30 "Q30. Blood pressure tested in the past 12 months"
+lab var q31 "Q31. Received a mammogram in the past 12 months"
+lab var q32 "Q32. Received cervical cancer screening, like a pap test or visual inspection"
+lab var q33 "Q33. Had your eyes or vision checked in the past 12 months"
+lab var q34 "Q34. Had your teeth checked in the past 12 months"
+lab var q35 "Q35. Had a blood sugar test in the past 12 months"
+lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
+lab var q37_za "Q37. ZA only: Had a test for HIV in the past 12 months"
+lab var q37_gr_in "Q37. GR/IN only: Received an oral cancer screening, like a visual inspection of the mouth"
+lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
+lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
+lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
+lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
+lab var q42 "Q42. The last time this happened, what was the main reason?"
+lab var q42_other "Q42. Other"
+lab var q43_et_in_ke_ro_za "Q43. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_other "Q43. Other"
+lab var q44 "Q44. What type of healthcare facility is this?"
+lab var q44_other "Q44. Other"
+lab var q45 "Q45. What was the main reason you went?"
+lab var q45_other "Q45. Other"
+lab var q46_refused "Q46. Refused"
+lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
+lab var q47_refused "Q47. Refused"
+lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
+lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
+lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
+lab var q48_c "Q48_C. How would you rate the equipment and supplies that the provider had?"
+lab var q48_d "Q48_D. How would you rate the level of respect your provider showed you?"
+lab var q48_e "Q48_E. How would you rate your provider knowledge about your prior visits?"
+lab var q48_f "Q48_F. How would you rate whether your provider explained things clearly?"
+lab var q48_g "Q48_G. How would you rate whether you were involved in your care decisions?"
+lab var q48_h "Q48_H. How would you rate the amount of time your provider spent with you?"
+lab var q48_i "Q48_I. How would you rate the amount of time you waited before being seen?"
+lab var q48_j "Q48_J. How would you rate the courtesy and helpfulness at the facility?"
+lab var q49 "Q49. How likely would recommend this facility to a friend or family member?"
+lab var q50_a "Q50_A. How would you rate the quality of care provided for care for pregnancy?"
+lab var q50_b "Q50_B. How would you rate the quality of care provided for children?"
+lab var q50_c "Q50_C. How would you rate the quality of care provided for chronic conditions?"
+lab var q50_d "Q50_D. How would you rate the quality of care provided for the mental health?"
+lab var q51 "Q51. How confident are you that you'd get good healthcare if you were very sick?"
+lab var q52 "Q52. How confident are you that you'd be able to afford the care you requiered?"
+lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
+lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
+lab var q55 "Q55. How would you rate the quality of private healthcare?"
+lab var q56_et_gr_in_ke_ro_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
+lab var q58 "Q58. Which of these statements do you agree with the most?"
+lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
+lab var q60 "Q60. How would you rate the quality of care provided? (Vignette, option 1)"
+lab var q61 "Q61. How would you rate the quality of care provided? (Vignette, option 2)"
+lab var q62 "Q62. Respondent's mother tongue or native language"
+lab var q62_other "Q62. Other"
+lab var q63 "Q63. Total monthly household income"
+lab var q64 "Q64. Do you have another mobile phone number besides this one?"
+lab var q65 "Q65. How many other mobile phone numbers do you have?"
+
+
+*------------------------------------------------------------------------------*
 * Save data
 
 save "$data_mc/02 recoded data/pvs_et_in_ke_za.dta", replace
