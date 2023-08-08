@@ -35,7 +35,7 @@ ren q14_new q14
 ren q15_new q15
 ren q19 q19_ro
 
-*change q21 for additional GR var:
+*change q21 for additional RO var:
 recode q21 (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
 			(3 = 3 "Short waiting time") ///
@@ -77,15 +77,18 @@ recode q45 (1 = 1 "Care for an urgent or new health problem") ///
 		   (996 = .r "Refused"), gen(recq45)
 
 ren q46_a q46a
-
-* Similar to greece, q46b data is confusing
 ren q46_b q46b
 ren q56 q56_ro
 ren q66 q64
 ren q67 q65
 ren q68 q66
 
-*formatting some vars:
+*------------------------------------------------------------------------------*
+* Fix interview length variable and other time variables
+
+generate recdate = dofc(date)
+format recdate %td
+
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
@@ -99,6 +102,8 @@ gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60)
 
 format q47 %tcMM:SS
 gen recq47 = (mm(q47)+ ss(q47)/60) 
+
+*------------------------------------------------------------------------------*
 
 gen reclanguage = 19000 + language 
 lab def lang 19002 "RO: Romanian" 
@@ -227,7 +232,6 @@ drop q7
 * Recode refused and don't know values 
 recode q23 q25_b q27 q28_a q28_b q37_ro (997 = .d)
 
-* Do i need this?
 recode q32 q33 q35 q36 q38 (3 = .d)
 
 * In raw data, 996 = "refused" 	  
@@ -487,7 +491,7 @@ label define labels26 .a "NA" .r "Refused" .d "Don't know",modify
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q3 q6 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
+drop date q3 q6 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ro q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
