@@ -35,7 +35,7 @@ notes drop _all
 ren q14_new q14
 ren q15_new q15
 
-*change q21 for additional GR var:
+*change q21 for additional GR vars:
 recode q21 (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
 			(3 = 3 "Short waiting time") ///
@@ -71,7 +71,7 @@ ren q43_gr q43b_gr
 ren q43 q43a_gr
 
 ren q46_gr2 q46a
-ren q46_gr q46b // double check units of raw data
+ren q46_gr q46b 
 ren q46_gr_refused  q46b_refused
 ren q56 q56_gr
 ren q66 q64
@@ -92,9 +92,12 @@ ren q66_a q66a_gr
 ren q66_b q66b_gr
 ren q69 q69_gr
 
+*------------------------------------------------------------------------------*
+* Fix interview length variable and other time variables
 
-*formatting some vars:
-*double check this is correct
+generate recdate = dofc(date)
+format recdate %td
+
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
@@ -108,6 +111,8 @@ gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60)
 
 format q47 %tcMM:SS
 gen recq47 = (mm(q47)+ ss(q47)/60) 
+
+*------------------------------------------------------------------------------*
 
 gen reclanguage = 18000 + language 
 lab def lang 18002 "GR: Greek" 
@@ -503,7 +508,7 @@ lab def labels66 .a "NA" .r "Refused" .d "Don't know",modify
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
+drop date q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
