@@ -52,7 +52,7 @@ replace q43_other = subinstr(q43_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 
 
-foreach i in 18 {
+foreach i in 19 {
  preserve
  keep if country == `i'
   
