@@ -486,7 +486,7 @@ label define labels26 .a "NA" .r "Refused" .d "Don't know",modify
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
+drop q3 q6 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ro q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
@@ -515,7 +515,7 @@ lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
 lab var q7 "Q7. What type of health insurance do you have?"
-*lab var q7_other "Q7. Other type of health insurance"
+lab var q7_other "Q7. Other type of health insurance"
 lab var q8 "Q8. Highest level of education completed by the respondent"
 *lab var q8_other "Q8. Other"
 lab var q9 "Q9. In general, would you say your health is:"
@@ -616,6 +616,244 @@ lab var q66 "Q66.Which political party did you vote for in the last election?"
 *label drop labels24  
 *label value q19_gr q19_gr_label
 
+*------------------------------------------------------------------------------*
+**# PVS ROMANIA - CATEGORIZATION OF "OTHER, SPECIFY" RESPONSES
+**# Stata Version 18.0, 07-AUG-2023 
+
+*****************************************************************************************************************
+**# (a) q7 & q7_other:  					
+*****************************************************************************************************************
+
+* ===== CLASSIFICATION OF  "OTHER, SPECIFY" RESPONSES (Q7_OTHER)
+* Kindly be aware that the option "Private insurance" was not a Q7 predefined category. 
+
+*Private insurance
+replace q7_other="Private Insurance" if  ///
+	q7_other=="asigurare de sanatate privata"| ///
+	q7_other=="Privat"| ///
+	q7_other=="asigurare de sanatate privata"| ///
+	q7_other=="Asigurare AOK"| ///
+	q7_other=="Asigurare privata"| ///
+	q7_other=="Privata"| ///
+	q7_other=="Privata"| ///
+	q7_other=="Asigurare de sanatate privata."| ///
+	q7_other=="de la stat, privat si abonament"| ///
+	q7_other=="de stat, privata si abonament in sistemul privat"| ///
+	q7_other=="Privata"| ///
+	q7_other=="privata de la locul de munca"| ///
+	q7_other=="asigurare de sanatate de stat, privata si abonament medical in sistemul privat"| ///
+	q7_other=="Asigurare privata"| ///
+	q7_other=="privata"| ///
+	q7_other=="asigurare privata"| ///
+	q7_other=="asigurare de stat, privata si abonament la privat"| ///
+	q7_other=="de stat, privata si abonament medical la privat"| ///
+	q7_other=="Privata"| ///
+	q7_other=="Asigurare privata"| ///
+	q7_other=="asigurare privata"
+
+* ===== CLASSIFICATION OF  "OTHER, SPECIFY" RESPONSES UNDER Q7 CATEGORIES
+
+*Both mandatory social health insurance and private health insurance
+replace q7=19032 if q7_other=="asig de sanat cu acumulare de capital+CAS" 
+replace q7=19032 if q7_other=="CAS+ o alta in strainatate" 
+replace q7=19032 if q7_other=="proaspat pensionat luna trecuta, nu stie care e situatia asig sale de sanata CAS+ pvt la Tiriac (de la servici ambele)"
+
+
+*Both mandatory social health insurance and private medical subscription
+replace q7=19033 if q7_other=="CAS+pvt+ abonam"
+
+*Mandatory social health insurance only (CAS) 
+replace q7=19031 if q7_other=="casa de asigurare de sanatate a armatei OPSNAJ" | ///
+	q7_other=="CAS+ asig europeana" | ///
+	q7_other=="CAS+asig de sanat ca studenta (?!)"
+ 
+*****************************************************************************************************************
+**# (b) q19_gr & q19_gr_other: Is this a public, private, contracted to public, or NGO healthcare facility?  
+*****************************************************************************************************************
+* ===== CLASSIFICATION OF  "OTHER, SPECIFY" RESPONSES UNDER Q19 CATEGORIES
+
+* Private healthcare facility
+replace q19_et_in_ke_ro_za=2 if q19_other=="PIVAT DAR LUCREAZA SI CU CAS-UL"
+										
+*****************************************************************************************************************	
+**# (d) q21 & q21_other: Why did you choose this healthcare facility? 				*****************************************************************************************************************	
+
+* ===== CLASSIFICATION OF  "OTHER, SPECIFY" RESPONSES UNDER Q21 CATEGORIES
+
+*Covered by my healthcare insurance 
+replace q21= 8 if 	q21_other=="Inclus la aceasta unitate prin locul de munca" 
+replace q21= 8 if 	q21_other=="abonament oferit prin firma" 	
+replace q21= 8 if 	q21_other=="beneficiez de abonament din partea angajatorului" 
+replace q21= 8 if 	q21_other=="abonament de la firma" 	
+replace q21= 8 if 	q21_other=="acoperit de abonamentul medical in sistemul privat" 	
+replace q21= 8 if 	q21_other=="Am abonament medical privat de la servici" 	
+replace q21= 8 if 	q21_other=="angajatorul meu mi-a facut abonament in perioada cand lucram." 	
+replace q21= 8 if 	q21_other=="Pentru ca am abonament la acea clinica." 
+replace q21= 8 if 	q21_other=="Asigurare de sanatate oferita de catre angajatorul meu."
+replace q21= 8 if 	q21_other=="Abonament platit de companie"
+replace q21= 8 if 	q21_other=="nu am acum asig de sanat pt ca nu mai lucrez, dar am ales aceasta unitaste pt ca era acop de asig de sanat"
+replace q21= 8 if 	q21_other=="primul lucru e la medicul de familie, deoarece acesta ofera trimitre" 
+replace q21= 8 if 	q21_other=="colaborare cu locul meu de mubnca"
+replace q21= 8 if 	q21_other=="oferta companiei"
+
+
+*Good healthcare provider skills 
+replace q21=4 if ///
+	q21_other=="Am incredere in deciziile loate de acest medic"| ///	
+	q21_other=="pentru ca medicul ma cunoaste de mult timp"| ///	
+	q21_other=="Deoarece lucreaza medicul meu."| ///	
+	q21_other=="Comunicare buna cu medicul"| ///	
+	q21_other=="Personal bine pregatit"| ///	
+	q21_other=="Cunosc medicul de familie de multi si am incredere in acesta."| ///		
+	q21_other=="Increderea in acest furnizor de servicii medicale."| ///	 
+	q21_other=="increderea in cadrul medical"| ///	
+	q21_other=="Medicul imi cunoaste problema medicala de 20 ani"| ///	
+	q21_other=="am incredere in doctorul de familie"| ///	
+	q21_other=="Medicul meu specialist este la aceasta unitate"| ///	 
+	q21_other=="Deoarece acolo este cabinetul Diabetologului meu"| ///	
+	q21_other=="cunosc medicul din liceu, am fost colegi, am incredere in dansa."| ///	 
+	q21_other=="medicul face parte din reteaua sanitara militara pe care o utilizam"| ///	
+	q21_other=="medicul meu profeseaza acolo si merg dupa el"| ///	
+	q21_other=="am incredere in personal/medici"| ///	
+	q21_other=="Personalul imi inspira incredere, iar tratamentul este eficient, ma simt mai bine urmand tratamentul indicat."
+
+
+*Only facility available
+replace q21=7 if ///	
+	q21_other=="este singurul spital pneumologgic care se ocupa de boala mea"| ///	
+	q21_other=="Acolo ma primeste pt pb, caci nu am medic de familie"| ///	
+	q21_other=="Unica unitate sanitara șla care poate fii tratata problemamea de sanatate"| ///	
+	q21_other=="Este singurul medic din localitate"	
+	
+
+*Short distance
+replace q21=2 if q21_other=="aprope de casa"
+
+	
+*Short waiting time
+replace q21=3 if ///
+	q21_other=="Raspuns repede"| ///	
+	q21_other=="birocratie redusa comparativ cu alt tip de unitati sanitare"| ///	
+	q21_other=="Rapiditatea serviciilor din unitate"| ///	
+	q21_other=="Disponibilitatea mecicilor"| ///	
+	q21_other=="Disponiobilitatea medicului"| ///	
+	q21_other=="merg la privat pentru ca este mai rapid decat daca merg la o unitate sanitara de stat"| ///	
+	q21_other=="rapiditatea rezolvarii"	
+
+*Staff shows respect
+replace q21=5 if ///
+	q21_other=="seriozitate"| ///	
+	q21_other=="Dipsonibilitatea angajatilor"| ///	
+	q21_other=="Seriozitate"| ///	
+	q21_other=="amabilitatea amabil"| ///	
+	q21_other=="Imi place faptul ca sunt tratrata cu respect."
+
+
+*****************************************************************************************************************
+**# (e) q42_other. The last time this happened what was the main reason? 
+*****************************************************************************************************************	
+
+* ===== CLASSIFICATION OF  "OTHER, SPECIFY" RESPONSES UNDER Q42 CATEGORIES
+*Far distance
+replace q42=2 if q42_other=="Nu a ajuns ambulanta la timp"	
+
+*High cost
+replace q42=1 if ///
+	q42_other=="Cardul de sanatate nu este valid si nu am putut beneficia de asistenta medicala." | ///
+	q42_other=="Lipsa cardului de sanatate" | ///
+	q42_other=="Nu aveam asigurarea de sanatate." | ///
+	q42_other=="Nu am asigurare medicala" | ///
+	q42_other=="Nu este asigurata" | ///
+	q42_other=="Fara asigurare."	
+
+
+*Illness perceived as not serious enough
+replace q42=7 if ///
+	q42_other=="Nu a fost necesar"	| ///
+	q42_other=="nu a fost cazul" 
+
+*Lack of trust
+replace q42=14 if q42_other=="Lipsa de incredere fata de sistem"	
+
+*Long waiting time
+replace q42=3 if q42_other=="programare peste un termen lung"	
+
+*Staff don't show respect
+replace q42=5 if q42_other=="personalul medical nu a dorit sa ma consulte" 
+replace q42=5 if q42_other=="personalul medical a afirmat ca invoc stari de rau doar pentru a fi internata si ca acest comportament este specific persoanelor in varsta care doresc atentie" 
+replace q42=5 if q42_other=="Am cfost trimis acasa pe motivul ca nu am nimic"	
+
+	
+*****************************************************************************************************************	
+**# (f) q43 & q43_other   	
+*****************************************************************************************************************	
+
+* Categorization not possible without uncertainty. It is reported "don't know" in most of the open-ended fields.
+	
+	
+*****************************************************************************************************************	
+**# (f) q45 & q45_other What was the main reason you went?  	
+*****************************************************************************************************************	
+
+*CLASSIFICATION OF "OTHER, SPECIFY" RESPONSES UNDER Q45 CATEGORIES
+
+*Urgent or new health problem
+replace q45=1 if q45_other=="dureri foarte mari in zona abdomenului"	
+
+* Follow=up care
+replace q45=2 if ///
+	q45_other=="monitorizare Covid -19" | ///
+	q45_other=="Consultatie pentru o afectiune mai veche" | ///
+	q45_other=="gimnastica pentru recuperare" | ///
+	q45_other=="Recuperare dupa operatia la coloana" | ///
+	q45_other=="Control medical dupa o interventie chirurgicala" | ///
+	q45_other=="infertilitate"
+
+* Preventive care
+replace q45=3 if q45_other=="Ingrijiri postanatale"
+
+
+*------------------------------------------------------------------------------*
+
+* Other, specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+
+gen q19_other_original = q19_other
+label var q19_other_original "Q19. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q43_other_original = q43_other
+label var q43_other_original "Q43. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"	
+
+
+*Remove "" from responses for macros to work
+replace q21_other = subinstr(q21_other,`"""',  "", .)
+replace q42_other = subinstr(q42_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_19.xlsm",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_serial)	
+	
+drop q19_other_gb q21_other q42_other q43_other_gb q45_other
+	 
+ren q19_other_original q19_other_gb
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43_other_original q43_other_gb
+ren q45_other_original q45_other
 
 *------------------------------------------------------------------------------*
 
