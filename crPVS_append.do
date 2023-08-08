@@ -206,5 +206,5 @@ order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 
 	
 *Save recoded data
-*save "$data_mc/02 recoded data/pvs_appended.dta", replace
+save "$data_mc/02 recoded data/pvs_appended.dta", replace
 
