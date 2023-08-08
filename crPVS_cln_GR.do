@@ -77,6 +77,22 @@ ren q56 q56_gr
 ren q66 q64
 ren q67 q65
 
+*Greece only vars:
+ren q20_b q20a_gr
+ren q20_b_other q20a_gr_other
+ren q20_c q20b_gr 
+ren q20_c_other q20b_gr_other
+ren q20_d q20c_gr
+ren q20_d_other q20c_gr_other
+ren q44_b q44a_gr
+ren q44_b_other q44a_gr_other
+ren q44_c q44b_gr 
+ren q44_c_other q44b_gr_other
+ren q66_a q66a_gr
+ren q66_b q66b_gr
+ren q69 q69_gr
+
+
 *formatting some vars:
 *double check this is correct
 format intlength %tcHH:MM:SS
@@ -185,12 +201,13 @@ recode q64 (. = .a) if sample_type == 2
 
 * Drop unused variables 
 
-drop ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q20_b q20_b_other q20_c q20_c_other q20_d q20_d_other q21 q42 q44 q44_b q44_b_other q44_c q44_c_other q46 q46b q47 q62 q63 q66_a q66_b q69 q69_codes rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall sample_type interviewer_id interviewer_gender interviewer_language country language
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 q46 q46b q47 q62 q63 rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall interviewer_id interviewer_gender interviewer_language country language
 
 
 *------------------------------------------------------------------------------*
 
 * Generate variables 
+gen respondent_id = "GR" + string(respondent_serial)
 gen q2 = .a
 gen q66 = .a 
 
@@ -210,20 +227,19 @@ label def q7_label 18004 "GR: Private insurance only" 18029 "GR: Public insuranc
 				   18030 "GR: Both public and private insurance" 18995 "GR: Other, specify" .a "NA" .r "Refused"
 label values recq7 q7_label
 
-
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
 * In raw data, 995 = "don't know" 
 recode q12 q15 q23 q37_gr (995 = .d)
 
-recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 (997 = .d)
+recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 q66a_gr q66b_gr (997 = .d)
 
 * In raw data, 996 = "refused" 	  
 recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
-	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr (996 = .r)
+	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr q66a_gr q66b_gr q69_codes (996 = .r)
 	   
 recode recq63 q64 (18996 = .r)
 
@@ -299,8 +315,9 @@ recode q13 (. = .a) if q12 == 2 | q12 == .r
 recode q15 (. = .a) if inrange(q14,3,5) | q14== .r 
 
 *q19-22
-recode q19_gr recq20 recq21 q22 (. = .a) if q18 == 2 | q18 == .r 
+recode q19_gr recq20 recq21 q22 q20a_gr q20b_gr q20c_gr (. = .a) if q18 == 2 | q18 == .r 
 recode recq20 (. = .a) if q19_gr == 4 | q19_gr == .r
+recode q20c_gr (. = .a) if q18 == 2 | q18 == .r | q20b_gr != 1 ///need to confirm with a clean instrument
 
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d & q23 != .r 
@@ -331,8 +348,9 @@ recode q43a_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q4
 	   
 recode q43b_gr (. = .a) if q43b_gr != 3
 	   
-recode recq44 (. = .a) if q43a_gr == 4 | q43a_gr == .r
-
+recode recq44 (. = .a) if q43a_gr == 4 | q43a_gr == .r | q43a_gr == .a
+recode q44a_gr (. = .a) if q43a_gr == 4 | q43a_gr == .r | q43a_gr == .a
+recode q44b_gr (. = .a) if q43a_gr == 4 | q43a_gr == .r | q43a_gr == .a |q20b_gr != 1
 recode q45 (995 = 4)
 
 *q46/q47 refused
@@ -352,6 +370,12 @@ recode q65 (. = .a) if q64 != 1
 *q66/67
 recode q66 (. = .a) if mode == 2
 
+recode q69_gr (. = .r) if q69_codes == .r
+
+recode q66a_gr (. = .a) if sample_type == 1
+recode q66b_gr  (. = .a) if sample_type == 2
+
+*q69_gr: need to figure out this question's skip pattern logic with a clean instrument
 
 *------------------------------------------------------------------------------*
 * Recode values and value labels:
@@ -466,6 +490,13 @@ lab def labels43 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels26 .a "NA", modify
+lab def labels28 .a "NA", modify
+lab def labels45 .a "NA", modify
+lab def labels46 .a "NA", modify
+lab def labels65 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels66 .a "NA" .r "Refused" .d "Don't know",modify
+
 
 *------------------------------------------------------------------------------*
 
@@ -476,7 +507,7 @@ drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_gr q57 q59 q60 q61 weight
+	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_gr q57 q59 q60 q61 weight q69_codes sample_type
 	 
 ren rec* *
 
@@ -516,6 +547,12 @@ lab var q18 "Q18. Is there one healthcare facility or provider's group you usual
 lab var q19_gr "Q19. GR only: Is this a public, private, contracted to public or NGO healthcare facility?"
 lab var q19_gr_other "Q19. GR only: Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
+lab var q20a_gr "Q20a. GR only: Can you please tell me the specialty of your main provider in this facility?"
+lab var q20a_gr_other "Q20a. Other"
+lab var q20b_gr "Q20b. GR only: Have you registered with a personal doctor?"
+lab var q20b_gr_other "Q20b. Other"
+lab var q20c_gr "Q20c. GR only: Is your usual healthcare provider the personal doctor that you have registered with?"
+lab var q20c_gr_other "Q20c. Other"
 lab var q20_other "Q20. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
@@ -548,6 +585,10 @@ lab var q42_other "Q42. Other"
 lab var q43a_gr "Q43a. GR only: Is this a public, private, contracted to public, or NGO healthcare facility?"
 lab var q43b_gr "Q43b. GR only: In your last visit did you pay part of the healthcare cost or did you not pay at all?"
 lab var q44 "Q44. What type of healthcare facility is this?"
+lab var q44a_gr "Q44a. GR only: Can you please tell me the specialty of your provider in your last healthcare visit?"
+lab var q44a_gr_other "Q44a. Other"
+lab var q44b_gr "Q44b. GR only: The healthcare provider that you saw in your last visit was the personal doctor that you have registered with?"
+lab var q44b_gr_other "Q44b. Other"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
@@ -593,7 +634,9 @@ lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 lab var q66 "Q66.Which political party did you vote for in the last election?"
-
+lab var q66a_gr "Q66a. GR only: Do you happen to have a mobile phone or not?"
+lab var q66b_gr "Q66b. GR only: Is this mobile phone your only phone, or do you also have a landline telephone at home that is used to makeand receive calls?"
+lab var q69_gr "Q69. GR only: Including yourself, how many people aged 18 or older currently live in your household"
 
 *------------------------------------------------------------------------------*
 *Dropping the following value labels so the dataset won't get messed up when merging
@@ -697,14 +740,23 @@ replace q45=2  if q45_other=="ΚΑΘΕΩ ΤΡΕΙΣ ΜΗΝΕΣ ΓΡΑΦΩ ΤΑ �
 
 *------------------------------------------------------------------------------*
 
+/*
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
+gen q7_other_original = q7_other
+label var q7_other_original "Q7. Other"
 
-gen q19_other_original = q19_other
-label var q19_other_original "Q19. Other"
+gen q8_other_original = q8_other
+label var q8_other_original "Q8. Other"
+
+gen q19_gr_other_original = q19_gr_other
+label var q19_gr_other_original "Q19. GR only: Other"
+
+gen q20_other_original = q20_other
+label var q20_other_original "Q20. Other"
 
 gen q21_other_original = q21_other
 label var q21_other_original "Q21. Other"
@@ -712,11 +764,14 @@ label var q21_other_original "Q21. Other"
 gen q42_other_original = q42_other
 label var q42_other_original "Q42. Other"
 
-gen q43_other_original = q43_other
-label var q43_other_original "Q43. Other"
+gen q44_other_original = q44_other
+label var q44_other_original "Q44. Other"
 	
 gen q45_other_original = q45_other
 label var q45_other_original "Q45. Other"	
+
+gen q62_other_original = q62_other
+label var q62_other_original "62. Other"	
 
 
 *Remove "" from responses for macros to work
@@ -729,13 +784,18 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
 	sheet(other_specify_recode)							///	
 	id(respondent_serial)	
 	
-drop q19_other q21_other q42_other q43_other_gb q45_other
+drop q7_other q8_other q19_gr_other q20_other q21_other q42_other q44_other q45_other q62_other
 	 
-ren q19_other_original q19_other
+ren q7_other_original q7_other
+ren q8_other_original q8_other
+ren q19_gr_other_original q19_gr_other
+ren q20_other_original q20_other
 ren q21_other_original q21_other
 ren q42_other_original q42_other
-ren q43_other_original q43_other
+ren q44_other_original q44_other
 ren q45_other_original q45_other
+ren q62_other_original q62_other
+*/
 
 *------------------------------------------------------------------------------*
 drop q8_other
