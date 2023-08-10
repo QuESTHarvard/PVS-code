@@ -157,10 +157,10 @@ lab val activation pa
 recode q21 (2 = 1 "Convenience (short distance)") /// 
 			(1 8 = 2 "Cost (low cost, covered by insurance)") ///
 			(4 = 3 "Techincal quality (provider skills)") ///
-			(3 5 10 11 13 = 4 "Interpersonal quality (short waiting time, respect)") ///
+			(3 5 10  = 4 "Interpersonal quality (short waiting time, respect)") ///
 			(6 = 5 "Service readiness (medicines and equipment available)") ///
 			(7 = 6 "Only facility available") ///
-			(.r 9 12 = .r "Other or Refused") ///
+			(.r 9 11 12 13 = .r "Other or Refused") ///
 			(.a = .a "NA") , gen(usual_reason)
 
 * visits
