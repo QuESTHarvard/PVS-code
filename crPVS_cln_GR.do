@@ -656,31 +656,35 @@ label value q19_gr q19_gr_label
 
 *------------------------------------------------------------------------------*
 
-
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
-**# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES
-**# Stata Version 18.0, 27-JUL-2023 
+/*
+**# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES - UPDATED FILE
+**# Stata Version 18.0, 10-AUG-2023 
 
-* Data cleaning was focused on: 
-*(a) q8: highest level of education completed by the respondent 
-*(b) q19 & q43: public/private/contracted/NGO facility,
-*(c) q20 & q44 type of healthcare facility (help distinguish primary from secondary healthcare), 
-*(d) q21: main reason for choosing the healthcare facility of usual healthcare
-*(e) q42: reason of unmet need the last time that the respondent needed healthcare
-*(f) q45: main reason for last healthcare visit 
+********************************************************************************
+**# Q7: What type of healthcare insurance do you have?
+
+* ===== CATEGORIZATION OF 1/2 "OTHER, SPECIFY" RESPONSES 
+
+replace q7=4 if q7_other=="ΕΔΟΕΑΠ"
+
+		/* Response Info: EDOEAP / ΕΔΟΕΑΠ (journalists' fund) is a legal person in private law covering only journalists and relevant professionals (mandatory insurance). It is not ncluded in the public expenditure and it has its own private council. */
+		
+		
+		/* Response Info: "ΤΑΜΕΙΟ ΥΓΕΙΑΣ"=="Health fund" (vague response; it could be public or private) - not categorized */
+	
+	
+	
+********************************************************************************
+**# q8 & q8_other: Highest level of education completed by the respondent 					
+
+* ===== CATEGORIZATION OF 152/153 "OTHER, SPECIFY" RESPONSES 
  
-
-*****************************************************************************************************************
-**# (a) q8 & q8_other: Highest level of education completed by the respondent 					
-***********************************************************************************************************
-
-* ===== CLASSIFICATION OF 152/153 "OTHER, SPECIFY" RESPONSES UNDER Q8 CATEGORIES
- 
-replace q8=18050 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="METAPTIXIAKO" ///
+replace q8=50 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="METAPTIXIAKO" ///
  | q8_other=="METAPTYXIAKO" | q8_other=="ΔΙΔΑΚΤΟΡΙΚΟ" | q8_other=="ΜΑΣΤΕΡ" | ///
  q8_other=="ΜΕΤΑΠΠΤΥΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΑΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΧΙΑΚΟ" | ///
  q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΑ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ ΣΠΟΥΔΕΣ" | ///
@@ -689,66 +693,243 @@ replace q8=18050 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="ME
  q8_other=="μεταπτυχιακο" 
  
  
-*****************************************************************************************************************
-**# (b) q19_gr & q19_gr_other: Is this a public, private, contracted to public, or NGO healthcare facility?  
-*****************************************************************************************************************
-* Responses of q19_gr_other (n=4) cannot be classified under q19_gr categories. The best approach is to keep them
-* as they are.  	
+		/* Response Info "ΚΑΠΟΙΑ ΣΧΟΛΗ ΜΕΤΑ ΤΟ ΛΥΚΕΙΟ" = "A school/institute after high school": (vague response) - not categorized*/
+	
+	
+	
+	
+ 
+********************************************************************************
+**# q19_gr & q19_gr_other: Is this a public, private, contracted to public, or NGO healthcare facility?  
 
-		
-*****************************************************************************************************************
-**# (c) q20 & q20_other. What type of healthcare facility is this? 						  *****************************************************************************************************************
+* Responses of q19_gr_other (n=4) cannot be categorized under q19_gr categories, please see below translation & justification: 
 
-* The majority of the responses "Other, specify" cannot be classified under q19_gr existing categories, either because 
-* they indeed do not fall under the existing categories or due to the fact that there is uncertaintly.
 
-* Only one response can be classified under public & hospital as an inpatient:
+		/* Response Info: NOSOKOMEIO == Hospital (vague response, it can be publc or private facility) - not categorized*/
+		/* Response Info: O ΓΙΑΤΡΟΣ ΤΗΣ ΕΡΓΑΣΙΑΣ == Occupational Doctor (vague response, the provider can be public or private hc facility)- not categorized*/
+		/* Response Info: ΠΟΛΥΙΑΤΡΕΙΟ == polyclinic (vague response, it can be publc or private facility)- not categorized*/
+		/* Response Info: ΤΗΣ ΟΛΥΜΠΙΑΚΗΣ ΕΠΙΤΡΟΠΗΣ == "the hellenic olympic committee" this committee is not a healthcare provider/facility/fund. It can provide mostly private healthcare services but these are covered by external collaborators and donations of different sources - response not categorized*/ 
 
-replace q20=18110 if q20_other=="ΝΟΣΟΚΟΜΕΙΟ ΜΕ ΝΟΣΗΛΙΑ ΩΡΩΝ"
+	
+	
+********************************************************************************
+**# q20 & q20_other. What type of healthcare facility is this?
+ 	
+* PUBLIC "OTHER" RESPONSES
+* Only one response could be categorized under q20 responses, please see below translation & justification: 
 
-*****************************************************************************************************************	
-**# (c) q44 & q44_other. What type of healthcare facility is this? 					*****************************************************************************************************************	
+replace q20=110 if q20_other=="ΝΟΣΟΚΟΜΕΙΟ ΜΕ ΝΟΣΗΛΙΑ ΩΡΩΝ"
 
-* All responses under "Other, specify" cannot be classified under q44 categories, either because 
-* they indeed do not fall under the existing categories or due to the fact that the responses are unclear.				
-										
-*****************************************************************************************************************	
-**# (d) q21 & q21_other: Why did you choose this healthcare facility? 				*****************************************************************************************************************	
+
+		/* Response Info: ΓΙΑΤΡΟΣ = "doctor" (vague response)- not categorized*/
+		/* Response Info: ΕΔΟΕΑΠ = "health fund for journalists" (vague response: this health fund has both outpatient & inpatient services)- not categorized*/
+		/* Response Info: ΙΑΤΡΕΙΟ = "a medical office " (vague response) - not categorized */
+		/* Response Info: ΚΕΝΤΡΟ ΨΥΧΟΘΕΡΑΠΕΙΑΣ = "mental health facility" ("other" response and also vague as it could be within a hospital or independent facility)- not categorized*/
+		/* Response Info: ΟΙΚΟΓΕΝΕΙΑΚΟΣ = "family doctor" (vague response)- not categorized*/
+		/* Response Info: ΣΤΗΝ ΥΠΕΡΗΣΙΑ ΤΗΣ ΔΟΥΛΕΙΑΣ ΠΥΡΟΣΒΕΣΤΙΚΗ =  "Health Services of the Fire Department - ΥΓΥΠΣ"
+		 public fund which provides outpatient and inpatient services (vague response) - not categorized*/ 
+		/* Response Info: ΣΤΡΑΤΙΩΤΙΚΟ ΝΟΣΟΚΟΜΕΙΟ = "military hospital" (vague response)- not categorized*/
+		/* Response Info: ΤΑΜΕΙΟ ΤΩΝ ΔΗΜΟΣΙΟΓΡΑΦΩΝ "health fund for journalists" (vague response)- not categorized*/
+		/* Response Info: ΤΥΠΕΤ = "health fund for bank officers" (vague response)- not categorized*/
+		/* Response Info: διαγνωστικο κεντρο = "Diagnostic center" (other response)- not categorized*/
+
+	
+* PRIVATE FOR-PROFIT "OTHER" RESPONSES
+* No response could be categorized under q20 responses, please see below:
+
+		/* Response Info: DIAGNVSTIKA = "Diagnostic center" (other response)- not categorized */
+		/* Response Info: ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ = "Diagnostic center" ΚΕΝΤΡΟ (other response)- not categorized*/
+		/* Response Info: ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΤΝΡΟ = "Diagnostic center" (other response)- not categorized*/
+		/* Response Info: ΕΡΓΑΣΤΗΡΙΟ = "Lab" (vague response - not categorized)*/
+		/* Response Info: ΙΔΙΩΤΙΚΗ ΔΟΜΗ ΠΟΥ ΕΧΕΙ ΙΑΤΡΕΙΑ ΚΑΙ ΝΟΣΟΚΟΜΕΙΑ = "Private facility with offices and" (vague response)- not categorized*/
+		/* Response Info: ΙΔΙΩΤΙΚΗ ΚΛΙΝΙΚΗ = "Private clinic" (vague response)- not categorized)*/
+		/* Response Info: ΙΔΙΩΤΙΚΟΣ ΓΙΑΤΡΟΣ ΠΟΥ ΕΡΧΕΤΑΙ ΣΠΙΤΙ = "Private doctor for home visit" (other response)- not categorized*/
+		/* Response Info: ΚΛΙΝΙΚΗ = "Clinic" (vague response)- not categorized*/
+		/* Response Info: ΠΟΛΥΙΑΤΡΕΙΟ = "Polyclinic" (vague response)- not categorized*/
+		/* Response Info: μοναδα αιμοκαθαρσησ = "hemodialysis unit" (vague response: an be at hospital or at an inpedendent unit)- not categorized*/
+
+
+* CONTRACTED "OTHER" RESPONSES
+* No response could be categorized under q20 responses, please see below:
+
+		/* Response Info:ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ = "Diagnostic center" (other response)- not categorized */
+		/* Response Info:ΙΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ = "Diagnostic center" (other response)- not categorized */
+		/* Response Info:ΚΕΝΤΡΟ ΥΓΕΙΑΣ = "Health center" (other response)- not categorized */
+		/* Response Info:ΜΙΚΡΟΒΙΟΛΟΓΙΚΟ ΕΡΓΑΣΤΗΡΙΟ = "Microbiology lab" (other response)- not categorized */
+		/* Response Info:ΠΟΛΙΑΤΡΙΑ = "Polyclinic" (vague response)- not categorized */
+		/* Response Info:ΠΟΛΥΙΑΤΡΕΙΟ = "Polyclinic" (vague response)- not categorized */
+		/* Response Info:ΠΟΛΥΙΑΤΡΙΟ = "Polyclinic" (vague response)- not categorized*/
+
+
+********************************************************************************
+**# q20_c & q20_c_other. Have you registered with a personal doctor?
+* 1 response means "No", please find code below:
+
+replace q20_c=2 if q20_c_other=="ΔΕΝ ΕΧΕΙ" 
+
+* 3/4 responses under q20_c_other cannot be categorized under q20_c because they mean "don't know", please find code below:
+
+replace q20_c_other="DK" if ///
+q20_c_other=="ΔΕΝ ΓΝΩΡΙΖΩ ΕΠΕΙΔΗ ΜΕ ΑΥΤΟ ΑΣΧΟΛΕΙΤΑΙ ΑΠΟΚΛΕΙΣΤΙΚΑ Η ΣΥΖΥΓΟΣ ΜΟΥ" | ///
+q20_c_other=="ΔΕΝ ΕΙΜΑΙ ΣΙΓΟΥΡΟΣ" | ///
+q20_c_other=="ΔΕΝ ΞΕΡΩ"
+
+
+********************************************************************************
+**# q21 & q21_other: Why did you choose this healthcare facility? 					
 
 * ===== CLASSIFICATION OF 13/42 "OTHER, SPECIFY" RESPONSES UNDER Q21 CATEGORIES
 
-replace q21=1  if q21_other=="ΕΙΝΑΙ ΔΩΡΕΑΝ Η ΠΡΩΤΟΒΑΘΜΙΑ ΦΡΟΝΤΙΔΑ ΥΓΕΙΑΣ" | q21_other=="ΜΗΔΑΜΙΝΟ ΚΟΣΤΟΣ"
-replace q21=3  if q21_other=="ΚΟΝΤΙΝΑ ΡΑΝΤΕΒΟΥ" | q21_other=="ΑΜΕΣΟΤΗΤΑ" | q21_other=="ΑΜΕΣΗ ΕΞΥΠΗΡΕΤΗΣΗ"
-replace q21=4  if q21_other=="ΝΙΩΘΩ ΑΣΦΑΛΕΙΑ ΚΑΙ ΕΜΠΙΣΤΟΣΥΝΗ ΜΕΒ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΓΙΑΤΡΟ" | q21_other=="ΕΞΙΔΕΙΚΕΥΜΕΝΟ" | ///
-q21_other=="EMPISTOSYNH STO GIATRO" | q21_other=="ΓΙΑΤΙ ΕΚΕΙ ΒΡΙΣΚΩ ΓΙΑΤΡΟΥΣ ΠΟΥ ΞΕΡΟΥΝ ΝΑ ΚΑΝΟΥΝ ΤΗ ΔΟΥΛΕΙΑ ΤΟΥΣ" | ///
-q21_other=="ΕΧΟΥΝ ΕΞΕΙΔΙΚΕΥΣΗ" | q21_other=="ΟΙ ΥΠΗΡΕΣΙΕΣ ΠΟΥ ΠΑΡΕΧΟΝΤΑΙ ΑΠΟ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΔΟΜΗ ΕΙΝΑΙ ΠΟΛΥ ΚΑΛΕΣ" | ///
-q21_other=="ΕΜΠΙΣΤΕΥΟΜΑΙ ΤΟ ΓΙΑΤΡΟ" | q21_other=="ΓΙΑ ΛΟΓΟΥΣ ΕΜΠΙΣΤΟΣΥΝΗΣ"
-replace q21=8  if q21_other=="απο τηνδουλεια τουεχει ασφαλεια" | q21_other=="ΕΙΝΑΙ ΣΥΜΒΕΒΛΗΜΕΝΟ ΜΕ ΤΗΝ ΙΔΙΩΤΙΚΗ ΑΣΦΑΛΕΙΑ ΜΟΥ"
+*Low cost 
+replace q21=1  if q21_other=="ΕΙΝΑΙ ΔΩΡΕΑΝ Η ΠΡΩΤΟΒΑΘΜΙΑ ΦΡΟΝΤΙΔΑ ΥΓΕΙΑΣ" | ///
+q21_other=="ΜΗΔΑΜΙΝΟ ΚΟΣΤΟΣ"
 
 
-*****************************************************************************************************************
-**# (e) q42_other. The last time this happened what was the main reason? 
-*****************************************************************************************************************	
-* ===== CLASSIFICATION OF 5 "OTHER, SPECIFY" RESPONSES UNDER Q42 CATEGORIES
+*Short waiting time 
+replace q21=3  if q21_other=="ΚΟΝΤΙΝΑ ΡΑΝΤΕΒΟΥ" | ///
+q21_other=="ΑΜΕΣΟΤΗΤΑ" | ///
+q21_other=="ΑΜΕΣΗ ΕΞΥΠΗΡΕΤΗΣΗ"
 
-replace q42=3 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΡΑΝΤΕΒΟΥ ΓΙΑ ΤΟΥΣ ΕΠΟΜΕΝΟΥΣ 7 ΜΗΝΕΣ"
-replace q42=6 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΑΣΘΕΝΟΦΟΡΟ"
-replace q42=8 if q42_other=="ΓΙΑΤΙ ΕΙΧΑ COVID KAI DEN ME ΔEXONTAN ΣΕ ΙΔΙΩΤΙΚΑ ΘΕΡΑΠΕΥΤΗΡΙΑ" | ///
-q42_other=="ΔΕΝ ΜΕ ΔΕΧΘΗΚΑΝ ΕΠΕΙΔΗ ΗΜΟΥΝ ΑΝΕΜΒΟΛΙΑΣΤΗ" |  q42_other=="ΕΙΧΑ COVID"
+
+* Good healthcare provider skills 
+replace q21=4  if q21_other=="ΝΙΩΘΩ ΑΣΦΑΛΕΙΑ ΚΑΙ ΕΜΠΙΣΤΟΣΥΝΗ ΜΕΒ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΓΙΑΤΡΟ" | ///
+q21_other=="ΕΞΙΔΕΙΚΕΥΜΕΝΟ" | ///
+q21_other=="EMPISTOSYNH STO GIATRO" | ///
+q21_other=="ΓΙΑΤΙ ΕΚΕΙ ΒΡΙΣΚΩ ΓΙΑΤΡΟΥΣ ΠΟΥ ΞΕΡΟΥΝ ΝΑ ΚΑΝΟΥΝ ΤΗ ΔΟΥΛΕΙΑ ΤΟΥΣ" | ///
+q21_other=="ΕΧΟΥΝ ΕΞΕΙΔΙΚΕΥΣΗ" | ///
+q21_other=="ΟΙ ΥΠΗΡΕΣΙΕΣ ΠΟΥ ΠΑΡΕΧΟΝΤΑΙ ΑΠΟ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΔΟΜΗ ΕΙΝΑΙ ΠΟΛΥ ΚΑΛΕΣ" | ///
+q21_other=="ΕΜΠΙΣΤΕΥΟΜΑΙ ΤΟ ΓΙΑΤΡΟ" | ///
+q21_other=="ΓΙΑ ΛΟΓΟΥΣ ΕΜΠΙΣΤΟΣΥΝΗΣ" | ///
+q21_other=="ΕΙΝΑΙ ΘΕΜΑ ΕΜΠΙΣΤΟΣΥΝΗΣ"
+
+
+*Covered by insurance 
+replace q21=8  if q21_other=="απο τηνδουλεια τουεχει ασφαλεια" | ///
+q21_other=="ΕΙΝΑΙ ΣΥΜΒΕΒΛΗΜΕΝΟ ΜΕ ΤΗΝ ΙΔΙΩΤΙΚΗ ΑΣΦΑΛΕΙΑ ΜΟΥ"
+
+
+********************************************************************************
+**# q42_other. The last time this happened what was the main reason? 
 	
-*****************************************************************************************************************	
+* ===== CLASSIFICATION OF 5 "OTHER, SPECIFY" RESPONSES UNDER Q42 CATEGORIES
+*Long waiting time
+replace q42=3 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΡΑΝΤΕΒΟΥ ΓΙΑ ΤΟΥΣ ΕΠΟΜΕΝΟΥΣ 7 ΜΗΝΕΣ"
+
+*Medicines and equipment not available
+replace q42=6 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΑΣΘΕΝΟΦΟΡΟ"
+
+* Covid-19 restrictions
+replace q42=8 if q42_other=="ΓΙΑΤΙ ΕΙΧΑ COVID KAI DEN ME ΔEXONTAN ΣΕ ΙΔΙΩΤΙΚΑ ΘΕΡΑΠΕΥΤΗΡΙΑ" | ///
+q42_other=="ΔΕΝ ΜΕ ΔΕΧΘΗΚΑΝ ΕΠΕΙΔΗ ΗΜΟΥΝ ΑΝΕΜΒΟΛΙΑΣΤΗ" | ///
+q42_other=="ΕΙΧΑ COVID"
+
+* Staff don't show respect
+replace q42=5 if q42_other=="ΑΔΙΑΦΟΡΙΑ ΓΙΑΤΡΟΥ" | ///
+q42_other=="ΜΕ ΕΞΑΤΑΣΕ ΒΙΑΣΤΙΚΑ ΚΑΙ ΜΕ ΑΝΑΓΚΑΣΕ ΝΑ ΠΑΩ ΤΟ ΑΠΟΓΕΥΜΑ ΣΤΟ ΙΑΤΡΙΟ ΤΟΥ"
+
+*********************************************************************************
+**# q43 & q43_other. What type of healthcare facility is this? 						
+* Only one response could be categorized under q43 responses: 
+
+replace q43=1 if q43_other=="ΣΤΡΑΤΙΩΤΙΚΟ ΝΟΣΟΚΟΜΕΙΟ"
+		onse) - not categorized 
+
+* The other responses could not categorized under q43 responses:
+
+		/* ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ = "Diagnostic center" (vague response) - not categorized*/
+		/* ΜΙΚΡΟΒΙΟΛΟΓΙΚΟ = "Microbiology Lab" (vague response) - not categorized */
+		/* ΜΙΚΡΟΒΙΟΛΟΓΟΣ = "Microbiology Lab" (vague response) - not categorized */
+		/* ΤΥΠΕΤ = (vague response) - not categorized*/
+		/* ΤΑΜΕΙΟ ΤΩΝ ΔΗΜΟΣΙΟΓΑΦΩΝ = "Journalists' fund" (vague respοnse)*/
+
+
+
+*********************************************************************************
+**# q44 & q44_other. What type of healthcare facility is this? 						
+* No response could be categorized under q44 responses, please see below translation & justification:
+
+* PUBLIC "OTHER" RESPONSES
+		/*KINHTH MONADA = "Mobile medical unit" (other response) - not categorized*/
+		/*ΕΔΟΕΑΠ = "Journalists' fund" (vague response) - not categorized */
+		/*ΙΑΤΡΕΙΟ = "Doctor's office" (vague response) - not categorized*/
+		/*ΙΔΙΩΤΗΣ = "Private provider" (vague response) - not categorized*/
+		/*ΙΔΙΩΤΗΣ ΓΙΑΤΡΟΣ = "Private doctor" (vague response) - not categorized*/
+		/*ΟΔΟΝΤΙΑΤΡΙΚΗ ΣΧΟΛΗ = "Dental school" (other response) - not categorized */
+		/*ΣΤΗΝ ΠΥΡΟΣΒΕΣΤΙΚΗ = "Firefighter's facilities" (vague response: counld be inpatient or outpatient) - not categorized*/
+		/*ΣΤΡΑΤΙΩΤΙΚΟ = "Military" (vague response: counld be inpatient or outpatient) - not categorized*/
+
+* PRIVATE FOR-PROFIT "OTHER" RESPONSES
+		/* KLINIKH  = "Clinic" (vague response) - not categorized*/
+		/* ON LINE  (other response) - not categorized */
+		/* ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ  = "Diagnostic center" (other response) - not categorized*/
+		/* ΙΑΤΡΙΚΟ ΚΕΝΤΡΟ  = "Medical center" (vague response) - not categorized */
+		/* ΚΛΙΝΙΚΗ  = "Clinic" (vague response) - not categorized*/
+		/* ΜΙΚΡΟΒΙΟΛΟΓΙΚΟ ΕΡΓΑΣΤΗΡΙΟ = "Microbiology Lab" (other response) - not categorized */ 
+		/* ΠΟΛΥΙΑΤΡΕΙΟ = "Polyclinic" (vague response) - not categorized*/
+
+* CONTRACTED "OTHER" RESPONSES
+		/* ΔΙΑΓΝΩΣΤΙΚΟ = "Diagnostic center" (other response) - not categorized*/
+		/* ΔΙΑΓΝΩΣΤΙΚΟ KENTΡO  = "Diagnostic center" (other response) - not categorized*/
+		/* ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ  = "Diagnostic center" (other response) - not categorized*/
+		/* ΜΙΚΡΟΒΙΟΛΟΓΙΚΗ ΚΛΙΝΙΚΗ  = "Microbiology clinic" (vague response) - not categorized */
+		/* ΜΙΚΡΟΒΙΟΛΟΓΙΚΟ ΕΡΓΑΣΤΗΡΙΟ  = "Microbiology Lab" (other response) - not categorized */
+		/* ΜΙΚΡΟΒΙΟΛΟΓΚΟ ΕΡΓΑΣΤΗΡΙΟ  = "Microbiology Lab" (other response) - not categorized */
+		/* ΠΑΝΕΠΙΣΤΗΜΙΑΚΗ ΣΧΟΛΗ = "University" (vague response) - not categorized */
+		/* ΠΟΛΙΑΤΡΙΑ  = "Polyclinic" (vague response) - not categorized */
+		/* ΠΟΛΥΙΑΤΡΕΙΑ  = "Polyclinic" (vague response) - not categorized */
+		/* ΠΟΛΥΙΑΤΡΕΙΟ  = "Polyclinic" (vague response) - not categorized */
+		/* διαγνωστικο κεντρο  = "Diagnostic center" (other response) - not categorized */
+		/* μοναδα αιμοκαθαρσησ  = "Hemodialysis unit" (other response) - not categorized */
+
+* NGO RESPONSES
+* This response ("ΙΔΙΩΤΙΚΗ") means "Private" - vague response - not categorized.
+
+
+*********************************************************************************
 **# (f) q45 & q45_other What was the main reason you went?  	
-*****************************************************************************************************************	
+*CATEGORIZATION OF 9/31 "OTHER, SPECIFY" RESPONSES UNDER Q45 CATEGORIES
 
-*CLASSIFICATION OF 9/31 "OTHER, SPECIFY" RESPONSES UNDER Q45 CATEGORIES
+* Follow-up care for a longstanding illness
+replace q45=2  if q45_other=="ΚΑΘΕΩ ΤΡΕΙΣ ΜΗΝΕΣ ΓΡΑΦΩ ΤΑ ΦΑΡΜΑΚΑ ΜΟΥ" | ///
+q45_other=="ΕΛΕΓΧΟΣ ΕΓΧΕΙΡΙΣΜΕΝΟΥ ΠΟΔΙΟΥ" | ///
+q45_other=="ΕΠΑΝΕΛΕΓΧΟΣ"
 
-replace q45=3 if q45_other=="ΠΡΟΛΗΠΤΙΚΟΣ ΕΚΕΓΧΟΣ" | q45_other== "ΤΑΚΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other=="ΠΡΟΛΗΨΗ" | ///
-q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other=="ΠΡΟΛΗΨΗ" | q45_other=="ΕΤΗΣΙΟ ΤΣΕΚ -ΑΠ" 
-replace q45=2  if q45_other=="ΚΑΘΕΩ ΤΡΕΙΣ ΜΗΝΕΣ ΓΡΑΦΩ ΤΑ ΦΑΡΜΑΚΑ ΜΟΥ"
+
+* Preventive care
+replace q45=3 if q45_other=="ΠΡΟΛΗΠΤΙΚΟΣ ΕΚΕΓΧΟΣ" | ///
+q45_other== "ΤΑΚΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other=="ΠΡΟΛΗΨΗ" | ///
+q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | ///
+q45_other=="ΕΤΗΣΙΟ ΤΣΕΚ -ΑΠ" 
+            
+
+*********************************************************************************
+**# q62 & q62_other Respondent's mother tongue or native language 
+
+replace q62_other="Albanian" if q62_other=="ALBANIA" | ///
+q62_other=="ALBANIKA" | ///
+q62_other=="ALBANIKH" | ///
+q62_other=="AΛBANIKA" | ///
+q62_other=="albanikh" | ///
+q62_other=="ΑΒΑΝΙΚΗ"  | ///
+q62_other=="ΑΛBANIKA" | ///
+q62_other=="ΑΛΒΑΝΙΚΑ" | ///
+q62_other=="ΑΛΒΑΝΙΚΗ" | ///
+q62_other=="αλβανικα" 
+
+replace q62_other="Greek" if q62_other=="EΛΗΝΙΚΑ" | ///
+q62_other=="EΛΛΗΝΙΚΑ" | ///
+q62_other=="ΕΛΛΗΝΙΚΑ" | ///
+q62_other=="ΠΟΝΤΙΑΚΑ" | ///
+q62_other=="ΠΟΝΤΙΑΚΗ" | ///
+q62_other=="ΚΥΠΡΙΑΚΑ"
+
+replace q62=90 if q62_other=="Greek" 
+
+*/
 
 *------------------------------------------------------------------------------*
 
-/*
+
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
@@ -788,7 +969,7 @@ replace q42_other = subinstr(q42_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 
 
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_18.xlsm",	///
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_18.xlsx",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_serial)	
 	
@@ -803,7 +984,7 @@ ren q42_other_original q42_other
 ren q44_other_original q44_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other
-*/
+
 
 *------------------------------------------------------------------------------*
 drop q8_other
