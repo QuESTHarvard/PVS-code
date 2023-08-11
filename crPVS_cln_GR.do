@@ -953,6 +953,9 @@ label var q21_other_original "Q21. Other"
 gen q42_other_original = q42_other
 label var q42_other_original "Q42. Other"
 
+gen q43_other_original = q43_other
+label var q43_other_original "Q43. Other"
+
 gen q44_other_original = q44_other
 label var q44_other_original "Q44. Other"
 	
@@ -973,7 +976,7 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
 	sheet(other_specify_recode)							///	
 	id(respondent_serial)	
 	
-drop q7_other q8_other q19_gr_other q20_other q21_other q42_other q44_other q45_other q62_other
+drop q7_other q8_other q19_gr_other q20_other q21_other q42_other q43_other q44_other q45_other q62_other
 	 
 ren q7_other_original q7_other
 ren q8_other_original q8_other
@@ -981,6 +984,7 @@ ren q19_gr_other_original q19_gr_other
 ren q20_other_original q20_other
 ren q21_other_original q21_other
 ren q42_other_original q42_other
+ren q43_other_original q43_other
 ren q44_other_original q44_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other

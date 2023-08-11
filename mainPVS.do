@@ -72,7 +72,7 @@ run "$github/crPVS_cln_RO.do"
 run "$github/crPVS_append.do"
 
 * Run Other specify 
-run "$github/crPVS_otherspecify"
+*run "$github/crPVS_otherspecify"
 
 * Adding derived variables for analysis
 run "$github/crPVS_der.do"
