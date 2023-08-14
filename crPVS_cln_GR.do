@@ -4,7 +4,7 @@
 
 /*
 
-This file cleans Ipsos data for Greece and Romania. 
+This file cleans Ipsos data for Greece. 
 
 Cleaning includes:
 	- Recoding outliers to missing 
@@ -35,7 +35,7 @@ notes drop _all
 ren q14_new q14
 ren q15_new q15
 
-*change q21 for additional GR var:
+*change q21 for additional GR vars:
 recode q21 (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
 			(3 = 3 "Short waiting time") ///
@@ -53,7 +53,7 @@ recode q21 (1 = 1 "Low cost") ///
 ren q28 q28_a
 ren q28_new q28_b
 ren q28_gr q28_c // need to flip order of values
-ren q37_gr q37_gr_in
+
 
 *specific GR value added to q42:
 recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
@@ -67,36 +67,55 @@ recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 			(9 = 9 "COVID-19 fear") (10 = 10 "Other, specify") (11 = 12 "GR: Fear or anxiety of a healthcare procedure, examination or treatment") ///
 			(996 = .r "Refused"), gen(recq42)
 
-
-*renamed q43_gr to q43 and q43 to q43_gr since the old q43_gr data isn't a part of our survey
-ren q43_gr q43b
-ren q43 q43_gr
+ren q43_gr q43b_gr
+ren q43 q43a_gr
 
 ren q46_gr2 q46a
-ren q46_gr q46b // double check units of raw data
+ren q46_gr q46b 
 ren q46_gr_refused  q46b_refused
-
-*rename q56 vars
-recode q56 (1 = 4 "Excellent") ///
-	   (2 = 3 "Very Good") ///
-	   (3 = 2 "Good") ///
-	   (4 = 1 "Fair") ///
-	   (5 = 0 "Poor") ///
-	   (996 = .r "Refused"), gen(q56_et_gr_in_ke_za)
-
-ren q66 q64
+ren q56 q56_gr
 ren q67 q65
 
-*double check this is correct
+*Greece only vars:
+ren q20_b q20a_gr
+ren q20_b_other q20a_gr_other
+ren q20_c q20b_gr 
+ren q20_c_other q20b_gr_other
+ren q20_d q20c_gr
+ren q20_d_other q20c_gr_other
+ren q44_b q44a_gr
+ren q44_b_other q44a_gr_other
+ren q44_c q44b_gr 
+ren q44_c_other q44b_gr_other
+
+recode q66 (1 = 1 "Yes") ///
+		   (2 = 0 "No / No other numbers"), gen(q64)
+
+ren q66_a q66a_gr
+ren q66_b q66b_gr
+ren q69 q69_gr
+
+*------------------------------------------------------------------------------*
+* Fix interview length variable and other time variables
+
+generate recdate = dofc(date)
+format recdate %td
+
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
-*confirm the format for q46 and q47 (is it MM:SS or HH:MM) - and q46b is in  -1.19e+13?what does this mean?
-format q46 %tcMM:SS
-gen recq46 = (mm(q46)+ ss(q46)/60) 
+*confirm the format for q46 and q47 instrument word doc says HH:MM
+format q46 %tcHH:MM
+gen recq46 = (hh(q46)*60 + mm(q46))
+
+* confirm that format for q46b is in HH:MM:SS even though question asks days, hours, minutes
+format q46b %tcHH:MM:SS
+gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
 
 format q47 %tcMM:SS
 gen recq47 = (mm(q47)+ ss(q47)/60) 
+
+*------------------------------------------------------------------------------*
 
 gen reclanguage = 18000 + language 
 lab def lang 18002 "GR: Greek" 
@@ -178,24 +197,25 @@ label define labels61 .r "Refused", add
 
 **** Combining/recoding some variables ****
 
-recode q46_refused (. = 0) if q46 != .
-recode q47_refused (. = 0) if q47 != .
+recode q46_refused (. = 0) if recq46 != .
+recode q47_refused (. = 0) if recq47 != .
 
 recode q46b (. = .r) if q46b_refused == 1 
 recode q46b_refused (. = 0) if q46b != .
 
-*add for q47
+recode q64 (. = .a) if sample_type == 2
 
 *------------------------------------------------------------------------------*
 
 * Drop unused variables 
 
-drop ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q20_b q20_b_other q20_c q20_c_other q20_d q20_d_other q21 q42 q43b q44 q44_b q44_b_other q44_c q44_c_other q46 q47 q56 q62 q63 q66_a q66_b q69 q69_codes rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall sample_type interviewer_id interviewer_gender interviewer_language country language
-
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall interviewer_id interviewer_gender interviewer_language country language
+ 
 
 *------------------------------------------------------------------------------*
 
 * Generate variables 
+gen respondent_id = "GR" + string(respondent_serial)
 gen q2 = .a
 gen q66 = .a 
 
@@ -215,20 +235,19 @@ label def q7_label 18004 "GR: Private insurance only" 18029 "GR: Public insuranc
 				   18030 "GR: Both public and private insurance" 18995 "GR: Other, specify" .a "NA" .r "Refused"
 label values recq7 q7_label
 
-
 *------------------------------------------------------------------------------*
 
 * Recode refused and don't know values 
 * In raw data, 995 = "don't know" 
-recode q12 q15 q23 q37_gr_in (995 = .d)
+recode q12 q15 q23 q37_gr (995 = .d)
 
-recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 (997 = .d)
+recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 q66a_gr q66b_gr (997 = .d)
 
 * In raw data, 996 = "refused" 	  
 recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
-	   q40 q43_gr q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
+	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
-	   q56_et_gr_in_ke_za q57 q58 q59 q60 q61 q65 q64 (996 = .r)
+	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr q66a_gr q66b_gr q69_codes (996 = .r)
 	   
 recode recq63 (18996 = .r)
 
@@ -285,7 +304,8 @@ drop visits_total
 
 *------------------------------------------------------------------------------*
  
-* Recode missing values to NA for intentionally skipped questions
+* Recode missing values to NA for intentionally skipped questions 
+* do some of these have to be the rec version?
 
 *q1/q2 
 recode q2 (. = .a) if q1 > 0 & q1 < . //change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
@@ -303,8 +323,9 @@ recode q13 (. = .a) if q12 == 2 | q12 == .r
 recode q15 (. = .a) if inrange(q14,3,5) | q14== .r 
 
 *q19-22
-recode q19_gr recq20 recq21 q22 (. = .a) if q18 == 2 | q18 == .r 
+recode q19_gr recq20 recq21 q22 q20a_gr q20b_gr q20c_gr (. = .a) if q18 == 2 | q18 == .r 
 recode recq20 (. = .a) if q19_gr == 4 | q19_gr == .r
+recode q20c_gr (. = .a) if q18 == 2 | q18 == .r | q20b_gr != 1 ///need to confirm with a clean instrument
 
 * NA's for q24-27 
 recode q24 (. = .a) if q23 != .d & q23 != .r 
@@ -327,14 +348,17 @@ recode recq42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q43_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43a_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 q48_k (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
-recode q43_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43a_gr recq44 q45 recq46 q46_refused q46a q47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
 	   q48_g q48_h q48_i q48_j q48_k q49 (nonmissing = .a) if q23 == 0 | q24 == 1
 	   
-recode recq44 (. = .a) if q43_gr == 4 | q43_gr == .r
-
+recode q43b_gr (. = .a) if q43b_gr != 3
+	   
+recode recq44 (. = .a) if q43a_gr == 4 | q43a_gr == .r | q43a_gr == .a
+recode q44a_gr (. = .a) if q43a_gr == 4 | q43a_gr == .r | q43a_gr == .a
+recode q44b_gr (. = .a) if q43a_gr == 4 | q43a_gr == .r | q43a_gr == .a |q20b_gr != 1
 recode q45 (995 = 4)
 
 *q46/q47 refused
@@ -354,6 +378,12 @@ recode q65 (. = .a) if q64 != 1
 *q66/67
 recode q66 (. = .a) if mode == 2
 
+recode q69_gr (. = .r) if q69_codes == .r
+
+recode q66a_gr (. = .a) if sample_type == 1
+recode q66b_gr  (. = .a) if sample_type == 2
+
+*q69_gr: need to figure out this question's skip pattern logic with a clean instrument
 
 *------------------------------------------------------------------------------*
 * Recode values and value labels:
@@ -367,7 +397,7 @@ recode q11 q13 q18 q25_a q26 q29 q41 ///
 
 lab val q46_refused q47_refused yes_no
 
-recode q12 q30 q31 q32 q33 q34 q35 q36 q37_gr_in q38 ///
+recode q12 q30 q31 q32 q33 q34 q35 q36 q37_gr q38 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (3 .d = .d "Don't know") /// 
 	   (.a = .a "NA"), ///
 	   pre(rec) label(yes_no_dk)
@@ -385,10 +415,10 @@ recode q46a ///
 		(.r = .r "Refused"), pre(rec) label(yes_no_appt)
 		
 * All Excellent to Poor scales
-* Confirm it's ok to change "Neither bad nor good" to "Fair"
+* Please note that in Greece: "Neither bad nor good" was recoded to "Fair"
 
 recode q9 q10 q28_c q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q54 ///
-	   q55 q59 q60 q61 ///
+	   q55 q56_gr q59 q60 q61 ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
 	   (5 = 0 "Poor") (.r = .r "Refused") (.a = .a "NA"), /// 
 	   pre(rec) label(exc_poor)
@@ -468,23 +498,36 @@ lab def labels43 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels26 .a "NA", modify
+lab def labels28 .a "NA", modify
+lab def labels45 .a "NA", modify
+lab def labels46 .a "NA", modify
+lab def labels65 .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels66 .a "NA" .r "Refused" .d "Don't know",modify
+lab def q64 .a "NA" .r "Refused" .d "Don't know",modify
+
 
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
-	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr_in q38 q39 q40 q41 q46a ///
+drop date q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
+	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q57 q59 q60 q61 weight
+	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_gr q57 q59 q60 q61 weight q69_codes sample_type
 	 
 ren rec* *
 
+*Reorder variables
 
 order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
+
+* Country-specific vars for append 
+ren q37_gr q37_gr_in_ro
+ren q56_gr q56_et_gr_in_ke_ro_za
 
 * Label variables
 lab var country "Country"
@@ -510,12 +553,15 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-
-*Need to confirm wording of q19_gr with instrument - dropped q19 and q19 other because there was no data
 lab var q19_gr "Q19. GR only: Is this a public, private, contracted to public or NGO healthcare facility?"
 lab var q19_gr_other "Q19. GR only: Other"
-
 lab var q20 "Q20. What type of healthcare facility is this?"
+lab var q20a_gr "Q20a. GR only: Can you please tell me the specialty of your main provider in this facility?"
+lab var q20a_gr_other "Q20a. Other"
+lab var q20b_gr "Q20b. GR only: Have you registered with a personal doctor?"
+lab var q20b_gr_other "Q20b. Other"
+lab var q20c_gr "Q20c. GR only: Is your usual healthcare provider the personal doctor that you have registered with?"
+lab var q20c_gr_other "Q20c. Other"
 lab var q20_other "Q20. Other"
 lab var q21 "Q21. Why did you choose this healthcare facility?"
 lab var q21_other "Q21. Other"
@@ -538,38 +584,32 @@ lab var q33 "Q33. Had your eyes or vision checked in the past 12 months"
 lab var q34 "Q34. Had your teeth checked in the past 12 months"
 lab var q35 "Q35. Had a blood sugar test in the past 12 months"
 lab var q36 "Q36. Had a blood cholesterol test in the past 12 months"
-
-*Need to confirm wording of q37_gr_in with instrument since it's cut off in stata
-lab var q37_gr_in "Q37_C. GR/IN only: Have you received any of the following health services in the past 12 mon"
-
+lab var q37_gr_in_ro "Q37_C. GR/IN/RO only: Have you received any of the following health services in the past 12 months from any healthcare provider?"
 lab var q38 "Q38. Received care for depression, anxiety, or another mental health condition"
 lab var q39 "Q39. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q40 "Q40. You were treated unfairly or discriminated against in the past 12 months"
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-
-*Need to confirm wording of q43_gr with instrument since it's cut off in stata
-lab var q43_gr "Q43. GR only: Thinking about your last healthcare visit for a new or ongoing health probl"
-
+lab var q43a_gr "Q43a. GR only: Is this a public, private, contracted to public, or NGO healthcare facility?"
+lab var q43b_gr "Q43b. GR only: In your last visit did you pay part of the healthcare cost or did you not pay at all?"
 lab var q44 "Q44. What type of healthcare facility is this?"
+lab var q44a_gr "Q44a. GR only: Can you please tell me the specialty of your provider in your last healthcare visit?"
+lab var q44a_gr_other "Q44a. Other"
+lab var q44b_gr "Q44b. GR only: The healthcare provider that you saw in your last visit was the personal doctor that you have registered with?"
+lab var q44b_gr_other "Q44b. Other"
 lab var q44_other "Q44. Other"
 lab var q45 "Q45. What was the main reason you went?"
 lab var q45_other "Q45. Other"
 
-***********Need to confirm wording of q46 thru q47 with instrument, very confusing
 lab var q46 "Q46. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var q46_refused "Q46. Refused"
-*In data: "Was this a scheduled visit or did you go to the facilit"
-lab var q46a "Q46A. Was this a scheduled visit or did you go without an appt.?"
-*Q46b very confusing in data "Q46_GR. How long did you wait in hours, days, or weeks, between scheduling the a",
-	*Does this one var have hours, days, and weeks in it?
-*lab var q46b "Q46B. In days: how long between scheduling and seeing provider?"
+lab var q46a "Q46A. Was this a scheduled visit or did you go to the facility without an appointment?"
+*Does this one var have hours, days, and weeks in it?
+lab var q46b "Q46B. How long did you wait in hours, days, or weeks, between scheduling the appointment and seeing the health care provider?"
 lab var q46b_refused "Q46B. Refused"
 lab var q47 "Q47. In minutes: Approximately how much time did the provider spend with you?"
-* keeps dropping q47_refused above, unsure why
 lab var q47_refused "Q47. Refused"
-
 lab var q48_a "Q48_A. How would you rate the overall quality of care you received?"
 lab var q48_b "Q48_B. How would you rate the knowledge and skills of your provider?"
 lab var q48_c "Q48_C. How would you rate the equipment and supplies that the provider had?"
@@ -591,9 +631,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-
-lab var q56_et_gr_in_ke_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
-
+lab var q56_et_gr_in_ke_ro_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -605,15 +643,289 @@ lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 lab var q66 "Q66.Which political party did you vote for in the last election?"
-
+lab var q66a_gr "Q66a. GR only: Do you happen to have a mobile phone or not?"
+lab var q66b_gr "Q66b. GR only: Is this mobile phone your only phone, or do you also have a landline telephone at home that is used to makeand receive calls?"
+lab var q69_gr "Q69. GR only: Including yourself, how many people aged 18 or older currently live in your household"
 
 *------------------------------------------------------------------------------*
 *Dropping the following value labels so the dataset won't get messed up when merging
 
 label copy labels24 q19_gr_label
 label drop labels24  
-label value q19_gr q19_gr_label
+label value q19_gr q19_gr_label 
 
+*------------------------------------------------------------------------------*
+
+* Other, specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+/*
+**# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES - UPDATED FILE
+**# Stata Version 18.0, 10-AUG-2023 
+
+********************************************************************************
+**# Q7: What type of healthcare insurance do you have?
+
+* ===== CATEGORIZATION OF 1/2 "OTHER, SPECIFY" RESPONSES 
+
+replace q7=4 if q7_other=="ΕΔΟΕΑΠ"
+
+		/* Response Info: EDOEAP / ΕΔΟΕΑΠ (journalists' fund) is a legal person in private law covering only journalists and relevant professionals (mandatory insurance). It is not ncluded in the public expenditure and it has its own private council. */
+		
+		
+		/* Response Info: "ΤΑΜΕΙΟ ΥΓΕΙΑΣ"=="Health fund" (vague response; it could be public or private) - not categorized */
+	
+	
+	
+********************************************************************************
+**# q8 & q8_other: Highest level of education completed by the respondent 					
+
+* ===== CATEGORIZATION OF 152/153 "OTHER, SPECIFY" RESPONSES 
+ 
+replace q8=50 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="METAPTIXIAKO" ///
+ | q8_other=="METAPTYXIAKO" | q8_other=="ΔΙΔΑΚΤΟΡΙΚΟ" | q8_other=="ΜΑΣΤΕΡ" | ///
+ q8_other=="ΜΕΤΑΠΠΤΥΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΑΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΧΙΑΚΟ" | ///
+ q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΑ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ ΣΠΟΥΔΕΣ" | ///
+ q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΟΣ" | q8_other=="ΜΕΤΑΠΥΥΧΙΑΚΟ" | ///
+ q8_other=="Μεταπτυχιακό" | q8_other=="ΝΕΤΑΠΤΥΧΙΑΚΟ" | q8_other=="ΠΟΛΥΤΕΧΝΕΙΟ" | ///
+ q8_other=="μεταπτυχιακο" 
+ 
+ 
+		/* Response Info "ΚΑΠΟΙΑ ΣΧΟΛΗ ΜΕΤΑ ΤΟ ΛΥΚΕΙΟ" = "A school/institute after high school": (vague response) - not categorized*/
+	
+	
+	
+	
+ 
+********************************************************************************
+**# q19_gr & q19_gr_other: Is this a public, private, contracted to public, or NGO healthcare facility?  
+
+* Responses of q19_gr_other (n=4) cannot be categorized under q19_gr categories, please see below translation & justification: 
+
+
+		/* Response Info: NOSOKOMEIO == Hospital (vague response, it can be publc or private facility) - not categorized*/
+		/* Response Info: O ΓΙΑΤΡΟΣ ΤΗΣ ΕΡΓΑΣΙΑΣ == Occupational Doctor (vague response, the provider can be public or private hc facility)- not categorized*/
+		/* Response Info: ΠΟΛΥΙΑΤΡΕΙΟ == polyclinic (vague response, it can be publc or private facility)- not categorized*/
+		/* Response Info: ΤΗΣ ΟΛΥΜΠΙΑΚΗΣ ΕΠΙΤΡΟΠΗΣ == "the hellenic olympic committee" this committee is not a healthcare provider/facility/fund. It can provide mostly private healthcare services but these are covered by external collaborators and donations of different sources - response not categorized*/ 
+
+	
+	
+********************************************************************************
+**# q20 & q20_other. What type of healthcare facility is this?
+ 	
+* PUBLIC "OTHER" RESPONSES
+* Only one response could be categorized under q20 responses, please see below translation & justification: 
+
+replace q20=110 if q20_other=="ΝΟΣΟΚΟΜΕΙΟ ΜΕ ΝΟΣΗΛΙΑ ΩΡΩΝ"
+
+
+		/* Response Info: ΓΙΑΤΡΟΣ = "doctor" (vague response)- not categorized*/
+		/* Response Info: ΕΔΟΕΑΠ = "health fund for journalists" (vague response: this health fund has both outpatient & inpatient services)- not categorized*/
+		/* Response Info: ΙΑΤΡΕΙΟ = "a medical office " (vague response) - not categorized */
+		/* Response Info: ΚΕΝΤΡΟ ΨΥΧΟΘΕΡΑΠΕΙΑΣ = "mental health facility" ("other" response and also vague as it could be within a hospital or independent facility)- not categorized*/
+		/* Response Info: ΟΙΚΟΓΕΝΕΙΑΚΟΣ = "family doctor" (vague response)- not categorized*/
+		/* Response Info: ΣΤΗΝ ΥΠΕΡΗΣΙΑ ΤΗΣ ΔΟΥΛΕΙΑΣ ΠΥΡΟΣΒΕΣΤΙΚΗ =  "Health Services of the Fire Department - ΥΓΥΠΣ"
+		 public fund which provides outpatient and inpatient services (vague response) - not categorized*/ 
+		/* Response Info: ΣΤΡΑΤΙΩΤΙΚΟ ΝΟΣΟΚΟΜΕΙΟ = "military hospital" (vague response)- not categorized*/
+		/* Response Info: ΤΑΜΕΙΟ ΤΩΝ ΔΗΜΟΣΙΟΓΡΑΦΩΝ "health fund for journalists" (vague response)- not categorized*/
+		/* Response Info: ΤΥΠΕΤ = "health fund for bank officers" (vague response)- not categorized*/
+		/* Response Info: διαγνωστικο κεντρο = "Diagnostic center" (other response)- not categorized*/
+
+	
+* PRIVATE FOR-PROFIT "OTHER" RESPONSES
+* No response could be categorized under q20 responses, please see below:
+
+		/* Response Info: DIAGNVSTIKA = "Diagnostic center" (other response)- not categorized */
+		/* Response Info: ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ = "Diagnostic center" ΚΕΝΤΡΟ (other response)- not categorized*/
+		/* Response Info: ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΤΝΡΟ = "Diagnostic center" (other response)- not categorized*/
+		/* Response Info: ΕΡΓΑΣΤΗΡΙΟ = "Lab" (vague response - not categorized)*/
+		/* Response Info: ΙΔΙΩΤΙΚΗ ΔΟΜΗ ΠΟΥ ΕΧΕΙ ΙΑΤΡΕΙΑ ΚΑΙ ΝΟΣΟΚΟΜΕΙΑ = "Private facility with offices and" (vague response)- not categorized*/
+		/* Response Info: ΙΔΙΩΤΙΚΗ ΚΛΙΝΙΚΗ = "Private clinic" (vague response)- not categorized)*/
+		/* Response Info: ΙΔΙΩΤΙΚΟΣ ΓΙΑΤΡΟΣ ΠΟΥ ΕΡΧΕΤΑΙ ΣΠΙΤΙ = "Private doctor for home visit" (other response)- not categorized*/
+		/* Response Info: ΚΛΙΝΙΚΗ = "Clinic" (vague response)- not categorized*/
+		/* Response Info: ΠΟΛΥΙΑΤΡΕΙΟ = "Polyclinic" (vague response)- not categorized*/
+		/* Response Info: μοναδα αιμοκαθαρσησ = "hemodialysis unit" (vague response: an be at hospital or at an inpedendent unit)- not categorized*/
+
+
+* CONTRACTED "OTHER" RESPONSES
+* No response could be categorized under q20 responses, please see below:
+
+		/* Response Info:ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ = "Diagnostic center" (other response)- not categorized */
+		/* Response Info:ΙΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ = "Diagnostic center" (other response)- not categorized */
+		/* Response Info:ΚΕΝΤΡΟ ΥΓΕΙΑΣ = "Health center" (other response)- not categorized */
+		/* Response Info:ΜΙΚΡΟΒΙΟΛΟΓΙΚΟ ΕΡΓΑΣΤΗΡΙΟ = "Microbiology lab" (other response)- not categorized */
+		/* Response Info:ΠΟΛΙΑΤΡΙΑ = "Polyclinic" (vague response)- not categorized */
+		/* Response Info:ΠΟΛΥΙΑΤΡΕΙΟ = "Polyclinic" (vague response)- not categorized */
+		/* Response Info:ΠΟΛΥΙΑΤΡΙΟ = "Polyclinic" (vague response)- not categorized*/
+
+
+********************************************************************************
+**# q20_c & q20_c_other. Have you registered with a personal doctor?
+* 1 response means "No", please find code below:
+
+replace q20_c=2 if q20_c_other=="ΔΕΝ ΕΧΕΙ" 
+
+* 3/4 responses under q20_c_other cannot be categorized under q20_c because they mean "don't know", please find code below:
+
+replace q20_c_other="DK" if ///
+q20_c_other=="ΔΕΝ ΓΝΩΡΙΖΩ ΕΠΕΙΔΗ ΜΕ ΑΥΤΟ ΑΣΧΟΛΕΙΤΑΙ ΑΠΟΚΛΕΙΣΤΙΚΑ Η ΣΥΖΥΓΟΣ ΜΟΥ" | ///
+q20_c_other=="ΔΕΝ ΕΙΜΑΙ ΣΙΓΟΥΡΟΣ" | ///
+q20_c_other=="ΔΕΝ ΞΕΡΩ"
+
+
+********************************************************************************
+**# q21 & q21_other: Why did you choose this healthcare facility? 					
+
+* ===== CLASSIFICATION OF 13/42 "OTHER, SPECIFY" RESPONSES UNDER Q21 CATEGORIES
+
+*Low cost 
+replace q21=1  if q21_other=="ΕΙΝΑΙ ΔΩΡΕΑΝ Η ΠΡΩΤΟΒΑΘΜΙΑ ΦΡΟΝΤΙΔΑ ΥΓΕΙΑΣ" | ///
+q21_other=="ΜΗΔΑΜΙΝΟ ΚΟΣΤΟΣ"
+
+
+*Short waiting time 
+replace q21=3  if q21_other=="ΚΟΝΤΙΝΑ ΡΑΝΤΕΒΟΥ" | ///
+q21_other=="ΑΜΕΣΟΤΗΤΑ" | ///
+q21_other=="ΑΜΕΣΗ ΕΞΥΠΗΡΕΤΗΣΗ"
+
+
+* Good healthcare provider skills 
+replace q21=4  if q21_other=="ΝΙΩΘΩ ΑΣΦΑΛΕΙΑ ΚΑΙ ΕΜΠΙΣΤΟΣΥΝΗ ΜΕΒ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΓΙΑΤΡΟ" | ///
+q21_other=="ΕΞΙΔΕΙΚΕΥΜΕΝΟ" | ///
+q21_other=="EMPISTOSYNH STO GIATRO" | ///
+q21_other=="ΓΙΑΤΙ ΕΚΕΙ ΒΡΙΣΚΩ ΓΙΑΤΡΟΥΣ ΠΟΥ ΞΕΡΟΥΝ ΝΑ ΚΑΝΟΥΝ ΤΗ ΔΟΥΛΕΙΑ ΤΟΥΣ" | ///
+q21_other=="ΕΧΟΥΝ ΕΞΕΙΔΙΚΕΥΣΗ" | ///
+q21_other=="ΟΙ ΥΠΗΡΕΣΙΕΣ ΠΟΥ ΠΑΡΕΧΟΝΤΑΙ ΑΠΟ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΔΟΜΗ ΕΙΝΑΙ ΠΟΛΥ ΚΑΛΕΣ" | ///
+q21_other=="ΕΜΠΙΣΤΕΥΟΜΑΙ ΤΟ ΓΙΑΤΡΟ" | ///
+q21_other=="ΓΙΑ ΛΟΓΟΥΣ ΕΜΠΙΣΤΟΣΥΝΗΣ" | ///
+q21_other=="ΕΙΝΑΙ ΘΕΜΑ ΕΜΠΙΣΤΟΣΥΝΗΣ"
+
+
+*Covered by insurance 
+replace q21=8  if q21_other=="απο τηνδουλεια τουεχει ασφαλεια" | ///
+q21_other=="ΕΙΝΑΙ ΣΥΜΒΕΒΛΗΜΕΝΟ ΜΕ ΤΗΝ ΙΔΙΩΤΙΚΗ ΑΣΦΑΛΕΙΑ ΜΟΥ"
+
+
+********************************************************************************
+**# q42_other. The last time this happened what was the main reason? 
+	
+* ===== CLASSIFICATION OF 5 "OTHER, SPECIFY" RESPONSES UNDER Q42 CATEGORIES
+*Long waiting time
+replace q42=3 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΡΑΝΤΕΒΟΥ ΓΙΑ ΤΟΥΣ ΕΠΟΜΕΝΟΥΣ 7 ΜΗΝΕΣ"
+
+*Medicines and equipment not available
+replace q42=6 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΑΣΘΕΝΟΦΟΡΟ"
+
+* Covid-19 restrictions
+replace q42=8 if q42_other=="ΓΙΑΤΙ ΕΙΧΑ COVID KAI DEN ME ΔEXONTAN ΣΕ ΙΔΙΩΤΙΚΑ ΘΕΡΑΠΕΥΤΗΡΙΑ" | ///
+q42_other=="ΔΕΝ ΜΕ ΔΕΧΘΗΚΑΝ ΕΠΕΙΔΗ ΗΜΟΥΝ ΑΝΕΜΒΟΛΙΑΣΤΗ" | ///
+q42_other=="ΕΙΧΑ COVID"
+
+* Staff don't show respect
+replace q42=5 if q42_other=="ΑΔΙΑΦΟΡΙΑ ΓΙΑΤΡΟΥ" | ///
+q42_other=="ΜΕ ΕΞΑΤΑΣΕ ΒΙΑΣΤΙΚΑ ΚΑΙ ΜΕ ΑΝΑΓΚΑΣΕ ΝΑ ΠΑΩ ΤΟ ΑΠΟΓΕΥΜΑ ΣΤΟ ΙΑΤΡΙΟ ΤΟΥ"
+
+*********************************************************************************
+**# q43 & q43_other. What type of healthcare facility is this? 						
+* Only one response could be categorized under q43 responses: 
+
+replace q43=1 if q43_other=="ΣΤΡΑΤΙΩΤΙΚΟ ΝΟΣΟΚΟΜΕΙΟ"
+		onse) - not categorized 
+
+* The other responses could not categorized under q43 responses:
+
+		/* ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ = "Diagnostic center" (vague response) - not categorized*/
+		/* ΜΙΚΡΟΒΙΟΛΟΓΙΚΟ = "Microbiology Lab" (vague response) - not categorized */
+		/* ΜΙΚΡΟΒΙΟΛΟΓΟΣ = "Microbiology Lab" (vague response) - not categorized */
+		/* ΤΥΠΕΤ = (vague response) - not categorized*/
+		/* ΤΑΜΕΙΟ ΤΩΝ ΔΗΜΟΣΙΟΓΑΦΩΝ = "Journalists' fund" (vague respοnse)*/
+
+
+
+*********************************************************************************
+**# q44 & q44_other. What type of healthcare facility is this? 						
+* No response could be categorized under q44 responses, please see below translation & justification:
+
+* PUBLIC "OTHER" RESPONSES
+		/*KINHTH MONADA = "Mobile medical unit" (other response) - not categorized*/
+		/*ΕΔΟΕΑΠ = "Journalists' fund" (vague response) - not categorized */
+		/*ΙΑΤΡΕΙΟ = "Doctor's office" (vague response) - not categorized*/
+		/*ΙΔΙΩΤΗΣ = "Private provider" (vague response) - not categorized*/
+		/*ΙΔΙΩΤΗΣ ΓΙΑΤΡΟΣ = "Private doctor" (vague response) - not categorized*/
+		/*ΟΔΟΝΤΙΑΤΡΙΚΗ ΣΧΟΛΗ = "Dental school" (other response) - not categorized */
+		/*ΣΤΗΝ ΠΥΡΟΣΒΕΣΤΙΚΗ = "Firefighter's facilities" (vague response: counld be inpatient or outpatient) - not categorized*/
+		/*ΣΤΡΑΤΙΩΤΙΚΟ = "Military" (vague response: counld be inpatient or outpatient) - not categorized*/
+
+* PRIVATE FOR-PROFIT "OTHER" RESPONSES
+		/* KLINIKH  = "Clinic" (vague response) - not categorized*/
+		/* ON LINE  (other response) - not categorized */
+		/* ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ  = "Diagnostic center" (other response) - not categorized*/
+		/* ΙΑΤΡΙΚΟ ΚΕΝΤΡΟ  = "Medical center" (vague response) - not categorized */
+		/* ΚΛΙΝΙΚΗ  = "Clinic" (vague response) - not categorized*/
+		/* ΜΙΚΡΟΒΙΟΛΟΓΙΚΟ ΕΡΓΑΣΤΗΡΙΟ = "Microbiology Lab" (other response) - not categorized */ 
+		/* ΠΟΛΥΙΑΤΡΕΙΟ = "Polyclinic" (vague response) - not categorized*/
+
+* CONTRACTED "OTHER" RESPONSES
+		/* ΔΙΑΓΝΩΣΤΙΚΟ = "Diagnostic center" (other response) - not categorized*/
+		/* ΔΙΑΓΝΩΣΤΙΚΟ KENTΡO  = "Diagnostic center" (other response) - not categorized*/
+		/* ΔΙΑΓΝΩΣΤΙΚΟ ΚΕΝΤΡΟ  = "Diagnostic center" (other response) - not categorized*/
+		/* ΜΙΚΡΟΒΙΟΛΟΓΙΚΗ ΚΛΙΝΙΚΗ  = "Microbiology clinic" (vague response) - not categorized */
+		/* ΜΙΚΡΟΒΙΟΛΟΓΙΚΟ ΕΡΓΑΣΤΗΡΙΟ  = "Microbiology Lab" (other response) - not categorized */
+		/* ΜΙΚΡΟΒΙΟΛΟΓΚΟ ΕΡΓΑΣΤΗΡΙΟ  = "Microbiology Lab" (other response) - not categorized */
+		/* ΠΑΝΕΠΙΣΤΗΜΙΑΚΗ ΣΧΟΛΗ = "University" (vague response) - not categorized */
+		/* ΠΟΛΙΑΤΡΙΑ  = "Polyclinic" (vague response) - not categorized */
+		/* ΠΟΛΥΙΑΤΡΕΙΑ  = "Polyclinic" (vague response) - not categorized */
+		/* ΠΟΛΥΙΑΤΡΕΙΟ  = "Polyclinic" (vague response) - not categorized */
+		/* διαγνωστικο κεντρο  = "Diagnostic center" (other response) - not categorized */
+		/* μοναδα αιμοκαθαρσησ  = "Hemodialysis unit" (other response) - not categorized */
+
+* NGO RESPONSES
+* This response ("ΙΔΙΩΤΙΚΗ") means "Private" - vague response - not categorized.
+
+
+*********************************************************************************
+**# (f) q45 & q45_other What was the main reason you went?  	
+*CATEGORIZATION OF 9/31 "OTHER, SPECIFY" RESPONSES UNDER Q45 CATEGORIES
+
+* Follow-up care for a longstanding illness
+replace q45=2  if q45_other=="ΚΑΘΕΩ ΤΡΕΙΣ ΜΗΝΕΣ ΓΡΑΦΩ ΤΑ ΦΑΡΜΑΚΑ ΜΟΥ" | ///
+q45_other=="ΕΛΕΓΧΟΣ ΕΓΧΕΙΡΙΣΜΕΝΟΥ ΠΟΔΙΟΥ" | ///
+q45_other=="ΕΠΑΝΕΛΕΓΧΟΣ"
+
+
+* Preventive care
+replace q45=3 if q45_other=="ΠΡΟΛΗΠΤΙΚΟΣ ΕΚΕΓΧΟΣ" | ///
+q45_other== "ΤΑΚΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other=="ΠΡΟΛΗΨΗ" | ///
+q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | ///
+q45_other=="ΕΤΗΣΙΟ ΤΣΕΚ -ΑΠ" 
+            
+
+*********************************************************************************
+**# q62 & q62_other Respondent's mother tongue or native language 
+
+replace q62_other="Albanian" if q62_other=="ALBANIA" | ///
+q62_other=="ALBANIKA" | ///
+q62_other=="ALBANIKH" | ///
+q62_other=="AΛBANIKA" | ///
+q62_other=="albanikh" | ///
+q62_other=="ΑΒΑΝΙΚΗ"  | ///
+q62_other=="ΑΛBANIKA" | ///
+q62_other=="ΑΛΒΑΝΙΚΑ" | ///
+q62_other=="ΑΛΒΑΝΙΚΗ" | ///
+q62_other=="αλβανικα" 
+
+replace q62_other="Greek" if q62_other=="EΛΗΝΙΚΑ" | ///
+q62_other=="EΛΛΗΝΙΚΑ" | ///
+q62_other=="ΕΛΛΗΝΙΚΑ" | ///
+q62_other=="ΠΟΝΤΙΑΚΑ" | ///
+q62_other=="ΠΟΝΤΙΑΚΗ" | ///
+q62_other=="ΚΥΠΡΙΑΚΑ"
+
+replace q62=90 if q62_other=="Greek" 
+
+*/
 
 *------------------------------------------------------------------------------*
 
@@ -623,90 +935,59 @@ label value q19_gr q19_gr_label
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
-**# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES
-**# Stata Version 18.0, 27-JUL-2023 
+gen q7_other_original = q7_other
+label var q7_other_original "Q7. Other"
 
-* Data cleaning was focused on: 
-*(a) q8: highest level of education completed by the respondent 
-*(b) q19 & q43: public/private/contracted/NGO facility,
-*(c) q20 & q44 type of healthcare facility (help distinguish primary from secondary healthcare), 
-*(d) q21: main reason for choosing the healthcare facility of usual healthcare
-*(e) q42: reason of unmet need the last time that the respondent needed healthcare
-*(f) q45: main reason for last healthcare visit 
- 
+gen q8_other_original = q8_other
+label var q8_other_original "Q8. Other"
 
-*****************************************************************************************************************
-**# (a) q8 & q8_other: Highest level of education completed by the respondent 					
-***********************************************************************************************************
+gen q19_gr_other_original = q19_gr_other
+label var q19_gr_other_original "Q19. GR only: Other"
 
-* ===== CLASSIFICATION OF 152/153 "OTHER, SPECIFY" RESPONSES UNDER Q8 CATEGORIES
- 
-replace q8=18050 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="METAPTIXIAKO" ///
- | q8_other=="METAPTYXIAKO" | q8_other=="ΔΙΔΑΚΤΟΡΙΚΟ" | q8_other=="ΜΑΣΤΕΡ" | ///
- q8_other=="ΜΕΤΑΠΠΤΥΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΑΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΧΙΑΚΟ" | ///
- q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΑ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ ΣΠΟΥΔΕΣ" | ///
- q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΟΣ" | q8_other=="ΜΕΤΑΠΥΥΧΙΑΚΟ" | ///
- q8_other=="Μεταπτυχιακό" | q8_other=="ΝΕΤΑΠΤΥΧΙΑΚΟ" | q8_other=="ΠΟΛΥΤΕΧΝΕΙΟ" | ///
- q8_other=="μεταπτυχιακο" 
- 
- 
-*****************************************************************************************************************
-**# (b) q19_gr & q19_gr_other: Is this a public, private, contracted to public, or NGO healthcare facility?  
-*****************************************************************************************************************
-* Responses of q19_gr_other (n=4) cannot be classified under q19_gr categories. The best approach is to keep them
-* as they are.  	
+gen q20_other_original = q20_other
+label var q20_other_original "Q20. Other"
 
-		
-*****************************************************************************************************************
-**# (c) q20 & q20_other. What type of healthcare facility is this? 						  *****************************************************************************************************************
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
 
-* The majority of the responses "Other, specify" cannot be classified under q19_gr existing categories, either because 
-* they indeed do not fall under the existing categories or due to the fact that there is uncertaintly.
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
 
-* Only one response can be classified under public & hospital as an inpatient:
+gen q43_other_original = q43_other
+label var q43_other_original "Q43. Other"
 
-replace q20=18110 if q20_other=="ΝΟΣΟΚΟΜΕΙΟ ΜΕ ΝΟΣΗΛΙΑ ΩΡΩΝ"
-
-*****************************************************************************************************************	
-**# (c) q44 & q44_other. What type of healthcare facility is this? 					*****************************************************************************************************************	
-
-* All responses under "Other, specify" cannot be classified under q44 categories, either because 
-* they indeed do not fall under the existing categories or due to the fact that the responses are unclear.				
-										
-*****************************************************************************************************************	
-**# (d) q21 & q21_other: Why did you choose this healthcare facility? 				*****************************************************************************************************************	
-
-* ===== CLASSIFICATION OF 13/42 "OTHER, SPECIFY" RESPONSES UNDER Q21 CATEGORIES
-
-replace q21=1  if q21_other=="ΕΙΝΑΙ ΔΩΡΕΑΝ Η ΠΡΩΤΟΒΑΘΜΙΑ ΦΡΟΝΤΙΔΑ ΥΓΕΙΑΣ" | q21_other=="ΜΗΔΑΜΙΝΟ ΚΟΣΤΟΣ"
-replace q21=3  if q21_other=="ΚΟΝΤΙΝΑ ΡΑΝΤΕΒΟΥ" | q21_other=="ΑΜΕΣΟΤΗΤΑ" | q21_other=="ΑΜΕΣΗ ΕΞΥΠΗΡΕΤΗΣΗ"
-replace q21=4  if q21_other=="ΝΙΩΘΩ ΑΣΦΑΛΕΙΑ ΚΑΙ ΕΜΠΙΣΤΟΣΥΝΗ ΜΕΒ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΓΙΑΤΡΟ" | q21_other=="ΕΞΙΔΕΙΚΕΥΜΕΝΟ" | ///
-q21_other=="EMPISTOSYNH STO GIATRO" | q21_other=="ΓΙΑΤΙ ΕΚΕΙ ΒΡΙΣΚΩ ΓΙΑΤΡΟΥΣ ΠΟΥ ΞΕΡΟΥΝ ΝΑ ΚΑΝΟΥΝ ΤΗ ΔΟΥΛΕΙΑ ΤΟΥΣ" | ///
-q21_other=="ΕΧΟΥΝ ΕΞΕΙΔΙΚΕΥΣΗ" | q21_other=="ΟΙ ΥΠΗΡΕΣΙΕΣ ΠΟΥ ΠΑΡΕΧΟΝΤΑΙ ΑΠΟ ΤΗ ΣΥΓΚΕΚΡΙΜΕΝΗ ΔΟΜΗ ΕΙΝΑΙ ΠΟΛΥ ΚΑΛΕΣ" | ///
-q21_other=="ΕΜΠΙΣΤΕΥΟΜΑΙ ΤΟ ΓΙΑΤΡΟ" | q21_other=="ΓΙΑ ΛΟΓΟΥΣ ΕΜΠΙΣΤΟΣΥΝΗΣ"
-replace q21=8  if q21_other=="απο τηνδουλεια τουεχει ασφαλεια" | q21_other=="ΕΙΝΑΙ ΣΥΜΒΕΒΛΗΜΕΝΟ ΜΕ ΤΗΝ ΙΔΙΩΤΙΚΗ ΑΣΦΑΛΕΙΑ ΜΟΥ"
-
-
-*****************************************************************************************************************
-**# (e) q42_other. The last time this happened what was the main reason? 
-*****************************************************************************************************************	
-* ===== CLASSIFICATION OF 5 "OTHER, SPECIFY" RESPONSES UNDER Q42 CATEGORIES
-
-replace q42=3 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΡΑΝΤΕΒΟΥ ΓΙΑ ΤΟΥΣ ΕΠΟΜΕΝΟΥΣ 7 ΜΗΝΕΣ"
-replace q42=6 if q42_other=="ΔΕΝ ΥΠΗΡΧΕ ΑΣΘΕΝΟΦΟΡΟ"
-replace q42=8 if q42_other=="ΓΙΑΤΙ ΕΙΧΑ COVID KAI DEN ME ΔEXONTAN ΣΕ ΙΔΙΩΤΙΚΑ ΘΕΡΑΠΕΥΤΗΡΙΑ" | ///
-q42_other=="ΔΕΝ ΜΕ ΔΕΧΘΗΚΑΝ ΕΠΕΙΔΗ ΗΜΟΥΝ ΑΝΕΜΒΟΛΙΑΣΤΗ" |  q42_other=="ΕΙΧΑ COVID"
+gen q44_other_original = q44_other
+label var q44_other_original "Q44. Other"
 	
-*****************************************************************************************************************	
-**# (f) q45 & q45_other What was the main reason you went?  	
-*****************************************************************************************************************	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"	
 
-*CLASSIFICATION OF 9/31 "OTHER, SPECIFY" RESPONSES UNDER Q45 CATEGORIES
+gen q62_other_original = q62_other
+label var q62_other_original "62. Other"	
 
-replace q45=3 if q45_other=="ΠΡΟΛΗΠΤΙΚΟΣ ΕΚΕΓΧΟΣ" | q45_other== "ΤΑΚΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other=="ΠΡΟΛΗΨΗ" | ///
-q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other== "ΠΡΟΛΗΠΤΙΚΟΣ ΕΛΕΓΧΟΣ" | q45_other=="ΠΡΟΛΗΨΗ" | q45_other=="ΕΤΗΣΙΟ ΤΣΕΚ -ΑΠ" 
-replace q45=2  if q45_other=="ΚΑΘΕΩ ΤΡΕΙΣ ΜΗΝΕΣ ΓΡΑΦΩ ΤΑ ΦΑΡΜΑΚΑ ΜΟΥ"
 
+*Remove "" from responses for macros to work
+replace q21_other = subinstr(q21_other,`"""',  "", .)
+replace q42_other = subinstr(q42_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_18.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_serial)	
+	
+drop q7_other q8_other q19_gr_other q20_other q21_other q42_other q43_other q44_other q45_other q62_other
+	 
+ren q7_other_original q7_other
+ren q8_other_original q8_other
+ren q19_gr_other_original q19_gr_other
+ren q20_other_original q20_other
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43_other_original q43_other
+ren q44_other_original q44_other
+ren q45_other_original q45_other
+ren q62_other_original q62_other
 
 
 *------------------------------------------------------------------------------*
