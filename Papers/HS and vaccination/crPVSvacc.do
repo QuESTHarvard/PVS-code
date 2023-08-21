@@ -36,6 +36,7 @@ replace c ="UK" if country==17
 	recode q14_la (0/1=0) (2/4=1), gen(twodosesla)
 	replace twodoses= twodosesla if twodoses==.a 
 	drop twodosesla
+	
 * Health system variables
 	recode visits_total (1/2=1) (2.5/4.5=2) (5/250=3), gen(visits4)
 	lab def visits4 0"No visits" 1"1-2visits" 2"3-4visits" 3"5ormorevisits"

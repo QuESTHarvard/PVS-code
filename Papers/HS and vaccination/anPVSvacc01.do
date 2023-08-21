@@ -28,6 +28,7 @@ summtab, catvars(visits4 usual_source  preventive unmet_need  ///
 summtab, catvars(health_chronic ever_covid post_secondary high_income female urban minority) ///
 		         contvars(age) by(country) mean meanrow catrow wts(weight) ///
 		         replace excel excelname(supptable demog)  				
+
 ********************************************************************************
 * COUNTRY-SPECIFIC REGRESSIONS - UTILIZATION
 foreach x in  Ethiopia Kenya LaoPDR Mexico Peru SouthAfrica USA UK {

@@ -1,7 +1,7 @@
 
 * Analysis: Health system quality and COVID vaccination in 14 countries
 * Created by C.Arsenault, April 2023
-* Health system competence and rating of own care models
+* Health system competence, perceived quality and user experience
 
 ********************************************************************************
 global user "/Users/catherine.arsenault/Dropbox"
@@ -11,7 +11,8 @@ global analysis "SPH Kruk Active Projects/Vaccine hesitancy/Analyses/Paper 7 vac
 u "$user/$analysis/pvs_vacc_analysis.dta", clear
 set more off
 ********************************************************************************
-* COUNTRY-SPECIFIC  REGRESSIONS - RATING OF OWN CARE AND SYSTEM COMPETENCE
+* COUNTRY-SPECIFIC  REGRESSIONS - HEALTH SYSTEM COMPETENCE, PERCEIVED QUALITY & USER EXPERIENCE
+
 foreach x in  Ethiopia  Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
 	putexcel set "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'")  modify	
 	logistic fullvax usual_source preventive unmet_need ///
@@ -23,6 +24,7 @@ foreach x in  Ethiopia  Kenya LaoPDR Mexico Peru SouthAfrica USA UK {
 				high_income female urban  minority if c=="`x'", vce(robust)		
 	putexcel (A15) = etable
 	}
+	
 foreach x in Argentina Colombia India Korea Uruguay Italy {
 	putexcel set "$user/$analysis/country-specific regressions comp qual.xlsx", sheet("`x'")  modify
 	logistic fullvax usual_source preventive unmet_need ///
@@ -131,7 +133,7 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy Kenya LaoPDR Mexico 
 		 
 		graph export "$user/$analysis/unmet_need.pdf", replace 
 
-	* GRAPHS QUALITY OF OWN CARE
+* GRAPHS PERCEIVED QUALITY ANS USER EXPERIENCE
 		twoway (rspike UCL LCL co if A=="vgusual_quality"& co>=1 & co<=4, lwidth(medthick) lcolor(pink)) ///
 			   (scatter aOR co if A=="vgusual_quality" & co>=1 & co<=4, msize(medsmall) mcolor(pink))  ///
 			   (rspike UCL LCL co if A=="vgusual_quality"& co>=5 & co<=9, lwidth(medthick) lcolor(lime)) ///
@@ -178,7 +180,7 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy Kenya LaoPDR Mexico 
 		graph export "$user/$analysis/mistake.pdf", replace 
 	restore 
 	
-	* META ANALYSIS - by income groups
+* META ANALYSIS - by income groups
 	local row = 1
 	
 	putexcel set "$user/$analysis/pooled estimates.xlsx", sheet("hs_competence")  modify
@@ -206,7 +208,8 @@ foreach x in  Argentina Colombia India Korea  Uruguay Italy Kenya LaoPDR Mexico 
 	putexcel B`row'= matrix(b), rownames 
 	local row = `row' + 9
 	}
-* META ANALYSIS - all countries
+
+	* META ANALYSIS - all countries
 	local row = 1
 	
 	putexcel set "$user/$analysis/pooled estimates.xlsx", sheet("hs_competence_all")  modify
