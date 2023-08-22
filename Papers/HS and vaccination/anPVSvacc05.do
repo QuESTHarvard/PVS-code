@@ -1,7 +1,7 @@
 * Analysis: Health system quality and COVID vaccination in 14 countries
 * Created by C.Arsenault, April 2023
 
-* CHECKING FOR MULTICOLLINEARITY
+* CHECKING FOR MULTICOLLINEARITY 
 
 global user "/Users/catherine.arsenault/Dropbox"
 global data "SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Multi-country/02 recoded data"
@@ -122,9 +122,8 @@ foreach x in Argentina Colombia India Korea Uruguay Italy {
 				vif, uncentered
 	putexcel (F2) = rscalars	
 	}
+	
 
-	
-	
 	
 	
 	
