@@ -24,7 +24,9 @@ set more off
 * Import data 
 import spss using "$data/Greece/01 raw data/PVS_Greece_weighted_180723.sav", case(lower)
 
-notes drop _all
+append using "$data/Greece/01 raw data/q43_other_data.dta"
+
+*notes drop _all
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
@@ -69,6 +71,7 @@ recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 
 ren q43_gr q43b_gr
 ren q43 q43a_gr
+ren q43_other q43a_gr_other
 
 ren q46_gr2 q46a
 ren q46_gr q46b 
@@ -648,21 +651,72 @@ lab var q66b_gr "Q66b. GR only: Is this mobile phone your only phone, or do you 
 lab var q69_gr "Q69. GR only: Including yourself, how many people aged 18 or older currently live in your household"
 
 *------------------------------------------------------------------------------*
-*Dropping the following value labels so the dataset won't get messed up when merging
 
-label copy labels24 q19_gr_label
-label drop labels24  
-label value q19_gr q19_gr_label 
-
-*------------------------------------------------------------------------------*
 
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
-/*
-**# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES - UPDATED FILE
+gen q7_other_original = q7_other
+label var q7_other_original "Q7. Other"
+
+gen q8_other_original = q8_other
+label var q8_other_original "Q8. Other"
+
+gen q19_gr_other_original = q19_gr_other
+label var q19_gr_other_original "Q19. GR only: Other"
+
+gen q20_other_original = q20_other
+label var q20_other_original "Q20. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q43a_gr_other_original = q43a_gr_other
+label var q43a_gr_other_original "Q43. Other"
+
+gen q44_other_original = q44_other
+label var q44_other_original "Q44. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"	
+
+gen q62_other_original = q62_other
+label var q62_other_original "62. Other"	
+
+
+*Remove "" from responses for macros to work
+replace q21_other = subinstr(q21_other,`"""',  "", .)
+replace q42_other = subinstr(q42_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_18.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_serial)	
+	
+drop q7_other q8_other q19_gr_other q20_other q21_other q42_other q43a_gr_other q44_other q45_other q62_other
+	 
+ren q7_other_original q7_other
+ren q8_other_original q8_other
+ren q19_gr_other_original q19_gr_other
+ren q20_other_original q20_other
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43a_gr_other_original q43a_gr_other
+ren q44_other_original q44_other
+ren q45_other_original q45_other
+ren q62_other_original q62_other
+
+*------------------------------------------------------------------------------*
+
+* Greece team sent code for other specify data - but still used input/output process:
+
+**# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES - UPDATED FILE (PART A)
 **# Stata Version 18.0, 10-AUG-2023 
 
 ********************************************************************************
@@ -670,7 +724,7 @@ label value q19_gr q19_gr_label
 
 * ===== CATEGORIZATION OF 1/2 "OTHER, SPECIFY" RESPONSES 
 
-replace q7=4 if q7_other=="ΕΔΟΕΑΠ"
+replace q7=18004 if q7_other=="ΕΔΟΕΑΠ"
 
 		/* Response Info: EDOEAP / ΕΔΟΕΑΠ (journalists' fund) is a legal person in private law covering only journalists and relevant professionals (mandatory insurance). It is not ncluded in the public expenditure and it has its own private council. */
 		
@@ -684,7 +738,7 @@ replace q7=4 if q7_other=="ΕΔΟΕΑΠ"
 
 * ===== CATEGORIZATION OF 152/153 "OTHER, SPECIFY" RESPONSES 
  
-replace q8=50 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="METAPTIXIAKO" ///
+replace q8=18050 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="METAPTIXIAKO" ///
  | q8_other=="METAPTYXIAKO" | q8_other=="ΔΙΔΑΚΤΟΡΙΚΟ" | q8_other=="ΜΑΣΤΕΡ" | ///
  q8_other=="ΜΕΤΑΠΠΤΥΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΑΧΙΑΚΟ" | q8_other=="ΜΕΤΑΠΤΙΧΙΑΚΟ" | ///
  q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΑ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ" | q8_other=="ΜΕΤΑΠΤΥΧΙΑΚΕΣ ΣΠΟΥΔΕΣ" | ///
@@ -695,10 +749,6 @@ replace q8=50 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="METAP
  
 		/* Response Info "ΚΑΠΟΙΑ ΣΧΟΛΗ ΜΕΤΑ ΤΟ ΛΥΚΕΙΟ" = "A school/institute after high school": (vague response) - not categorized*/
 	
-	
-	
-	
- 
 ********************************************************************************
 **# q19_gr & q19_gr_other: Is this a public, private, contracted to public, or NGO healthcare facility?  
 
@@ -718,7 +768,7 @@ replace q8=50 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="METAP
 * PUBLIC "OTHER" RESPONSES
 * Only one response could be categorized under q20 responses, please see below translation & justification: 
 
-replace q20=110 if q20_other=="ΝΟΣΟΚΟΜΕΙΟ ΜΕ ΝΟΣΗΛΙΑ ΩΡΩΝ"
+replace q20=18110 if q20_other=="ΝΟΣΟΚΟΜΕΙΟ ΜΕ ΝΟΣΗΛΙΑ ΩΡΩΝ"
 
 
 		/* Response Info: ΓΙΑΤΡΟΣ = "doctor" (vague response)- not categorized*/
@@ -765,14 +815,14 @@ replace q20=110 if q20_other=="ΝΟΣΟΚΟΜΕΙΟ ΜΕ ΝΟΣΗΛΙΑ ΩΡΩΝ
 **# q20_c & q20_c_other. Have you registered with a personal doctor?
 * 1 response means "No", please find code below:
 
-replace q20_c=2 if q20_c_other=="ΔΕΝ ΕΧΕΙ" 
+replace q20b_gr=2 if q20b_gr_other=="ΔΕΝ ΕΧΕΙ" 
 
 * 3/4 responses under q20_c_other cannot be categorized under q20_c because they mean "don't know", please find code below:
 
-replace q20_c_other="DK" if ///
-q20_c_other=="ΔΕΝ ΓΝΩΡΙΖΩ ΕΠΕΙΔΗ ΜΕ ΑΥΤΟ ΑΣΧΟΛΕΙΤΑΙ ΑΠΟΚΛΕΙΣΤΙΚΑ Η ΣΥΖΥΓΟΣ ΜΟΥ" | ///
-q20_c_other=="ΔΕΝ ΕΙΜΑΙ ΣΙΓΟΥΡΟΣ" | ///
-q20_c_other=="ΔΕΝ ΞΕΡΩ"
+replace q20b_gr_other="DK" if ///
+q20b_gr_other=="ΔΕΝ ΓΝΩΡΙΖΩ ΕΠΕΙΔΗ ΜΕ ΑΥΤΟ ΑΣΧΟΛΕΙΤΑΙ ΑΠΟΚΛΕΙΣΤΙΚΑ Η ΣΥΖΥΓΟΣ ΜΟΥ" | ///
+q20b_gr_other=="ΔΕΝ ΕΙΜΑΙ ΣΙΓΟΥΡΟΣ" | ///
+q20b_gr_other=="ΔΕΝ ΞΕΡΩ"
 
 
 ********************************************************************************
@@ -831,8 +881,7 @@ q42_other=="ΜΕ ΕΞΑΤΑΣΕ ΒΙΑΣΤΙΚΑ ΚΑΙ ΜΕ ΑΝΑΓΚΑΣΕ Ν
 **# q43 & q43_other. What type of healthcare facility is this? 						
 * Only one response could be categorized under q43 responses: 
 
-replace q43=1 if q43_other=="ΣΤΡΑΤΙΩΤΙΚΟ ΝΟΣΟΚΟΜΕΙΟ"
-		onse) - not categorized 
+replace q43a_gr=1 if q43a_gr_other=="ΣΤΡΑΤΙΩΤΙΚΟ ΝΟΣΟΚΟΜΕΙΟ"
 
 * The other responses could not categorized under q43 responses:
 
@@ -890,7 +939,7 @@ replace q43=1 if q43_other=="ΣΤΡΑΤΙΩΤΙΚΟ ΝΟΣΟΚΟΜΕΙΟ"
 *CATEGORIZATION OF 9/31 "OTHER, SPECIFY" RESPONSES UNDER Q45 CATEGORIES
 
 * Follow-up care for a longstanding illness
-replace q45=2  if q45_other=="ΚΑΘΕΩ ΤΡΕΙΣ ΜΗΝΕΣ ΓΡΑΦΩ ΤΑ ΦΑΡΜΑΚΑ ΜΟΥ" | ///
+replace q45=2 if q45_other=="ΚΑΘΕΩ ΤΡΕΙΣ ΜΗΝΕΣ ΓΡΑΦΩ ΤΑ ΦΑΡΜΑΚΑ ΜΟΥ" | ///
 q45_other=="ΕΛΕΓΧΟΣ ΕΓΧΕΙΡΙΣΜΕΝΟΥ ΠΟΔΙΟΥ" | ///
 q45_other=="ΕΠΑΝΕΛΕΓΧΟΣ"
 
@@ -923,72 +972,519 @@ q62_other=="ΠΟΝΤΙΑΚΑ" | ///
 q62_other=="ΠΟΝΤΙΑΚΗ" | ///
 q62_other=="ΚΥΠΡΙΑΚΑ"
 
-replace q62=90 if q62_other=="Greek" 
+replace q62=18090 if q62_other=="Greek" 
 
-*/
+
+**# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES - UPDATED FILE (PART B)
+**# Stata Version 18.0, 16-AUG-2023 
+
+********************************************************************************
+**# Q20_B: Can you please tell me the specialty of your main provider in this facility? (1,109)
+
+* ===== CATEGORIZATION OF  "OTHER, SPECIFY" RESPONSES UNDER Q20_B
+
+* Internist categorization
+	replace q20a_gr=2 if ///
+		q20a_gr_other=="ΠΑΘΟΛΟΓΟΣ" | ///
+		q20a_gr_other=="ΕΙΔΙΚΟΣ ΠΑΘΟΛΟΓΟΣ" 
+		
+			
+		* Internist translation 
+			replace q20a_gr_other="pc_internist" if ///
+					q20a_gr_other=="ΠΑΘΟΛΟΓΟΣ" | ///
+					q20a_gr_other=="ΕΙΔΙΚΟΣ ΠΑΘΟΛΟΓΟΣ" 
+
+* Hematologist-Gastro-Diabetes-Cardiologist-Nephro-Rheuma-Onco-Pneumo-PRM categorization
+	replace q20a_gr=3 if ///
+		q20a_gr_other=="DIABHTOLOGOS" | ///
+		q20a_gr_other=="ΔΙΑΒΗΤΟΛΟΓΟΣ" | ///
+		q20a_gr_other=="ΔΙΒΗΤΟΛΟΓΟΣ ΠΑΘΟΛΟΓΟΣ" | ///
+		q20a_gr_other=="ΗΠΑΤΟΛΟΓΟΣ" | ///
+		q20a_gr_other=="ΝΕΦΡΟΛΟΓΟΣ" | ///
+		q20a_gr_other=="FYSIATROS"  | ///
+		q20a_gr_other=="ΡΕΥΜΑΤΟΛΟΓΟΣ" 
+				
+		* Diabetes specialist translation
+			replace q20a_gr_other="spec_diabetes" if ///
+					q20a_gr_other=="DIABHTOLOGOS" | ///
+					q20a_gr_other=="ΔΙΑΒΗΤΟΛΟΓΟΣ" | ///
+					q20a_gr_other=="ΔΙΒΗΤΟΛΟΓΟΣ ΠΑΘΟΛΟΓΟΣ" 		
+
+					
+		* Kidney specialist translation			
+			replace q20a_gr_other="spec_kidney" if ///			
+					q20a_gr_other=="ΝΕΦΡΟΛΟΓΟΣ" 
+					
+		* Physical Medicine & Rehabilitation (PRM) specialist translation			
+			replace q20a_gr_other="spec_prm" if ///				
+					q20a_gr_other=="FYSIATROS"  
+					
+		* Rheumatology specialist translation		
+			replace q20a_gr_other="spec_rheumatol" if ///				
+					q20a_gr_other=="ΡΕΥΜΑΤΟΛΟΓΟΣ" 
+			
+			
+* ===== TRANSLATION OF NOT CATEGORIZED UNDER Q20_B "OTHER, SPECIFY" RESPONSES 
+
+* Andrologist (Urologist)
+	replace q20a_gr_other="spec_urologist" if ///		
+			q20a_gr_other=="ANDROLOGOS" | ///
+			q20a_gr_other=="OYROLOGOS" | ///
+			q20a_gr_other=="ΟΥΡΟΛΟΓΟΣ" 
+
+* Neurologist
+	replace q20a_gr_other="spec_neurol" if ///
+			q20a_gr_other=="ΝΕΥΛΟΓΟΣ" | ///
+			q20a_gr_other=="ΝΕΥΡΟΛΟΓΟΣ" | ///
+			q20a_gr_other=="νευρολογοσ" 
+
+* Neurosurgeon
+	replace q20a_gr_other="surg_neuro" if ///
+			q20a_gr_other=="NEYROXEIROYRGOS"
+
+* Orhopaedist
+	replace q20a_gr_other="spec_ortho" if ///
+			q20a_gr_other=="ORKOPEDIKOS" | ///
+			q20a_gr_other=="ORUOPEDIKOS" | ///
+			q20a_gr_other=="orthopedikos"  | ///
+			q20a_gr_other=="oruopedikosw" | ///
+			q20a_gr_other=="ΟΡΘΟΠΑΙΔΙΚΟΣ" | ///
+			q20a_gr_other=="ΟΡΘΟΠΕΔΙΚΟΣ" | ///
+			q20a_gr_other=="ορθοπαιδικος" 
+		
+		
+* Dentist
+	replace q20a_gr_other="spec_dentist" if ///
+			q20a_gr_other=="ODONTIATROS" | ///
+			q20a_gr_other=="ΟΔΟΝΤΙΑΤΡΟΣ"  
+		
+		
+*Dermatologist
+	replace q20a_gr_other="spec_dermatol" if ///
+			q20a_gr_other=="δερματικοσ" | ///
+			q20a_gr_other=="ΔΕΡΜΑΤΟΛΟΓΟΣ" | ///
+			q20a_gr_other=="DERMATOLOGOS"	
+			
+		
+*Endocrinologist
+	replace q20a_gr_other="spec_endocrin" if ///
+			q20a_gr_other=="ENDOKRINOLOGOS" | ///
+			q20a_gr_other=="ENDOLRINOLOGOS" | ///
+			q20a_gr_other=="ENDΟΚΡΙΝΟΛΟΓΟΣ" | ///
+			q20a_gr_other=="ΕΝΔΟΚΡΙΝΟΛΟΓΟ" | ///
+			q20a_gr_other=="ΕΝΔΟΚΡΙΝΟΛΟΓΟΣ" | ///
+			q20a_gr_other=="ΕΝΔΟΚΡΙΝΟΛΟΣ" | ///
+			q20a_gr_other=="ΕΝΔΟΚΡΥΝΟΛΟΓΟΣ" | ///
+			q20a_gr_other=="ενδοκρινογος" | ///
+			q20a_gr_other=="ενδοκρινολογοσ" | ///
+			q20a_gr_other=="ενδοκρινολος" 
+
+*ENT		
+	replace q20a_gr_other="spec_ent" if ///
+			q20a_gr_other=="ΩΡΙΛΑ" | ///
+			q20a_gr_other=="ΩΡΙΛΑΣ" | ///
+			q20a_gr_other=="ΩΡΛ" | ///
+			q20a_gr_other=="ΩΡΥΛΑ" | ///
+			q20a_gr_other=="ωρλ" | ///
+			q20a_gr_other=="ΩΤΟΡΙΝΟΛΑΡΥΓΓΟΛΟΓΟΣ" | ///
+			q20a_gr_other=="ΟΡΥΛΑ" 
+
+
+			
+* Liver specialist translation		
+	replace q20a_gr_other="spec_liver" if ///
+			q20a_gr_other=="ΗΠΑΤΟΛΟΓΟΣ" 
+			
+			
+* Opthalmologist
+	replace q20a_gr_other="spec_eye" if ///
+			q20a_gr_other=="ΟΦΘΑΛΜΙΑΤΡΟΣ" | ///
+			q20a_gr_other=="οφθαλμιατρο" | ///
+			q20a_gr_other=="οφθαλμιατροσ" 
+	
+
+* Microbiologist
+	replace q20a_gr_other="spec_microbiol" if ///
+			q20a_gr_other=="ΜΙΚΡΟΒΙΟΛΟΓΙΚΟ" | /// 
+			q20a_gr_other=="ΜΙΚΡΟΒΙΟΛΟΓΟΣ" | ///
+			q20a_gr_other=="μικροβιολογος" 
+		
+
+* Radiologist
+	replace q20a_gr_other="spec_radiol" if ///
+			q20a_gr_other=="AKTINOLOGOS" | ///
+			q20a_gr_other=="ΑΚΤΙΝΟΛΟΓΟΙ"  | ///
+			q20a_gr_other=="ΑΚΤΙΝΟΛΟΓΟΣ" 
+		
+* Surgeon, unspecified
+	replace q20a_gr_other="surg_unspecified" if ///
+			q20a_gr_other=="ΧΕΙΡΟΥΡΓΟΣ" | ///
+			q20a_gr_other=="XEIROYRGOS" 
+			
+* Surgeon, breast
+	replace q20a_gr_other="surg_breast" if ///
+			q20a_gr_other=="ΧΕΙΡΟΥΡΓΟΣ ΜΑΣΤΟΥ"  
+			
+		
+* Psychiatrist 
+	replace q20a_gr_other="spec_psychiatrist" if ///
+			q20a_gr_other=="ΨΥΧΙΑΤΡΟΣ" | ///
+			q20a_gr_other=="ψυχιατρος" | ///
+			q20a_gr_other=="cyxiatros" 
+			
+* Non-physician, psychologist
+	replace q20a_gr_other="nophys_psychologist" if ///			
+			q20a_gr_other=="ΨΥΧΟΛΟΓΟΣ"		
+
+* Vascular specialist	
+	replace q20a_gr_other="spec_vascular" if ///
+			q20a_gr_other=="αγγειολογος" | ///
+			q20a_gr_other=="ΑΓΓΕΙΟΛΟΓΟΣ" 
+					
+
+* Without specialty - rural doctors	
+	replace q20a_gr_other="no_specialty" if ///
+			q20a_gr_other=="ΑΓΡΟΤΙΚΟΙ ΓΙΑΤΡΟΙ" | ///
+			q20a_gr_other=="ΑΓΡΟΤΙΚΟΣ" 
+
+			
+* Non-physician, Physical Therapist
+	replace q20a_gr_other="nophys_pt" if ///
+			q20a_gr_other=="ΦΥΣΙΚΟΘΕΡΑΠΕΥΤΗΣ" | ///
+			q20a_gr_other=="ΦΥΣΙΟΘΕΡΑΠΕΥΤΗΣ" 
+	
+
+* Responses that should be coded as missing values:
+	* "ΑΡΝΗΣΗ" = "Refused"
+	* "ΠΑΙΔΙΑΤΡΟΣ" = "Pediatrician"
+	
+	replace q20a_gr_other="999" if ///
+			q20a_gr_other=="ΠΑΙΔΙΑΤΡΟΣ" | ///
+			q20a_gr_other=="ΑΡΝΗΣΗ"
+			
+	replace q20a_gr_other="."	if q20a_gr_other=="999"
+	drop if q20a_gr_other=="."
+
+* Vague responses, coded as "Other":
+	* "ΑΝΑΛΟΓΩΣ ΤΗΝ ΠΕΡΙΠΤΩΣΗ" = "Depending on the case"
+	* "ΟΤΙ ΟΡΙΖΟΥΝ" = "Whatever they define"
+	* "ΣΕ ΔΙΑΦΟΡΕΣ ΕΙΔΙΚΟΤΗΤΕΣ" = "Numerous specialties"
+	* "ΤΜΗΜΑ ΜΕΤΑΜΟΣΧΕΥΣΕΩΝ" = "Transplant unit"
+	* "ΥΠΕΡΤΑΣΙΟΛΟΓΟΣ" = "Hypertension specialist"
+	* "ΜΑΣΤΟΛΟΓΟΣ" = "Breast specialist"
+	* "ΨΥΧΟΘΕΡΑΠΕΥΤΗΣ" = "Mental health professional"
+
+	replace q20a_gr_other="other" if ///
+			q20a_gr_other=="ΑΝΑΛΟΓΩΣ ΤΗΝ ΠΕΡΙΠΤΩΣΗ" | ///
+			q20a_gr_other=="ΟΤΙ ΟΡΙΖΟΥΝ" | ///
+			q20a_gr_other=="ΣΕ ΔΙΑΦΟΡΕΣ ΕΙΔΙΚΟΤΗΤΕΣ" | ///
+			q20a_gr_other=="ΤΜΗΜΑ ΜΕΤΑΜΟΣΧΕΥΣΕΩΝ" | ///
+			q20a_gr_other=="ΥΠΕΡΤΑΣΙΟΛΟΓΟΣ" | ///
+			q20a_gr_other=="ΜΑΣΤΟΛΟΓΟΣ"	| ///		
+			q20a_gr_other=="ΨΥΧΟΘΕΡΑΠΕΥΤΗΣ"			
+			
+			
+
+********************************************************************************
+**# Q44_B: Can you please tell me the specialty of your main provider in this facility? (1,744)
+
+* ===== CATEGORIZATION & TRANSLATION OF  "OTHER, SPECIFY" RESPONSES 
+		   
+* Internist cleaning
+	replace q44a_gr=2 if ///
+		q44a_gr_other=="PAUOLOGOS" | ///
+		q44a_gr_other=="ΕΙΔΙΚΟΣ ΠΑΘΟΛΟΓΟΣ" 
+		
+	* Internist translation
+			replace q44a_gr_other="pc_internist" if q44a_gr_other=="PAUOLOGOS" 
+			replace q44a_gr_other="pc_internist" if q44a_gr_other=="ΕΙΔΙΚΟΣ ΠΑΘΟΛΟΓΟΣ" 
+
+
+* Hematologist/Gastro/Diabetes/Cardiologist/Nephro/Rheuma/Onco/Pneumo cleaning
+	replace q44a_gr=3 if ///
+		q44a_gr_other=="ΠΑΘΟΛΟΓΟΣ ΔΙΑΒΗΤΟΛΟΓΟΣ" | ///
+		q44a_gr_other=="DIABHTOLOGOS" | ///
+		q44a_gr_other=="PAUOLOGOS-ΔΙΑΒΗΤΟΛΟΓΟΣ"  | ///
+		q44a_gr_other=="ΓΑΣΤΡΕΝΤΕΡΟΛΟΓΟΣ" | ///
+		q44a_gr_other=="ΔΙΑΒΗΤΟΛΟΓΟΣ" | ///
+		q44a_gr_other=="ΔΙΑΒΝΤΟΛΟΓΟΣ" | ///
+		q44a_gr_other=="ΚΑΡΔΙΟΛΟΓΟΣ" | ///
+		q44a_gr_other=="ΝΕΦΡΟΛΟΓΟΣ" 
+		
+	* Diabetes specialist translation
+			replace q44a_gr_other="spec_diabetes" if ///
+					q44a_gr_other=="ΠΑΘΟΛΟΓΟΣ ΔΙΑΒΗΤΟΛΟΓΟΣ" | ///
+					q44a_gr_other=="DIABHTOLOGOS" | ///
+					q44a_gr_other=="PAUOLOGOS-ΔΙΑΒΗΤΟΛΟΓΟΣ" | ///
+					q44a_gr_other=="ΔΙΑΒΗΤΟΛΟΓΟΣ" | ///
+					q44a_gr_other=="ΔΙΑΒΝΤΟΛΟΓΟΣ" 
+		
+	* Gastroenterologist translation		
+			replace q44a_gr_other="spec_gastro" if q44a_gr_other=="ΓΑΣΤΡΕΝΤΕΡΟΛΟΓΟΣ" 
+
+	* Cardio translation		
+			replace q44a_gr_other="spec_cardio" if q44a_gr_other=="ΚΑΡΔΙΟΛΟΓΟΣ" 
+			replace q44a_gr_other="spec_kidney" if q44a_gr_other=="ΝΕΦΡΟΛΟΓΟΣ" 
+
+* OBGYN cleaning
+	replace q44a_gr=4 if q44a_gr_other=="ΓΥΝΑΙΚΟΛΟΓΟΣ"
+
+* OBGYN translation
+	replace q44a_gr_other="spec_obgyn" if q44a_gr_other=="ΓΥΝΑΙΚΟΛΟΓΟΣ"
+
+* ===== TRANSLATION OF NOT CATEGORIZED  "OTHER, SPECIFY" RESPONSES 
+
+
+* Andrologist (Urologist)
+	replace q44a_gr_other="spec_urologist" if ///		
+			q44a_gr_other=="0ΥΡΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="ANDROLOGOS" | ///
+			q44a_gr_other=="OYROLOGOS" | ///
+			q44a_gr_other=="oyrologos" | ///
+			q44a_gr_other=="OYROΛΟΓΟΣ" | ///
+			q44a_gr_other=="ΟΥΡΟΛΟΓΟ" | ///
+			q44a_gr_other=="ΟΥΡΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="ΟΥΡΟΛΟΓΟς"
+
+
+* Neurologist
+	replace q44a_gr_other="spec_neurol" if ///
+			q44a_gr_other=="NEYROLOGOS" | ///	
+			q44a_gr_other=="ΝΕΥΡΟΛΟΓΟΣ" | ///	
+			q44a_gr_other=="Νευρολόγος" 
+
+* Neurologist-surgeon
+	replace q44a_gr_other="surg_neuro" if ///
+			q44a_gr_other=="ΝΕΥΡΟΧΕΙΡΟΥΡΓΟΣ"  | ///
+			q44a_gr_other=="ΧΕΙΡΟΥΡΓΟΣ ΝΕΥΡΟΛΟΓΟΣ" 
+
+* Orhopaedist
+	replace q44a_gr_other="spec_ortho" if ///	
+			q44a_gr_other=="ΟΡΘΟΠΑΙΔΙΚΟΣ" | ///
+			q44a_gr_other=="ΟΡΘΟΠΕΔΙΚΟ" | ///
+			q44a_gr_other=="ΟΡΘΟΠΕΔΙΚΟΣ" | ///
+			q44a_gr_other=="ορθοπεδικοσ" | ///
+			q44a_gr_other=="ΟΡΘΟΠΟΔΕΠΙΚΟ" | ///
+			q44a_gr_other=="ΟΠΘΟΠΕΔΙΚΟΣ" | ///
+			q44a_gr_other=="ΟΡΘ0ΠΕΔΙΚΟΣ" | ///
+			q44a_gr_other=="ORDOPEDIKOS" | ///
+			q44a_gr_other=="ORUOPEDIKOS" | ///
+			q44a_gr_other=="OΡΘOΠEΔIKOS" | ///
+			q44a_gr_other=="OΡΘΟΠΕΔΙΚΟΣ" | ///
+			q44a_gr_other=="ordopedikos" | ///
+			q44a_gr_other=="orthopedikos" | ///
+			q44a_gr_other=="oορθοπαιδικοσ"
+			 
+			 
+* Orhopaedist-surgeon
+	replace q44a_gr_other="surg_ortho" if ///	
+			q44a_gr_other=="ΧΕΙΡΟΥΡΓΟΣ ΟΡΘΟΠΕΔΙΚΟΣ" | ///
+			q44a_gr_other=="XEΙΡΟΥΡΓΟΣ ΟΡΘΟΠΕΔΙΚΟΣ" | ///		
+			q44a_gr_other=="ΧΕΙΡΟΥΡΓΟΣ, ΟΡΘΟΠΕΔΙΚΟΣ"
+
+		
+* Dentist
+	replace q44a_gr_other="spec_dentist" if ///	
+			q44a_gr_other=="|ODONTIATROS" | ///
+			q44a_gr_other=="ODONTIATROPS" | ///
+			q44a_gr_other=="ODONTIATROS" | ///
+			q44a_gr_other=="odontiatros" | ///
+			q44a_gr_other=="OΔΟΝΤΙΑΤΡΟΣ" | ///
+			q44a_gr_other=="ΟΔΟΝΤΙΑΤΡΟ" | ///
+			q44a_gr_other=="ΟΔΟΝΤΙΑΤΡΟΣ" | ///
+			q44a_gr_other=="οδοντιατρος" | ///
+			q44a_gr_other=="οδοντιατροσ" | ///
+			q44a_gr_other=="ΟΔΟΝΤΟΤΡΕΙΟ"
+
+		
+*Dermatologist
+	replace q44a_gr_other="spec_dermatol" if ///
+			q44a_gr_other=="DERMATOLOGOS" | ///
+			q44a_gr_other=="dermatologos" | ///
+			q44a_gr_other=="ΔΕΡΜΑΤΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="δερματολογος" | ///
+			q44a_gr_other=="δερματολοσ"
+			
+			
+		
+*Endocrinologist
+	replace q44a_gr_other="spec_endocrin" if ///
+			q44a_gr_other=="ENDOKRINOLOGOS" | ///
+			q44a_gr_other=="ENΔΟΚΡΙΝΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="ΕΝΔΙΟΚΡΙΝΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="ΕΝΔΟΚΡΙΛΟΓΟΣ" | ///
+			q44a_gr_other=="ΕΝΔΟΚΡΙΝΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="ενδοκρινολογος" | ///
+			q44a_gr_other=="Ενδοκρινολόγος" | ///
+			q44a_gr_other=="ΕΝΔΟΚΡΙΝΟΛΟΣ" | ///
+			q44a_gr_other=="ΕΝΔΟΟΔΟΝΤΙΣΤΗΣ" | ///
+			q44a_gr_other=="ΕΝΔΡΟΚΛΙΝΟΛΟΣ" | ///
+			q44a_gr_other=="ΕΝΔΡΟΚΡΙΝΟΛΟΓΟΣ"
+			
+
+*ENT		
+	replace q44a_gr_other="spec_ent" if ///
+			q44a_gr_other=="ORILAS" | ///
+			q44a_gr_other=="OΡΥΛΑ" | ///
+			q44a_gr_other=="ΩΡΙΛΑ" | ///
+			q44a_gr_other=="ΩΡΛ" | ///
+			q44a_gr_other=="ΩΡΥΛΑ" | ///
+			q44a_gr_other=="ΩΤΟΛΑΡΙΝΟΛΑΡΙΓΓΟΛΟΣ" | ///
+			q44a_gr_other=="ΩΤΟΡΙΝΟΛΑΡΥΓΓΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="ΟΡΙΛΑ" | ///
+			q44a_gr_other=="ΟΡΛ" | ///
+			q44a_gr_other=="ΟΡΛΑ" | ///
+			q44a_gr_other=="ΟΡΥΛΑ" | ///
+			q44a_gr_other=="ΩΡΙΛΑΣ"
+
+	
+* Opthalmologist (eye specialist)
+	replace q44a_gr_other="spec_eye" if ///		
+			q44a_gr_other=="0ΦΘΑΛΜΙΑΤΡΟΣ" | ///
+			q44a_gr_other=="OFUALMI\ATROS" | ///
+			q44a_gr_other=="OFUALMIATROS" | ///
+			q44a_gr_other=="OΦΘΑΛΜΙΑΤΡΟΣ" | ///
+			q44a_gr_other=="ΟΦΑΛΜΙΑΤΡΟ" | ///
+			q44a_gr_other=="ΟΦΑΛΜΙΑΤΡΟΣ" | ///
+			q44a_gr_other=="ΟΦΘΑΛΜΙΑΤΡΟ" | ///
+			q44a_gr_other=="ΟΦΘΑΛΜΙΑΤΡΟΣ" | ///
+			q44a_gr_other=="οφθαλμιατρος" | ///
+			q44a_gr_other=="ΟΦΘΑΛΜΟΛΟΓΙΚΟ" | ///
+			q44a_gr_other=="ΟΦΜΑΛΜΙΑΤΡΟΣ" | ///
+			q44a_gr_other=="ΟΦΡΑΛΜΙΑΤΡΟΣ" 
+
+
+* Microbiologist
+	replace q44a_gr_other="spec_microbiol" if ///
+			q44a_gr_other=="ΒΙΟΠΑΘΟΛΟΓΟΣ - ΜΙΚΡΟΒΙΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="ΜΙΚΡΟΒΙΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="ΜΥΚΡΟΒΙΟΛΟΓΙΚΟ" 
+				
+
+* Radiologist
+	replace q44a_gr_other="spec_radiol" if ///
+			q44a_gr_other=="AKTINILOGOS" | ///
+			q44a_gr_other=="AKTINΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="ΑΚΤΙΝΟΔΙΑΓΝΩΣΤΗΣ" | ///
+			q44a_gr_other=="ΑΚΤΙΝΟΛΟΓΟΣ"
+			
+		
+*Surgeon, general
+	replace q44a_gr_other="surg_general" if ///
+			q44a_gr_other=="ΓΕΝΙΚΗ ΧΕΙΡΟΥΡΓΟΣ" | ///
+			q44a_gr_other=="ΓΕΝΙΚΟΣ ΧΕΙΡΟΥΡΓΟΣ" | ///
+			q44a_gr_other=="π[αθολογοσ χειρουργοσ"
+		
+* Surgeon, unspecified
+	replace q44a_gr_other="surg_unspecified" if ///
+			q44a_gr_other=="XEIROYRGOS" | ///
+			q44a_gr_other=="xeiroyrgos" | ///
+			q44a_gr_other=="XEIROΥΡΓΟΣ" | ///
+			q44a_gr_other=="ΧΕΙΡΟΥΡΓΟΣ" | ///
+			q44a_gr_other=="χειρουργοσ" | ///
+			q44a_gr_other=="Χειρούργος"
+		
+* Psychiatrist 
+	replace q44a_gr_other="spec_psychiatrist" if ///
+			q44a_gr_other=="cyxiatros" | ///
+			q44a_gr_other=="ΨΥΧΙΑΤΡΟΣ" 
+		
+			
+* Vascular specialist	
+	replace q44a_gr_other="spec_vascular" if ///
+			q44a_gr_other=="ΑΓΓΕΙΟΛΟΓΟΣ" | ///
+			q44a_gr_other=="αγγειολογοσ"
+		
+* Surgeon, vascular
+	replace q44a_gr_other="surg_vascular" if ///
+			q44a_gr_other=="ΑΓΓΕΙΟΧΕΙΡΟΥΡΓΟΣ" 
+			
+
+* Without specialty (rural doctors)	
+	replace q44a_gr_other="no_specialty" if ///
+			q44a_gr_other=="ΑΓΡΟΤΙΚΟΣ"			
+
+	
+* Physical Therapist
+	replace q44a_gr_other="nophys_pt" if ///	
+			q44a_gr_other=="ΦΥΣΙΚΟΘΕΡΑΠΕΥΤΗΣ" | ///
+			q44a_gr_other=="ΦΥΣΙΟΘΕΡΑΠΕΥΤΗΣ" 
+
+
+* Non-physician, psychologist
+	replace q44a_gr_other="nophys_psychologist" if ///
+			q44a_gr_other=="Ψυχαναλύτρια" | ///
+			q44a_gr_other=="ΨΥΧΟΛΟΓΟΣ" 
+
+* Non-physician, nurse
+	replace q44a_gr_other="nophys_nurse" if ///
+			q44a_gr_other=="NOSHLEYTHS" 
+
+* Non-physician, epidemiologist
+	replace q44a_gr_other="nophys_epidemiologist" if ///
+			q44a_gr_other=="ΕΠΙΔΗΜΙΟΛΟΓΟΣ" 
+	
+* Non-physician, dietitian
+	replace q44a_gr_other="nophys_diet" if ///
+			q44a_gr_other=="DIATROFOLOGOS" | ///
+			q44a_gr_other=="ΔΙΑΙΤΟΛΟΓΟΣ"  | ///
+			q44a_gr_other=="ΔΙΑΤΡΟΦΟΛΟΓΟΣ" 
+			
+
+* Cell specialist			
+	replace q44a_gr_other="spec_cell" if ///
+			q44a_gr_other=="KYTTAROLOGOS" 
+ 
+* Allergy specialist
+	replace q44a_gr_other="spec_allergy" if ///
+			q44a_gr_other=="ΑΛΛΕΡΓΙΟΛΟΓΟΣ" 
+
+* Chest surgeon
+	replace q44a_gr_other="surg_chest" if ///
+			q44a_gr_other=="ΘΩΡΑΚ0ΧΕΙΡΟΥΡΓΟΣ"
+
+*Breast specialist
+	replace q44a_gr_other="spec_breast" if ///
+			q44a_gr_other=="ΜΑΣΤΟΛΟΓΟΣ" 
+
+* Breast surgeon
+	replace q44a_gr_other="surg_breast" if ///
+			q44a_gr_other=="ΜΑΣΤΟΛΟΓΟΣ ΧΕΙΡΟΥΡΓΟΣ" | ///
+			q44a_gr_other=="ΧΕΙΡΟΥΡΓΟΣ ΜΑΣΤΟΥ" 
+
+* Plastic surgeon
+	replace q44a_gr_other="surg_plastic" if ///
+			q44a_gr_other=="ΠΛΑΣΤΙΚΟΣ ΧΕΙΡΟΥΡΓΟΣ"
+
+* Proctologist 
+	replace q44a_gr_other="spec_proctol" if ///
+			q44a_gr_other=="ΠΡΟΚΤΟΛΟΓΟΣ" 
+
+* Nuclear medicine specialist
+	replace q44a_gr_other="spec_nuclear" if ///
+			q44a_gr_other=="ΠΥΡΗΝΙΚΗ ΙΑΤΡΙΚΗ" 
+
+ 
+* Vague responses, coded as "Other":
+	* "VRL" = "probabaly ent but it's vague"
+	* "yx" = "probabaly mental health specialist, but it's vague"
+	* "ΥΠΕΡΗΧΟΛΟΓΟΣ" = "ultrasound professional" vague response
+	* "ΨΥΧΟΘΕΡΑΠΕΥΤΗΣ" = "mental health professional" vague response
+	
+
+	replace q44a_gr_other="other" if ///
+			q44a_gr_other=="VRL" | ///
+			q44a_gr_other=="yx" | ///			
+			q44a_gr_other=="ΥΠΕΡΗΧΟΛΟΓΟΣ" | ///		
+			q44a_gr_other=="ΨΥΧΟΘΕΡΑΠΕΥΤΗΣ" 	
 
 *------------------------------------------------------------------------------*
 
+*Dropping the following value labels so the dataset won't get messed up when merging
 
-* Other, specify recode 
-* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
-* This command requires an input file that lists all the variables to be recoded and their new values
-* The command in data quality checks below extracts other, specify values 
-
-gen q7_other_original = q7_other
-label var q7_other_original "Q7. Other"
-
-gen q8_other_original = q8_other
-label var q8_other_original "Q8. Other"
-
-gen q19_gr_other_original = q19_gr_other
-label var q19_gr_other_original "Q19. GR only: Other"
-
-gen q20_other_original = q20_other
-label var q20_other_original "Q20. Other"
-
-gen q21_other_original = q21_other
-label var q21_other_original "Q21. Other"
-
-gen q42_other_original = q42_other
-label var q42_other_original "Q42. Other"
-
-gen q43_other_original = q43_other
-label var q43_other_original "Q43. Other"
-
-gen q44_other_original = q44_other
-label var q44_other_original "Q44. Other"
-	
-gen q45_other_original = q45_other
-label var q45_other_original "Q45. Other"	
-
-gen q62_other_original = q62_other
-label var q62_other_original "62. Other"	
-
-
-*Remove "" from responses for macros to work
-replace q21_other = subinstr(q21_other,`"""',  "", .)
-replace q42_other = subinstr(q42_other,`"""',  "", .)
-replace q45_other = subinstr(q45_other,`"""',  "", .)
-
-
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_18.xlsx",	///
-	sheet(other_specify_recode)							///	
-	id(respondent_serial)	
-	
-drop q7_other q8_other q19_gr_other q20_other q21_other q42_other q43_other q44_other q45_other q62_other
-	 
-ren q7_other_original q7_other
-ren q8_other_original q8_other
-ren q19_gr_other_original q19_gr_other
-ren q20_other_original q20_other
-ren q21_other_original q21_other
-ren q42_other_original q42_other
-ren q43_other_original q43_other
-ren q44_other_original q44_other
-ren q45_other_original q45_other
-ren q62_other_original q62_other
-
+label copy labels24 q19_gr_label
+label drop labels24  
+label value q19_gr q19_gr_label 
 
 *------------------------------------------------------------------------------*
 drop q8_other

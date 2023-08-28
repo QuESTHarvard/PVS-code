@@ -454,12 +454,15 @@ recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 902
 		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
 		   10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 ///
 		   12005 12006 15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 17007 17008 17009 18110 18113 18117 19121 19127 19123 19130 = 1 "Secondary (or higher)") ///
-		   (.a = .a "NA") (3995 9995 12995 4995 18995 .r = .r "Refused"), gen(usual_type_lvl)
+		   (.a = .a "NA") (3995 9995 12995 4995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if inlist(q19_q20a_la,2,4,6) | ///
 								  inlist(q19_q20b_la,2,4,6)
 recode usual_type_lvl (.a = 1) if q19_q20a_la == 1 | q19_q20a_la == 3 | q19_q20b_la == 1 | q19_q20b_la == 3
 
+recode usual_type_lvl (.a = 0) if q20a_gr == 1 | q20a_gr == 2
+
+recode usual_type_lvl (.a = 1) if q20a_gr == 3 | q20a_gr == 4 | q20a_gr == 6
 
 * NOTE: Maybe add an other for Laos? also for last visit level? But we will see with other, specify data
 		   
@@ -531,6 +534,10 @@ recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 902
 		   12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 4075 4076 17007 17008 17009 18110 18113 18117 19121 19127 19130 19123 = 1 "Secondary (or higher)") ///
 		   (.a = .a "NA") (3995 9995 11995 12995 13995 4995 18995 .r = .r "Refused"), gen(last_type_lvl)
 
+* Greece recode
+recode last_type_lvl (.a = 0) if q20a_gr == 1 | q20a_gr == 2
+recode last_type_lvl (.a = 1) if q20a_gr == 3 | q20a_gr == 4 | q20a_gr == 6		   
+		   
 		      
 * last_type - ownership and level
 gen last_type = . 
