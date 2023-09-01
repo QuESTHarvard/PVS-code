@@ -716,7 +716,7 @@ ren q62_other_original q62_other
 
 * Greece team sent code for other specify data - but still used input/output process:
 
-**# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES - UPDATED FILE (PART A)
+**# PVS GREECE - CATEGORIZATION OF "OTHER, SPECIFY" RESPONSES - UPDATED FILE (PART A)
 **# Stata Version 18.0, 10-AUG-2023 
 
 ********************************************************************************
