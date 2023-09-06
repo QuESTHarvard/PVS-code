@@ -316,7 +316,7 @@ recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r
 * Note: Some missing values in q1 that should be refused 
 
 * q7 
-recode q7 (. = .a) if q6 == 2 | q6 == .r 
+recode q7 (. = .a) if q6 == 2 | q6 == .r | q6 == .
 recode q7 (nonmissing = .a) if q6 == 2
 
 * q13 
