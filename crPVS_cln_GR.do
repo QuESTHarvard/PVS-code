@@ -24,6 +24,7 @@ set more off
 * Import data 
 import spss using "$data/Greece/01 raw data/PVS_Greece_weighted_180723.sav", case(lower)
 
+*q43_other responses manually appended since they were provided seperately
 append using "$data/Greece/01 raw data/q43_other_data.dta"
 
 *notes drop _all
