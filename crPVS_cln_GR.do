@@ -37,6 +37,7 @@ append using "$data/Greece/01 raw data/q43_other_data.dta"
 ren q14_new q14
 ren q15_new q15
 
+label drop labels26
 *change q21 for additional GR vars:
 recode q21 (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
@@ -49,9 +50,8 @@ recode q21 (1 = 1 "Low cost") ///
 			(995 = 9 "Other, specify") ///
 			(10 = 11 "GR: Preferred provider by other family members") ///
 			(11 = 12 "GR: Referred from another provider") ///
-			(996 = .r "Refused"), gen(recq21)
-
-
+			(996 = .r "Refused"), gen(recq21) label(labels26)
+			
 ren q28 q28_a
 ren q28_new q28_b
 ren q28_gr q28_c // need to flip order of values
@@ -81,6 +81,10 @@ ren q67 q65
 
 *Greece only vars:
 ren q20_b q20a_gr
+lab def q20a_gr 1 "GP/Family Physician" 2 "Internist" 3 "Hematologist, Gastroenterologists, Diabetes specialist, Cardiologist, Nephrologist, Rheumatologist, Oncologist, Pneumonologist" 4 "Obstetrician-Gynecologist" 6 "Other, specify"
+
+lab value q20a_gr q20a_gr
+
 ren q20_b_other q20a_gr_other
 ren q20_c q20b_gr 
 ren q20_c_other q20b_gr_other
@@ -502,6 +506,7 @@ lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels26 .a "NA", modify
+lab def q20a_gr .a "NA", modify
 lab def labels28 .a "NA", modify
 lab def labels45 .a "NA", modify
 lab def labels46 .a "NA", modify
