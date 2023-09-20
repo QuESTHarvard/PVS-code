@@ -904,15 +904,19 @@ keep if country == 17
 save "$data/United Kingdom/02 recoded data/pvs_gb_recoded"
 restore
 
-*/
-
 *Greece
 preserve
 keep if country == 18
 save "$data/Greece/02 recoded data/pvs_gr_recoded"
 restore
 
+*Romania
+preserve
+keep if country == 19
+save "$data/Romania/02 recoded data/pvs_ro_recoded"
+restore
 
+*/
 
 
 * ONLY RUN COMMAND BELOW WHEN SHARING TO ALL
