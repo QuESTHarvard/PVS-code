@@ -368,7 +368,7 @@ recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
-* Note: All are insured in South Africa, Laos, taly, Mendoza and UK
+* Note: All are insured in South Africa, Laos, Italy, Mendoza and UK
 gen insured = q6 
 recode insured (.a = 1) if country == 11 | country == 14 | country == 16 | country == 17
 recode insured (.a = 0) if inlist(q7,7014,13014) | inlist(q6_kr, 3) 
@@ -904,13 +904,15 @@ keep if country == 17
 save "$data/United Kingdom/02 recoded data/pvs_gb_recoded"
 restore
 
+*/
+
 *Greece
 preserve
 keep if country == 18
 save "$data/Greece/02 recoded data/pvs_gr_recoded"
 restore
 
-*/
+
 
 
 * ONLY RUN COMMAND BELOW WHEN SHARING TO ALL
