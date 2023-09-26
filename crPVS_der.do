@@ -21,7 +21,7 @@ qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
 	
-	if inlist(`i',12, 13, 14, 15, 17) {
+	if inlist(`i',12, 13, 14, 15, 17 18 19) {
 		extremes q46b country if country == `i', high
 	}
 
@@ -56,6 +56,10 @@ replace q46 = . if q46 > 780 & q46 < . & country == 15
 replace q46 = . if q46 > 540 & q46 < . & country == 16
 * UK - 3 values recoded
 replace q46 = . if q46 > 780 & q46 < . & country == 17
+* Greece - 1 value recoded (Todd to review)
+replace q46 = . if q46 > 600 & q46 < . & country == 18
+* Romania -  1 value recoded (Todd to review)
+replace q46 = . if q46 > 600 & q46 < . & country == 19
 
 * q47
 * Colombia okay 
@@ -79,6 +83,8 @@ replace q47 = . if q47 >= 600 & q47 < . & country == 15
 * Mendoza okay 
 * UK - 1 value recoded
 replace q47 = . if q47 > 560 & q47 < . & country == 17 
+* Greece okay (Todd to review)
+* Romania okay (Todd to review)
 
 * q46b
 * US - 4 values recoded 
@@ -90,6 +96,10 @@ replace q46b = . if q46b > 365 & q46b < . & country == 14
 replace q46b = . if q46b > 365 & q46b < . & country == 15
 * UK - 2 values recoded 
 replace q46b = . if q46b > 365 & q46b < . & country == 17
+* Greece - 1 value recoded (Todd to review)
+replace q46b = . if q46b > 720 & q46b < . & country == 18
+* Romania - 12 values recoded (Todd to review)
+replace q46b = . if q46b > 720 & q46b < . & country == 19
 
 *****************************
 
@@ -368,24 +378,28 @@ recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
-* Note: All are insured in South Africa, Laos, taly, Mendoza and UK
+* Note: All are insured in South Africa, Laos, Italy, Mendoza and UK
 gen insured = q6 
-recode insured (.a = 1) if country == 9 | country == 11 | country == 14 | country == 16 | country == 17
+recode insured (.a = 1) if country == 11 | country == 14 | country == 16 | country == 17
 recode insured (.a = 0) if inlist(q7,7014,13014) | inlist(q6_kr, 3) 
 recode insured (.a = 1) if inlist(q7,2015,2016,2017,2018,2028,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005,2015,2016,2017,2018, 2030) | inlist(q6_kr, 1, 2)
 recode insured (.a = .r) if q7 == .r | inlist(q7,2995,13995) | q6_kr == .r
 lab val insured yes_no
+
+
+recode insured (.a = 1) if q6_za == 1
+recode insured (.a = 0) if q6_za == 0
 
 * For Colombia, moved "no insurance" to "yes" in insured and "public" in "insur_type"
 
 * insur_type 
 
 recode q7 (3001 5003 2017 2018 7010 7011 7012 10019 10020 10022 11002 12002 12003 12005 13001 13002 13003 13004 14002 16001 16002 16003 16004 4023 4024 4025 4026 17002 2030 18029 19031 = 0 Public) ///
-		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 = 1 Private) /// 
+		  (3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 = 1 Private) /// 
 		  (2995 9995 12995 13995 4995 18995 19995 = 2 Other) ///
 		  (.r = .r "Refused") (7014 13014 16007 .a = .a NA), gen(insur_type)
 
-recode insur_type (.a = 0) if q6_za == 0
+recode insur_type (.a = 1) if q6_za == 1
 recode insur_type (.a = 1) if q7_kr == 1
 recode insur_type (.a = 0) if q7_kr == 0
 		 	  
@@ -402,8 +416,8 @@ recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 
 		  
 * usual_type_own
 		  
-recode q19_et_in_ke_ro_za (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
-		(.a = .a NA) (.r = .r Refused), ///
+recode q19_et_in_ke_ro_za (1 = 0 "Public") (2 3 = 1 "Private") (4 = 2 "Other") /// 
+		(.a = .a "NA") (.d = .d "Don't Know") (.r = .r "Refused"), ///
 		gen(usual_type_own)
 
 * Colombia recode
@@ -448,21 +462,23 @@ recode usual_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
 								   
 * usual type level								  
 
-recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
-			2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 14001 14002 ///
-			13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 17006 18106 18107 18108 18109 18111 18112 18115 18116 19120 19122 19126 19124 19125 19129 19128 = 0 "Primary") /// 
-		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 10093 10097 ///
-		   10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 ///
-		   12005 12006 15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 17007 17008 17009 18110 18113 18117 19121 19127 19123 19130 = 1 "Secondary (or higher)") ///
-		   (.a = .a "NA") (3995 9995 12995 4995 .r = .r "Refused"), gen(usual_type_lvl)
+recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 ///
+			9032 9033 9036 2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 ///
+			10104 14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
+			15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 ///
+			17006 19120 19122 19126 19124 19125 19129 19128 = 0 "Primary") /// 
+		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 ///
+		   10093 10097 10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 12005 12006 ///
+		   15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 17007 17008 17009 19121 19127 19123 19130 = 1 "Secondary (or higher)") ///
+		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 18995= .a "NA") (3995 9995 12995 4995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if inlist(q19_q20a_la,2,4,6) | ///
 								  inlist(q19_q20b_la,2,4,6)
 recode usual_type_lvl (.a = 1) if q19_q20a_la == 1 | q19_q20a_la == 3 | q19_q20b_la == 1 | q19_q20b_la == 3
 
-recode usual_type_lvl (.a = 0) if q20a_gr == 1 | q20a_gr == 2
+recode usual_type_lvl (.a . .r = 0) if (q20a_gr == 1 | q20a_gr == 2) & country == 18
 
-recode usual_type_lvl (.a = 1) if q20a_gr == 3 | q20a_gr == 4 | q20a_gr == 6
+recode usual_type_lvl (.a . = 1) if (q20a_gr == 3 | q20a_gr == 4 | q20a_gr == 6) & country == 18
 
 * NOTE: Maybe add an other for Laos? also for last visit level? But we will see with other, specify data
 		   
@@ -528,15 +544,18 @@ recode last_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
 recode q44 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 		   2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
 		   14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
-		   15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 17006 18106 18107 18108 18109 18111 18112 18115 18116 19120 19122 19124 19125 19128 19129 = 0 "Primary") /// 
-		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 ///
-		   10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 13019 13020 ///
-		   12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 4075 4076 17007 17008 17009 18110 18113 18117 19121 19127 19130 19123 = 1 "Secondary (or higher)") ///
-		   (.a = .a "NA") (3995 9995 11995 12995 13995 4995 18995 .r = .r "Refused"), gen(last_type_lvl)
+		   15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 17006 ///
+		   19120 19122 19124 19125 19128 19129 = 0 "Primary") /// 
+		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 ///
+		   7044 7046 7049 10093 10097 10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 ///
+		   13019 13020 12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 4075 4076 17007 17008 17009 19121 ///
+		   19127 19130 19123 = 1 "Secondary (or higher)") ///
+		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 18995 = .a "NA") ///
+		   (3995 9995 11995 12995 13995 4995 .r = .r "Refused"), gen(last_type_lvl)
 
 * Greece recode
-recode last_type_lvl (.a = 0) if q20a_gr == 1 | q20a_gr == 2
-recode last_type_lvl (.a = 1) if q20a_gr == 3 | q20a_gr == 4 | q20a_gr == 6		   
+recode last_type_lvl (.a = 0) if q44a_gr == 1 | q44a_gr == 2
+recode last_type_lvl (.a = 1) if q44a_gr == 3 | q44a_gr == 4 | q44a_gr == 6		   
 		   
 		      
 * last_type - ownership and level
@@ -904,6 +923,12 @@ restore
 preserve
 keep if country == 18
 save "$data/Greece/02 recoded data/pvs_gr_recoded"
+restore
+
+*Romania
+preserve
+keep if country == 19
+save "$data/Romania/02 recoded data/pvs_ro_recoded"
 restore
 
 */

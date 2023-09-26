@@ -64,7 +64,7 @@ qui do `label6'
 
 tempfile label7
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label7'
-label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label 
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
 append using "$data_mc/02 recoded data/pvs_gr.dta"
 
@@ -171,7 +171,8 @@ lab def labels37 12 "GR: Fear or anxiety of a healthcare procedure, examination 
 				 13 "RO: Fear of examination/medical procedure" ///
 				 14 "RO: Lack of trust in doctors/procedures" ///
 				 15 "RO: Concern about informal payments/gifts", modify
-lab def labels44 .a "NA" .r "Refused", modify				
+lab def labels44 .a "NA" .r "Refused", modify	
+lab def labels65 1 "Yes" 2 "No" .d "Don't Know", modify		
 				
 *** weights ***
 ren weight_educ weight

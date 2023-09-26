@@ -24,6 +24,7 @@ set more off
 * Import data 
 import spss using "$data/Greece/01 raw data/PVS_Greece_weighted_180723.sav", case(lower)
 
+*q43_other responses manually appended since they were provided seperately
 append using "$data/Greece/01 raw data/q43_other_data.dta"
 
 *notes drop _all
@@ -37,6 +38,7 @@ append using "$data/Greece/01 raw data/q43_other_data.dta"
 ren q14_new q14
 ren q15_new q15
 
+label drop labels26
 *change q21 for additional GR vars:
 recode q21 (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
@@ -49,9 +51,8 @@ recode q21 (1 = 1 "Low cost") ///
 			(995 = 9 "Other, specify") ///
 			(10 = 11 "GR: Preferred provider by other family members") ///
 			(11 = 12 "GR: Referred from another provider") ///
-			(996 = .r "Refused"), gen(recq21)
-
-
+			(996 = .r "Refused"), gen(recq21) label(labels26)
+			
 ren q28 q28_a
 ren q28_new q28_b
 ren q28_gr q28_c // need to flip order of values
@@ -81,6 +82,10 @@ ren q67 q65
 
 *Greece only vars:
 ren q20_b q20a_gr
+lab def q20a_gr 1 "GP/Family Physician" 2 "Internist" 3 "Hematologist, Gastroenterologists, Diabetes specialist, Cardiologist, Nephrologist, Rheumatologist, Oncologist, Pneumonologist" 4 "Obstetrician-Gynecologist" 6 "Other, specify"
+
+lab value q20a_gr q20a_gr
+
 ren q20_b_other q20a_gr_other
 ren q20_c q20b_gr 
 ren q20_c_other q20b_gr_other
@@ -247,7 +252,7 @@ recode q12 q15 q23 q37_gr (995 = .d)
 recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 q66a_gr q66b_gr (997 = .d)
 
 * In raw data, 996 = "refused" 	  
-recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
+recode q6 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
 	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr q66a_gr q66b_gr q69_codes (996 = .r)
@@ -316,8 +321,8 @@ recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r
 * Note: Some missing values in q1 that should be refused 
 
 * q7 
-recode q7 (. = .a) if q6 == 2 | q6 == .r 
-recode q7 (nonmissing = .a) if q6 == 2
+recode recq7 (. = .a) if q6 == 2 | q6 == .r | q6 == .
+recode recq7 (nonmissing = .a) if q6 == 2
 
 * q13 
 recode q13 (. = .a) if q12 == 2 | q12 == .r 
@@ -502,6 +507,7 @@ lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
 lab def labels26 .a "NA", modify
+lab def q20a_gr .a "NA", modify
 lab def labels28 .a "NA", modify
 lab def labels45 .a "NA", modify
 lab def labels46 .a "NA", modify
