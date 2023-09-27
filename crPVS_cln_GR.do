@@ -234,6 +234,7 @@ recode q23_q24 (996 = 2.5) (997 = 2.5) if q24 == 2
 recode q23_q24 (996 = 7) (997 = 7) if q24 == 3
 recode q23_q24 (996 = 10) (997 = 10) if q24 == 4
 recode q23_q24 (997 = .r) if q24 == 996
+recode q23_q24 (996 = .r) if q24 == . | q24 == .r
 
 *Q7
 gen recq7 = reccountry*1000 + q7
