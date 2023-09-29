@@ -10,7 +10,6 @@
 */
 
 ***************************** Deriving variables *******************************
-global data_mc "C:/Users/Mia/Biostat Global Dropbox/Mia Yu/Data/Multi-country"
 u "$data_mc/02 recoded data/pvs_appended.dta", clear
 
 *------------------------------------------------------------------------------*
