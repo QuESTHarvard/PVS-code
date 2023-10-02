@@ -64,7 +64,7 @@ qui do `label6'
 
 tempfile label7
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label7'
-label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label 
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
 append using "$data_mc/02 recoded data/pvs_gr.dta"
 
@@ -78,9 +78,22 @@ append using "$data_mc/02 recoded data/pvs_ro.dta"
 
 qui do `label8'
 
+*TBC
+rename q19_et_in_ke_ro_za q19_multi
+rename q43_et_in_ke_ro_za q43_multi
+rename q56_et_gr_in_ke_ro_za q56_multi
+
+tempfile label9
+label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label9'
+label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
+
+append using "$data_mc/02 recoded data/pvs_ng.dta"
+
+qui do `label9'
+
 * Country
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
-				17 "United Kingdom" 18 "Greece" 19 "Romania", modify
+				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria", modify
 
 * Mode
 recode mode (3 = 1) (4 = 3)
@@ -89,9 +102,9 @@ label val mode mode
 lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 
 * Country-specific skip patterns - check this 
-recode q19_et_in_ke_ro_za q56_et_gr_in_ke_ro_za (. = .a) if country != 3  | country != 18 | country != 4 | ///
-															country != 5 | country != 19 | country != 9  
-recode q43_et_in_ke_ro_za (. = .a) if country != 3 | country != 4 | country != 5 | country != 19 | country != 9
+recode q19_multi q56_multi (. = .a) if country != 3  | country != 18 | country != 4 | ///
+															country != 5 | country != 19 | country != 9 | country != 20
+recode q43_multi (. = .a) if country != 3 | country != 4 | country != 5 | country != 19 | country != 9 | country != 20
 recode q56_pe (. = .a) if country != 7
 recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
 recode q6_za q37_za (. = .a) if country != 9
@@ -117,7 +130,7 @@ recode q19_gr (. = .a) if country !=18
 recode q43a_gr (. = .a) if country !=18
 recode q43b_gr (. = .a) if country !=18
 recode q20a_gr q20b_gr q20c_gr q44a_gr q44b_gr q66a_gr q66b_gr q69_gr (. = .a) if country != 18
-
+recode q37_ng q50_e_ng (. = .a) if country != 20
 
 * Country-specific value labels -edit for ssrs-
 lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
@@ -127,9 +140,9 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 9009 "ZA: Sepedi" 9010 "ZA: isiXhosa" 10011 "UY: Spanish" 11001 "LA: Lao" ///
 				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
 				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish" ///
-				 17001 "UK: English" 18002 "GR: Greek" 19002 "RO: Romanian"
-				 
-				 
+				 17001 "UK: English" 18002 "GR: Greek" 19002 "RO: Romanian" ///
+				 20001 "NG: English" 20030 "NG: Hausa" 20031 "NG: Igbo" 20032 "NG: Pidgin" 20033 "NG: Yoruba"
+			 
 lab val language Language
 lab var language "Language of interview"
 
@@ -155,8 +168,8 @@ lab def labels39 .a "NA" .r "Refused", modify
 lab def labels40 .a "NA" .r "Refused", modify
 lab def labels84 .a "NA" .r "Refused", modify
 lab def labels50 .r "Refused", modify
-lab def Q19 .a "NA" .r "Refused", modify
-lab def Q43 .a "NA" .r "Refused", modify
+lab def Q19 .a "NA" .r "Refused" .d "Don't know", modify
+lab def Q43 .a "NA" .r "Refused" .d "Don't know", modify
 lab def place_type .a "NA" .r "Refused", modify
 lab def fac_owner .a "NA" .r "Refused", modify
 lab def fac_type1 .a "NA" .r "Refused", modify
@@ -171,7 +184,9 @@ lab def labels37 12 "GR: Fear or anxiety of a healthcare procedure, examination 
 				 13 "RO: Fear of examination/medical procedure" ///
 				 14 "RO: Lack of trust in doctors/procedures" ///
 				 15 "RO: Concern about informal payments/gifts", modify
-lab def labels44 .a "NA" .r "Refused", modify				
+lab def labels44 .a "NA" .r "Refused", modify	
+lab def labels65 1 "Yes" 2 "No" .d "Don't Know", modify		
+label values q12 yes_no_dk
 				
 *** weights ***
 ren weight_educ weight
