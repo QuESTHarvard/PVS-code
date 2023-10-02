@@ -25,7 +25,7 @@ set more off
 import spss using "$data/Greece/01 raw data/PVS_Greece_weighted_180723.sav", case(lower)
 
 *q43_other responses manually appended since they were provided seperately
-append using "$data/Greece/01 raw data/q43_other_data.dta"
+merge 1:1 respondent_id using "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Greece/01 raw data/q43_other_data.dta"
 
 *notes drop _all
 
