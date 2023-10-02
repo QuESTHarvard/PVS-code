@@ -27,7 +27,6 @@ import spss using "$data/Greece/01 raw data/PVS_Greece_weighted_180723.sav", cas
 *q43_other responses manually appended since they were provided seperately
 merge 1:1 respondent_id using "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Greece/01 raw data/q43_other_data.dta"
 
-drop _merge 
 *notes drop _all
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
@@ -720,7 +719,7 @@ ren q44_other_original q44_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other
 
-*------------------------------------------------------------------------------*
+/*------------------------------------------------------------------------------*
 
 * Greece team sent code for other specify data - but still used input/output process:
 
@@ -1486,7 +1485,7 @@ replace q62=18090 if q62_other=="Greek"
 			q44a_gr_other=="ΥΠΕΡΗΧΟΛΟΓΟΣ" | ///		
 			q44a_gr_other=="ΨΥΧΟΘΕΡΑΠΕΥΤΗΣ" 	
 
-*------------------------------------------------------------------------------*
+*/
 
 *Dropping the following value labels so the dataset won't get messed up when merging
 
