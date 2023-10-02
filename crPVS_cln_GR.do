@@ -25,8 +25,9 @@ set more off
 import spss using "$data/Greece/01 raw data/PVS_Greece_weighted_180723.sav", case(lower)
 
 *q43_other responses manually appended since they were provided seperately
-append using "$data/Greece/01 raw data/q43_other_data.dta"
+merge 1:1 respondent_id using "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Greece/01 raw data/q43_other_data.dta"
 
+drop _merge 
 *notes drop _all
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
@@ -234,6 +235,7 @@ recode q23_q24 (996 = 2.5) (997 = 2.5) if q24 == 2
 recode q23_q24 (996 = 7) (997 = 7) if q24 == 3
 recode q23_q24 (996 = 10) (997 = 10) if q24 == 4
 recode q23_q24 (997 = .r) if q24 == 996
+recode q23_q24 (996 = .r) if (q23 == . | q23 == .d | q23 == .r) & (q24 == . | q24 == .r)
 
 *Q7
 gen recq7 = reccountry*1000 + q7
