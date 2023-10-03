@@ -22,8 +22,8 @@ set more off
 *********************** ROMANIA ***********************
 
 * Import data 
-*import spss using "$data/Nigeria/01 raw data/23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
-import spss using "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\Data\Nigeria\01 raw data\23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
+import spss using "$data/Nigeria/01 raw data/23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
+*import spss using "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\Data\Nigeria\01 raw data\23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
 notes drop _all
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
@@ -559,6 +559,47 @@ lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 lab var q66 "Q66.Which political party did you vote for in the last election?"
+
+*------------------------------------------------------------------------------*
+
+* Other, specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+gen q7_other_original = q7_other
+label var q7_other_original "Q7. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"	
+
+gen q62_other_original = q62_other
+label var q62_other_original "62. Other"	
+
+
+*Remove "" from responses for macros to work
+replace q21_other = subinstr(q21_other,`"""',  "", .)
+replace q42_other = subinstr(q42_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_20.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_serial)	
+	
+drop q7_other q21_other q42_other q45_other q62_other
+	 
+ren q7_other_original q7_other
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q45_other_original q45_other
+ren q62_other_original q62_other
 
 *------------------------------------------------------------------------------*
 
