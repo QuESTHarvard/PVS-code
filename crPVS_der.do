@@ -60,6 +60,8 @@ replace q46 = . if q46 > 780 & q46 < . & country == 17
 replace q46 = . if q46 > 600 & q46 < . & country == 18
 * Romania -  1 value recoded (Todd to review)
 replace q46 = . if q46 > 600 & q46 < . & country == 19
+* Nigeria -  2 values recoded (Todd to review)
+replace q46 = . if q46 > 720 & q46 < . & country == 20
 
 * q47
 * Colombia okay 
@@ -100,6 +102,7 @@ replace q46b = . if q46b > 365 & q46b < . & country == 17
 replace q46b = . if q46b > 720 & q46b < . & country == 18
 * Romania - 12 values recoded (Todd to review)
 replace q46b = . if q46b > 720 & q46b < . & country == 19
+* NA for Nigeria
 
 *****************************
 
