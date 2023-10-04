@@ -401,6 +401,24 @@ label define labels37 .a "NA" .r "Refused",add
 	
 *------------------------------------------------------------------------------*
 
+* Renaming variables 
+* Rename variables to match question numbers in current survey
+
+drop date q2 q3 q6 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
+	 q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ng q38 q39 q40 q41 ///
+	 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i ///
+	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
+	 q50_b q50_c q50_d q50_e_ng q51 q52 q53 q54 q55 q56_ng q57 q59 q60 q61 interviewer_gender
+	 
+ren rec* *
+
+*Reorder variables
+
+order respondent_serial mode respondent_id country weight_educ
+order q*, sequential
+	
+*------------------------------------------------------------------------------*
+
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
@@ -441,22 +459,6 @@ ren q45_other_original q45_other
 ren q62_other_original q62_other
 
 *------------------------------------------------------------------------------*
-
-* Renaming variables 
-* Rename variables to match question numbers in current survey
-
-drop date q2 q3 q6 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
-	 q26 q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ng q38 q39 q40 q41 ///
-	 q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i ///
-	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
-	 q50_b q50_c q50_d q50_e_ng q51 q52 q53 q54 q55 q56_ng q57 q59 q60 q61 interviewer_gender
-	 
-ren rec* *
-
-*Reorder variables
-
-order respondent_serial mode respondent_id country weight_educ
-order q*, sequential
 
 * Country-specific vars for append 
 ren q19_ng q19_multi
