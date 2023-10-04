@@ -580,10 +580,10 @@ order respondent_serial respondent_id mode country language date time int_length
 *------------------------------------------------------------------------------*
 
 * Country-specific vars for append 
-ren q19_et_in_ke_za q19_et_in_ke_ro_za
+ren q19_et_in_ke_za q19_multi
 ren q37_in q37_gr_in_ro
-ren q43_et_in_ke_za q43_et_in_ke_ro_za
-ren q56 q56_et_gr_in_ke_ro_za 
+ren q43_et_in_ke_za q43_multi
+ren q56 q56_multi
 
 *------------------------------------------------------------------------------*
 
