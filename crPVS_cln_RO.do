@@ -485,7 +485,6 @@ label define recq45 .a "NA",modify
 label define labels46 .a "NA" .r "Refused",modify
 label define labels26 .a "NA" .r "Refused" .d "Don't know",modify
 
-
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
@@ -502,6 +501,57 @@ ren rec* *
 *Reorder variables
 order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
+
+
+*------------------------------------------------------------------------------*
+
+
+* Other, specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+gen q7_other_original = q7_other
+label var q7_other_original "Q7. Other"
+
+gen q19_other_original = q19_other
+label var q19_other_original "Q19. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q43_other_original = q43_other
+label var q43_other_original "Q43. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"
+
+gen q62_other_original = q62_other
+label var q62_other_original "Q62. Other"	
+
+*Remove "" from responses for macros to work
+replace q21_other = subinstr(q21_other,`"""',  "", .)
+replace q42_other = subinstr(q42_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_19.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_serial)	
+	
+drop q7_other q19_other q21_other q42_other q43_other q45_other
+	
+ren q7_other_original q7_other	
+ren q19_other_original q19_other
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43_other_original q43_other
+ren q45_other_original q45_other
+
+*------------------------------------------------------------------------------*
 
 * Country-specific vars for append 
 ren q37_ro q37_gr_in_ro
@@ -819,54 +869,6 @@ replace q45=2 if ///
 * Preventive care
 replace q45=3 if q45_other=="Ingrijiri postanatale"
 */
-
-*------------------------------------------------------------------------------*
-
-
-* Other, specify recode 
-* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
-* This command requires an input file that lists all the variables to be recoded and their new values
-* The command in data quality checks below extracts other, specify values 
-
-gen q7_other_original = q7_other
-label var q7_other_original "Q7. Other"
-
-gen q19_other_original = q19_other
-label var q19_other_original "Q19. Other"
-
-gen q21_other_original = q21_other
-label var q21_other_original "Q21. Other"
-
-gen q42_other_original = q42_other
-label var q42_other_original "Q42. Other"
-
-gen q43_other_original = q43_other
-label var q43_other_original "Q43. Other"
-	
-gen q45_other_original = q45_other
-label var q45_other_original "Q45. Other"
-
-gen q62_other_original = q62_other
-label var q62_other_original "Q62. Other"	
-
-*Remove "" from responses for macros to work
-replace q21_other = subinstr(q21_other,`"""',  "", .)
-replace q42_other = subinstr(q42_other,`"""',  "", .)
-replace q45_other = subinstr(q45_other,`"""',  "", .)
-
-
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_19.xlsx",	///
-	sheet(other_specify_recode)							///	
-	id(respondent_serial)	
-	
-drop q7_other q19_other q21_other q42_other q43_other q45_other
-	
-ren q7_other_original q7_other	
-ren q19_other_original q19_other
-ren q21_other_original q21_other
-ren q42_other_original q42_other
-ren q43_other_original q43_other
-ren q45_other_original q45_other
 
 *------------------------------------------------------------------------------*
 
