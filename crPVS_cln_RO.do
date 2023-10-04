@@ -505,9 +505,9 @@ order q*, sequential
 
 * Country-specific vars for append 
 ren q37_ro q37_gr_in_ro
-ren q19_ro q19_et_in_ke_ro_za
-ren q43_ro q43_et_in_ke_ro_za
-ren q56_ro q56_et_gr_in_ke_ro_za
+ren q19_ro q19_multi
+ren q43_ro q43_multi
+ren q56_ro q56_multi
 
 * Label variables
 lab var country "Country"
@@ -533,7 +533,7 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_et_in_ke_ro_za "Q19. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q19_multi "Q19. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
 lab var q19_other "Q19. ET/IN/KE/RO/ZA only: Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 *lab var q20_other "Q20. Other"
@@ -565,7 +565,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_et_in_ke_ro_za "Q43. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_multi "Q43. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 *lab var q44_other "Q44. Other"
@@ -600,7 +600,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56_et_gr_in_ke_ro_za "Q56. ET/GR/IN/KE/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_multi "Q56. ET/GR/IN/KE/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
