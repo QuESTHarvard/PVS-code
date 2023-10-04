@@ -78,11 +78,6 @@ append using "$data_mc/02 recoded data/pvs_ro.dta"
 
 qui do `label8'
 
-*TBC
-rename q19_et_in_ke_ro_za q19_multi
-rename q43_et_in_ke_ro_za q43_multi
-rename q56_et_gr_in_ke_ro_za q56_multi
-
 tempfile label9
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label9'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
