@@ -309,12 +309,12 @@ gen teeth_exam = q34
 gen blood_sugar = q35 
 gen blood_chol = q36
 gen hiv_test = q37_za
-* Mia's note: need to gen a variable for q37_ng
+gen care_srh = q37_ng
 gen care_mental = q38 
 gen mistake = q39
 gen discrim = q40
 lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
-	blood_sugar blood_chol hiv_test care_mental mistake discrim yes_no_dk
+	blood_sugar blood_chol hiv_test care_srh care_mental mistake discrim yes_no_dk
 lab val mistake discrim yes_no_na
 	
 **** Excellent to Poor scales *****	   
@@ -347,8 +347,8 @@ gen phc_women = q50_a
 gen phc_child = q50_b
 gen phc_chronic = q50_c
 gen phc_mental = q50_d
-* Mia's note: need to gen a variable for q50_e_ng
-lab val phc_women phc_child phc_chronic phc_mental exc_poor_judge
+gen qual_srh = q50_e_ng
+lab val phc_women phc_child phc_chronic phc_mental qual_srh exc_poor_judge
 	
 gen qual_public = q54
 gen qual_private = q55 
