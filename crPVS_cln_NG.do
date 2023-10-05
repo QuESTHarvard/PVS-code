@@ -19,11 +19,11 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 clear all
 set more off 
 
-*********************** ROMANIA ***********************
+*********************** NIGERIA ***********************
 
 * Import data 
-*import spss using "$data/Nigeria/01 raw data/23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
-import spss using "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\Data\Nigeria\01 raw data\23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
+import spss using "$data/Nigeria/01 raw data/23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
+*import spss using "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\Data\Nigeria\01 raw data\23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
 notes drop _all
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
@@ -400,6 +400,7 @@ label define labels36 .a "NA" .r "Refused",add
 label define labels37 .a "NA" .r "Refused",add
 	
 *------------------------------------------------------------------------------*
+
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
@@ -415,20 +416,14 @@ ren rec* *
 
 order respondent_serial mode respondent_id country weight_educ
 order q*, sequential
-
-* Country-specific vars for append 
-ren q19_ng q19_multi
-ren q43_ng q43_multi
-ren q56_ng q56_multi
-
+	
 *------------------------------------------------------------------------------*
-
 
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
-/*
+
 gen q7_other_original = q7_other
 label var q7_other_original "Q7. Other"
 
@@ -437,7 +432,7 @@ label var q21_other_original "Q21. Other"
 
 gen q42_other_original = q42_other
 label var q42_other_original "Q42. Other"
-
+	
 gen q45_other_original = q45_other
 label var q45_other_original "Q45. Other"	
 
@@ -446,13 +441,12 @@ label var q62_other_original "62. Other"
 
 
 *Remove "" from responses for macros to work
-replace q7_other = subinstr(q7_other,`"""',  "", .)
 replace q21_other = subinstr(q21_other,`"""',  "", .)
 replace q42_other = subinstr(q42_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
-replace q62_other = subinstr(q62_other,`"""',  "", .)
 
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_18.xlsx",	///
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_20.xlsx",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_serial)	
 	
@@ -463,7 +457,13 @@ ren q21_other_original q21_other
 ren q42_other_original q42_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other
-*/
+
+*------------------------------------------------------------------------------*
+
+* Country-specific vars for append 
+ren q19_ng q19_multi
+ren q43_ng q43_multi
+ren q56_ng q56_multi
 
 *------------------------------------------------------------------------------*
 * Label variables
@@ -559,6 +559,7 @@ lab var q63 "Q63. Total monthly household income"
 lab var q64 "Q64. Do you have another mobile phone number besides this one?"
 lab var q65 "Q65. How many other mobile phone numbers do you have?"
 lab var q66 "Q66.Which political party did you vote for in the last election?"
+
 
 *------------------------------------------------------------------------------*
 

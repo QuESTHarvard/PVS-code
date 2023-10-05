@@ -485,7 +485,6 @@ label define recq45 .a "NA",modify
 label define labels46 .a "NA" .r "Refused",modify
 label define labels26 .a "NA" .r "Refused" .d "Don't know",modify
 
-
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
@@ -503,11 +502,62 @@ ren rec* *
 order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
 
+
+*------------------------------------------------------------------------------*
+
+
+* Other, specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+gen q7_other_original = q7_other
+label var q7_other_original "Q7. Other"
+
+gen q19_other_original = q19_other
+label var q19_other_original "Q19. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q43_other_original = q43_other
+label var q43_other_original "Q43. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"
+
+gen q62_other_original = q62_other
+label var q62_other_original "Q62. Other"	
+
+*Remove "" from responses for macros to work
+replace q21_other = subinstr(q21_other,`"""',  "", .)
+replace q42_other = subinstr(q42_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_19.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_serial)	
+	
+drop q7_other q19_other q21_other q42_other q43_other q45_other
+	
+ren q7_other_original q7_other	
+ren q19_other_original q19_other
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43_other_original q43_other
+ren q45_other_original q45_other
+
+*------------------------------------------------------------------------------*
+
 * Country-specific vars for append 
 ren q37_ro q37_gr_in_ro
-ren q19_ro q19_et_in_ke_ro_za
-ren q43_ro q43_et_in_ke_ro_za
-ren q56_ro q56_et_gr_in_ke_ro_za
+ren q19_ro q19_multi
+ren q43_ro q43_multi
+ren q56_ro q56_multi
 
 * Label variables
 lab var country "Country"
@@ -533,7 +583,7 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_et_in_ke_ro_za "Q19. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q19_multi "Q19. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
 lab var q19_other "Q19. ET/IN/KE/RO/ZA only: Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 *lab var q20_other "Q20. Other"
@@ -565,7 +615,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_et_in_ke_ro_za "Q43. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_multi "Q43. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 *lab var q44_other "Q44. Other"
@@ -600,7 +650,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56_et_gr_in_ke_ro_za "Q56. ET/GR/IN/KE/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_multi "Q56. ET/GR/IN/KE/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -819,54 +869,6 @@ replace q45=2 if ///
 * Preventive care
 replace q45=3 if q45_other=="Ingrijiri postanatale"
 */
-
-*------------------------------------------------------------------------------*
-
-
-* Other, specify recode 
-* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
-* This command requires an input file that lists all the variables to be recoded and their new values
-* The command in data quality checks below extracts other, specify values 
-
-gen q7_other_original = q7_other
-label var q7_other_original "Q7. Other"
-
-gen q19_other_original = q19_other
-label var q19_other_original "Q19. Other"
-
-gen q21_other_original = q21_other
-label var q21_other_original "Q21. Other"
-
-gen q42_other_original = q42_other
-label var q42_other_original "Q42. Other"
-
-gen q43_other_original = q43_other
-label var q43_other_original "Q43. Other"
-	
-gen q45_other_original = q45_other
-label var q45_other_original "Q45. Other"
-
-gen q62_other_original = q62_other
-label var q62_other_original "Q62. Other"	
-
-*Remove "" from responses for macros to work
-replace q21_other = subinstr(q21_other,`"""',  "", .)
-replace q42_other = subinstr(q42_other,`"""',  "", .)
-replace q45_other = subinstr(q45_other,`"""',  "", .)
-
-
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_19.xlsx",	///
-	sheet(other_specify_recode)							///	
-	id(respondent_serial)	
-	
-drop q7_other q19_other q21_other q42_other q43_other q45_other
-	
-ren q7_other_original q7_other	
-ren q19_other_original q19_other
-ren q21_other_original q21_other
-ren q42_other_original q42_other
-ren q43_other_original q43_other
-ren q45_other_original q45_other
 
 *------------------------------------------------------------------------------*
 

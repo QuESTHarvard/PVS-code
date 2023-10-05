@@ -27,8 +27,7 @@ import spss using "$data/Greece/01 raw data/PVS_Greece_weighted_180723.sav", cas
 *q43_other responses manually appended since they were provided seperately
 merge 1:1 respondent_id using "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Greece/01 raw data/q43_other_data.dta"
 
-drop _merge 
-*notes drop _all
+drop _merge
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
@@ -257,7 +256,7 @@ recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 q66a_gr q66b_gr (997 = 
 recode q6 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
-	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr q66a_gr q66b_gr q69_codes (996 = .r)
+	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr q66a_gr q66b_gr q69_codes q23_q24 (996 = .r)
 	   
 recode recq63 (18996 = .r)
 
@@ -538,7 +537,7 @@ order q*, sequential
 
 * Country-specific vars for append 
 ren q37_gr q37_gr_in_ro
-ren q56_gr q56_et_gr_in_ke_ro_za
+ren q56_gr q56_multi
 
 * Label variables
 lab var country "Country"
@@ -642,7 +641,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56_et_gr_in_ke_ro_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_multi "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -720,7 +719,7 @@ ren q44_other_original q44_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other
 
-*------------------------------------------------------------------------------*
+/*------------------------------------------------------------------------------*
 
 * Greece team sent code for other specify data - but still used input/output process:
 
@@ -1486,7 +1485,7 @@ replace q62=18090 if q62_other=="Greek"
 			q44a_gr_other=="ΥΠΕΡΗΧΟΛΟΓΟΣ" | ///		
 			q44a_gr_other=="ΨΥΧΟΘΕΡΑΠΕΥΤΗΣ" 	
 
-*------------------------------------------------------------------------------*
+*/
 
 *Dropping the following value labels so the dataset won't get messed up when merging
 

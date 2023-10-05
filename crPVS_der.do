@@ -60,6 +60,8 @@ replace q46 = . if q46 > 780 & q46 < . & country == 17
 replace q46 = . if q46 > 600 & q46 < . & country == 18
 * Romania -  1 value recoded (Todd to review)
 replace q46 = . if q46 > 600 & q46 < . & country == 19
+* Nigeria -  2 values recoded (Todd to review)
+replace q46 = . if q46 > 720 & q46 < . & country == 20
 
 * q47
 * Colombia okay 
@@ -100,6 +102,7 @@ replace q46b = . if q46b > 365 & q46b < . & country == 17
 replace q46b = . if q46b > 720 & q46b < . & country == 18
 * Romania - 12 values recoded (Todd to review)
 replace q46b = . if q46b > 720 & q46b < . & country == 19
+* NA for Nigeria
 
 *****************************
 
@@ -306,12 +309,12 @@ gen teeth_exam = q34
 gen blood_sugar = q35 
 gen blood_chol = q36
 gen hiv_test = q37_za
-* Mia's note: need to gen a variable for q37_ng
+gen care_srh = q37_ng
 gen care_mental = q38 
 gen mistake = q39
 gen discrim = q40
 lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
-	blood_sugar blood_chol hiv_test care_mental mistake discrim yes_no_dk
+	blood_sugar blood_chol hiv_test care_srh care_mental mistake discrim yes_no_dk
 lab val mistake discrim yes_no_na
 	
 **** Excellent to Poor scales *****	   
@@ -344,8 +347,8 @@ gen phc_women = q50_a
 gen phc_child = q50_b
 gen phc_chronic = q50_c
 gen phc_mental = q50_d
-* Mia's note: need to gen a variable for q50_e_ng
-lab val phc_women phc_child phc_chronic phc_mental exc_poor_judge
+gen qual_srh = q50_e_ng
+lab val phc_women phc_child phc_chronic phc_mental qual_srh exc_poor_judge
 	
 gen qual_public = q54
 gen qual_private = q55 
@@ -479,7 +482,7 @@ recode q20 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 902
 		   10093 10097 10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 12005 12006 ///
 		   15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 17007 17008 17009 19121 19127 19123 19130 ///
 		   20133 20134 20138 20140 = 1 "Secondary (or higher)") ///
-		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 = .a "NA") (3995 9995 12995 4995 18995 20995 .r = .r "Refused"), gen(usual_type_lvl)
+		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 18996 = .a "NA") (3995 9995 12995 4995 18995 20995 .r = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if inlist(q19_q20a_la,2,4,6) | ///
 								  inlist(q19_q20b_la,2,4,6)
