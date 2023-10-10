@@ -116,9 +116,9 @@ gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60)
 format q46 %tcHH:MM
 gen recq46 = (hh(q46)*60 + mm(q46))
 
-* confirm that format for q46b is in HH:MM:SS even though question asks days, hours, minutes
-format q46b %tcHH:MM:SS
-gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
+* raw format is in: hours, days, weeks - need to troubleshoot
+*format q46b %tdDDwwhh
+*gen recq46b = (hh(q46b)/24 + dd(q46b) + ww(q46b)/7) 
 
 format q47 %tcMM:SS
 gen recq47 = (mm(q47)+ ss(q47)/60) 
@@ -485,7 +485,11 @@ recode q24 ///
 	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(number_visits)
 
-* q49 - no recode needed 
+recode q49 ///
+	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
+	(7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
+	(.r = .r Refused) (.a = .a NA), ///
+	pre(rec) label(prom_score)
 	
 recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
@@ -524,7 +528,7 @@ lab def q64 .a "NA" .r "Refused" .d "Don't know",modify
 
 drop date q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr q38 q39 q40 q41 q46a ///
-	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
+	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q49 ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_gr q57 q59 q60 q61 weight q69_codes sample_type
 	 
