@@ -112,7 +112,6 @@ format recdate %td
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
-*confirm the format for q46 and q47 instrument word doc says HH:MM
 format q46 %tcHH:MM
 gen recq46 = (hh(q46)*60 + mm(q46))
 
@@ -121,7 +120,7 @@ gen recq46 = (hh(q46)*60 + mm(q46))
 *gen recq46b = (hh(q46b)/24 + dd(q46b) + ww(q46b)/7) 
 
 format q47 %tcMM:SS
-gen recq47 = (mm(q47)+ ss(q47)/60) 
+gen recq47 = (hh(q47)*60 + mm(q47)) 
 
 *------------------------------------------------------------------------------*
 
@@ -217,7 +216,7 @@ recode q64 (. = .a) if sample_type == 2
 
 * Drop unused variables 
 
-drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall interviewer_id interviewer_gender interviewer_language country language
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 q46 q47 q62 q63 q66 rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall interviewer_id interviewer_gender interviewer_language country language // q46b
  
 
 *------------------------------------------------------------------------------*
@@ -380,7 +379,7 @@ recode q47_refused (. = 0) if recq47 != .
 
 recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
-recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r
+recode q46b_refused (. = .a) if q46a == 2 | q46a == .r // q46b
 
 *q65
 recode q65 (. = .a) if q64 != 1
@@ -496,7 +495,7 @@ recode q57 ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 	
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46a q46b recq47 na_rf	
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46a recq47 na_rf // q46b
 	
 label define labels47 4 "Other, specify" .a "NA" .r "Refused", modify
 

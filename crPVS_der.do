@@ -934,25 +934,25 @@ restore
 *United Kingdown
 preserve
 keep if country == 17
-save "$data/United Kingdom/02 recoded data/pvs_gb_recoded"
+save "$data/United Kingdom/02 recoded data/pvs_gb_recoded", replace
 restore
 
 *Greece
 preserve
 keep if country == 18
-save "$data/Greece/02 recoded data/pvs_gr_recoded"
+save "$data/Greece/02 recoded data/pvs_gr_recoded", replace
 restore
 
 *Romania
 preserve
 keep if country == 19
-save "$data/Romania/02 recoded data/pvs_ro_recoded"
+save "$data/Romania/02 recoded data/pvs_ro_recoded", replace
 restore
 
 *Nigeria 
 preserve
 keep if country == 20
-save "$data/Nigeria/02 recoded data/pvs_ng_recoded"
+save "$data/Nigeria/02 recoded data/pvs_ng_recoded", replace
 restore
 
 
