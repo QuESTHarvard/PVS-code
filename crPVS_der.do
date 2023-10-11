@@ -850,7 +850,7 @@ compress
 save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 
-/*
+
 **************=Save individual datasets to recoded data folder****************
 
 *Colombia
@@ -954,8 +954,6 @@ preserve
 keep if country == 20
 save "$data/Nigeria/02 recoded data/pvs_ng_recoded"
 restore
-
-*/
 
 
 * ONLY RUN COMMAND BELOW WHEN SHARING TO ALL
