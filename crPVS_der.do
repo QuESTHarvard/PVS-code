@@ -384,29 +384,30 @@ recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
-* Note: All are insured in South Africa, Laos, Italy, Mendoza and UK
+* Note: All are insured in Laos, Italy, Mendoza and UK
 gen insured = q6 
-recode insured (.a = 1) if country == 11 | country == 14 | country == 16 | country == 17
-recode insured (.a = 0) if inlist(q7,7014,13014) | inlist(q6_kr, 3) 
-recode insured (.a = 1) if inlist(q7,7010,7011,7012,7013,10019,10020,10021,10022,13001,13002,13003,13004,13005) | inlist(q6_kr, 1, 2)
+recode insured (.a = 1) if country == 11 | country == 14 | country == 17
+recode insured (.a = 0) if inlist(q7,2030,7014,13003,13014) | inlist(q6_kr, 3) 
+recode insured (.a = 1) if inlist(q7,2015, 2016, 2017, 2018, 2028, 7010, 7011, 7012, 7013, 10019, 10020, 10021, 10022, 13001, 13002, 13004, 13005, 16001, ///
+								     16002, 16003, 16004, 16005) | inlist(q6_kr, 1, 2)
 recode insured (.a = .r) if q7 == .r | inlist(q7,13995) | q6_kr == .r
 lab val insured yes_no
 
 recode insured (.a = 1) if q6_za == 1
+recode insured (.a = 0) if q6_za == 0
 recode insured (.a = .r) if q6_za == .r
+
 
 * For Colombia, moved "no insurance" to "yes" in insured and "public" in "insur_type"
 
 * insur_type 
 
-
 recode q7 (2017 2018 3001 5003 2017 2018 7010 10019 11002 12002 12003 ///
 		   12005 14002 16001 4023 4024 4025 4026 17002 2030 ///
 		   18029 19031 20034 20037 = 0 "Public") ///
-		  (2028 3002 5004 5005 5006 3007 9008 9009 2015 2016 2028 7013 10021 11001 12001 ///
+		  (2028 3002 5004 5005 5006 3007 9008 9009 2028 7013 10021 11001 12001 ///
 		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 20036 = 1 "Private") /// 
-		  (2015 2016 16002 16003 16004 13001 13002 13004 7011 7012 10020 ///
-		  10022 = 2 "Social security / military") ///
+		  (2015 2016 16002 16003 16004 13001 13002 13004 7011 7012 10020 10022 = 2 "Social security/military") ///
 		  (2995 9995 12995 13995 4995 18995 19995 20995 = 3 "Other") ///
 		  (.r = .r "Refused") (2030 7014 13014 16007 13003 .a = .a "NA"), gen(insur_type)
 
@@ -626,7 +627,7 @@ recode minority (.a = 0) if q62a_la == 11001
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
 
 recode q63 (2039 2040 2041 3009 5001 7031 7032 9015 9016 9017 10049 ///
-		   10050 10051 10052 11001 11002 12001 12002 13001 14001 14002 15001 15002 ///
+		   10050 10051 11001 11002 12001 12002 13001 14001 14002 15001 15002 ///
 		   15003 15004 16001 16002 16003 17001 17002 4024 4025 18062 19068 ///
 		   20075 20076 20077 = 0 "Lowest income") /// 
 		   (2042 2043 2044 3010 7033 9018 9019 10052 10053 10054 11003 ///
@@ -734,12 +735,12 @@ order respondent_serial respondent_id country country_reg language date ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
 	  usual_reason usual_quality visits visits_cat visits_covid ///
 	  fac_number visits_home visits_tele tele_qual visits_total inpatient blood_pressure mammogram ///
-	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_mental /// 
+	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_srh care_mental /// 
 	  mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
 	  last_type last_reason last_wait_time last_sched_time ///
 	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate ///
-	  last_promote phc_women phc_child phc_chronic phc_mental conf_sick ///
+	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
 	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q6_gb q7 q7_kr ///
@@ -850,7 +851,7 @@ compress
 save "$data_mc/02 recoded data/pvs_all_countries.dta", replace
 
 
-/*
+
 **************=Save individual datasets to recoded data folder****************
 
 *Colombia
@@ -934,28 +935,26 @@ restore
 *United Kingdown
 preserve
 keep if country == 17
-save "$data/United Kingdom/02 recoded data/pvs_gb_recoded"
+save "$data/United Kingdom/02 recoded data/pvs_gb_recoded", replace
 restore
 
 *Greece
 preserve
 keep if country == 18
-save "$data/Greece/02 recoded data/pvs_gr_recoded"
+save "$data/Greece/02 recoded data/pvs_gr_recoded", replace
 restore
 
 *Romania
 preserve
 keep if country == 19
-save "$data/Romania/02 recoded data/pvs_ro_recoded"
+save "$data/Romania/02 recoded data/pvs_ro_recoded", replace
 restore
 
 *Nigeria 
 preserve
 keep if country == 20
-save "$data/Nigeria/02 recoded data/pvs_ng_recoded"
+save "$data/Nigeria/02 recoded data/pvs_ng_recoded", replace
 restore
-
-*/
 
 
 * ONLY RUN COMMAND BELOW WHEN SHARING TO ALL

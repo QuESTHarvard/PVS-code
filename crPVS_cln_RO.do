@@ -92,16 +92,16 @@ format recdate %td
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
-*confirm the format for q46 and q47 instrument word doc says HH:MM
 format q46 %tcHH:MM
 gen recq46 = (hh(q46)*60 + mm(q46))
 
-* confirm that format for q46b is in HH:MM:SS even though question asks days, hours, minutes
+/* raw format is in: hours, days, weeks - need to troubleshoot
 format q46b %tcHH:MM:SS
 gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
+*/
 
 format q47 %tcMM:SS
-gen recq47 = (mm(q47)+ ss(q47)/60) 
+gen recq47 = (hh(q47)*60 + mm(q47)) 
 
 *------------------------------------------------------------------------------*
 
@@ -198,7 +198,7 @@ recode q47_refused (. = 0) if q47 != .
 
 * Drop unused variables 
 
-drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q42 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q42 q44 q46 q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language // q46b
 
 *------------------------------------------------------------------------------*
 
@@ -339,10 +339,10 @@ recode recq42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q43_ro recq44 recq45 recq46 recq46b q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_ro recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// recq46b
 	   q48_g q48_h q48_i q48_j q48_k q49 q48_k (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
-recode q43_ro recq44 recq45 recq46 recq46b q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_ro recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// recq46b
 	   q48_g q48_h q48_i q48_j q48_k q49 (nonmissing = .a) if q23 == 0 | q24 == 1
 	      
 recode recq44 (. = .a) if q43_ro == 4 | q43_ro == .r
@@ -358,7 +358,7 @@ recode q47_refused (. = 0) if recq47 != .
 
 recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
-recode recq46b (. = .a) if q46a == 2 | q46a == .r
+* recode recq46b (. = .a) if q46a == 2 | q46a == .r
 
 *q65
 recode q65 (. = .a) if q64 != 1
@@ -457,7 +457,11 @@ recode q24 ///
 	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(number_visits)
 
-* q49 - no recode needed 
+recode q49 ///
+	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
+	(7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
+	(.r = .r Refused) (.a = .a NA), ///
+	pre(rec) label(prom_score)
 	
 recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
@@ -472,7 +476,7 @@ recode q64 ///
 *NA/Refused/DK
 	
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46 recq46b recq47 q66 na_rf	
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46 recq47 q66 na_rf // recq46b
 
 
 ******* Country-specific *******
@@ -493,7 +497,7 @@ label define labels26 .a "NA" .r "Refused" .d "Don't know",modify
 drop date q3 q6 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ro q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
-	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
+	 q54 q55 q59 q60 q61 q22 q48_e q48_j q49 q50_a ///
 	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ro q57 q59 q60 q61 q64 weight
 	 
 ren rec* *
