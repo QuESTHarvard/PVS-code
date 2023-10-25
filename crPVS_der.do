@@ -394,6 +394,7 @@ recode insured (.a = .r) if q7 == .r | inlist(q7,13995) | q6_kr == .r
 lab val insured yes_no
 
 recode insured (.a = 1) if q6_za == 1
+recode insured (.a = 0) if q6_za == 0
 recode insured (.a = .r) if q6_za == .r
 
 
