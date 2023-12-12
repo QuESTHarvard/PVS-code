@@ -40,8 +40,7 @@ ren q14_new q14
 ren q15_new q15
 
 *change q21 for additional GR vars:
-encode q21, gen(q21a)
-recode q21a (1 = 1 "Low cost") /// 
+recode q21 (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
 			(3 = 3 "Short waiting time") ///
 			(5 = 4 "Good healthcare provider skills") ///
@@ -56,8 +55,7 @@ recode q21a (1 = 1 "Low cost") ///
 			
 ren q28 q28_a
 ren q28_new q28_b
-ren q28_gr q28_c // need to flip order of values
-
+ren q28_gr q28_c
 
 *specific GR value added to q42:
 recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
@@ -75,7 +73,7 @@ ren q43_gr q43b_gr
 ren q43 q43a_gr
 ren q43_other q43a_gr_other
 
-*ren q46_gr2 q46a
+ren q46_gr2 q46a
 *ren q46_gr q46b 
 ren q46_gr_refused  q46b_refused
 ren q56 q56_gr
@@ -113,15 +111,11 @@ format recdate %td
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
-encode q46,gen(recq46)
-format recq46 %tcHH:MM
+gen recq46 = q46_h*60
 
-* raw format is in: hours, days, weeks - need to troubleshoot
-*format q46b %tdDDwwhh
-*gen recq46b = (hh(q46b)/24 + dd(q46b) + ww(q46b)/7) 
+gen recq46b = q46_gr_w/7 + q46_gr_h/24
 
-format q47 %tcMM:SS
-gen recq47 = (hh(q47)*60 + mm(q47)) 
+gen recq47 = q47_h*60
 
 *------------------------------------------------------------------------------*
 
@@ -154,13 +148,13 @@ replace recq62 = .r if q62== 996
 gen recq63 = reccountry*1000 + q63
 replace recq63 = .r if q63 == 996
 
-local q4l labels9
-local q5l labels10
-local q8l labels13
-local q20l labels25
-local q44l labels25
-local q62l labels62
-local q63l labels63
+local q4l Q4
+local q5l Q5
+local q8l Q8
+local q20l Q20
+local q44l Q44
+local q62l Q62
+local q63l Q63
 
 foreach q in q4 q5 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
@@ -199,7 +193,7 @@ label define q63_label .a "NA" .r "Refused" , modify
 
 * add label for "Refused"
 
-label define labels61 .r "Refused", add
+label define Q61 .r "Refused", add
 
 *****************************
 
@@ -217,7 +211,10 @@ recode q64 (. = .a) if sample_type == 2
 
 * Drop unused variables 
 
-drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 q46 q47 q62 q63 q66 rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall interviewer_id interviewer_gender interviewer_language country language // q46b
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 ///
+	 q46 q46_gr q46_h q46_gr_h q46_gr_w q47_h q47 q62 q63 q66 rim_age rim_gender ///
+	 q4_weight rim_region q8_weight rim_education dw_overall interviewer_id ///
+	 interviewer_gender interviewer_language country language
  
 
 *------------------------------------------------------------------------------*
@@ -253,7 +250,7 @@ recode q12 q15 q23 q37_gr (995 = .d)
 recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 q66a_gr q66b_gr (997 = .d)
 
 * In raw data, 996 = "refused" 	  
-recode q6 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
+recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
 	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr q66a_gr q66b_gr q69_codes q23_q24 (996 = .r)
@@ -504,22 +501,74 @@ label def q46_label .a "NA" .r "Refused"
 label values recq46 q46_label
 
 ******* Country-specific *******
-lab def labels24 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels38 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels14 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels43 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels26 .a "NA", modify
-lab def q20a_gr .a "NA", modify
-lab def labels28 .a "NA", modify
-lab def labels45 .a "NA", modify
-lab def labels46 .a "NA", modify
-lab def labels65 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels66 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q6 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q7 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q11 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q12 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q13 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q14 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q15 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q16 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q17 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q18 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q19_GR .a "NA" .r "Refused" .d "Don't know",modify
+lab def q20a_gr .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q20_D .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q22 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q24 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q25_A .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q26 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q28_GR .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q29 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q31 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q32 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q33 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q34 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q35 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q36 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q37_GR .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q38 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q39 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q40 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q43 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q43_GR .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q44_B .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q44_C .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q45 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q46_GR2 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q46_GR_refused .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_A .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_B .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_C .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_D .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_E .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_F .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_G .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_H .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_I .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_J .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_K .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q49 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q50_A .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q50_B .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q50_C .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q50_D .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q51 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q52 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q53 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q54 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q55 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q56 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q57 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q58 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q59 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q60 .a "NA" .r "Refused" .d "Don't know",modify
 lab def q64 .a "NA" .r "Refused" .d "Don't know",modify
-
+lab def Q67 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q66_A .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q66_B .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels26 .a "NA", modify
+lab def recq42 .a "NA", modify
 
 *------------------------------------------------------------------------------*
 
