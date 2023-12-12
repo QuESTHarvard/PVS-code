@@ -1542,8 +1542,8 @@ replace q62=18090 if q62_other=="Greek"
 
 *Dropping the following value labels so the dataset won't get messed up when merging
 
-label copy labels24 q19_gr_label
-label drop labels24  
+label copy Q19_GR q19_gr_label
+label drop Q19_GR  
 label value q19_gr q19_gr_label 
 
 *------------------------------------------------------------------------------*
