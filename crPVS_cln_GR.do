@@ -22,7 +22,7 @@ set more off
 *********************** GREECE ***********************
 
 * Import data 
-import spss using "$data/Greece/01 raw data/PVS_Greece_weighted_180723.sav", case(lower)
+import delimited spss using "$data/Greece/01 raw data/PVS_Greece_weighted v2_unlabelled_231023.csv", case(lower)
 
 *q43_other responses manually appended since they were provided seperately
 merge 1:1 respondent_id using "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Greece/01 raw data/q43_other_data.dta"
@@ -38,9 +38,9 @@ drop _merge
 ren q14_new q14
 ren q15_new q15
 
-label drop labels26
 *change q21 for additional GR vars:
-recode q21 (1 = 1 "Low cost") /// 
+encode q21, gen(q21a)
+recode q21a (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
 			(3 = 3 "Short waiting time") ///
 			(4 = 4 "Good healthcare provider skills") ///
@@ -74,8 +74,8 @@ ren q43_gr q43b_gr
 ren q43 q43a_gr
 ren q43_other q43a_gr_other
 
-ren q46_gr2 q46a
-ren q46_gr q46b 
+*ren q46_gr2 q46a
+*ren q46_gr q46b 
 ren q46_gr_refused  q46b_refused
 ren q56 q56_gr
 ren q67 q65
@@ -112,8 +112,8 @@ format recdate %td
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
-format q46 %tcHH:MM
-gen recq46 = (hh(q46)*60 + mm(q46))
+encode q46,gen(recq46)
+format recq46 %tcHH:MM
 
 * raw format is in: hours, days, weeks - need to troubleshoot
 *format q46b %tdDDwwhh
