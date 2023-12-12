@@ -22,12 +22,13 @@ set more off
 *********************** GREECE ***********************
 
 * Import data 
-import delimited spss using "$data/Greece/01 raw data/PVS_Greece_weighted v2_unlabelled_231023.csv", case(lower)
+use  "$data/Greece/01 raw data/PVS_Greece_weighted v2_231023.dta"
 
-*q43_other responses manually appended since they were provided seperately
-merge 1:1 respondent_id using "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Greece/01 raw data/q43_other_data.dta"
+rename *, lower
+drop q46 q46_gr q47 
 
-drop _merge
+*adding Elena's q46-q47 variables
+merge 1:1 respondent_id using "$data/Greece/01 raw data/EB_gr_waiting_times_numeric_v1_2nov23.dta", force
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
@@ -40,18 +41,19 @@ ren q15_new q15
 
 *change q21 for additional GR vars:
 encode q21, gen(q21a)
-recode q21a (1 = 1 "Low cost") /// 
-			(2 = 2 "Short distance") ///
-			(3 = 3 "Short waiting time") ///
-			(4 = 4 "Good healthcare provider skills") ///
-			(5 = 5 "Staff shows respect") ///
-			(6 = 6 "Medicines and equipment are available") ///
-			(7 = 7 "Only facility available") ///
-			(8 = 8 "Covered by insurance") ///
-			(995 = 9 "Other, specify") ///
-			(10 = 11 "GR: Preferred provider by other family members") ///
-			(11 = 12 "GR: Referred from another provider") ///
-			(996 = .r "Refused"), gen(recq21) label(labels26)
+recode q21a (4 = 1 "Low cost") /// 
+			(11 = 2 "Short distance") ///
+			(12 = 3 "Short waiting time") ///
+			(3 = 4 "Good healthcare provider skills") ///
+			(13 = 5 "Staff shows respect") ///
+			(5 = 6 "Medicines and equipment are available") ///
+			(6 = 7 "Only facility available") ///
+			(2 = 8 "Covered by insurance") ///
+			(7 = 9 "Other, specify") ///
+			(8 = 11 "GR: Preferred provider by other family members") ///
+			(9 = 12 "GR: Referred from another provider") ///
+			(10 = .r "Refused") ///
+			(1 = .), gen(recq21) label(labels26)
 			
 ren q28 q28_a
 ren q28_new q28_b
