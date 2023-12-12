@@ -44,17 +44,6 @@ global in_out "$data_mc/03 input output"
 * Path to GitHub folder 
 global github "$user/Documents/GitHub/PVS-code"
 
-
-* Installing packages and commands
-************************************************
-
-* IPA's Stata Package for high-frequency checks
-net install ipacheck, all replace from("https://raw.githubusercontent.com/PovertyAction/high-frequency-checks/master")
-ipacheck update
-
-ssc install elabel 
-ssc install extremes
-
 ************************************************
 
 * Clean each dataset separately 
@@ -77,3 +66,13 @@ run "$github/crPVS_append.do"
 
 * Adding derived variables for analysis
 run "$github/crPVS_der.do"
+
+* Installing packages and commands
+************************************************
+
+* IPA's Stata Package for high-frequency checks
+net install ipacheck, all replace from("https://raw.githubusercontent.com/PovertyAction/high-frequency-checks/master")
+ipacheck update
+
+ssc install elabel 
+ssc install extremes

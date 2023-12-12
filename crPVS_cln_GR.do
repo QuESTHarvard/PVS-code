@@ -29,6 +29,7 @@ drop q46 q46_gr q47
 
 *adding Elena's q46-q47 variables
 merge 1:1 respondent_id using "$data/Greece/01 raw data/EB_gr_waiting_times_numeric_v1_2nov23.dta", force
+drop _merge 
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
