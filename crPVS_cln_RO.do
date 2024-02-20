@@ -22,7 +22,7 @@ set more off
 *********************** ROMANIA ***********************
 
 * Import data 
-import spss using "$data/Romania/01 raw data/PVS_Romania_Final weighted.sav", case(lower)
+import delimited using "$data/Romania/01 raw data/PVS_Romania_Final weighted_labelled_04.07.23.csv", case(lower)
 
 notes drop _all
 
