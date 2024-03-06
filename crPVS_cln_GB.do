@@ -700,5 +700,5 @@ order respondent_serial respondent_id mode country language date int_length weig
 *------------------------------------------------------------------------------*
 
 * Save data
-save "$data_mc/02 recoded data/pvs_gb.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_gb.dta", replace
  

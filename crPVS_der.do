@@ -10,7 +10,7 @@
 */
 
 ***************************** Deriving variables *******************************
-u "$data_mc/02 recoded data/pvs_appended.dta", clear
+u "$data_mc/02 recoded data/input data files/pvs_appended.dta", clear
 
 *------------------------------------------------------------------------------*
 
@@ -902,22 +902,21 @@ keep if country == 11
 save "$data/Laos/02 recoded data/pvs_laos_recoded", replace
 restore
 
-*United States - saved in multi country recoded folder
 preserve
 keep if country == 12
-save "$data_mc/02 recoded data/pvs_us_recoded", replace
+save "$data/United States/02 recoded data/pvs_us_recoded", replace
 restore
 
-*Mexico - saved in multi country recoded folder
+*Mexico
 preserve
 keep if country == 13
-save "$data_mc/02 recoded data/pvs_mx_recoded", replace
+save "$data/Mexico/02 recoded data/pvs_mx_recoded", replace
 restore
 
-*Italy - saved in multi country recoded folder
+*Italy
 preserve
 keep if country == 14
-save "$data_mc/02 recoded data/pvs_it_recoded", replace
+save "$data/Italy/02 recoded data/pvs_it_recoded", replace
 restore
 
 *South Korea

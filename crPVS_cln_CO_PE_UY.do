@@ -638,6 +638,6 @@ order respondent_serial respondent_id mode country language date time int_length
 *------------------------------------------------------------------------------*
 
 
-save "$data_mc/02 recoded data/pvs_co_pe_uy.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_co_pe_uy.dta", replace
 
 *------------------------------------------------------------------------------*

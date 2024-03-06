@@ -12,13 +12,13 @@
 
 ********************************* Append data *********************************
 
-u "$data_mc/02 recoded data/pvs_co_pe_uy.dta", clear
+u "$data_mc/02 recoded data/input data files/pvs_co_pe_uy.dta", clear
 
 tempfile label1
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label1'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label 
 
-append using "$data_mc/02 recoded data/pvs_et_in_ke_za.dta"
+append using "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za.dta"
 
 qui do `label1'
 
@@ -26,7 +26,7 @@ tempfile label2
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label2'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
-append using "$data_mc/02 recoded data/pvs_la.dta"
+append using "$data_mc/02 recoded data/input data files/pvs_la.dta"
 
 qui do `label2'
 
@@ -34,7 +34,7 @@ tempfile label3
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label3'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
-append using "$data_mc/02 recoded data/pvs_it_mx_us.dta"
+append using "$data_mc/02 recoded data/input data files/pvs_it_mx_us.dta"
 
 qui do `label3'
 
@@ -42,7 +42,7 @@ tempfile label4
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label q66_label using `label4'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label q66_label
 
-append using "$data_mc/02 recoded data/pvs_kr.dta"
+append using "$data_mc/02 recoded data/input data files/pvs_kr.dta"
 
 qui do `label4'
 
@@ -50,7 +50,7 @@ tempfile label5
 label save q4_label q5_label q7_label q8_label q20_label q44_label q63_label using `label5'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q63_label
 
-append using "$data_mc/02 recoded data/pvs_ar.dta"
+append using "$data_mc/02 recoded data/input data files/pvs_ar.dta"
 
 qui do `label5'
 
@@ -58,7 +58,7 @@ tempfile label6
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label6'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
-append using "$data_mc/02 recoded data/pvs_gb.dta"
+append using "$data_mc/02 recoded data/input data files/pvs_gb.dta"
 
 qui do `label6'
 
@@ -66,7 +66,7 @@ tempfile label7
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label7'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
-append using "$data_mc/02 recoded data/pvs_gr.dta"
+append using "$data_mc/02 recoded data/input data files/pvs_gr.dta"
 
 qui do `label7'
 
@@ -74,7 +74,7 @@ tempfile label8
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label8'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
-append using "$data_mc/02 recoded data/pvs_ro.dta"
+append using "$data_mc/02 recoded data/input data files/pvs_ro.dta"
 
 qui do `label8'
 
@@ -82,7 +82,7 @@ tempfile label9
 label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label9'
 label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label
 
-append using "$data_mc/02 recoded data/pvs_ng.dta"
+append using "$data_mc/02 recoded data/input data files/pvs_ng.dta"
 
 qui do `label9'
 
@@ -216,5 +216,5 @@ order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 
 	
 *Save recoded data
-save "$data_mc/02 recoded data/pvs_appended.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_appended.dta", replace
 
