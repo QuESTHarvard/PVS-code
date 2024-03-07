@@ -956,7 +956,9 @@ save "$data/Nigeria/02 recoded data/pvs_ng_recoded", replace
 restore
 
 
+drop if country == 19 // remove once we are able to use Romania data
+
 * ONLY RUN COMMAND BELOW WHEN SHARING TO ALL
-* save "$data/Multi-country (shared)/pvs_all_countries_3-7-24.dta", replace 
+save "$data/Multi-country (shared)/pvs_all_countries_3-7-24.dta", replace 
 
 
