@@ -564,4 +564,4 @@ lab var q66 "Q66.Which political party did you vote for in the last election?"
 *------------------------------------------------------------------------------*
 
 * Save data
-save "$data_mc/02 recoded data/pvs_ng.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_ng.dta", replace

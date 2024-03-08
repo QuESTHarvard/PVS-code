@@ -713,6 +713,22 @@ lab var q69_gr "Q69. GR only: Including yourself, how many people aged 18 or old
 
 *------------------------------------------------------------------------------*
 
+/*
+***************************** Data quality checks *****************************
+* Macros for these commands
+gl inputfile	"$data_mc/03 input output/Input/dq_inputs.xlsm"	
+gl output		"$data_mc/03 input output/Output"				
+gl id 			"respondent_id"	
+gl key			"respondent_serial"	
+gl enum			"interviewer_id"
+gl date			"date"	
+gl time			"time"
+gl duration		"int_length"
+gl keepvars 	"country"
+global all_dk 	"q13b q13e q23 q25_a q25_b q27 q28_a q28_b q30 q31 q32 q33 q34 q35 q36 q38 q50_a q50_b q50_c q50_d q63 q64 q65"
+global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q19_et_in_ke_za q19_co q19_pe q19_uy q20 q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_et_in_ke_za q43_co q43_pe q43_uy q44 q45 q46 q47 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 q62 q63 q64 q65"
+
+*============================= Other Specify ===============================* 
 
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
@@ -757,7 +773,7 @@ replace q45_other = subinstr(q45_other,`"""',  "", .)
 
 
 ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_18.xlsx",	///
-	sheet(other_specify_recode)							///	
+	sheet(other_specify_recode)	///	
 	id(respondent_serial)	
 	
 drop q7_other q8_other q19_gr_other q20_other q21_other q42_other q43a_gr_other q44_other q45_other q62_other
@@ -773,9 +789,11 @@ ren q44_other_original q44_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other
 
-/*------------------------------------------------------------------------------*
+*/
 
-* Greece team sent code for other specify data - but still used input/output process:
+*-----------------------------------------------------------------------------*
+
+* Greece team sent code for other specify data 
 
 **# PVS GREECE - CATEGPRIZATION OF "OTHER, SPECIFY" RESPONSES - UPDATED FILE (PART A)
 **# Stata Version 18.0, 10-AUG-2023 
@@ -1539,7 +1557,6 @@ replace q62=18090 if q62_other=="Greek"
 			q44a_gr_other=="ΥΠΕΡΗΧΟΛΟΓΟΣ" | ///		
 			q44a_gr_other=="ΨΥΧΟΘΕΡΑΠΕΥΤΗΣ" 	
 
-*/
 
 *Dropping the following value labels so the dataset won't get messed up when merging
 
@@ -1556,7 +1573,7 @@ order respondent_serial respondent_id country language date int_length mode weig
 
 * Save data - need to do other specify checks
 
-save "$data_mc/02 recoded data/pvs_gr.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_gr.dta", replace
 
 *------------------------------------------------------------------------------*
 

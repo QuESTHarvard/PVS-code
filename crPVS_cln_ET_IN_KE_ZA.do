@@ -690,6 +690,6 @@ lab var q65 "Q65. How many other mobile phone numbers do you have?"
 *------------------------------------------------------------------------------*
 * Save data
 
-save "$data_mc/02 recoded data/pvs_et_in_ke_za.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za.dta", replace
 
 *------------------------------------------------------------------------------*

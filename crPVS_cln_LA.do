@@ -698,7 +698,7 @@ order respondent_serial respondent_id mode country language date int_length weig
 
 * Save data 
 
-save "$data_mc/02 recoded data/pvs_la.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_la.dta", replace
 save "$data/Laos/02 recoded data/pvs_harmonized_la.dta", replace
 *save "J:\HEHS\HE\QuEST Laos\Data\Lao PVS\Clean data\Harmonized version\pvs_laos_harmonized.dta", replace 
 
