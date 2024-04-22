@@ -27,7 +27,6 @@ macro drop _all
 *global user "/Users/nek096"
 *global user "/Users/catherine.arsenault"
 *global user "/Users/tol145"
-*global user "/Users/rodba"
 global user "/Users/shs8688"
 
 
