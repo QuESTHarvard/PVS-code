@@ -949,6 +949,6 @@ drop Operator ContactRecords CELL1 CELL2 retest InterviewerID Interviewlanguage 
 
 * Save data 
 
-*save "$data_mc/02 recoded data/input data files/pvs_cn.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_cn.dta", replace
 
 *------------------------------------------------------------------------------*
