@@ -145,30 +145,9 @@ rename huifang retest
 order q*, sequential
 
 *------------------------------------------------------------------------------*
-*Fix interview length variable and other time variables - 
+*Fix interview date and time variables - 
 
 format date %td
-
-/*SS: confirm if this needs to be done for China
-
-generate recdate = dofc(date)
-format recdate %td
-
-format intlength %tcHH:MM:SS
-gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
-
-format q46 %tcHH:MM
-gen recq46 = (hh(q46)*60 + mm(q46))
-
-/* raw format is in: hours, days, weeks - need to troubleshoot
-format q46b %tcHH:MM:SS
-gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
-*/
-
-format q47 %tcMM:SS
-gen recq47 = (hh(q47)*60 + mm(q47)) 
-
-*/
 
 *------------------------------------------------------------------------------*
 *language data collection did in Chinese ony, which is the offical langue in China, people can communicate with Chiese"
@@ -816,7 +795,7 @@ replace q34_other=".d" if q34_other=="不清楚" ///
 	  | q34_other=="我也不知道，搞不懂"							
 
 
-/* SS: fix	  
+/* SS: This needs to be fixed, not working	  
 replace q37=.r if q37_other=="不清楚"
 *replace q37_other = "" in 2259 // SS: confirm with Xiaohui this line of code
 replace q37_other = "24" if q37_other == "第二天"
