@@ -299,7 +299,7 @@ ren q39 recq28_a
 ren q40 recq28_b
 ren q41 recq29
 ren q42 recq30
-ren q42_other recq42_other
+ren q42_other recq30_other
 
 ren q43_ar recq32_ar
 ren q43_co_pe recq32_co_pe
@@ -528,6 +528,6 @@ label variable retest "retest after two weeks"
 label variable int_length "Interview length"
 
 *Save recoded data
-*save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
 
 

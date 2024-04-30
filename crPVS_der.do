@@ -12,7 +12,7 @@
 * UPDATE 4-30-2024: SS updated variable names to V2.0 variables
 
 ***************************** Deriving variables *******************************
-u "$data_mc/02 recoded data/input data files/pvs_appended.dta", clear
+u "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", clear
 
 *------------------------------------------------------------------------------*
 
@@ -225,7 +225,7 @@ lab val tele_qual exc_poor
 egen visits_total = rowtotal(q18_q19 q22 q23)
 
 * value label for all numeric var
-lab val visits visits_covid visits_total visits_home visits_tele na_rf
+lab val visits visits_total visits_home visits_tele na_rf
 
 * unmet_reason - confirm placements of 12-15
 recode q30 (1 = 1 "Cost (High cost)") ///
@@ -304,11 +304,11 @@ recode usual_source (.a = .r) if q13b_la == .r
 
 gen inpatient = q26 
 gen unmet_need = q29 
-lab val health_chronic ever_covid covid_confirmed usual_source ///
-		inpatient unmet_need yes_no	
+lab val health_chronic usual_source inpatient unmet_need yes_no	
 * blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
 * blood_chol care_mental 
 * Yes/No/Don't Know/Refused - q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27_a q28_b q52 
+* SS: add China derived vars
 gen blood_pressure = q27_a 
 gen mammogram = q27_b
 gen cervical_cancer = q27_c
@@ -316,8 +316,8 @@ gen eyes_exam = q27_d
 gen teeth_exam = q27_e
 gen blood_sugar = q27_f 
 gen blood_chol = q27_g
-gen hiv_test = q27_za
-gen care_srh = q27_ng
+gen hiv_test = q27i_za
+gen care_srh = q27i_ng
 gen care_mental = q27_h 
 gen mistake = q28_a
 gen discrim = q28_b
@@ -736,7 +736,8 @@ lab val pol_align pol_align
 *****************************
 
 **** Order Variables ****
-	   
+
+order q*, sequential	   
 order respondent_serial respondent_id country country_reg language date /// 
 	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
 	  insured insur_type education health health_mental health_chronic ///
@@ -747,25 +748,13 @@ order respondent_serial respondent_id country country_reg language date ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_srh care_mental /// 
 	  mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
 	  last_type last_reason last_wait_time last_sched_time ///
-	  last_visit_time last_qual last_skills last_supplies last_respect last_know ///
+	   last_qual last_skills last_supplies last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate ///
 	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income pol_align q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q5_other q6 q6_it q6_kr q6_la q6_za q6_gb q7 q7_kr ///
-	  q7_other q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 ///
-	  q18a_la q18b_la q19_co q19_multi q19_gr_other q19_it q19a_gb q19b_gb q19_other_gb q19_kr q19_mx ///
-	  q19_co_pe q19_uy q19_ar q19_other ///
-	  q19_q20a_la q19_q20a_other q19_q20b_la ///
-	  q19_q20b_other q20 q20_other q20a_gr q20a_gr_other q20b_gr q20b_gr_other q20c_gr q20c_gr_other q21 q21_other q22 ///
-	  q23 q24 q23_q24 q26 q27 q28_a q28_b q28_c q29 q30 q31 q32 q33 q34 q35 q36 ///
-	  q37_za q37_gr_in_ro q37_ng q38 q39 q40 q41 q42 q42_other q43_ar q43_co_pe q43_multi q43a_gr q43b_gr q43_la q43_it q43_kr q43_mx ///
-	   q43_uy q43_other q43a_gb q43b_gb q43_other_gb q44 ///
-	  q44_other q44a_gr q44a_gr_other q44b_gr q44b_gr_other q45 q45_other q46 q46_refused q46a q46b q46b_refused ///
-	  q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q48_k q49 q50_a ///
-	  q50_b q50_c q50_d q50_e_ng q51 q41_b q41_c q42 q43 q44_multi q44_pe q44_uy q44a_mx q44b_mx q44a_ar q44b_ar q44c_ar q45 q46 q47 ///
-	  q48 q49 q50 q50_gb q50_other q50_mx q50a_la q50a_other_la q50a_us q50b_us q50b_other_us q51 CELL1 CELL2 q52 q52a_us q52b_us q52_gb q52a_gr q52b_gr q51_gr
-	   	  
+	  vignette_good minority income 
+order CELL1 CELL2, before(q52)	  	   	  
 	
 ***************************** Labeling variables ***************************** 
  
@@ -817,7 +806,7 @@ lab var	last_type_lvl "Facility level for last visit to a healthcare provider (q
 lab var last_type "Facility ownership and level for last visit to a healthcare provider (q32/q33)"
 lab var	last_reason	"Reason for last healthcare visit (q34)" 
 lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (q37)"
-lab var	last_visit_time "Length of time spent with the provider during last healthcare visit (Q47)"
+*lab var	last_visit_time "Length of time spent with the provider during last healthcare visit (Q47)"
 lab var	last_qual "Last visit rating: overall quality (q38A)"
 lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence) (q38B)"
 lab var	last_supplies "Last visit rating: equipment and supplies provider had available (q38C)"
@@ -849,7 +838,7 @@ lab var tele_qual "Overall quality of last telemedicine visit (Q28C)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (q36)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (q38K)"
 lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (q41_a/q41_b)"
-lab var pol_align "Political alignment in respondent's region / district / state"
+*lab var pol_align "Political alignment in respondent's region / district / state"
 
 
 
