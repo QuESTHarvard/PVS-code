@@ -9,6 +9,8 @@
 
 */
 
+* UPDATE 4-30-2024: SS updated variable names to V2.0 variables
+
 ***************************** Deriving variables *******************************
 u "$data_mc/02 recoded data/input data files/pvs_appended.dta", clear
 
@@ -153,8 +155,8 @@ lab val covid_vax_intent yes_no_doses
 * Note: In Laos, q15 was only asked to those who said 0 doses 
 
 * region
-gen region = q5
-lab val region q5_label
+gen region = q4
+lab val region q4_label
 
 * patient activiation
 gen activation = 1 if q16 == 3 & q17 == 3
@@ -378,7 +380,7 @@ lab val conf_getafford vc_nc_der
 
 *urban/rural
 
-recode q4 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 ///
+recode q5 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 ///
            4015 4016 17001 17002 17003 18018 19021 20022 20023 = 1 "Urban") ///
           (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 4017 17004 18019 19020 20024 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
@@ -710,6 +712,7 @@ rename q46_original  q46
 rename q47_original  q47
 rename q46b_origial  q46b
 
+/*
 *** Political alignment***
 
 **Import excel as updatas and save it as .dta
@@ -718,11 +721,11 @@ destring q5 pol_align, replace float
 save "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta", replace
 */
 
-merge m:m q5 using "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta" 
+merge m:m q4 using "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta" 
 drop _merge
 lab def pol_align 0 "Aligned (in favor)" 1 "Not aligned (out of favor)" .a "NA"
 lab val pol_align pol_align
-
+*/
 
 *****************************
 
