@@ -282,6 +282,7 @@ egen visits_total = rowtotal(q18_q19 q22 q23)
 * Recoding q28_a and q28_b to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
 
 *SS: double check, doesn't make sense
+/*
 list visits_total q28_a q28_b if q28_a == 3 & visits_total > 0 & visits_total < . /// 
 							  | q28_b == 3 & visits_total > 0 & visits_total < .
 
@@ -296,14 +297,17 @@ list visits_total q28_a q28_b if q28_a == .a & visits_total > 0 & ///
 							  
 list visits_total q28_a q28_b if q28_a != 3 & visits_total == 0 /// 
 						   | q28_b != 3 & visits_total == 0
-							  
+						  
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
 recode q28_a q28_b (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
 							  
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
 recode q28_a q28_b (.r = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
 
+*/
 drop visits_total
+	
+
 
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for intentionally skipped questions
@@ -367,44 +371,46 @@ recode CELL2 (. = .a) if CELL1 != 1
 *------------------------------------------------------------------------------*
 * Recode values and value labels so that their values and direction make sense
 
-lab def q2label 0 "under 18" 1 "18-29" 2 "30-39" 3 "40-49" 4 "50-59" 5 "60-69" ///
-				6 "70-79" 7 ">80" .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
-lab val q2 q2label
+lab def q2_label 0 "under 18" 1 "18-29" 2 "30-39" 3 "40-49" 4 "50-59" 5 "60-69" ///
+				6 "70-79" 7 "80 +" .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
+lab val q2 q2_label
 
-lab def q3label 0 "Male" 1 "Female" .a "NA" .d "Don't Know" .r "Refused"
-lab val q3 q3label
+lab def q3_label 0 "Male" 1 "Female" .a "NA" .d "Don't Know" .r "Refused"
+lab val q3 q3_label
 
-label define q4label 21001 "CN:安徽省" 21002"CN:北京市" 21003"CN:福建省" 21004"CN:甘肃省" 21005"CN:广东省" ///
+label define q4_label2 21001 "CN:安徽省" 21002"CN:北京市" 21003"CN:福建省" 21004"CN:甘肃省" 21005"CN:广东省" ///
 					 21006"CN:广西壮族自治区" 21007 "CN:贵州省" 21008"CN:海南省" 21009"CN:河北省" 21010"CN:河南省" ///
 					 21011"CN:黑龙江省" 21012"CN:湖北省" 21013 "CN:湖南省" 21014"CN:吉林省" 21015"CN:江苏省" ///
 					 21016"CN:江西省" 21017"CN:辽宁省" 21018"CN:内蒙古自治区" 21019 "CN:宁夏回族自治区" 21020"青海省" ///
 					 21021"CN:山东省" 21022"CN:山西省" 21023"CN:陕西省" 21024"CN:上海市" ///
 					 21025 "CN:四川省" 21026"CN:天津市" 21027"CN:西藏自治区" 21028"CN:新疆维吾尔自治区" 21029"CN:云南省" ///
 					 21030 "CN:浙江省" 21031"CN:重庆市" .a "NA" .d "Don't Know" .r "Refused"
-label val q4 q4label
+label val q4 q4_label2
 
-lab def q5label 21001 "CN: City" 21002 "CN:Suburb of city" 21003 "CN:Small town" 21004 "CN:Rural area" .a "NA" .d "Don't Know" .r "Refused"
-lab val q5 q5label
+lab def q5_label2 21001 "CN: City" 21002 "CN:Suburb of city" 21003 "CN:Small town" 21004 "CN:Rural area" .a "NA" .d "Don't Know" .r "Refused"
+lab val q5 q5_label2
 
 *Yes, No, Refused, Don't Know, NA
 lab def YNRF 0 "No" 1 "Yes" .a "NA" .d "Don't Know" .r "Refused"
 lab val q6 q11 q13 q26 q27_a q27_b q27i_cn q27j_cn q27_c q27_d q27_e q27_f q27_g q27_h q28_a ///
 		q28_b q29 q31_a q31_b YNRF
 
-lab def q7label 1 "Urban employee medical insurance" 2 "Urban and rural resident medical insurance" ///
+/*		
+lab def q7_label 1 "Urban employee medical insurance" 2 "Urban and rural resident medical insurance" ///
 				3 "Government medical insurance" 4 "Private medical insurance" 5 "Long-term care insurance" ///
 				6 "Other" .a "NA" .d "Don't Know" .r "Refused"
-lab val q7 q7label
+lab val q7 q7_label
+*/
 
-lab def q8label 21001 "CN:No formal education (illiterate)" 21002 "CN:Did not finish primary school" ///
+lab def q8_label 21001 "CN:No formal education (illiterate)" 21002 "CN:Did not finish primary school" ///
 				21003 "CN:Elementary school" ///
 				21004 "CN:Middle school" 21005 "CN:High school" 21006 "CN:Vocational school" ///
 				21007 "CN:Two-/Three-Year College/Associate degree" 21008 "CN:Four-Year College/Bachelor's degree" ///
 				21009 "CN:Master's degree" 21010 "CN:Doctoral degree/Ph.D." .a "NA" .d "Don't Know" .r "Refused"
-lab val q8 q8label				
+lab val q8 q8_label				
 
 *Endorsement
-lab def endorse 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
+lab def endorse 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" 5 "I did not receive healthcare from this provider in the past 12 months" .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
 lab val q9 q10 q17 q25 q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q42 ///
         q43 q47 q48 q49 endorse
 
@@ -412,33 +418,33 @@ lab val q9 q10 q17 q25 q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38
 lab def confidence 0 "Not at all confident" 1 "Not too confident" 2 "Somewhat confident" 3 "Very confident" .a "NA" .d "Don't Know" .r "Refused"
 lab val q12_a q12_b q41_a q41_b q41_c confidence 
 
-lab def q14label 1 "Public" 2 "Private (for-profit)" 3 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
-lab val q14 q14label 
+lab def q14_label 1 "Public" 2 "Private (for-profit)" 3 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
+lab val q14 q14_label 
 
-lab def q15label 21001 "CN:General hospital (Not including traditional chinese medicine hospital" ///
+lab def q15_label2 21001 "CN:General hospital (Not including traditional chinese medicine hospital" ///
 				 21002 "CN:Specialized hospital (Not including traditional chinese medicine hospital)" ///
 				 21003 "CN:Chinese medicine hospital" 21004 "CN:Community healthcare center" ///
 				 21005 "CN:Township hospital" ///
 				 21006 "CN:Health care post" 21007 "CN:Village clinic/Private clinic" 21008 "CN:Other" .r "Refused" ///
 				 .d "Don't Know" .a "NA"
-lab val q15 q15label
+lab val q15 q15_label2
 				 
-lab def q16label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" 4 "Good healthcare provider skills" ///
+lab def q16_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" 4 "Good healthcare provider skills" ///
 				 5 "Staff shows respect" 6 "Medicines and equipment are available" 7 "Only facility available" ///
 				 8 "Covered by insurance" 9 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
-lab val q16 q16label
+lab val q16 q16_label
 
 *NA/Refused/DK
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q18 q20 q21 q22 q23 q39 CELL2 na_rf
 
-lab def q19label 0 "0" 1 "1-4" 2 "5-9" 3 "10 or more" .a "NA" .d "Don't Know" .r "Refused"
-lab val q19 q19label 
+lab def q19_label 0 "0" 1 "1-4" 2 "5-9" 3 "10 or more" .a "NA" .d "Don't Know" .r "Refused"
+lab val q19 q19_label 
 
-lab def q24label 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" 2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
-lab val q24 q24label 
+lab def q24_label 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" 2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
+lab val q24 q24_label 
 
-lab def q30label 1 "High cost (e.g., high out of pocket payment, not covered by insurance)" ///
+lab def q30_label 1 "High cost (e.g., high out of pocket payment, not covered by insurance)" ///
 				 2 "Far distance (e.g., too far to walk or drive, transport not readily available)" ///
 				 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
 				 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
@@ -446,55 +452,55 @@ lab def q30label 1 "High cost (e.g., high out of pocket payment, not covered by 
 				 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
 				 7 "Illness not serious enough" /// 
 				 8 "Other" .a "NA" .d "Don't Know" .r "Refused"
-lab val q30 q30label
+lab val q30 q30_label
 
-lab def q32label 1 "Public" 2 "Private (for-profit)" 3 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
-lab val q32 q32label 
+lab def q32_label 1 "Public" 2 "Private (for-profit)" 3 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
+lab val q32 q32_label 
 
-lab def q33label 21001 "CN:General hospital (Not including traditional chinese medicine hospital" ///
+lab def q33_label 21001 "CN:General hospital (Not including traditional chinese medicine hospital" ///
 				 21002 "CN:Specialized hospital (Not including traditional chinese medicine hospital)" ///
 				 21003 "CN:Chinese medicine hospital" 21004 "CN:Community healthcare center" ///
 				 21005 "CN:Township hospital" 21006 "CN:Health care post" 21007 "CN:Village clinic/Private clinic" ///
 				 21008 "CN:Other" .a "NA" .d "Don't Know" .r "Refused"
-lab val q33 q33label
+lab val q33 q33_label
 
-lab def q34label 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" 2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4 "Other, specify"
-lab val q34 q34label 
+lab def q34_label 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" 2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4 "Other, specify"
+lab val q34 q34_label 
 
 
-lab def q35label 0 "No, I did not have an appointment" ///
+lab def q35_label 0 "No, I did not have an appointment" ///
 				 1 "Yes, the visit was scheduled, and I had an appointment" ///
 				 .a "NA" .d "Don't Know" .r "Refused"
-lab val q35 q35label 
+lab val q35 q35_label 
 
 
-lab def q36label 1 "Same or next day" 2 "2 days to less than one week" 3 "1 week to less than 2 weeks" ///
+lab def q36_label 1 "Same or next day" 2 "2 days to less than one week" 3 "1 week to less than 2 weeks" ///
 				 4 "2 weeks to less than 1 month" 5 "1 month to less than 2 months" ///
 				 6 "2 months to less than 3 months" 7 "3 months to less than 6 months" 8 "6 months or more" ///
 				 .a "NA" .d "Don't Know" .r "Refused"
-lab val q36 q36label 
+lab val q36 q36_label 
 
-lab def q37label 1 "Less than 15 minutes" 2 "15 minutes to less than 30 minutes" ///
+lab def q37_label 1 "Less than 15 minutes" 2 "15 minutes to less than 30 minutes" ///
 				 3 "30 minutes to less than 1 hour" 4 "1 hour to less than 2 hours" ///
 				 5 "2 hours to less than 3 hours" 6 "3 hours to less than 4 hours" ///
 				 7 "More than 4 hours (specify)" .a "NA" .d "Don't Know" .r "Refused"
-lab val q37 q37label
+lab val q37 q37_label
 
 lab def YN_nojudge 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" 5 "I am unable to judge" ///
 				   .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
 lab val q40_a q40_b q40_c q40_d YN_nojudge	  
 
-lab def q45label 1 "Getting better" 2 "Staying the same" 3 "Getting worse" .a "NA" .d "Don't Know" .r "Refused"
-lab val q45 q45label
+lab def q45_label 1 "Getting better" 2 "Staying the same" 3 "Getting worse" .a "NA" .d "Don't Know" .r "Refused"
+lab val q45 q45_label
 
-lab def q46label 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
+lab def q46_label 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 				 2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
 				 3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." ///
 				 .a "NA" .d "Don't Know" .r "Refused"
-lab val q46 q46label
+lab val q46 q46_label
 
-lab def language 21001 "CN:Mandarin Chinese" 21002 "CN:Minority languages" .a "NA" .d "Don't Know" .r "Refused"
-lab val q50 language	   
+lab def q50_label2 21001 "CN:Mandarin Chinese" 21002 "CN:Minority languages" .a "NA" .d "Don't Know" .r "Refused"
+lab val q50 q50_label2	   
 		   
 lab def income 21001 "CN:<700" 21002 "CN:700-1499" 21003 "CN:1500-2499" 21004 "CN:2500-3999" ///  
 			   21005 "CN:4000-6999" 21006 "CN:>=7000" .a "NA" .d "Don't Know" .r "Refused"

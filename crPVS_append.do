@@ -210,29 +210,16 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id  
 
 
-* Reorder variables
-order q*, sequential
-order respondent_serial respondent_id mode country language date ///
-	  int_length psu_id_for_svy_cmds weight 
-	
-*Save recoded data
-save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
-
-
-********************************* PVS V2 *********************************
-* Starting with PVS China, the PVS question items were re-ordered, this part of the do file will:
-	* Re-order V1 vars to match V2 ordered
-	* Append V2 countries
-
-
-clear all
-use "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta"
-
+*----------- reorder V1 to V2 ------
 drop q12 q13 q13b_co_pe_uy_ar q13e_co_pe_uy_ar q13e_other_co_pe_uy_ar ///
-     q14 q15 q14_la q15_la q25_a q25_b q47 q47_refused  // questions that were dropped
-
+     q14 q15 q14_la q15_la q25_a q25_b q47 q47_refused // questions that were dropped
+	 
 ren q4 recq5
+*label val recq5 q5_label
+
 ren q5 recq4
+*label val recq4 q4_label
+
 ren q5_other_it recq4_other_it
 ren q16 recq12_a
 ren q17 recq12_b
@@ -331,7 +318,7 @@ ren q45_other recq34_other
 ren q46a recq35
 ren q46b recq36 
 ren q46 recq37
-ren q46_refused recq37_refused
+ren q46_refused recq37_refused // this specific question isn't in V2.0
 ren q46b_refused recq37b_refused
 
 ren q48_a recq38_a
@@ -399,11 +386,50 @@ ren q69_gr recq51_gr
 
 ren rec* *
 
+label copy q4_label q5_label2
+label copy q5_label q4_label2
+label copy q20_label q15_label2
+label copy q62_label q50_label2
+
+label val q4 q4_label2
+label val q5 q5_label2
+label val q15 q15_label2
+label val q50 q50_label2
+
+label drop q4_label q5_label q20_label q62_label 
+
+* Reorder variables
+order q*, sequential
+order respondent_serial respondent_id mode country language date ///
+	  int_length psu_id_for_svy_cmds weight 
+		
+	
+*Save recoded data
+save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
+
+
+********************************* PVS V2 *********************************
+* Starting with PVS China, the PVS question items were re-ordered, this part of the do file will:
+	* Re-order V1 vars to match V2 order
+	* Update variable labels to match V2 label names
+	* Append V2 countries
+
+clear all
+use "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta"
+
+* Update CN data labels:
+recode q45 (0 = 1 "Getting worse") (1 = 2 "Staying the same") (2 = 3 "Getting better"), gen(recq45)
+drop q45
+
+recode q2 (0 = 1 "18 to 29") (1 = 2 "30-39") (2 = 3 "40-49" ) (3 = 4 "50-59") (4 = 5 "60-69") (5 = 6 "70-79") (6 = 7 "80+"), gen(recq2)
+drop q2
+ 
+ren rec* *
 
 * Append V2 datasets:
 tempfile label10
-label save q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label using `label10'
-label drop q4_label q5_label q7_label q8_label q20_label q44_label q62_label q63_label 
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q44_label q50_label2 q63_label using `label10'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q44_label q50_label2 q63_label 
 
 append using "$data_mc/02 recoded data/input data files/pvs_cn.dta"
 
@@ -417,6 +443,12 @@ lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 
 * Country-specific skip patterns - check this 
 recode q27i_cn q27j_cn q51_cn (. = .a) if country != 21
+
+* Other value label modifcations // SS: confirm with Todd these are not China specifc options
+lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
+lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
+lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
+lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 					
 * Reorder variables
 order q*, sequential
@@ -435,7 +467,7 @@ lab var mode "mode"
 lab var q1 "Q1. Respondent's еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent's gender"
-lab variable q4 "Q4. What Province do you live in?"
+lab variable q4 "Q4. What region do you live in?"
 lab var q5 "Q5. Which of these options best describes the place where you live?"
 lab var q6 "Q6. Do you have health insurance?"
 lab var q7 "Q7. What type of health insurance do you have?"
@@ -443,30 +475,30 @@ lab var q7_other "Q7. Other type of health insurance"
 lab var q8 "Q8. What is the highest level of education that you have completed?"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health, including your mood and your ability to think clearly, is:"
-lab var q11 "Q11. By longstanding, I mean illness, health problem, or mental health problem which has lasted or is expected to last for six months or more."
-lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
-lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
-lab var q13 "Q13. Is there one healthcare facility or provider's group you usually go to?" 
-lab var q14 "Q14. Is this a public, private, or NGO/faith-based healthcare facility?"
-label variable q14_other "Q14_Other. if the respondent do not know public/private"
+lab var q11 "Q11. Do you have any longstanding illness or health problem?"
+lab var q12_a "Q12a. How confident are you that you are the person who is responsible for managing your overall health?"
+lab var q12_b "Q12b. How confident are you can tell a healthcare provider concerns you have even when he or she does not ask??"
+lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
+lab var q14 "Q14. Is this a public, private, social security, NGO, or faith-based facility?"
+label variable q14_other "Q14_Other. Other (specify)"
 lab var q15 "Q15. What type of healthcare facility is this?"
 label variable q15_other "Q15_Other. Other"
 label variable q16 "Q16. Why did you choose this healthcare facility? Please tell us the main reason."
 label variable q16_other "Q16. Other reasons"
 label variable q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"
 label variable q18 "Q18. How many healthcare visits in total have you made in the past 12 months?"
-label variable q19 "Q19. Total number of healthcare visits in the past 12 months choice(range)"
+label variable q19 "Q19. Total number of healthcare visits in the past 12 months"
 lab var q18_q19 "Q18/Q19. Total mumber of visits made in past 12 months (q18, q19 mid-point)"
 label variable q20 "Q20. You said you made * visits. Were they all to the same facility?"
 label variable q21 "Q21. How many different healthcare facilities did you go to in total?"
-label variable q22 "Q22. How many visits did you have with a healthcare provider at your home?"
+label variable q22 "Q22. How many visits did you have with a healthcare provider at your home in the past 12 months?"
 label variable q23 "Q23. How many virtual or telemedicine visits did you have in the past 12 months?"
-label variable q24 "Q24. What was the main reason for the virtual or telemedicine visit?"
-label variable q24_other "Q24_other reasons of virtual or telemedicine visit."
+label variable q24 "Q24. What was the main reason for the last virtual or telemedicine visit?"
+label variable q24_other "Q24_Other. Other reasons of virtual or telemedicine visit."
 label variable q25 "Q25. How would you rate the overall quality of your last telemedicine visit?"
-label variable q26 "Q26. Stayed overnight at a facility in past 12 months (inpatient care)"
+label variable q26 "Q26. In the past 12 months did you stay overnight at a healthcare facility as a patient?"
 label variable q27_a "Q27a. Blood pressure tested in the past 12 months"
-label variable q27_b "Q27b. Breast examination"
+label variable q27_b "Q27b. Breast examination (received a mammogram) in the past 12 months"
 label variable q27_c "Q27c. Received cervical cancer screening, like a pap test or visual inspection"
 label variable q27_d "Q27d. Had your eyes or vision checked in the past 12 months"
 label variable q27_e "Q27e. Had your teeth checked in the past 12 months"
@@ -476,15 +508,15 @@ label variable q27_h "Q27h. Received care for depression, anxiety, or another me
 label variable q27i_cn "Q27i. CN only: Breast colour ultrasound (B-ultrasound)"
 label variable q27j_cn "Q27j. CN only: Received a mammogram (a special X-ray of the breast)"
 label variable q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
-label variable q28_b "Q28b. been treated unfairly or discriminated against by a doctor, nurse, or..."
+label variable q28_b "Q28b. Been treated unfairly or discriminated against by a doctor, nurse, or another healthcare provider"
 label variable q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
-label variable q30 "Q30. The last time this happened, what was the main reason?"
+label variable q30 "Q30. The last time this happened, what was the main reason you did not receive healthcare?"
 label variable q30_other "Q30_Other. Other"
 label variable q31_a "Q31a. Have you ever needed to borrow money to pay for healthcare"
 label variable q31_b "Q31b. Sell items to pay for healthcare"
 label variable q32 "Q32. Last visit facility type public/private/social security/NGO/faith-based?"
 label variable q32_other "Q32_Other. other last visit facility type"
-label variable q33 "Q33. What type of healthcare facility is this?"
+label variable q33 "Q33. What type of healthcare facility was this?"
 label variable q33_other "Q33_Other. Other type of healthcare facility"
 label variable q34 "Q34. What was the main reason you went?"
 label variable q34_other "Q34_Other. Other reasons"
@@ -513,9 +545,10 @@ label variable q41_b "Q41b. How confident are you that you'd be able to afford t
 label variable q41_c "Q41c. How confident are you that the government considers the public's opinion?"
 label variable q42 "Q42. How would you rate the quality of public healthcare system in your country?"
 label variable q43 "Q43. How would you rate the quality of private healthcare system in your country?"
+label variable q44 "Q44. Overall, how would you rate the quality of the NGO or faith-based healthcare system in your country?"
 label variable q45 "Q45. Is your country's health system is getting better, same or worse?"
 label variable q46 "Q46. Which of these statements do you agree with the most?"
-label variable q47 "Q47. How would you rate the government's management of the COVID-19 pandemic?"
+label variable q47 "Q47. How would you rate the government's management of the COVID-19 pandemic overall?"
 label variable q48 "Q48. How would you rate the quality of care provided? (Vignette, option 1)"
 label variable q49 "Q49. How would you rate the quality of care provided? (Vignette, option 2)"
 label variable q50 "Q50. What is your native language or mother tongue?"
@@ -524,7 +557,6 @@ label variable q51 "Q51. Total monthly household income"
 label variable q51_cn "Q51a. What is the number of people in the household?"
 label variable CELL1 "CELL1. Do you have another mobile phone number besides the one I am calling. "
 label variable CELL2 "CELL2. How many other mobile phone numbers do you have?"
-label variable retest "retest after two weeks"
 label variable int_length "Interview length"
 
 *Save recoded data

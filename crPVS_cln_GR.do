@@ -827,6 +827,9 @@ replace q8=18050 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="ME
  
  
 		/* Response Info "ΚΑΠΟΙΑ ΣΧΟΛΗ ΜΕΤΑ ΤΟ ΛΥΚΕΙΟ" = "A school/institute after high school": (vague response) - not categorized*/
+* 5-1 SS: based on this info, I want to recode this to the lowest category (high school) to remove the other specify category to match other countries	
+
+replace q8 = 18047 if q8_other == "ΚΑΠΟΙΑ ΣΧΟΛΗ ΜΕΤΑ ΤΟ ΛΥΚΕΙΟ" 	
 	
 ********************************************************************************
 **# q19_gr & q19_gr_other: Is this a public, private, contracted to public, or NGO healthcare facility?  
