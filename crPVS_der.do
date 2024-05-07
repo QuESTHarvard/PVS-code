@@ -130,6 +130,8 @@ recode age_cat (.a = 4) if q1 >= 50 & q1 <= 59
 recode age_cat (.a = 5) if q1 >= 60 & q1 <= 69
 recode age_cat (.a = 6) if q1 >= 70 & q1 <= 79
 recode age_cat (.a = 7) if q1 >= 80
+
+lab def age_cat 1 "18 to 29" 2 "30-39" 3 "40-49" 4 "50-59" 5 "60-69" 6 "70-79" 7 "80+"
 lab val age_cat age_cat
 
 * female: gender 	   
