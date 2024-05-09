@@ -309,7 +309,7 @@ lab val health_chronic usual_source inpatient unmet_need yes_no
 * blood_pressure mammogram cervical_cancer eyes_exam teeth_exam blood_sugar  
 * blood_chol care_mental 
 * Yes/No/Don't Know/Refused - q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27_a q28_b q52 
-* SS: add China derived vars
+
 gen blood_pressure = q27_a 
 gen mammogram = q27_b
 gen cervical_cancer = q27_c
@@ -317,13 +317,14 @@ gen eyes_exam = q27_d
 gen teeth_exam = q27_e
 gen blood_sugar = q27_f 
 gen blood_chol = q27_g
-gen hiv_test = q27i_za
-gen care_srh = q27i_ng
 gen care_mental = q27_h 
 
-*SS: Confirm with Todd how to create these der vars
-*gen Breast colour ultrasound (B-ultrasound) = q27i_cn
-*gen Received a mammogram (a special X-ray of the breast = q27j_cn 
+gen hiv_test = q27i_za
+gen care_srh = q27i_ng
+gen breast_exam = q27i_cn
+gen color_ultrasound = q27j_cn 
+
+*SS: confirm with Todd what this should be
 *gen = q27i_gr_in_ro
 
 gen mistake = q28_a

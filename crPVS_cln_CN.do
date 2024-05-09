@@ -85,9 +85,9 @@ drop q23_code
 rename q24other q24_other
 
 rename q27a q27_a
-rename q27b q27_b
-rename q27bi q27i_cn
-rename q27bii q27j_cn
+rename q27b q27i_cn
+rename q27bi q27j_cn
+rename q27bii q27_b
 rename q27c q27_c
 rename q27d q27_d
 rename q27e q27_e
