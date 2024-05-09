@@ -54,6 +54,7 @@ drop  q4_2_other
 
 rename q7other q7_other
 
+rename q14 q14_cn
 rename q14other q14_other
 rename q15other q15_other
 rename q16other q16_other
@@ -101,6 +102,7 @@ rename q30other q30_other
 rename q31a q31_a
 rename q31b q31_b
 
+rename q32 q32_cn
 rename q32other q32_other
 rename q33other q33_other
 
@@ -236,12 +238,12 @@ recode q18_q19 (998 = .r) if q19 == 999
 gen recq7 = country*1000 + q7
 replace recq7 = .a if q7 == .a
 replace recq7 = .r if q7 == 999
-label def q7_label 21001 "CN:Urban employee medical insurance" ///
-                   21002 "CN:Urban and rural resident medical insurance (integrated urban resident medical insurance and new rural cooperative medical insurance)" ///
-				   21003 "CN:Government medical insurance" ///
-				   21004 "CN:Private medical insurance" ///
-				   21005 "CN:Long-term care insurance" ///
-				   21006 "CN:Other" .a "NA" .r "Refused"
+label def q7_label 21001 "CN: Urban employee medical insurance" ///
+                   21002 "CN: Urban and rural resident medical insurance (integrated urban resident medical insurance and new rural cooperative medical insurance)" ///
+				   21003 "CN: Government medical insurance" ///
+				   21004 "CN: Private medical insurance" ///
+				   21005 "CN: Long-term care insurance" ///
+				   21006 "CN: Other" .a "NA" .r "Refused"
 label values recq7 q7_label
 drop q7 
 
@@ -254,9 +256,9 @@ ren rec* *
 recode q18 q21 q22 q23 q27_a q27_b q27i_cn q27j_cn q27_c q27_d q27_e q27_f q27_g q27_h (998 = .d)
 	  
 recode q1 q2 q3 q4 q4_2 q5 q6 q7 q8 q9 q10 q11 q12_a q12_b ///
-       q13 q14 q15 q16 q17 q18 q19 q20 q21 q22 q23 q24 q25 q26 q27_a ///
+       q13 q14_cn q15 q16 q17 q18 q19 q20 q21 q22 q23 q24 q25 q26 q27_a ///
 	   q27_b q27i_cn q27j_cn q27_c q27_d q27_e q27_f q27_g q27_h q28_a q28_b q29 ///
-	   q30 q31_a q31_b q32 q33 q34 q35 q36 q37 q38_a ///
+	   q30 q31_a q31_b q32_cn q33 q34 q35 q36 q37 q38_a ///
 	   q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q39 q40_a q40_b ///
 	   q40_c q40_d q41_a q41_b q41_c q42 q43 q45 q46 q47 q48 q49 q50 q51 CELL1 CELL2 (999 = .r)
 	   
@@ -322,8 +324,8 @@ recode q7 (. = .a) if q6 == 0 | q6 == .r
 recode q7 (nonmissing = .a) if q6 == 0
 
 *q14-17
-recode q14 q15 q16 q17 (. = .a) if q13 == 0 | q13 == .r 
-recode q15 (. = .a) if q14 ==3
+recode q14_cn q15 q16 q17 (. = .a) if q13 == 0 | q13 == .r 
+recode q15 (. = .a) if q14_cn == 3
 *0 changes made
 
 * NA's for q19-21 
@@ -351,15 +353,15 @@ recode q30 (. = .a) if q29 == 0 | q29 == .r
 
 * q43-49 na's  43=32 44=33 45=34 46=35 47=drop 48_a=38_a ...k 49=39
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q32 q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_cn q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q19 == 1 | q19 == .r
 *648 changes to all
 	  	   	   
-recode q32 q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_cn q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (nonmissing = .a) if q18 == 0 | q19 == 1
 * 0 changes to all	   
 	      
-recode q33 (. = .a) if q32 == 3 | q32 == .r
+recode q33 (. = .a) if q32_cn == 3 | q32_cn == .r
 
 recode q36 (. = .a) if q35!=1 
 
@@ -387,7 +389,7 @@ label define q4_label2 21001 "CN:安徽省" 21002"CN:北京市" 21003"CN:福建�
 					 21030 "CN:浙江省" 21031"CN:重庆市" .a "NA" .d "Don't Know" .r "Refused"
 label val q4 q4_label2
 
-lab def q5_label2 21001 "CN: City" 21002 "CN:Suburb of city" 21003 "CN:Small town" 21004 "CN:Rural area" .a "NA" .d "Don't Know" .r "Refused"
+lab def q5_label2 21001 "CN: City" 21002 "CN: Suburb of city" 21003 "CN: Small town" 21004 "CN: Rural area" .a "NA" .d "Don't Know" .r "Refused"
 lab val q5 q5_label2
 
 *Yes, No, Refused, Don't Know, NA
@@ -419,13 +421,13 @@ lab def confidence 0 "Not at all confident" 1 "Not too confident" 2 "Somewhat co
 lab val q12_a q12_b q41_a q41_b q41_c confidence 
 
 lab def q14_label 1 "Public" 2 "Private (for-profit)" 3 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
-lab val q14 q14_label 
+lab val q14_cn q14_label 
 
-lab def q15_label2 21001 "CN:General hospital (Not including traditional chinese medicine hospital" ///
-				 21002 "CN:Specialized hospital (Not including traditional chinese medicine hospital)" ///
-				 21003 "CN:Chinese medicine hospital" 21004 "CN:Community healthcare center" ///
-				 21005 "CN:Township hospital" ///
-				 21006 "CN:Health care post" 21007 "CN:Village clinic/Private clinic" 21008 "CN:Other" .r "Refused" ///
+lab def q15_label2 21001 "CN: General hospital (Not including traditional chinese medicine hospital" ///
+				 21002 "CN: Specialized hospital (Not including traditional chinese medicine hospital)" ///
+				 21003 "CN: Chinese medicine hospital" 21004 "CN: Community healthcare center" ///
+				 21005 "CN: Township hospital" ///
+				 21006 "CN: Health care post" 21007 "CN: Village clinic/Private clinic" 21008 "CN: Other" .r "Refused" ///
 				 .d "Don't Know" .a "NA"
 lab val q15 q15_label2
 				 
@@ -455,14 +457,14 @@ lab def q30_label 1 "High cost (e.g., high out of pocket payment, not covered by
 lab val q30 q30_label
 
 lab def q32_label 1 "Public" 2 "Private (for-profit)" 3 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
-lab val q32 q32_label 
+lab val q32_cn q32_label 
 
-lab def q33_label 21001 "CN:General hospital (Not including traditional chinese medicine hospital" ///
-				 21002 "CN:Specialized hospital (Not including traditional chinese medicine hospital)" ///
-				 21003 "CN:Chinese medicine hospital" 21004 "CN:Community healthcare center" ///
-				 21005 "CN:Township hospital" 21006 "CN:Health care post" 21007 "CN:Village clinic/Private clinic" ///
-				 21008 "CN:Other" .a "NA" .d "Don't Know" .r "Refused"
-lab val q33 q33_label
+lab def q33_label2 21001 "CN: General hospital (Not including traditional chinese medicine hospital" ///
+				 21002 "CN: Specialized hospital (Not including traditional chinese medicine hospital)" ///
+				 21003 "CN: Chinese medicine hospital" 21004 "CN: Community healthcare center" ///
+				 21005 "CN: Township hospital" 21006 "CN: Health care post" 21007 "CN: Village clinic/Private clinic" ///
+				 21008 "CN: Other" .a "NA" .d "Don't Know" .r "Refused"
+lab val q33 q33_label2
 
 lab def q34_label 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" 2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4 "Other, specify"
 lab val q34 q34_label 
@@ -499,12 +501,12 @@ lab def q46_label 1 "Our healthcare system has so much wrong with it that we nee
 				 .a "NA" .d "Don't Know" .r "Refused"
 lab val q46 q46_label
 
-lab def q50_label2 21001 "CN:Mandarin Chinese" 21002 "CN:Minority languages" .a "NA" .d "Don't Know" .r "Refused"
+lab def q50_label2 21001 "CN: Mandarin Chinese" 21002 "CN: Minority languages" .a "NA" .d "Don't Know" .r "Refused"
 lab val q50 q50_label2	   
 		   
-lab def income 21001 "CN:<700" 21002 "CN:700-1499" 21003 "CN:1500-2499" 21004 "CN:2500-3999" ///  
+lab def q51_label2 21001 "CN:<700" 21002 "CN:700-1499" 21003 "CN:1500-2499" 21004 "CN:2500-3999" ///  
 			   21005 "CN:4000-6999" 21006 "CN:>=7000" .a "NA" .d "Don't Know" .r "Refused"
-lab val q51 income
+lab val q51 q51_label2
 
 lab def CELL1label 0 "No / No other numbers" 1 "Yes" .a "NA" .d "Don't Know" .r "Refused"
 lab val CELL1 CELL1label
@@ -534,7 +536,7 @@ replace q7_other = "城镇职工医疗保险和商业医疗保险" if q7_other =
 							  | q7_other == "我有职工和商业险，我不知道哪个最主要" 
 replace q7_other = "城乡居民医疗保险和商业医疗保险" if q7_other=="城镇职工医疗保险和商业医疗保险都有，都重要啊"  ///
 							  | q7_other == "城乡居民医疗保险，和商业医疗"
-replace q7=2 if q7_other == "每年120元"
+replace q7= 21002 if q7_other == "每年120元"
 replace q7_other = "4种保险" if q7_other == "什么都有，公费，个人都有，有四个，我不知道哪个最重要"
 replace q7_other=".d" if q7_other == "不知道" ///
 
@@ -751,7 +753,7 @@ replace q32_other = "不知道" if q32_other == "不知道。" ///
 	  | q32_other == "没记住。"  ///
 	  | q32_other == "单位固定医疗机构体检"  ///
 	  | q32_other == "农村的诊所，不知道是公立还是私立" 
-replace q32 = 2 if q32_other == "国际"
+replace q32_cn = 2 if q32_other == "国际"
 replace q32_other = "" if q32_other == "国际"
 replace q32_other = ".d" if q32_other == "不知道"							
 
@@ -768,7 +770,7 @@ replace q33_other = "体检机构" if q33_other == "不知道名字，就是一�
 				| q33_other=="美兆体检中心" 
 replace q33_other = "妇幼保健医院" if q33_other == "天门市妇幼保健院" ///
                 | q33_other == "妇幼保健院" 
-replace q33 = 1 if q33_other == "中西结合医院" | q33_other == "工人医院"
+replace q33 = 21001 if q33_other == "中西结合医院" | q33_other == "工人医院"
 replace q33_other = "" if q33_other == "中西结合医院" | q33_other == "工人医院"							
 							
 replace q34 = 1 if q34_other == "内分泌不调" ///
@@ -815,7 +817,7 @@ destring q37_other, replace
 	  
 replace q50_other = "蒙古族" if q50_other == "蒙族" | q50_other == "蒙古"
 replace q50_other = "维吾尔族" if q50_other == "新疆维吾尔族"
-replace q50 = 1 if q50_other == "闽南语"
+replace q50 = 21001 if q50_other == "闽南语"
 replace q50_other = "" if q50_other == "闽南语"		
 
 *------------------------------------------------------------------------------*
@@ -844,7 +846,7 @@ lab var q11 "Q11. By longstanding, I mean illness, health problem, or mental hea
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
 lab var q13 "Q13. Is there one healthcare facility or provider's group you usually go to?" 
-lab var q14 "Q14. Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q14_cn "Q14. CN only: Is this a public, private, or NGO/faith-based healthcare facility?"
 label variable q14_other "Q14_Other. if the respondent do not know public/private"
 lab var q15 "Q15. What type of healthcare facility is this?"
 label variable q15_other "Q15_Other. Other"
@@ -879,8 +881,8 @@ label variable q30 "Q30. The last time this happened, what was the main reason?"
 label variable q30_other "Q30_Other. Other"
 label variable q31_a "Q31a. Have you ever needed to borrow money to pay for healthcare"
 label variable q31_b "Q31b. Sell items to pay for healthcare"
-label variable q32 "Q32. Last visit facility type public/private/social security/NGO/faith-based?"
-label variable q32_other "Q32_Other. other last visit facility type"
+label variable q32_cn "q32_cn. Last visit facility type public/private/social security/NGO/faith-based?"
+label variable q32_other "q32_Other. other last visit facility type"
 label variable q33 "Q33. What type of healthcare facility is this?"
 label variable q33_other "Q33_Other. Other type of healthcare facility"
 label variable q34 "Q34. What was the main reason you went?"

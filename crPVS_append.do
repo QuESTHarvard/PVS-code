@@ -390,13 +390,17 @@ label copy q4_label q5_label2
 label copy q5_label q4_label2
 label copy q20_label q15_label2
 label copy q62_label q50_label2
+label copy q44_label q33_label2
+label copy q63_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
 label val q15 q15_label2
 label val q50 q50_label2
+label val q33 q33_label2
+label val q51 q51_label2
 
-label drop q4_label q5_label q20_label q62_label 
+label drop q4_label q5_label q20_label q62_label q44_label q63_label
 
 * Reorder variables
 order q*, sequential
@@ -428,8 +432,8 @@ ren rec* *
 
 * Append V2 datasets:
 tempfile label10
-label save q4_label2 q5_label2 q7_label q8_label q15_label2 q44_label q50_label2 q63_label using `label10'
-label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q44_label q50_label2 q63_label 
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label10'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 
 
 append using "$data_mc/02 recoded data/input data files/pvs_cn.dta"
 
@@ -442,7 +446,7 @@ lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				21 "China", modify
 
 * Country-specific skip patterns - check this 
-recode q27i_cn q27j_cn q51_cn (. = .a) if country != 21
+recode q14_cn q27i_cn q27j_cn q32_cn q51_cn (. = .a) if country != 21
 
 * Other value label modifcations // SS: confirm with Todd these are not China specifc options
 lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
@@ -479,7 +483,7 @@ lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12_a "Q12a. How confident are you that you are the person who is responsible for managing your overall health?"
 lab var q12_b "Q12b. How confident are you can tell a healthcare provider concerns you have even when he or she does not ask??"
 lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
-lab var q14 "Q14. Is this a public, private, social security, NGO, or faith-based facility?"
+lab var q14_cn "Q14. CN only: Is this a public, private, social security, NGO, or faith-based facility?"
 label variable q14_other "Q14_Other. Other (specify)"
 lab var q15 "Q15. What type of healthcare facility is this?"
 label variable q15_other "Q15_Other. Other"
@@ -514,7 +518,7 @@ label variable q30 "Q30. The last time this happened, what was the main reason y
 label variable q30_other "Q30_Other. Other"
 label variable q31_a "Q31a. Have you ever needed to borrow money to pay for healthcare"
 label variable q31_b "Q31b. Sell items to pay for healthcare"
-label variable q32 "Q32. Last visit facility type public/private/social security/NGO/faith-based?"
+label variable q32_cn "Q32. CN only: Last visit facility type public/private/social security/NGO/faith-based?"
 label variable q32_other "Q32_Other. other last visit facility type"
 label variable q33 "Q33. What type of healthcare facility was this?"
 label variable q33_other "Q33_Other. Other type of healthcare facility"
@@ -554,7 +558,7 @@ label variable q49 "Q49. How would you rate the quality of care provided? (Vigne
 label variable q50 "Q50. What is your native language or mother tongue?"
 label variable q50_other "Q50_Other. Other languages"
 label variable q51 "Q51. Total monthly household income"
-label variable q51_cn "Q51a. What is the number of people in the household?"
+label variable q51_cn "Q51a. CN only: What is the number of people in the household?"
 label variable CELL1 "CELL1. Do you have another mobile phone number besides the one I am calling. "
 label variable CELL2 "CELL2. How many other mobile phone numbers do you have?"
 label variable int_length "Interview length"
