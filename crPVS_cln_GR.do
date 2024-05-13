@@ -22,13 +22,14 @@ set more off
 *********************** GREECE ***********************
 
 * Import data 
-import spss using "$data/Greece/01 raw data/PVS_Greece_weighted_180723.sav", case(lower)
+use  "$data/Greece/01 raw data/PVS_Greece_weighted v2_231023.dta"
 
-*q43_other responses manually appended since they were provided seperately
-merge 1:1 respondent_id using "/Users/shs8688/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data/Greece/01 raw data/q43_other_data.dta"
+rename *, lower
+drop q46 q46_gr q47 
 
+*adding Elena's q46-q47 variables
+merge 1:1 respondent_id using "$data/Greece/01 raw data/EB_gr_waiting_times_numeric_v1_2nov23.dta", force
 drop _merge 
-*notes drop _all
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
@@ -39,12 +40,11 @@ drop _merge
 ren q14_new q14
 ren q15_new q15
 
-label drop labels26
 *change q21 for additional GR vars:
 recode q21 (1 = 1 "Low cost") /// 
 			(2 = 2 "Short distance") ///
 			(3 = 3 "Short waiting time") ///
-			(4 = 4 "Good healthcare provider skills") ///
+			(5 = 4 "Good healthcare provider skills") ///
 			(5 = 5 "Staff shows respect") ///
 			(6 = 6 "Medicines and equipment are available") ///
 			(7 = 7 "Only facility available") ///
@@ -56,8 +56,7 @@ recode q21 (1 = 1 "Low cost") ///
 			
 ren q28 q28_a
 ren q28_new q28_b
-ren q28_gr q28_c // need to flip order of values
-
+ren q28_gr q28_c
 
 *specific GR value added to q42:
 recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") /// 
@@ -76,7 +75,7 @@ ren q43 q43a_gr
 ren q43_other q43a_gr_other
 
 ren q46_gr2 q46a
-ren q46_gr q46b 
+*ren q46_gr q46b 
 ren q46_gr_refused  q46b_refused
 ren q56 q56_gr
 ren q67 q65
@@ -113,16 +112,11 @@ format recdate %td
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
-*confirm the format for q46 and q47 instrument word doc says HH:MM
-format q46 %tcHH:MM
-gen recq46 = (hh(q46)*60 + mm(q46))
+gen recq46 = q46_h*60
 
-* confirm that format for q46b is in HH:MM:SS even though question asks days, hours, minutes
-format q46b %tcHH:MM:SS
-gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
+gen recq46b = q46_gr_w/7 + q46_gr_h/24
 
-format q47 %tcMM:SS
-gen recq47 = (mm(q47)+ ss(q47)/60) 
+gen recq47 = q47_h*60
 
 *------------------------------------------------------------------------------*
 
@@ -155,13 +149,13 @@ replace recq62 = .r if q62== 996
 gen recq63 = reccountry*1000 + q63
 replace recq63 = .r if q63 == 996
 
-local q4l labels9
-local q5l labels10
-local q8l labels13
-local q20l labels25
-local q44l labels25
-local q62l labels62
-local q63l labels63
+local q4l Q4
+local q5l Q5
+local q8l Q8
+local q20l Q20
+local q44l Q44
+local q62l Q62
+local q63l Q63
 
 foreach q in q4 q5 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
@@ -200,7 +194,7 @@ label define q63_label .a "NA" .r "Refused" , modify
 
 * add label for "Refused"
 
-label define labels61 .r "Refused", add
+label define Q61 .r "Refused", add
 
 *****************************
 
@@ -218,7 +212,10 @@ recode q64 (. = .a) if sample_type == 2
 
 * Drop unused variables 
 
-drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender q4_weight rim_region q8_weight rim_education dw_overall interviewer_id interviewer_gender interviewer_language country language
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q19 q19_other q20 q21 q42 q44 ///
+	 q46 q46_gr q46_h q46_gr_h q46_gr_w q47_h q47 q62 q63 q66 rim_age rim_gender ///
+	 q4_weight rim_region q8_weight rim_education dw_overall interviewer_id ///
+	 interviewer_gender interviewer_language country language
  
 
 *------------------------------------------------------------------------------*
@@ -254,10 +251,10 @@ recode q12 q15 q23 q37_gr (995 = .d)
 recode q23 q27 q28_a q31 q32 q33 q34 q35 q36 q38 q65 q64 q66a_gr q66b_gr (997 = .d)
 
 * In raw data, 996 = "refused" 	  
-recode q6 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
+recode q6 q7 q11 q14 q15 q16 q17 q18 q22 q23 q24 q27 q28_a q28_c q29 q39 ///
 	   q40 q45 q46a q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h ///
 	   q48_i q48_j q48_k q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 ///
-	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr q66a_gr q66b_gr q69_codes (996 = .r)
+	   q56_gr q57 q58 q59 q60 q61 q65 q64 q43a_gr q43b_gr q66a_gr q66b_gr q69_codes q23_q24 (996 = .r)
 	   
 recode recq63 (18996 = .r)
 
@@ -381,7 +378,7 @@ recode q47_refused (. = 0) if recq47 != .
 
 recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
-recode q46b q46b_refused (. = .a) if q46a == 2 | q46a == .r
+recode q46b_refused (. = .a) if q46a == 2 | q46a == .r // q46b
 
 *q65
 recode q65 (. = .a) if q64 != 1
@@ -486,14 +483,18 @@ recode q24 ///
 	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(number_visits)
 
-* q49 - no recode needed 
+recode q49 ///
+	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
+	(7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
+	(.r = .r Refused) (.a = .a NA), ///
+	pre(rec) label(prom_score)
 	
 recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
 	(.r = .r "Refused") , pre(rec) label(system_outlook)
 	
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46a q46b recq47 na_rf	
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46a recq47 na_rf // q46b
 	
 label define labels47 4 "Other, specify" .a "NA" .r "Refused", modify
 
@@ -501,22 +502,74 @@ label def q46_label .a "NA" .r "Refused"
 label values recq46 q46_label
 
 ******* Country-specific *******
-lab def labels24 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels38 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels14 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels43 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels55 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels31 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels64 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels26 .a "NA", modify
-lab def q20a_gr .a "NA", modify
-lab def labels28 .a "NA", modify
-lab def labels45 .a "NA", modify
-lab def labels46 .a "NA", modify
-lab def labels65 .a "NA" .r "Refused" .d "Don't know",modify
-lab def labels66 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q6 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q7 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q11 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q12 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q13 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q14 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q15 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q16 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q17 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q18 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q19_GR .a "NA" .r "Refused" .d "Don't know",modify
+lab def q20a_gr .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q20_D .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q22 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q24 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q25_A .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q26 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q28_GR .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q29 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q31 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q32 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q33 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q34 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q35 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q36 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q37_GR .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q38 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q39 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q40 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q43 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q43_GR .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q44_B .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q44_C .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q45 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q46_GR2 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q46_GR_refused .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_A .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_B .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_C .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_D .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_E .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_F .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_G .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_H .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_I .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_J .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q48_K .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q49 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q50_A .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q50_B .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q50_C .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q50_D .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q51 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q52 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q53 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q54 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q55 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q56 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q57 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q58 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q59 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q60 .a "NA" .r "Refused" .d "Don't know",modify
 lab def q64 .a "NA" .r "Refused" .d "Don't know",modify
-
+lab def Q67 .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q66_A .a "NA" .r "Refused" .d "Don't know",modify
+lab def Q66_B .a "NA" .r "Refused" .d "Don't know",modify
+lab def labels26 .a "NA", modify
+lab def recq42 .a "NA", modify
 
 *------------------------------------------------------------------------------*
 
@@ -525,7 +578,7 @@ lab def q64 .a "NA" .r "Refused" .d "Don't know",modify
 
 drop date q3 q6 q7 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_gr q38 q39 q40 q41 q46a ///
-	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
+	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k q49 ///
 	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
 	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_gr q57 q59 q60 q61 weight q69_codes sample_type
 	 
@@ -538,7 +591,7 @@ order q*, sequential
 
 * Country-specific vars for append 
 ren q37_gr q37_gr_in_ro
-ren q56_gr q56_et_gr_in_ke_ro_za
+ren q56_gr q56_multi
 
 * Label variables
 lab var country "Country"
@@ -642,7 +695,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56_et_gr_in_ke_ro_za "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_multi "Q56. ET/GR/IN/KE/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -660,6 +713,22 @@ lab var q69_gr "Q69. GR only: Including yourself, how many people aged 18 or old
 
 *------------------------------------------------------------------------------*
 
+/*
+***************************** Data quality checks *****************************
+* Macros for these commands
+gl inputfile	"$data_mc/03 input output/Input/dq_inputs.xlsm"	
+gl output		"$data_mc/03 input output/Output"				
+gl id 			"respondent_id"	
+gl key			"respondent_serial"	
+gl enum			"interviewer_id"
+gl date			"date"	
+gl time			"time"
+gl duration		"int_length"
+gl keepvars 	"country"
+global all_dk 	"q13b q13e q23 q25_a q25_b q27 q28_a q28_b q30 q31 q32 q33 q34 q35 q36 q38 q50_a q50_b q50_c q50_d q63 q64 q65"
+global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q19_et_in_ke_za q19_co q19_pe q19_uy q20 q21 q22 q23 q24 q25_a q25_b q26 q27 q28_a q28_b q29 q30 q31 q32 q33 q34 q35 q36 q38 q39 q40 q41 q42 q43_et_in_ke_za q43_co q43_pe q43_uy q44 q45 q46 q47 q46_min q46_refused q47_min q47_refused q48_a q48_b q48_c q48_d q48_e q48_f q48_g q48_h q48_i q48_j q49 q50_a q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ke_et q56_pe q56_uy q57 q58 q59 q60 q61 q62 q63 q64 q65"
+
+*============================= Other Specify ===============================* 
 
 * Other, specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
@@ -704,7 +773,7 @@ replace q45_other = subinstr(q45_other,`"""',  "", .)
 
 
 ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_18.xlsx",	///
-	sheet(other_specify_recode)							///	
+	sheet(other_specify_recode)	///	
 	id(respondent_serial)	
 	
 drop q7_other q8_other q19_gr_other q20_other q21_other q42_other q43a_gr_other q44_other q45_other q62_other
@@ -720,9 +789,11 @@ ren q44_other_original q44_other
 ren q45_other_original q45_other
 ren q62_other_original q62_other
 
-*------------------------------------------------------------------------------*
+*/
 
-* Greece team sent code for other specify data - but still used input/output process:
+*-----------------------------------------------------------------------------*
+
+* Greece team sent code for other specify data 
 
 **# PVS GREECE - CATEGORIZATION OF "OTHER, SPECIFY" RESPONSES - UPDATED FILE (PART A)
 **# Stata Version 18.0, 10-AUG-2023 
@@ -756,6 +827,9 @@ replace q8=18050 if q8_other=="DIDAKTORIKO" | q8_other=="MASTER" | q8_other=="ME
  
  
 		/* Response Info "ΚΑΠΟΙΑ ΣΧΟΛΗ ΜΕΤΑ ΤΟ ΛΥΚΕΙΟ" = "A school/institute after high school": (vague response) - not categorized*/
+* 5-1 SS: based on this info, I want to recode this to the lowest category (high school) to remove the other specify category to match other countries	
+
+replace q8 = 18047 if q8_other == "ΚΑΠΟΙΑ ΣΧΟΛΗ ΜΕΤΑ ΤΟ ΛΥΚΕΙΟ" 	
 	
 ********************************************************************************
 **# q19_gr & q19_gr_other: Is this a public, private, contracted to public, or NGO healthcare facility?  
@@ -1486,12 +1560,11 @@ replace q62=18090 if q62_other=="Greek"
 			q44a_gr_other=="ΥΠΕΡΗΧΟΛΟΓΟΣ" | ///		
 			q44a_gr_other=="ΨΥΧΟΘΕΡΑΠΕΥΤΗΣ" 	
 
-*------------------------------------------------------------------------------*
 
 *Dropping the following value labels so the dataset won't get messed up when merging
 
-label copy labels24 q19_gr_label
-label drop labels24  
+label copy Q19_GR q19_gr_label
+label drop Q19_GR  
 label value q19_gr q19_gr_label 
 
 *------------------------------------------------------------------------------*
@@ -1503,7 +1576,7 @@ order respondent_serial respondent_id country language date int_length mode weig
 
 * Save data - need to do other specify checks
 
-save "$data_mc/02 recoded data/pvs_gr.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_gr.dta", replace
 
 *------------------------------------------------------------------------------*
 

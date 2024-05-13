@@ -27,7 +27,6 @@ macro drop _all
 *global user "/Users/nek096"
 *global user "/Users/catherine.arsenault"
 *global user "/Users/tol145"
-*global user "/Users/rodba"
 global user "/Users/shs8688"
 
 
@@ -44,17 +43,7 @@ global in_out "$data_mc/03 input output"
 * Path to GitHub folder 
 global github "$user/Documents/GitHub/PVS-code"
 
-
-* Installing packages and commands
-************************************************
-
-* IPA's Stata Package for high-frequency checks
-net install ipacheck, all replace from("https://raw.githubusercontent.com/PovertyAction/high-frequency-checks/master")
-ipacheck update
-
-ssc install elabel 
-ssc install extremes
-
+/*
 ************************************************
 
 * Clean each dataset separately 
@@ -67,7 +56,7 @@ run "$github/crPVS_cln_AR.do"
 run "$github/crPVS_cln_GB.do"
 run "$github/crPVS_cln_GR.do"
 run "$github/crPVS_cln_RO.do"
-*run "$github/crPVS_cln_NG.do"
+run "$github/crPVS_cln_NG.do"
 
 * Append datasets 
 run "$github/crPVS_append.do"
@@ -77,3 +66,13 @@ run "$github/crPVS_append.do"
 
 * Adding derived variables for analysis
 run "$github/crPVS_der.do"
+
+* Installing packages and commands
+************************************************
+
+* IPA's Stata Package for high-frequency checks
+net install ipacheck, all replace from("https://raw.githubusercontent.com/PovertyAction/high-frequency-checks/master")
+ipacheck update
+
+ssc install elabel 
+ssc install extremes

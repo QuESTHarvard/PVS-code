@@ -11,7 +11,7 @@ clear all
 set more off
 
 ***************************** Data quality checks *****************************
-*use "$data_mc/02 recoded data/pvs_appended.dta", clear
+use "$data_mc/02 recoded data/pvs_appended.dta", clear
 * Macros for these commands
 gl inputfile	"$data_mc/03 input output/Input/dq_inputs.xlsm"	
 gl output		"$data_mc/03 input output/Output"				
@@ -31,11 +31,11 @@ global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 
 * This command requires an input file that lists all the variables with other, specify text 
 
 *use "$data_mc/02 recoded data/pvs_appended.dta", clear
-import spss using "$data/Nigeria/01 raw data/23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
+*import spss using "$data/Nigeria/01 raw data/23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
 
 *The code below generates a non-relevant interviewer id for the code to run, however it is not accurate because the interviewer id is deleted at a previous stage of data cleaning.
-*gen interviewer_id = respondent_serial
-gen respondent_id = "NG" + string(respondent_serial)
+gen interviewer_id = respondent_serial
+*gen respondent_id = "NG" + string(respondent_serial)
 
 /*
 *This section trims those "other specify" responses that just have a space and should be empty
@@ -55,7 +55,7 @@ replace q43_other = subinstr(q43_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 */
 
-foreach i in 20 {
+foreach i in 18 {
  *preserve
  *keep if country == `i'
   

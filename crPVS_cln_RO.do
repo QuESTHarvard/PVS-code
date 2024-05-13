@@ -22,7 +22,7 @@ set more off
 *********************** ROMANIA ***********************
 
 * Import data 
-import spss using "$data/Romania/01 raw data/PVS_Romania_Final weighted.sav", case(lower)
+import delimited using "$data/Romania/01 raw data/PVS_Romania_Final weighted_labelled_04.07.23.csv", case(lower)
 
 notes drop _all
 
@@ -92,16 +92,16 @@ format recdate %td
 format intlength %tcHH:MM:SS
 gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60) 
 
-*confirm the format for q46 and q47 instrument word doc says HH:MM
 format q46 %tcHH:MM
 gen recq46 = (hh(q46)*60 + mm(q46))
 
-* confirm that format for q46b is in HH:MM:SS even though question asks days, hours, minutes
+/* raw format is in: hours, days, weeks - need to troubleshoot
 format q46b %tcHH:MM:SS
 gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
+*/
 
 format q47 %tcMM:SS
-gen recq47 = (mm(q47)+ ss(q47)/60) 
+gen recq47 = (hh(q47)*60 + mm(q47)) 
 
 *------------------------------------------------------------------------------*
 
@@ -198,7 +198,7 @@ recode q47_refused (. = 0) if q47 != .
 
 * Drop unused variables 
 
-drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q42 q44 q46 q46b q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q42 q44 q46 q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language // q46b
 
 *------------------------------------------------------------------------------*
 
@@ -339,10 +339,10 @@ recode recq42 (. = .a) if q41 == 2 | q41 == .r
 
 * q43-49 na's
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q43_ro recq44 recq45 recq46 recq46b q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_ro recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// recq46b
 	   q48_g q48_h q48_i q48_j q48_k q49 q48_k (. = .a) if q23 == 0 | q24 == 1 | q24 == .r
 	   
-recode q43_ro recq44 recq45 recq46 recq46b q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// 
+recode q43_ro recq44 recq45 recq46 q46_refused q46a recq47 q47_refused q48_a q48_b q48_c q48_d q48_e q48_f /// recq46b
 	   q48_g q48_h q48_i q48_j q48_k q49 (nonmissing = .a) if q23 == 0 | q24 == 1
 	      
 recode recq44 (. = .a) if q43_ro == 4 | q43_ro == .r
@@ -358,7 +358,7 @@ recode q47_refused (. = 0) if recq47 != .
 
 recode q48_k (. = .a) if q46a == 2 | q46a == .r
 
-recode recq46b (. = .a) if q46a == 2 | q46a == .r
+* recode recq46b (. = .a) if q46a == 2 | q46a == .r
 
 *q65
 recode q65 (. = .a) if q64 != 1
@@ -457,7 +457,11 @@ recode q24 ///
 	(.r = .r Refused) (.a = .a NA), ///
 	pre(rec) label(number_visits)
 
-* q49 - no recode needed 
+recode q49 ///
+	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
+	(7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
+	(.r = .r Refused) (.a = .a NA), ///
+	pre(rec) label(prom_score)
 	
 recode q57 ///
 	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
@@ -472,7 +476,7 @@ recode q64 ///
 *NA/Refused/DK
 	
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
-lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46 recq46b recq47 q66 na_rf	
+lab val q1 q23 q23_q24 q25_b q27 q28_a q28_b recq46 recq47 q66 na_rf // recq46b
 
 
 ******* Country-specific *******
@@ -485,7 +489,6 @@ label define recq45 .a "NA",modify
 label define labels46 .a "NA" .r "Refused",modify
 label define labels26 .a "NA" .r "Refused" .d "Don't know",modify
 
-
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
@@ -494,7 +497,7 @@ label define labels26 .a "NA" .r "Refused" .d "Don't know",modify
 drop date q3 q6 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ro q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
-	 q54 q55 q59 q60 q61 q22 q48_e q48_j q50_a ///
+	 q54 q55 q59 q60 q61 q22 q48_e q48_j q49 q50_a ///
 	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ro q57 q59 q60 q61 q64 weight
 	 
 ren rec* *
@@ -503,11 +506,62 @@ ren rec* *
 order respondent_serial mode weight_educ respondent_id country
 order q*, sequential
 
+
+*------------------------------------------------------------------------------*
+
+
+* Other, specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+gen q7_other_original = q7_other
+label var q7_other_original "Q7. Other"
+
+gen q19_other_original = q19_other
+label var q19_other_original "Q19. Other"
+
+gen q21_other_original = q21_other
+label var q21_other_original "Q21. Other"
+
+gen q42_other_original = q42_other
+label var q42_other_original "Q42. Other"
+
+gen q43_other_original = q43_other
+label var q43_other_original "Q43. Other"
+	
+gen q45_other_original = q45_other
+label var q45_other_original "Q45. Other"
+
+gen q62_other_original = q62_other
+label var q62_other_original "Q62. Other"	
+
+*Remove "" from responses for macros to work
+replace q21_other = subinstr(q21_other,`"""',  "", .)
+replace q42_other = subinstr(q42_other,`"""',  "", .)
+replace q45_other = subinstr(q45_other,`"""',  "", .)
+
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_19.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_serial)	
+	
+drop q7_other q19_other q21_other q42_other q43_other q45_other
+	
+ren q7_other_original q7_other	
+ren q19_other_original q19_other
+ren q21_other_original q21_other
+ren q42_other_original q42_other
+ren q43_other_original q43_other
+ren q45_other_original q45_other
+
+*------------------------------------------------------------------------------*
+
 * Country-specific vars for append 
 ren q37_ro q37_gr_in_ro
-ren q19_ro q19_et_in_ke_ro_za
-ren q43_ro q43_et_in_ke_ro_za
-ren q56_ro q56_et_gr_in_ke_ro_za
+ren q19_ro q19_multi
+ren q43_ro q43_multi
+ren q56_ro q56_multi
 
 * Label variables
 lab var country "Country"
@@ -533,7 +587,7 @@ lab var q15 "Q15. Do you plan to receive all recommended doses if they are avail
 lab var q16 "Q16. How confident are you that you are responsible for managing your health?"
 lab var q17 "Q17. Can tell a healthcare provider your concerns even when not asked?"
 lab var q18 "Q18. Is there one healthcare facility or provider's group you usually go to?"
-lab var q19_et_in_ke_ro_za "Q19. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q19_multi "Q19. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
 lab var q19_other "Q19. ET/IN/KE/RO/ZA only: Other"
 lab var q20 "Q20. What type of healthcare facility is this?"
 *lab var q20_other "Q20. Other"
@@ -565,7 +619,7 @@ lab var q40 "Q40. You were treated unfairly or discriminated against in the past
 lab var q41 "Q41. Have you needed medical attention but you did not get it in past 12 months?"
 lab var q42 "Q42. The last time this happened, what was the main reason?"
 lab var q42_other "Q42. Other"
-lab var q43_et_in_ke_ro_za "Q43. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q43_multi "Q43. ET/IN/KE/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
 lab var q43_other "Q43. Other"
 lab var q44 "Q44. What type of healthcare facility is this?"
 *lab var q44_other "Q44. Other"
@@ -600,7 +654,7 @@ lab var q52 "Q52. How confident are you that you'd be able to afford the care yo
 lab var q53 "Q53. How confident are you that the government considers the public's opinion?"
 lab var q54 "Q54. How would you rate the quality of public healthcare system in your country?"
 lab var q55 "Q55. How would you rate the quality of private healthcare?"
-lab var q56_et_gr_in_ke_ro_za "Q56. ET/GR/IN/KE/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q56_multi "Q56. ET/GR/IN/KE/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q57 "Q57. Is your country's health system is getting better, same or worse?"
 lab var q58 "Q58. Which of these statements do you agree with the most?"
 lab var q59 "Q59. How would you rate the government's management of the COVID-19 pandemic?"
@@ -822,54 +876,6 @@ replace q45=3 if q45_other=="Ingrijiri postanatale"
 
 *------------------------------------------------------------------------------*
 
-
-* Other, specify recode 
-* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
-* This command requires an input file that lists all the variables to be recoded and their new values
-* The command in data quality checks below extracts other, specify values 
-
-gen q7_other_original = q7_other
-label var q7_other_original "Q7. Other"
-
-gen q19_other_original = q19_other
-label var q19_other_original "Q19. Other"
-
-gen q21_other_original = q21_other
-label var q21_other_original "Q21. Other"
-
-gen q42_other_original = q42_other
-label var q42_other_original "Q42. Other"
-
-gen q43_other_original = q43_other
-label var q43_other_original "Q43. Other"
-	
-gen q45_other_original = q45_other
-label var q45_other_original "Q45. Other"
-
-gen q62_other_original = q62_other
-label var q62_other_original "Q62. Other"	
-
-*Remove "" from responses for macros to work
-replace q21_other = subinstr(q21_other,`"""',  "", .)
-replace q42_other = subinstr(q42_other,`"""',  "", .)
-replace q45_other = subinstr(q45_other,`"""',  "", .)
-
-
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_19.xlsx",	///
-	sheet(other_specify_recode)							///	
-	id(respondent_serial)	
-	
-drop q7_other q19_other q21_other q42_other q43_other q45_other
-	
-ren q7_other_original q7_other	
-ren q19_other_original q19_other
-ren q21_other_original q21_other
-ren q42_other_original q42_other
-ren q43_other_original q43_other
-ren q45_other_original q45_other
-
-*------------------------------------------------------------------------------*
-
 order q*, sequential
 order respondent_serial respondent_id country language date int_length mode weight_educ weight
 
@@ -877,7 +883,7 @@ order respondent_serial respondent_id country language date int_length mode weig
 
 * Save data - need to do other specify checks
 
-save "$data_mc/02 recoded data/pvs_ro.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_ro.dta", replace
 
 *------------------------------------------------------------------------------*
 
