@@ -935,8 +935,186 @@ drop Operator ContactRecords CELL1 CELL2 retest InterviewerID Interviewlanguage 
 	 q4_1 q4_2 q4_2_1
 
 *------------------------------------------------------------------------------*
+** Creating Sampling weights 
+** Created: 2 Feb 2024
 
-* Save data 
+******age 
+***In the raw data set, q1 is age, q2 is age group (V2.0). Here create the age_cat to be used. Due to small sample from the age>=80 group, creat age_cat_1 & age_cat_2  
+***1) age_cat_1 with 7 age groups, >80 as a seperate group
+**in the data clean stage, we did this 
+/*recode q2 (0 = 0 "under 18") ///
+          (1 = 1 "18-29") ///
+		  (2 = 2 "30-39") ///
+		  (3 = 3 "40-49") ///
+		  (4 = 4 "50-59") ///
+		  (5 = 5 "60-69") ///
+		  (6 = 6 "70-79") ///
+		  (7 = 7 ">80") ///
+		  (999 = .r "refused"), gen(recq2)
+*/
+
+gen age_cat_1 = q2
+label variable age_cat_1 "age cat with >80"
+label define age_cat_1 0 "under 18" 1 "18-29" 2 "30-39" 3 "40-49" 4 "50-59" 5 "60-69" 6 "70-79" 7 ">80"
+label values age_cat_1 age_cat_1
+tab age_cat_1, m // none missing
+
+***2) age_cat_2 with 6 age groups: combine >= 80 with > 70 group due to only 7 samples in >= 80 group
+recode q2 (0 = 0 "under 18") ///
+             (1 = 1 "18-29") ///
+		     (2 = 2 "30-39") ///
+		     (3 = 3 "40-49") ///
+		     (4 = 4 "50-59") ///
+		     (5 = 5 "60-69") ///
+		     (6/7 = 6 ">70") ///
+		     (999 = .r "refused"), gen(age_cat_2)
+label variable age_cat_2 "age_cat with >80 combined"
+
+
+*******edu_cat
+recode q8 (21001/21002=0 "None(or no formal education)" ) ///
+             (21003=1 "Primary") ///
+		     (21004/21006 = 2 "Secondary") ///
+		     (21007/21010 = 3 "Post-secondary") ///
+		     (999 = .r "refused"), gen(edu_cat)
+label var edu_cat "Educational attainment (4 categories)"
+
+
+******region： try 6 region or 4 region
+/*
+recq4 refers to the recoded provinces in China, the samples are from 31 provinces in China. Using the raw data, the first step is to recode regions,as follow: 
+
+*gen recq4 = reccountry*1000 + q4		  
+*label define recq4 21001 "CN:安徽省" 21002"CN:北京市" 21003"CN:福建省" 21004"CN:甘肃省" 21005"CN:广东省" 21006"CN:广西壮族自治区" ///
+                   21007 "CN:贵州省" 21008"CN:海南省" 21009"CN:河北省" 21010"CN:河南省" 21011"CN:黑龙江省" 21012"CN:湖北省" ///
+				   21013 "CN:湖南省" 21014"CN:吉林省" 21015"CN:江苏省" 21016"CN:江西省" 21017"CN:辽宁省" 21018"CN:内蒙古自治区" ///
+				   21019 "CN:宁夏回族自治区" 21020"青海省" 21021"CN:山东省" 21022"CN:山西省" 21023"CN:陕西省" 21024"CN:上海市" ///
+				   21025 "CN:四川省" 21026"CN:天津市" 21027"CN:西藏自治区" 21028"CN:新疆维吾尔自治区" 21029"CN:云南省" ///
+				   21030 "CN:浙江省" 21031"CN:重庆市"
+*label values recq4 recq4	
+
+***regions in China
+1)by georgraph
+**1 = Huabei(华北地区)：北京市、天津市、河北省、山西省、内蒙古自治区
+**2 = Dongbei(东北地区)：辽宁省、吉林省、黑龙江省
+**3 = Huadong(华东地区)：上海市、江苏省、浙江省、安徽省、福建省、江西省、山东省
+**4 = Zhongnan(中南地区)：河南省、湖北省、湖南省、广东省、广西壮族自治区、海南省
+**5 = Xinan(西南地区)：重庆市、四川省、贵州省、云南省、西藏自治区
+**6 = Xibei(西北地区)：陕西省、甘肃省、青海省、宁夏回族自治区、新疆维吾尔自治区
+
+2)by ecomonic 
+**1 = East(东部)：北京、天津、河北、上海、江苏、浙江、福建、山东、广东和海南
+**2 = Middle（中部）：山西、安徽、江西、河南、湖北和湖南
+**3 = West（西部）：内蒙古、广西、重庆、四川、贵州、云南、西藏、陕西、甘肃、青海、宁夏和新疆
+**4 = Northeast（东北）：辽宁、吉林和黑龙江
+*/
+recode q4 (21002 21026 21009 21022 21018 = 1 "Huabei") ///
+             (21017 21014 21011 = 2 "Dongbei") ///
+		     (21024 21015 21030 21001 21003 21016 21021 = 3 "Huadong") ///
+		     (21010 21012 21013 21005 21006 21008 = 4 "Zhongnan" ) ///
+		     (21031 21025 21007 21029 21027 = 5 "Xinan") ///
+		     (21023 21004 21019 21020 21028 = 6 "Xibei") ////
+		     (999 = .r "Refused"), gen(region_cat_1)
+label variable region_cat_1 "RECODE of recq4 (RECODE of q4) 6 regions
+rename region_cat_1 region_6
+
+
+recode q4 (21002 21026 21009 21024 21015 21030 21003 21021 21005 21008 = 1 "East") ///
+             (21022 21001 21016 21010 21012 21013= 2 "Middle") ///
+             (21018 21006 21031 21025 21007 21029 21027 21023 21004 21020 21019 21028 = 3 "West") ///
+             (21017 21014 21011 = 4 "Northeast") ///
+		     (999 = .r "Refused"), gen(region_4)	
+label variable region_4 "RECODE of recq4 (RECODE of q4) 4 regions
+
+*******malefemale is recq3 in China dataset
+gen malefemale = q3
+label define malefemale 0 "Male" 1 "Female"
+label values malefemale malefemale
+label variable malefemale "RECODE of recq3 (RECODE of q4) gender
+
+*******urbanrural
+recode q5 (21001 21002 21003 = 1 "CN:Urban") ///
+             (21004 = 2 "CN:Rural") ///
+		     (9 = 999 "Refused"), gen(urbanrural)
+label values urbanrural urbanrural
+label variable urbanrural "urbanrural"
+
+********urbanrural_edu_cat
+gen urbanrural_edu_cat = 1 if urbanrural==1 & edu_cat== 0
+replace urbanrural_edu_cat = 2 if urbanrural==1 & edu_cat== 1
+replace urbanrural_edu_cat = 3 if urbanrural==1 & edu_cat== 2
+replace urbanrural_edu_cat = 4 if urbanrural==1 & edu_cat== 3  
+replace urbanrural_edu_cat = 5 if urbanrural==2 & edu_cat== 0
+replace urbanrural_edu_cat = 6 if urbanrural==2 & edu_cat== 1
+replace urbanrural_edu_cat = 7 if urbanrural==2 & edu_cat== 2
+replace urbanrural_edu_cat = 8 if urbanrural==2 & edu_cat== 3
+label define urbanrural_edu_cat 1 "Urban, None(or no formal education)" 2 "Urban, primary or less" 3 "Urban, secondary" 4 "Urban, post-secondary" 5 "Rural, primary or lessNone(or no formal education)" 6 "Rural, primary or less" 7 "Rural, secondary" 8 "Rural, post-secondary"
+label values urbanrural_edu_cat urbanrural_edu_cat
+label var urbanrural_edu_cat "Urban-rural * education"
+
+gen urbanrural_age_cat_1 = 1 if urbanrural==1 & age_cat_1==1
+replace urbanrural_age_cat_1 = 2 if urbanrural==1 & age_cat_1==2
+replace urbanrural_age_cat_1 = 3 if urbanrural==1 & age_cat_1==3
+replace urbanrural_age_cat_1 = 4 if urbanrural==1 & age_cat_1==4
+replace urbanrural_age_cat_1 = 5 if urbanrural==1 & age_cat_1==5
+replace urbanrural_age_cat_1 = 6 if urbanrural==1 & age_cat_1==6
+replace urbanrural_age_cat_1 = 7 if urbanrural==1 & age_cat_1==7
+replace urbanrural_age_cat_1 = 8 if urbanrural==2 & age_cat_1==1
+replace urbanrural_age_cat_1 = 9 if urbanrural==2 & age_cat_1==2
+replace urbanrural_age_cat_1 = 10 if urbanrural==2 & age_cat_1==3
+replace urbanrural_age_cat_1 = 11 if urbanrural==2 & age_cat_1==4
+replace urbanrural_age_cat_1 = 12 if urbanrural==2 & age_cat_1==5
+replace urbanrural_age_cat_1 = 13 if urbanrural==2 & age_cat_1==6
+replace urbanrural_age_cat_1 = 14 if urbanrural==2 & age_cat_1==7
+label define urbanrural_age_cat_1 1 "Urban, 18-29" 2 "Urban, 30-39" 3 "Urban, 40-49" 4 "Urban, 50-59" ///
+								  5 "Urban, 60-69" 6 "Urban, 70-79" 7 "Urban, >=80" 8 "Rural, 18-29" ///
+								  9 "Rural, 30-39" 10 "Rural, 40-49" 11 "Rural, 50-59" 12 "Rural, 60-69" ///
+								  13 "Rural, 70-79" 14 "Rural, >=80"  // this approach used the 7 age groups as in the raw dataset
+label val urbanrural_age_cat_1 urbanrural_age_cat_1
+label var urbanrural_age_cat_1 "Urban-rural * age_1"
+*rename urbanrural_age_cat_1 urbanrural_age_1 // SS: repeated below
+
+gen urbanrural_age_cat_2 = 1 if urbanrural==1 & age_cat_2==1
+replace urbanrural_age_cat_2 = 2 if urbanrural==1 & age_cat_2==2
+replace urbanrural_age_cat_2 = 3 if urbanrural==1 & age_cat_2==3
+replace urbanrural_age_cat_2 = 4 if urbanrural==1 & age_cat_2==4
+replace urbanrural_age_cat_2 = 5 if urbanrural==1 & age_cat_2==5
+replace urbanrural_age_cat_2 = 6 if urbanrural==1 & age_cat_2==6
+replace urbanrural_age_cat_2 = 7 if urbanrural==2 & age_cat_2==1
+replace urbanrural_age_cat_2 = 8 if urbanrural==2 & age_cat_2==2
+replace urbanrural_age_cat_2 = 9 if urbanrural==2 & age_cat_2==3
+replace urbanrural_age_cat_2 = 10 if urbanrural==2 & age_cat_2==4
+replace urbanrural_age_cat_2 = 11 if urbanrural==2 & age_cat_2==5
+replace urbanrural_age_cat_2 = 12 if urbanrural==2 & age_cat_2==6
+label define urbanrural_age_cat_2 1 "Urban, 18-29" 2 "Urban, 30-39" 3 "Urban, 40-49" 4 "Urban, 50-59" 5 "Urban, 60-69" 6 "Urban, >70" 7 "Rural, 18-29" 8  "Rural, 30-39" 9 "Rural, 40-49" 10 "Rural, 50-59" 11 "Rural, 60-69" 12 "Rural,>=70" //this approach combined >=80 with >70
+label values urbanrural_age_cat_2 urbanrural_age_cat_2
+label var urbanrural_age_cat_2 "Urban-rural * age_2"
+
+
+******3) Create sampling weights using raking approach
+
+rename urbanrural_age_cat_1 urbanrural_age_1
+rename urbanrural_age_cat_2 urbanrural_age_2
+rename urbanrural_edu_cat urbanrural_edu
+
+********************************weigthing command******************************************* 
+********************use individual variable：gender, region, edcation, age*******************
+********************************************************************************************
+
+***4） 4 region_4，6 age groups(region_4, age_cat_2)
+ipfweight malefemale region_4 edu_cat age_cat_2, gen(wgt_4) ///
+          val(51.15 48.85 ///malefemale values (gender)
+		  40.13 25.86 27.17 6.84 ///region_4 valuse (4 regions)
+		  3.77 26.07 50.68 19.48 ///edu_cat values (4 education categories)
+		  17.55 20.07 18.63	20.01 13.25	10.49) ///age_cat_2 values (combined >=80 group) 
+		  maxit(50)
+
+		  
+rename wgt_4 weight		
+drop age_cat_1 age_cat_2 edu_cat region_6 region_4 malefemale urbanrural urbanrural_edu urbanrural_age_1 urbanrural_age_2 	
+  
+*------------------------------------------------------------------------------*
+* Save data - with weights
 
 save "$data_mc/02 recoded data/input data files/pvs_cn.dta", replace
 
