@@ -138,25 +138,25 @@ lab val age_cat age_cat
 gen gender = q3
 lab val gender gender
 
-/* covid_vax
-recode q14 ///
+* covid_vax_v1
+recode q14_v1 ///
 	(0 = 0 "Unvaccinated (0 doses)") (1 = 1 "Partial vaccination (1 dose)") /// 
 	(2 3 4 = 2 "Fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
-	gen(covid_vax)
+	gen(covid_vax_v1)
 	
-recode q14_la ///
+recode q14_la_v1 ///
 	(0 = 0 "Unvaccinated (0 doses)") (1 = 1 "Partial vaccination (1 dose)") /// 
 	(2 3 4 = 2 "Fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
 	gen(covid_vax_la)
-replace covid_vax = covid_vax_la if country == 11
+replace covid_vax_v1 = covid_vax_la if country == 11
 drop covid_vax_la
 	
-* covid_vax_intent 
-gen covid_vax_intent = q15 
-replace covid_vax_intent = q15_la if country == 11
-lab val covid_vax_intent yes_no_doses
+* covid_vax_intent_v1 
+gen covid_vax_intent_v1 = q15_v1 
+replace covid_vax_intent_v1 = q15_la_v1 if country == 11
+lab val covid_vax_intent_v1 yes_no_doses
 * Note: In Laos, q15 was only asked to those who said 0 doses 
-*/
+
 
 * region
 gen region = q4
@@ -194,12 +194,10 @@ lab def visits_cat 0 "Non-user (0 visits)" 1 "Occasional user (1-4 visits)" ///
 			   2 "Frequent user (more than 4)" .r "Refused"
 lab val visits_cat visits_cat
 
-/*
-* visits_covid
-gen visits_covid = q25_b
-recode visits_covid (.a = 1) if q25_a == 1
-recode visits_covid (.a = 0) if q25_a == 0
-*/
+* visits_covid_v1
+gen visits_covid_v1 = q25_b_v1
+recode visits_covid_v1 (.a = 1) if q25_a_v1 == 1
+recode visits_covid_v1 (.a = 0) if q25_a_v1 == 0
 
 *fac_number
 * Note: recoded 0's and 1's in q21 during cleaning 
@@ -296,8 +294,8 @@ lab val system_reform sr
 * Yes/No/Refused - Q11 Q12 Q13 q13 q26 q29 
 
 gen health_chronic = q11
-*gen ever_covid = q12 // SS: ask todd what to do with V1 vars
-*gen covid_confirmed = q13 
+gen ever_covid_v1 = q12_v1 
+gen covid_confirmed_v1 = q13_v1 
 gen usual_source = q13
 recode usual_source (.a = 1) if (q13a_la == 1 & inlist(q14_q15a_la,1,2,3,4,6)) | q13b_la == 1
 recode usual_source (.a = 0) if q13a_la == 0 | q13a_la == 1 & q13b_la == 0
@@ -368,8 +366,8 @@ lab val phc_women phc_child phc_chronic phc_mental qual_srh exc_poor_judge
 	
 gen qual_public = q42
 gen qual_private = q43 
-gen covid_manage = q47
-lab val qual_public qual_private covid_manage exc_poor
+gen covid_manage_v1 = q47_v1
+lab val qual_public qual_private covid_manage_v1 exc_poor
 
 **** All Very Confident to Not at all Confident scales ****
 
@@ -780,77 +778,79 @@ lab var education "Highest level of education completed (Q8)"
 lab var	health "Self-rated health (Q9)"
 lab var	health_mental "Self-rated mental health (Q10)"
 lab var	health_chronic "Longstanding illness or health problem (chronic illness) (Q11)"
-*lab var	ever_covid "Ever had COVID-19 or coronavirus (Q12)"
-*lab var	covid_confirmed	"COVID-19 or coronavirus confirmed by a test (Q13)"
-*lab var	covid_vax "COVID-19 vaccination status (Q14)"
-*lab var	covid_vax_intent "Intent to receive all recommended COVID vaccine doses if available (Q15)"
-lab var	activation "Patient activation: manage overall health and tell a provider concerns (q12_a/q12_b)"
-lab var	usual_source "Whether respondent has a usual source of care (q13)"
-lab var	usual_type_own "Facility ownership for usual source of care (q14)"
-lab var	usual_type_lvl "Facility level for usual source of care (q15)"
-lab var	usual_type "Facility ownership and level for usual source of care (q14/q15)"
-lab var	usual_reason "Main reason for choosing usual source of care facility (q16)"
-lab var	usual_quality "Overall quality rating of usual source of care (q17)"
-lab var	visits "Visits (continuous) made in-person to a facility in past 12 months (q18/q19)"
-lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (q18/q19)"
-*lab var	visits_covid "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
-lab var	fac_number "Number of facilities visited during the past 12 months (q20/q21)"
-lab var visits_home "Number of visits made by healthcare provider at home (q22)"
-lab var visits_tele "Number of virtual or telemedicine visits (q23)"
-lab var	visits_total "Total number of healthcare contacts: facility, home, and tele (q18/q22/q23)"
-lab var	inpatient "Stayed overnight at a facility in past 12 months (inpatient care) (q26)"
-lab var	blood_pressure "Blood pressure checked by healthcare provider in past 12 months (q27_a)"
-lab var	mammogram "Mammogram conducted by healthcare provider in past 12 months (q27_b)"
-lab var	cervical_cancer "Cervical cancer screening done by healthcare provider in past 12 months (q27_c)"
-lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (q27_d)"
-lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (q27_e)"
-lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (q27_f)"
-lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (q27_g)"		
-lab var	hiv_test "ZA only: HIV test conducted by healthcare provider in past 12 months (q27_ZA)"
-lab var	care_mental	"Received care for depression, anxiety, or another mental health condition (q27_h)"
-lab var	mistake	"A medical mistake was made in treatment or care in the past 12 months (q28_a)"	
-lab var	discrim	"You were treated unfairly or discriminated against in the past 12 months (q28_b)"	
-lab var	unmet_need "Needed medical attention but did not get healthcare (q29)"
-lab var	unmet_reason "Reason for not getting healthcare when needed medical attention (q30)"
-lab var	last_type_own "Facility ownership for last visit to a healthcare provider (q32)"
-lab var	last_type_lvl "Facility level for last visit to a healthcare provider (q33)"
-lab var last_type "Facility ownership and level for last visit to a healthcare provider (q32/q33)"
-lab var	last_reason	"Reason for last healthcare visit (q34)" 
-lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (q37)"
-*lab var	last_visit_time "Length of time spent with the provider during last healthcare visit (Q47)"
-lab var	last_qual "Last visit rating: overall quality (q38A)"
-lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence) (q38_b)"
-lab var	last_supplies "Last visit rating: equipment and supplies provider had available (q38_c)"
-lab var	last_respect "Last visit rating: provider respect (q38_d)"
-lab var	last_know "Last visit rating: knowledge of prior tests and visits (q38_e)"
-lab var	last_explain "Last visit rating: explained things in an understandable way (q38_f)"
-lab var	last_decisions "Last visit rating: involved you in decisions about your care (q38_g)"
-lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (q38_h)"
-lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (q38_i)"
-lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (q38_j)"
-lab var	last_promote "Net promoter score for facility visited for last visit (q39)"
-lab var	phc_women "Public primary care system rating for: pregnant women (q40_a)"
-lab var	phc_child "Public primary care system rating for: children (q40_b)"
-lab var	phc_chronic "Public primary care system rating for: chronic conditions (q40_c)"
-lab var	phc_mental "Public primary care system rating for: mental health (q40_d)"
-lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick (q41_a)"
-lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (q41_b)"
-lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (q41_c)"
-lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (q42)"
-lab var	qual_private "Overall quality rating of private healthcare system in country (q43)" 
-lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (q45)"
-lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (q46)" 
-lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (q47)" 
+lab var ever_covid_v1 "Ever had COVID-19 or coronavirus (V1.0 - Q12)"
+lab var	covid_confirmed_v1	"COVID-19 or coronavirus confirmed by a test (V1.0 - Q13)"
+lab var	covid_vax_v1 "COVID-19 vaccination status (V1.0 - Q14)"
+lab var	covid_vax_intent_v1 "Intent to receive all recommended COVID vaccine doses if available (V1.0 - Q15)"
+lab var	activation "Patient activation: manage overall health and tell a provider concerns (Q12_a/Q12_b)"
+lab var	usual_source "Whether respondent has a usual source of care (Q13)"
+lab var	usual_type_own "Facility ownership for usual source of care (Q14)"
+lab var	usual_type_lvl "Facility level for usual source of care (Q15)"
+lab var	usual_type "Facility ownership and level for usual source of care (Q14/Q15)"
+lab var	usual_reason "Main reason for choosing usual source of care facility (Q16)"
+lab var	usual_quality "Overall quality rating of usual source of care (Q17)"
+lab var	visits "Visits (continuous) made in-person to a facility in past 12 months (Q18/Q19)"
+lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (Q18/Q19)"
+lab var	visits_covid_v1 "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
+lab var	fac_number "Number of facilities visited during the past 12 months (Q20/Q21)"
+lab var visits_home "Number of visits made by healthcare provider at home (Q22)"
+lab var visits_tele "Number of virtual or telemedicine visits (Q23)"
+lab var	visits_total "Total number of healthcare contacts: facility, home, and tele (Q18/Q22/Q23)"
+lab var	inpatient "Stayed overnight at a facility in past 12 months (inpatient care) (Q26)"
+lab var	blood_pressure "Blood pressure checked by healthcare provider in past 12 months (Q27_a)"
+lab var	mammogram "Mammogram conducted by healthcare provider in past 12 months (Q27_b)"
+lab var	cervical_cancer "Cervical cancer screening done by healthcare provider in past 12 months (Q27_c)"
+lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (Q27_d)"
+lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (Q27_e)"
+lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (Q27_f)"
+lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (Q27_g)"		
+lab var	hiv_test "ZA only: HIV test conducted by healthcare provider in past 12 months (Q27_za)"
+lab var	care_mental	"Received care for depression, anxiety, or another mental health condition (Q27_h)"
+lab var breast_exam "CN only: Breast examination conducted by healtchare provider in past 12 months (Q27i_cn)"
+lab var color_ultrasound "CN: Color Ultrasound Mammography conducted by healtchare provider in past 12 months (Q27j_cn)"
+
+lab var	mistake	"A medical mistake was made in treatment or care in the past 12 months (Q28_a)"	
+lab var	discrim	"You were treated unfairly or discriminated against in the past 12 months (Q28_b)"	
+lab var	unmet_need "Needed medical attention but did not get healthcare (Q29)"
+lab var	unmet_reason "Reason for not getting healthcare when needed medical attention (Q30)"
+lab var	last_type_own "Facility ownership for last visit to a healthcare provider (Q32)"
+lab var	last_type_lvl "Facility level for last visit to a healthcare provider (Q33)"
+lab var last_type "Facility ownership and level for last visit to a healthcare provider (Q32/Q33)"
+lab var	last_reason	"Reason for last healthcare visit (Q34)" 
+lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (Q37)"
+lab var	last_visit_time_v1 "Length of time spent with the provider during last healthcare visit (V1.0 - Q47)"
+lab var	last_qual "Last visit rating: overall quality (Q38A)"
+lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence) (Q38_b)"
+lab var	last_supplies "Last visit rating: equipment and supplies provider had available (Q38_c)"
+lab var	last_respect "Last visit rating: provider respect (Q38_d)"
+lab var	last_know "Last visit rating: knowledge of prior tests and visits (Q38_e)"
+lab var	last_explain "Last visit rating: explained things in an understandable way (Q38_f)"
+lab var	last_decisions "Last visit rating: involved you in decisions about your care (Q38_g)"
+lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (Q38_h)"
+lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q38_i)"
+lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
+lab var	last_promote "Net promoter score for facility visited for last visit (Q39)"
+lab var	phc_women "Public primary care system rating for: pregnant women (Q40_a)"
+lab var	phc_child "Public primary care system rating for: children (Q40_b)"
+lab var	phc_chronic "Public primary care system rating for: chronic conditions (Q40_c)"
+lab var	phc_mental "Public primary care system rating for: mental health (Q40_d)"
+lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick (Q41_a)"
+lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (Q41_b)"
+lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q41_c)"
+lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (Q42)"
+lab var	qual_private "Overall quality rating of private healthcare system in country (Q43)" 
+lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q45)"
+lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q46)" 
+lab var	covid_manage_v1 "Rating of the government's management of the COVID-19 pandemic (V1.0 - q47)" 
 lab var	vignette_poor "Rating of vignette in q48 (poor care)"
 lab var	vignette_good "Rating of vignette in q49 (good care)"
-lab var	minority "Minority group (based on native language, ethnicity or race) (q50)"
-lab var	income "Income group (q51)"
-lab var tele_qual "Overall quality of last telemedicine visit (q25)"
-lab var last_sched_time "Length of days between scheduling visit and seeing provider (q36)"
-lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (q38_k)"
-lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (q41_a/q41_b)"
-*lab var pol_align "Political alignment in respondent's region / district / state"
-
+lab var	minority "Minority group (based on native language, ethnicity or race) (Q50)"
+lab var	income "Income group (Q51)"
+lab var tele_qual "Overall quality of last telemedicine visit (Q25)"
+lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q36)"
+lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q38_k)"
+lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q41_a/Q41_b)"
+lab var pol_align_v1 "Political alignment in respondent's region / district / state"
 
 
 **************************** Save data *****************************
