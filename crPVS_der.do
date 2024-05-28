@@ -157,7 +157,6 @@ replace covid_vax_intent_v1 = q15_la_v1 if country == 11
 lab val covid_vax_intent_v1 yes_no_doses
 * Note: In Laos, q15 was only asked to those who said 0 doses 
 
-
 * region
 gen region = q4
 lab val region q4_label2
@@ -258,16 +257,15 @@ lab val last_wait_time lwt
 gen last_sched_time = q36
 lab val last_sched_time na_rf
 
-/*
-*last_visit_time
-gen last_visit_time = 0 if q47 <= 15
-recode last_visit_time (. = 1) if q47 > 15 & q47 < .
-recode last_visit_time (. = .a) if q47 == .a
-recode last_visit_time (. = .r) if q47 == .r
+*last_visit_time_v1
+gen last_visit_time_v1 = 0 if q47_v1 <= 15
+recode last_visit_time_v1 (. = 1) if q47_v1 > 15 & q47_v1 < .
+recode last_visit_time_v1 (. = .a) if q47_v1 == .a
+recode last_visit_time_v1 (. = .r) if q47_v1 == .r
 lab def lvt 0 "<= 15 minutes" 1 "> 15 minutes " ///
 			.r "Refused" .a "NA"
-lab val last_visit_time lvt
-*/
+lab val last_visit_time_v1 lvt
+
 
 * last_promote
 gen last_promote = 0 if q39 < 8
@@ -850,7 +848,7 @@ lab var tele_qual "Overall quality of last telemedicine visit (Q25)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q36)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q38_k)"
 lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q41_a/Q41_b)"
-lab var pol_align_v1 "Political alignment in respondent's region / district / state"
+*lab var pol_align_v1 "Political alignment in respondent's region / district / state"
 
 
 **************************** Save data *****************************
