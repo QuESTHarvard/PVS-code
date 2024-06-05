@@ -512,7 +512,7 @@ lab def CELL1label 0 "No / No other numbers" 1 "Yes" .a "NA" .d "Don't Know" .r 
 lab val CELL1 CELL1label
 		   
 *------------------------------------------------------------------------------*
-**# PVS ROMANIA - CATEGORIZATION OF "OTHER, SPECIFY" RESPONSES
+**# PVS CHINA - CATEGORIZATION OF "OTHER, SPECIFY" RESPONSES
 
 replace q7_other = "不知道" if q7_other == "不清楚" ///
                               | q7_other == "不知道." ///

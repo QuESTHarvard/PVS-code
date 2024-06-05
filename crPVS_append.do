@@ -182,6 +182,8 @@ lab def labels37 12 "GR: Fear or anxiety of a healthcare procedure, examination 
 lab def labels44 .a "NA" .r "Refused", modify	
 lab def labels65 1 "Yes" 2 "No" .d "Don't Know", modify		
 label values q12 yes_no_dk
+lab def q43a_gr 1 "Public" 2 "Private (for-profit)" 3 "Contracted to public" 4 "NGO" 5 "Other, specify",modify
+lab val q43a_gr q43a_gr
 				
 *** weights ***
 ren weight_educ weight
@@ -460,82 +462,83 @@ order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 	
 order CELL1 CELL2, before(q52)	  
 
-* Label variables:
-lab var respondent_serial 
-lab var respondent_id 
-lab var mode 
-lab var country 
-lab var language 
-lab var date 
-lab var int_length 
-lab var psu_id_for_svy_cmds 
-lab var weight 
-lab var q1 
-lab var q2 
-lab var q3 
-lab var q3a_co_pe_uy_ar 
-lab var q4 
-lab var q4_other_it 
-lab var q5 
-lab var q6 
-lab var q6_gb
+/*
+* Label variables
+lab var respondent_serial "Respondent serial"
+lab var country "Country"
+lab var int_length "Interview length (minutes)" 
+lab var date "Date of the interview"
+lab var respondent_id "Respondent ID"
+lab var language "Language"
+lab var mode "mode"
+lab var psu_id_for_svy_cmds "PSU ID"
+lab var weight  "Weight"
+lab var q1 "Q1. Respondent's еxact age"
+lab var q2 "Q2. Respondent's age group"
+lab var q3 "Q3. Respondent's gender"
+lab var q3a_co_pe_uy_ar "Q3a. CO/PE/UY/AR only: Are you a man or a woman?"
+lab var q4 "Q4. County, state, region where respondent lives"
+lab var q4_other_it "Q4. Other"
+lab var q5 "Q5. Type of area where respondent lives"
+lab var q6 "Q6. Do you have health insurance?"
+/*lab var q6_gb
 lab var q6_it 
 lab var q6_kr 
 lab var q6_la 
-lab var q6_za 
-lab var q7 
-lab var q7_kr 
-lab var q7_other 
-lab var q8 
-lab var q9 
-lab var q10 
-lab var q11 
-lab var q12_a 
-lab var q12_b 
-lab var q12_v1 
-lab var q13 
-lab var q13_v1 
-lab var q13a_la 
-lab var q13b_co_pe_uy_ar_v1 
-lab var q13b_la 
-lab var q13e_co_pe_uy_ar_v1 
-lab var q13e_other_co_pe_uy_ar_v1 
-lab var q14_ar 
-lab var q14_cn
-lab var q14_co_pe 
-lab var q14_gr 
-lab var q14_gr_other 
-lab var q14_it 
-lab var q14_kr 
-lab var q14_la_v1 
-lab var q14_multi 
-lab var q14_mx 
-lab var q14_other 
-lab var q14_other_gb 
-lab var q14_q15a_la 
-lab var q14_q15a_other_la 
-lab var q14_q15b_la 
-lab var q14_q15b_other_la 
-lab var q14_uy 
-lab var q14_v1 
-lab var q14a_gb 
-lab var q14b_gb 
-lab var q15 
-lab var q15_la_v1 
-lab var q15_other 
-lab var q15_v1 
-lab var q15a_gr 
-lab var q15a_gr_other 
-lab var q15b_gr 
-lab var q15b_gr_other 
-lab var q15c_gr 
-lab var q15c_gr_other 
-lab var q16 
-lab var q16_other 
-lab var q17 
-lab var q18 
-lab var q18_q19 
-lab var q19 
+lab var q6_za */ 
+lab var q7 "Q7. What type of health insurance do you have?"
+*lab var q7_kr 
+lab var q7_other "Q7. Other type of health insurance" 
+lab var q8 "Q8. Highest level of education completed by the respondent"
+lab var q9 "Q9. In general, would you say your health is:"
+lab var q10 "Q10. In general, would you say your mental health is:"
+lab var q11 "Q11. Do you have any longstanding illness or health problem?"
+lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
+lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
+lab var q12_v1 "Q12 (V1.0). Have you ever had COVID-19 or coronavirus?"
+lab var q13 "Q13. Is there one healthcare facility or provider's group you usually go to?"
+lab var q13_v1 "Q13 (V1.0). Was it confirmed by a test?"
+lab var q13a_la "Q13A. LA only: Is there one place you usually...? (incl pharm, traditional)"
+lab var q13b_co_pe_uy_ar_v1 "Q13B (V1.0). CO/PE/UY/AR only: Did you seek health care for COVID-19?"
+lab var q13b_la "Q13B. LA only: Is there one hospital, health center, or clinic you usually...?"
+lab var q13e_co_pe_uy_ar_v1 "Q13E (V1.0). CO/PE/UY/AR only: Why didn't you receive health care for COVID-19?"
+lab var q13e_other_co_pe_uy_ar_v1 "Q13E_Other (V1.0). CO/PE/UY only: Other"
+lab var q14_ar "Q14. AR only: Is this facility Public, OSEP, Other 'obras sociales', A medical center/hospital owned by PAMI, or Private/prepaid?"
+lab var q14_cn "Q14. CN only: Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q14_co_pe "Q14. CO/PE only: Is this a public or private healthcare facility?"
+lab var q14_gr "Q14. GR only: Is this a public, private, contracted to public, or an NGO healthcare facility?"
+lab var q14_gr_other "Q14. Other"
+lab var q14_it "Q14. IT only: Is this facility… public, private SSN, or private not SSN?"
+lab var q14_kr "Q14. KR only: Is this...public, private, or non-profit/religious medical...?"
+lab var q14_la_v1 "Q14 (V1.0). LA only: How many doses of COVID-19 vaccine have you received?"
+lab var q14_multi "Q14. ET/IN/KE/NG/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q14_mx "Q14. MX only: Who runs this healthcare facility?"
+lab var q14_other "Q14. Other"
+lab var q14_other_gb "Q14. GB only: Other"
+lab var q14_q15a_la "Q15A. LA only: What type of place is this?"
+lab var q14_q15a_other_la "Q15A. LA only: Other"
+lab var q14_q15b_la "Q15B. LA only: What type of healthcare facility is this?"
+lab var q14_q15b_other_la "Q15B. LA only: Other"
+lab var q14_uy "Q14. UY only: Is this a public, private, or mutual healthcare facility?"
+lab var q14_v1 "Q14 (V1.0). How many doses of a COVID-19 vaccine have you received, or have you not"
+lab var q14a_gb "Q14a. GB only: Is it a National Health Service (NHS) facility or private health?"
+lab var q14b_gb "Q14b. GB only: Is it a Health and Social Care (HSC) facility or private health?"
+lab var q15 "Q15. What type of healthcare facility is this?"
+lab var q15_la_v1 "Q15B (V1.0). LA only: If a vaccine against COVID-19 is or becomes available to you, do you plan to get vaccinated?"
+lab var q15_other "Q15. Other"
+lab var q15_v1 "Q15 (V1.0). Do you plan to receive all recommended doses if they are available to you?"
+lab var q15a_gr "Q15a. GR only: Can you please tell me the specialty of your main provider in this facility?"
+lab var q15a_gr_other "Q15a. Other"
+lab var q15b_gr "Q15b. GR only: Have you registered with a personal doctor?"
+lab var q15b_gr_other "Q15b. Other"
+lab var q15c_gr "Q15c. GR only: Is your usual healthcare provider the personal doctor that you have registered with?"
+lab var q15c_gr_other "Q15c. Other"
+lab var q16 "Q16. Why did you choose this healthcare facility?"
+lab var q16_other "Q16. Other"
+lab var q17 "Q17. Overall respondent's rating of the quality received in this facility"
+lab var q18 "Q18. How many healthcare visits in total have you made in the past 12 months? "
+lab var q18_q19 "Q18/Q19. Total number of visits made in past 12 months (q23, q24 mid-point)"
+lab var q19 "Q19. Total number of healthcare visits in the past 12 months (range)"
 lab var q20 
 lab var q21 
 lab var q22 
@@ -659,6 +662,7 @@ lab var q52b_us
 
 drop check
 
+*/
 *------------------------------------------------------------------------------*
 *Save recoded data
 
