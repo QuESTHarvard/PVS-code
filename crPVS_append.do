@@ -136,7 +136,8 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
 				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish" ///
 				 17001 "UK: English" 18002 "GR: Greek" 19002 "RO: Romanian" ///
-				 20001 "NG: English" 20030 "NG: Hausa" 20031 "NG: Igbo" 20032 "NG: Pidgin" 20033 "NG: Yoruba"
+				 20001 "NG: English" 20030 "NG: Hausa" 20031 "NG: Igbo" 20032 "NG: Pidgin" 20033 "NG: Yoruba" ///
+				 21001 "CN: Mandarin"
 			 
 lab val language Language
 lab var language "Language of interview"
@@ -182,6 +183,8 @@ lab def labels37 12 "GR: Fear or anxiety of a healthcare procedure, examination 
 lab def labels44 .a "NA" .r "Refused", modify	
 lab def labels65 1 "Yes" 2 "No" .d "Don't Know", modify		
 label values q12 yes_no_dk
+lab def q43a_gr 1 "Public" 2 "Private (for-profit)" 3 "Contracted to public" 4 "NGO" 5 "Other, specify",modify
+lab val q43a_gr q43a_gr
 				
 *** weights ***
 ren weight_educ weight
@@ -209,26 +212,33 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 * Dropping time for now 
 drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id  
 
-
 *----------- reorder V1 to V2 ------
-drop q12 q13 q13b_co_pe_uy_ar q13e_co_pe_uy_ar q13e_other_co_pe_uy_ar ///
-     q14 q15 q14_la q15_la q25_a q25_b q47 q47_refused // questions that were dropped
+
+* renaming questions that were dropped
+ren q12 q12_v1
+ren q13 q13_v1
+ren q13b_co_pe_uy_ar q13b_co_pe_uy_ar_v1
+ren q13e_co_pe_uy_ar q13e_co_pe_uy_ar_v1
+ren q13e_other_co_pe_uy_ar q13e_other_co_pe_uy_ar_v1
+ren q14 q14_v1
+ren q15 q15_v1
+ren q14_la q14_la_v1
+ren q15_la q15_la_v1
+ren q25_a q25_a_v1
+ren q25_b q25_b_v1
+ren q47 q47_v1
+ren q47_refused q47_refused_v1
+ren q46_refused q46_refused_v1
+
 	 
 ren q4 recq5
-*label val recq5 q5_label
-
 ren q5 recq4
-*label val recq4 q4_label
-
 ren q5_other_it recq4_other_it
 ren q16 recq12_a
 ren q17 recq12_b
-
 ren q18 recq13 
 ren q18a_la recq13a_la
 ren q18b_la recq13b_la
-
-*ren q19 recq14
 ren q19_ar recq14_ar
 ren q19_co_pe recq14_co_pe
 ren q19_gr recq14_gr
@@ -246,7 +256,6 @@ ren q19_q20b_other_la recq14_q15b_other_la
 ren q19_uy recq14_uy
 ren q19a_gb recq14a_gb
 ren q19b_gb recq14b_gb
-
 ren q20 recq15
 ren q20_other recq15_other
 ren q20a_gr recq15a_gr
@@ -255,13 +264,11 @@ ren q20b_gr recq15b_gr
 ren q20b_gr_other recq15b_gr_other
 ren q20c_gr recq15c_gr
 ren q20c_gr_other recq15c_gr_other
-
 ren q21 recq16
 ren q21_other recq16_other
 ren q22 recq17
 ren q23 recq18
 ren q23_q24 recq18_q19
-
 ren q24 recq19
 ren q26 recq20
 ren q27 recq21
@@ -276,18 +283,15 @@ ren q33 recq27_d
 ren q34 recq27_e
 ren q35 recq27_f
 ren q36 recq27_g
-
 ren q37_gr_in_ro recq27i_gr_in_ro
 ren q37_ng recq27i_ng
 ren q37_za recq27i_za
-
 ren q38 recq27_h
 ren q39 recq28_a
 ren q40 recq28_b
 ren q41 recq29
 ren q42 recq30
 ren q42_other recq30_other
-
 ren q43_ar recq32_ar
 ren q43_co_pe recq32_co_pe
 ren q43_it recq32_it
@@ -318,7 +322,6 @@ ren q45_other recq34_other
 ren q46a recq35
 ren q46b recq36 
 ren q46 recq37
-ren q46_refused recq37_refused // this specific question isn't in V2.0
 ren q46b_refused recq37b_refused
 
 ren q48_a recq38_a
@@ -445,14 +448,15 @@ lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
 				21 "China", modify
 
-* Country-specific skip patterns - check this 
+* Country-specific skip patterns  
 recode q14_cn q27i_cn q27j_cn q32_cn q51_cn (. = .a) if country != 21
 
-* Other value label modifcations // SS: confirm with Todd these are not China specifc options
+* Other value label modifcations
 lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
+lab def labels26 14 "CN: Trust hospital", modify
 					
 * Reorder variables
 order q*, sequential
@@ -460,110 +464,210 @@ order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 	
 order CELL1 CELL2, before(q52)	  
 
-
-* Label variables					
+/*
+* Label variables
+lab var respondent_serial "Respondent serial"
 lab var country "Country"
 lab var int_length "Interview length (minutes)" 
 lab var date "Date of the interview"
 lab var respondent_id "Respondent ID"
 lab var language "Language"
 lab var mode "mode"
+lab var psu_id_for_svy_cmds "PSU ID"
+lab var weight  "Weight"
 lab var q1 "Q1. Respondent's еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent's gender"
-lab variable q4 "Q4. What region do you live in?"
-lab var q5 "Q5. Which of these options best describes the place where you live?"
+lab var q3a_co_pe_uy_ar "Q3a. CO/PE/UY/AR only: Are you a man or a woman?"
+lab var q4 "Q4. County, state, region where respondent lives"
+lab var q4_other_it "Q4. Other"
+lab var q5 "Q5. Type of area where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
+/*lab var q6_gb
+lab var q6_it 
+lab var q6_kr 
+lab var q6_la 
+lab var q6_za */ 
 lab var q7 "Q7. What type of health insurance do you have?"
+*lab var q7_kr 
 lab var q7_other "Q7. Other type of health insurance" 
-lab var q8 "Q8. What is the highest level of education that you have completed?"
+lab var q8 "Q8. Highest level of education completed by the respondent"
 lab var q9 "Q9. In general, would you say your health is:"
-lab var q10 "Q10. In general, would you say your mental health, including your mood and your ability to think clearly, is:"
+lab var q10 "Q10. In general, would you say your mental health is:"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
-lab var q12_a "Q12a. How confident are you that you are the person who is responsible for managing your overall health?"
-lab var q12_b "Q12b. How confident are you can tell a healthcare provider concerns you have even when he or she does not ask??"
-lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
-lab var q14_cn "Q14. CN only: Is this a public, private, social security, NGO, or faith-based facility?"
-label variable q14_other "Q14_Other. Other (specify)"
+lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
+lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
+lab var q12_v1 "Q12 (V1.0). Have you ever had COVID-19 or coronavirus?"
+lab var q13 "Q13. Is there one healthcare facility or provider's group you usually go to?"
+lab var q13_v1 "Q13 (V1.0). Was it confirmed by a test?"
+lab var q13a_la "Q13A. LA only: Is there one place you usually...? (incl pharm, traditional)"
+lab var q13b_co_pe_uy_ar_v1 "Q13B (V1.0). CO/PE/UY/AR only: Did you seek health care for COVID-19?"
+lab var q13b_la "Q13B. LA only: Is there one hospital, health center, or clinic you usually...?"
+lab var q13e_co_pe_uy_ar_v1 "Q13E (V1.0). CO/PE/UY/AR only: Why didn't you receive health care for COVID-19?"
+lab var q13e_other_co_pe_uy_ar_v1 "Q13E_Other (V1.0). CO/PE/UY only: Other"
+lab var q14_ar "Q14. AR only: Is this facility Public, OSEP, Other 'obras sociales', A medical center/hospital owned by PAMI, or Private/prepaid?"
+lab var q14_cn "Q14. CN only: Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q14_co_pe "Q14. CO/PE only: Is this a public or private healthcare facility?"
+lab var q14_gr "Q14. GR only: Is this a public, private, contracted to public, or an NGO healthcare facility?"
+lab var q14_gr_other "Q14. Other"
+lab var q14_it "Q14. IT only: Is this facility… public, private SSN, or private not SSN?"
+lab var q14_kr "Q14. KR only: Is this...public, private, or non-profit/religious medical...?"
+lab var q14_la_v1 "Q14 (V1.0). LA only: How many doses of COVID-19 vaccine have you received?"
+lab var q14_multi "Q14. ET/IN/KE/NG/RO/ZA only: Is this a public, private, or NGO/faith-based healthcare facility?"
+lab var q14_mx "Q14. MX only: Who runs this healthcare facility?"
+lab var q14_other "Q14. Other"
+lab var q14_other_gb "Q14. GB only: Other"
+lab var q14_q15a_la "Q15A. LA only: What type of place is this?"
+lab var q14_q15a_other_la "Q15A. LA only: Other"
+lab var q14_q15b_la "Q15B. LA only: What type of healthcare facility is this?"
+lab var q14_q15b_other_la "Q15B. LA only: Other"
+lab var q14_uy "Q14. UY only: Is this a public, private, or mutual healthcare facility?"
+lab var q14_v1 "Q14 (V1.0). How many doses of a COVID-19 vaccine have you received, or have you not"
+lab var q14a_gb "Q14a. GB only: Is it a National Health Service (NHS) facility or private health?"
+lab var q14b_gb "Q14b. GB only: Is it a Health and Social Care (HSC) facility or private health?"
 lab var q15 "Q15. What type of healthcare facility is this?"
-label variable q15_other "Q15_Other. Other"
-label variable q16 "Q16. Why did you choose this healthcare facility? Please tell us the main reason."
-label variable q16_other "Q16. Other reasons"
-label variable q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"
-label variable q18 "Q18. How many healthcare visits in total have you made in the past 12 months?"
-label variable q19 "Q19. Total number of healthcare visits in the past 12 months"
-lab var q18_q19 "Q18/Q19. Total mumber of visits made in past 12 months (q18, q19 mid-point)"
-label variable q20 "Q20. You said you made * visits. Were they all to the same facility?"
-label variable q21 "Q21. How many different healthcare facilities did you go to in total?"
-label variable q22 "Q22. How many visits did you have with a healthcare provider at your home in the past 12 months?"
-label variable q23 "Q23. How many virtual or telemedicine visits did you have in the past 12 months?"
-label variable q24 "Q24. What was the main reason for the last virtual or telemedicine visit?"
-label variable q24_other "Q24_Other. Other reasons of virtual or telemedicine visit."
-label variable q25 "Q25. How would you rate the overall quality of your last telemedicine visit?"
-label variable q26 "Q26. In the past 12 months did you stay overnight at a healthcare facility as a patient?"
-label variable q27_a "Q27a. Blood pressure tested in the past 12 months"
-label variable q27_b "Q27b. Breast examination (received a mammogram) in the past 12 months"
-label variable q27_c "Q27c. Received cervical cancer screening, like a pap test or visual inspection"
-label variable q27_d "Q27d. Had your eyes or vision checked in the past 12 months"
-label variable q27_e "Q27e. Had your teeth checked in the past 12 months"
-label variable q27_f "Q27f. Had a blood sugar test in the past 12 months"
-label variable q27_g "Q27g. Had a blood cholesterol test in the past 12 months"
-label variable q27_h "Q27h. Received care for depression, anxiety, or another mental health condition"
-label variable q27i_cn "Q27i. CN only: Breast colour ultrasound (B-ultrasound)"
-label variable q27j_cn "Q27j. CN only: Received a mammogram (a special X-ray of the breast)"
-label variable q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
-label variable q28_b "Q28b. Been treated unfairly or discriminated against by a doctor, nurse, or another healthcare provider"
-label variable q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
-label variable q30 "Q30. The last time this happened, what was the main reason you did not receive healthcare?"
-label variable q30_other "Q30_Other. Other"
-label variable q31_a "Q31a. Have you ever needed to borrow money to pay for healthcare"
-label variable q31_b "Q31b. Sell items to pay for healthcare"
-label variable q32_cn "Q32. CN only: Last visit facility type public/private/social security/NGO/faith-based?"
-label variable q32_other "Q32_Other. other last visit facility type"
-label variable q33 "Q33. What type of healthcare facility was this?"
-label variable q33_other "Q33_Other. Other type of healthcare facility"
-label variable q34 "Q34. What was the main reason you went?"
-label variable q34_other "Q34_Other. Other reasons"
-label variable q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"
-label variable q36 "Q36. How long did you wait in days, weeks, or months between scheduling the appointment and seeing the health care provider?"
-label variable q37 "Q37. At this most recent visit, once you arrived at the facility, approximately how long did you wait before seeing the provider?"
-label variable q37_other "Q37_Other. Other"
-label variable q38_a "Q38a. How would you rate the overall quality of care you received?"
-label variable q38_b "Q38b. How would you rate the knowledge and skills of your provider?"
-label variable q38_c "Q38c. How would you rate the equipment and supplies that the provider had?"
-label variable q38_d "Q38d. How would you rate the level of respect your provider showed you?"
-label variable q38_e "Q38e. How would you rate your provider knowledge about your prior visits and test results?"
-label variable q38_f "Q38f. How would you rate whether your provider explained things clearly?"
-label variable q38_g "Q38g. How would you rate whether you were involved in your care decisions?"
-label variable q38_h "Q38h. How would you rate the amount of time your provider spent with you?"
-label variable q38_i "Q38i. How would you rate the amount of time you waited before being seen?"
-label variable q38_j "Q38j. How would you rate the courtesy and helpfulness at the facility?"
-label variable q38_k "Q38k. How would you rate how long it took for you to get this appointment?"
-label variable q39 "Q39. How likely would recommend this facility to a friend or family member?"
-label variable q40_a "Q40a. How would you rate the quality of care provided for care for pregnancy?"
-label variable q40_b "Q40b. How would you rate the quality of care provided for children?"
-label variable q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
-label variable q40_d "Q40d. How would you rate the quality of care provided for the mental health?"
-label variable q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
-label variable q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
-label variable q41_c "Q41c. How confident are you that the government considers the public's opinion?"
-label variable q42 "Q42. How would you rate the quality of public healthcare system in your country?"
-label variable q43 "Q43. How would you rate the quality of private healthcare system in your country?"
-label variable q44 "Q44. Overall, how would you rate the quality of the NGO or faith-based healthcare system in your country?"
-label variable q45 "Q45. Is your country's health system is getting better, same or worse?"
-label variable q46 "Q46. Which of these statements do you agree with the most?"
-label variable q47 "Q47. How would you rate the government's management of the COVID-19 pandemic overall?"
-label variable q48 "Q48. How would you rate the quality of care provided? (Vignette, option 1)"
-label variable q49 "Q49. How would you rate the quality of care provided? (Vignette, option 2)"
-label variable q50 "Q50. What is your native language or mother tongue?"
-label variable q50_other "Q50_Other. Other languages"
-label variable q51 "Q51. Total monthly household income"
-label variable q51_cn "Q51a. CN only: What is the number of people in the household?"
-label variable CELL1 "CELL1. Do you have another mobile phone number besides the one I am calling. "
-label variable CELL2 "CELL2. How many other mobile phone numbers do you have?"
-label variable int_length "Interview length"
+lab var q15_la_v1 "Q15B (V1.0). LA only: If a vaccine against COVID-19 is or becomes available to you, do you plan to get vaccinated?"
+lab var q15_other "Q15. Other"
+lab var q15_v1 "Q15 (V1.0). Do you plan to receive all recommended doses if they are available to you?"
+lab var q15a_gr "Q15a. GR only: Can you please tell me the specialty of your main provider in this facility?"
+lab var q15a_gr_other "Q15a. Other"
+lab var q15b_gr "Q15b. GR only: Have you registered with a personal doctor?"
+lab var q15b_gr_other "Q15b. Other"
+lab var q15c_gr "Q15c. GR only: Is your usual healthcare provider the personal doctor that you have registered with?"
+lab var q15c_gr_other "Q15c. Other"
+lab var q16 "Q16. Why did you choose this healthcare facility?"
+lab var q16_other "Q16. Other"
+lab var q17 "Q17. Overall respondent's rating of the quality received in this facility"
+lab var q18 "Q18. How many healthcare visits in total have you made in the past 12 months? "
+lab var q18_q19 "Q18/Q19. Total number of visits made in past 12 months (q23, q24 mid-point)"
+lab var q19 "Q19. Total number of healthcare visits in the past 12 months (range)"
+lab var q20 
+lab var q21 
+lab var q22 
+lab var q23 
+lab var q24 
+lab var q24_other 
+lab var q25 
+lab var q25_a_v1
+lab var q25_b_v1 
+lab var q26 
+lab var q27_a 
+lab var q27_b 
+lab var q27_c 
+lab var q27_d 
+lab var q27_e 
+lab var q27_f 
+lab var q27_g 
+lab var q27_h 
+lab var q27i_cn 
+lab var q27i_gr_in_ro 
+lab var q27i_ng 
+lab var q27i_za 
+lab var q27j_cn 
+lab var q28_a 
+lab var q28_b 
+lab var q29 
+lab var q30 
+lab var q30_other 
+lab var q31_a 
+lab var q31_b 
+lab var q32_ar 
+lab var q32_cn 
+lab var q32_co_pe 
+lab var q32_it 
+lab var q32_kr 
+lab var q32_la 
+lab var q32_multi 
+lab var q32_mx 
+lab var q32_other 
+lab var q32_other_gb 
+lab var q32_uy 
+lab var q32a_gb 
+lab var q32a_gr 
+lab var q32a_gr_other 
+lab var q32b_gb 
+lab var q32b_gr 
+lab var q33 
+lab var q33_other 
+lab var q33a_gr 
+lab var q33a_gr_other 
+lab var q33b_gr 
+lab var q33b_gr_other 
+lab var q34 
+lab var q34_other 
+lab var q35 
+lab var q36 
+lab var q37 
+lab var q37_other 
+lab var q37b_refused 
+lab var q38_a 
+lab var q38_b 
+lab var q38_c 
+lab var q38_d 
+lab var q38_e 
+lab var q38_f 
+lab var q38_g 
+lab var q38_h 
+lab var q38_i 
+lab var q38_j 
+lab var q38_k 
+lab var q38f 
+lab var q39 
+lab var q40_a 
+lab var q40_b 
+lab var q40_c 
+lab var q40_d 
+lab var q40_e_ng 
+lab var q41_a 
+lab var q41_b 
+lab var q41_c 
+lab var q42 
+lab var q43 
+lab var q44 
+lab var q44_multi 
+lab var q44_pe 
+lab var q44_uy 
+lab var q44a_ar 
+lab var q44a_mx 
+lab var q44b_ar 
+lab var q44b_mx 
+lab var q44c_ar 
+lab var q45 
+lab var q46 
+lab var q46_refused_v1 
+lab var q47 
+lab var q47_refused_v1 
+lab var q47_v1
+lab var q48 
+lab var q49 
+lab var q50 
+lab var q50_gb 
+lab var q50_mx 
+lab var q50_other 
+lab var q50_other_original 
+lab var q50a_la 
+lab var q50a_other_la 
+lab var q50a_us 
+lab var q50b_other_us 
+lab var q50b_us 
+lab var q51 
+lab var q51_cn 
+lab var q51_gr 
+lab var CELL1 
+lab var CELL2 
+lab var q52 
+lab var q52_gb 
+lab var q52a_gr 
+lab var q52a_us 
+lab var q52b_gr 
+lab var q52b_us 
 
+drop check
+
+*/
+*------------------------------------------------------------------------------*
 *Save recoded data
+
 save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
 
-
+*------------------------------------------------------------------------------*
