@@ -136,7 +136,8 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 11002 "LA: Khmou" 11003 "LA: Hmong" 12009 "US: English" 12010 "US: Spanish" ///
 				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish" ///
 				 17001 "UK: English" 18002 "GR: Greek" 19002 "RO: Romanian" ///
-				 20001 "NG: English" 20030 "NG: Hausa" 20031 "NG: Igbo" 20032 "NG: Pidgin" 20033 "NG: Yoruba"
+				 20001 "NG: English" 20030 "NG: Hausa" 20031 "NG: Igbo" 20032 "NG: Pidgin" 20033 "NG: Yoruba" ///
+				 21001 "CN: Mandarin"
 			 
 lab val language Language
 lab var language "Language of interview"
@@ -450,7 +451,7 @@ lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 * Country-specific skip patterns  
 recode q14_cn q27i_cn q27j_cn q32_cn q51_cn (. = .a) if country != 21
 
-* Other value label modifcations // SS: confirm with Todd these are not China specifc options
+* Other value label modifcations
 lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify

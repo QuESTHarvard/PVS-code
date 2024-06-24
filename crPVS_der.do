@@ -64,7 +64,7 @@ replace q37 = . if q37 > 600 & q37 < . & country == 19
 * Nigeria -  2 values recoded (Todd to review)
 replace q37 = . if q37 > 720 & q37 < . & country == 20
 
-/*
+
 * q47
 * Colombia okay 
 * Ethiopia - 6 values recoded
@@ -89,7 +89,7 @@ replace q47 = . if q47 >= 600 & q47 < . & country == 15
 replace q47 = . if q47 > 560 & q47 < . & country == 17 
 * Greece okay (Todd to review)
 * Romania okay (Todd to review)
-*/
+
 
 * q36
 * US - 4 values recoded 
@@ -364,8 +364,8 @@ lab val phc_women phc_child phc_chronic phc_mental qual_srh exc_poor_judge
 	
 gen qual_public = q42
 gen qual_private = q43 
-gen covid_manage_v1 = q47_v1
-lab val qual_public qual_private covid_manage_v1 exc_poor
+gen covid_manage = q47
+lab val qual_public qual_private covid_manage exc_poor
 
 **** All Very Confident to Not at all Confident scales ****
 
@@ -418,7 +418,7 @@ recode q7 (2017 2018 3001 5003 2017 2018 7010 10019 11002 12002 12003 ///
 		  (2028 3002 5004 5005 5006 3007 9008 9009 2028 7013 10021 11001 12001 ///
 		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 20036 21004 = 1 "Private") /// 
 		  (2015 2016 16002 16003 16004 13001 13002 13004 7011 7012 10020 10022 = 2 "Social security/military") ///
-		  (2995 9995 12995 13995 4995 18995 19995 20995 = 3 "Other") ///
+		  (2995 9995 12995 13995 4995 18995 19995 20995 21006 = 3 "Other") ///
 		  (.r = .r "Refused") (2030 7014 13014 16007 13003 .a = .a "NA"), gen(insur_type)
 
 recode insur_type (.a = 1) if q6_za == 1
@@ -719,10 +719,10 @@ lab var country_reg "Country (ordered by region)"
 
 
 * Drop trimmed q21 q37 q47 and get back the orignal var
-drop q21 q37 q47 q36
+drop q21 q37 q47_v1 q36
 rename q21_original q21
 rename q37_original q37
-*rename q47_original q47
+*rename q47_original q47_v1
 rename q36_origial q36
 
 /*
@@ -839,7 +839,7 @@ lab var	qual_public	"Overall quality rating of gov or public healthcare system i
 lab var	qual_private "Overall quality rating of private healthcare system in country (Q43)" 
 lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q45)"
 lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q46)" 
-lab var	covid_manage_v1 "Rating of the government's management of the COVID-19 pandemic (V1.0 - q47)" 
+lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q47)" 
 lab var	vignette_poor "Rating of vignette in q48 (poor care)"
 lab var	vignette_good "Rating of vignette in q49 (good care)"
 lab var	minority "Minority group (based on native language, ethnicity or race) (Q50)"
@@ -960,6 +960,12 @@ restore
 preserve
 keep if country == 20
 save "$data/Nigeria/02 recoded data/pvs_ng_recoded", replace
+restore
+
+*Nigeria 
+preserve
+keep if country == 21
+save "$data/China/02 recoded data/pvs_cn_recoded", replace
 restore
 
 
