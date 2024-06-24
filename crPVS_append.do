@@ -456,6 +456,7 @@ lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
+lab def labels26 14 "CN: Trust hospital", modify
 					
 * Reorder variables
 order q*, sequential

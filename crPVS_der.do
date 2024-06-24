@@ -435,9 +435,7 @@ recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 
           (.r = .r "Refused"), gen(education)
 
 		  
-* usual_type_own
-* SS: confirm for China
-		  
+* usual_type_own	  
 recode q14_multi (1 = 0 "Public") (2 3 = 1 "Private") (4 = 2 "Other") /// 
 		(.a = .a "NA") (.d = .d "Don't Know") (.r = .r "Refused"), ///
 		gen(usual_type_own)
@@ -456,8 +454,8 @@ recode usual_type_own (.a = 0) if (q14_co_pe == 1) | q14_uy == 1 | ///
 								  q14_it == 1 | inlist(q14_mx,3,4) | ///
 								  inlist(q15,12003,12004) | q14_kr == 1 | ///
 								  q14_ar == 1 ///
-								  | q14a_gb == 1 | q14b_gb == 1 | q14_gr == 1 | ///
-								  q14_cn == 1
+								  | q14a_gb == 1 | q14b_gb == 1 | q14_gr == 1 
+								  
 								  							  
 recode usual_type_own (.a = 1) if (q14_co_pe == 2) | q14_uy == 2 | ///
 								  inlist(q14_q15a_la,3,4,6) | ///
@@ -465,14 +463,14 @@ recode usual_type_own (.a = 1) if (q14_co_pe == 2) | q14_uy == 2 | ///
 								  q14_it == 2 | q14_it == 3 | q14_mx == 6 | ///
 								  inlist(q15,12001,12002,12005,12006) ///
 								  | q14_kr == 3 | q14_ar == 3 ///
-								  | q14a_gb == 2 | q14b_gb == 2 | q14_gr == 2 | ///
-								  q14_cn == 2
+								  | q14a_gb == 2 | q14b_gb == 2 | q14_gr == 2 
+								  
 						  
 recode usual_type_own (.a = 2) if inlist(q14_uy,5,995) | ///
 								  q14_q15a_la == 9 | q14_q15b_la == 7 | ///
 								  q14_it == 4 | inlist(q14_mx,1,2,5,7) | ///
 								  q15 == 12995 | q14_kr == 4 | inlist(q14_ar,2,4,6,7) ///
-								  | q14a_gb == 3 | q14_gr == 3 | q14_cn == 3
+								  | q14a_gb == 3 | q14_gr == 3 
 								  
 recode usual_type_own (.a = .r) if (q14_co_pe  == .r )| q14_uy == .r | ///
 								   q14_q15a_la == .r | q14_q15b_la == .r | ///
@@ -483,7 +481,15 @@ recode usual_type_own (.a = .r) if (q14_co_pe  == .r )| q14_uy == .r | ///
 *Peru recode 
 *Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
 recode usual_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
-								   
+
+*China recode
+recode usual_type_own (. = 0) if q14_cn == 1
+recode usual_type_own (. = 1) if q14_cn == 2
+recode usual_type_own (. = 2) if q14_cn == 3
+recode usual_type_own (. = .r) if q14_cn == .r
+recode usual_type_own (. = .a) if q14_cn == .a
+recode usual_type_own (. = .d) if q14_cn == .d
+							   
 * usual type level		
 * SS: placed 21008 "CN: Other" in refused to match the other countries		  
 recode q15 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 ///
