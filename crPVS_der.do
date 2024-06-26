@@ -16,7 +16,7 @@ u "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", clear
 
 *------------------------------------------------------------------------------*
 
-* Trim extreme values for for q21, q37 and q47; q36 for IT, MX, US, KR and UK
+* Trim extreme values for for q21, q37 and q47_v1; q36 for IT, MX, US, KR and UK
 
 * Mia's note: check extreme values for Nigeria needed
 qui levelsof country, local(countrylev)
@@ -65,28 +65,28 @@ replace q37 = . if q37 > 600 & q37 < . & country == 19
 replace q37 = . if q37 > 720 & q37 < . & country == 20
 
 
-* q47
+* q47_v1
 * Colombia okay 
 * Ethiopia - 6 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 3 
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 3 
 * India - 8 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 4 
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 4 
 * Kenya - 3 values recoded
-replace q47 = . if q47 > 600 & q47 < . & country == 5
+replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 5
 * Peru okay 
 * South Africa - 2 values recoded 
-replace q47 = . if q47 > 600 & q47 < . & country == 9 
+replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 9 
 * Uruguay okay, Lao okay 
 * United States - 5 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 12
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 12
 * Mexico okay 
 * Italy - 2 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 14
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 14
 * Korea - 13 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 15
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 15
 * Mendoza okay 
 * UK - 1 value recoded
-replace q47 = . if q47 > 560 & q47 < . & country == 17 
+replace q47_v1 = . if q47_v1 > 560 & q47_v1 < . & country == 17 
 * Greece okay (Todd to review)
 * Romania okay (Todd to review)
 
@@ -734,7 +734,7 @@ lab var country_reg "Country (ordered by region)"
 
 
 * Drop trimmed q21 q37 q47 and get back the orignal var
-drop q21 q37 q47_v1 q36
+drop q21 q37 q36
 rename q21_original q21
 rename q37_original q37
 *rename q47_original q47_v1
