@@ -423,7 +423,7 @@ lab val q14_cn q14_label
 lab def q15_label2 21001 "CN: General hospital (Not including traditional chinese medicine hospital" ///
 				 21002 "CN: Specialized hospital (Not including traditional chinese medicine hospital)" ///
 				 21003 "CN: Chinese medicine hospital" 21004 "CN: Community healthcare center" ///
-				 21005 "CN: Township hospital" ///
+				 21005 "CN: Township health center" ///
 				 21006 "CN: Health care post" 21007 "CN: Village clinic/Private clinic" 21008 "CN: Other" .r "Refused" ///
 				 .d "Don't Know" .a "NA"
 lab val q15 q15_label2
@@ -459,7 +459,7 @@ lab val q32_cn q32_label
 lab def q33_label2 21001 "CN: General hospital (Not including traditional chinese medicine hospital" ///
 				 21002 "CN: Specialized hospital (Not including traditional chinese medicine hospital)" ///
 				 21003 "CN: Chinese medicine hospital" 21004 "CN: Community healthcare center" ///
-				 21005 "CN: Township hospital" 21006 "CN: Health care post" 21007 "CN: Village clinic/Private clinic" ///
+				 21005 "CN: Township health center" 21006 "CN: Health care post" 21007 "CN: Village clinic/Private clinic" ///
 				 21008 "CN: Other" .a "NA" .d "Don't Know" .r "Refused"
 lab val q33 q33_label2
 
