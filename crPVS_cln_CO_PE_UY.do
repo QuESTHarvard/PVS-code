@@ -256,6 +256,7 @@ recode q31 (. = .a) if q3a == 1 | q1 < 50 | inrange(q2,1,4) | q2 == .r
 recode q32 (. = .a) if q3a == 1 | q2 == .r 
 
 * NOTE: q3a was assigned sex at birth, used for skip pattern in LAC
+* 7-2 SS: in raw dataset, q3a is sex and q3 is gender 
 
 * q42
 recode q42 (. = .a) if q41 == 2 | q41 == .r
@@ -433,7 +434,9 @@ drop interviewer_gender q2 q3 q3a q6 q11 q12 q13 q13b q18 q25_a q26 q29 q41 ///
 ren rec* *
  
 ren q7_995 q7_other
-ren (q3a q13b q13e) (q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar) 
+
+ren q3 q3a_co_pe_uy_ar
+ren (q3a q13b q13e) (q3 q13b_co_pe_uy_ar q13e_co_pe_uy_ar) 
 ren q13e_10 q13e_other_co_pe_uy_ar 
 ren q14_new q14
 ren q15_new q15
@@ -479,8 +482,8 @@ lab var date "Date of interview"
 lab var int_length "Interview length (in minutes)"
 lab var q1 "Q1. Respondent еxact age"
 lab var q2 "Q2. Respondent's age group"
-lab var q3 "Q3. Respondent gender"
-lab var q3a_co_pe_uy_ar "Q3A. CO/PE/UY/AR only: Are you a man or a woman?"
+lab var q3 "Q3. Respondent sex"
+lab var q3a_co_pe_uy_ar "Q3A. CO/PE/UY/AR only: Are you a man or a woman? (respondent gender)"
 lab var q4 "Q4. Type of area where respondent lives"
 lab var q5 "Q5. County, state, region where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
