@@ -449,14 +449,21 @@ recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) & q14
 recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q14_co_pe != .a 
 *recode usual_type_own (.a = .r) if country == 2 & q7 == .r
 
+*Peru recode 
+*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
+* Updated 7-2 SS based on updated data dictionary
+recode usual_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q14_co_pe != .a 
+recode usual_type_own (.a = 1) if country == 7 & q7==7013 & q14_co_pe != .a 
+recode usual_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q14_co_pe != .a 
+
 		
 recode usual_type_own (.a = 0) if (q14_co_pe == 1) | q14_uy == 1 | ///
 								  q14_q15a_la == 1 | q14_q15a_la == 2 |  ///
 								  q14_q15b_la == 1 | q14_q15b_la == 2 | ///
 								  q14_it == 1 | inlist(q14_mx,3,4) | ///
 								  inlist(q15,12003,12004) | q14_kr == 1 | ///
-								  q14_ar == 1 ///
-								  | q14a_gb == 1 | q14b_gb == 1 | q14_gr == 1 
+								  q14_ar == 1 | q14a_gb == 1 | q14b_gb == 1 | ///
+								  q14_gr == 1 
 								  
 								  							  
 recode usual_type_own (.a = 1) if (q14_co_pe == 2) | q14_uy == 2 | ///
@@ -478,17 +485,13 @@ recode usual_type_own (.a = .r) if (q14_co_pe  == .r )| q14_uy == .r | ///
 								   q14_q15a_la == .r | q14_q15b_la == .r | ///
 								   q14_it == .r | q14_mx == .r | ///
 								   (q15 == .r & country == 12) | q14_kr == .r | ///
-								   q14_ar == .r | q14a_gb == .r | q14b_gb == .r
-
-*Peru recode 
-*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode usual_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
+								   q14_ar == .r | q14a_gb == .r | q14b_gb == .r | ///
+								   q14_cn == .r
 
 *China recode
 recode usual_type_own (. = 0) if q14_cn == 1
 recode usual_type_own (. = 1) if q14_cn == 2
 recode usual_type_own (. = 2) if q14_cn == 3
-recode usual_type_own (. = .r) if q14_cn == .r
 recode usual_type_own (. = .a) if q14_cn == .a
 recode usual_type_own (. = .d) if q14_cn == .d
 							   
@@ -544,6 +547,14 @@ recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) & q32_
 recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q32_co_pe != .a 
 *recode last_type_own (.a = .r) if country == 2 & q7 == .r
 
+*Peru recode 
+*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
+*Updated 7-2 SS
+recode usual_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q32_co_pe != .a 
+recode usual_type_own (.a = 1) if country == 7 & q7==7013 & q32_co_pe != .a 
+recode last_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q32_co_pe != .a 
+
+
 *Laos
 recode last_type_own (.a = 0) if q32_la == 1 | q33 == 11002
 recode last_type_own (.a = 1) if q32_la == 2 | q33 == 11003
@@ -570,9 +581,6 @@ recode last_type_own (.a = .r) if (q32_co_pe == .r) | q32_uy == .r | ///
 								  (q33 == .r & country == 12) | q32_kr == .r | ///
 								  q32_ar == .r | q32a_gb == .r | q32b_gb == .r | q32a_gr == .r
 								  
-*Peru recode 
-*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode last_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
 
 * last type level							  
 recode q33 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
