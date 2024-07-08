@@ -16,7 +16,7 @@ u "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", clear
 
 *------------------------------------------------------------------------------*
 
-* Trim extreme values for for q21, q37 and q47; q36 for IT, MX, US, KR and UK
+* Trim extreme values for for q21, q37 and q47_v1; q36 for IT, MX, US, KR and UK
 
 * Mia's note: check extreme values for Nigeria needed
 qui levelsof country, local(countrylev)
@@ -65,28 +65,28 @@ replace q37 = . if q37 > 600 & q37 < . & country == 19
 replace q37 = . if q37 > 720 & q37 < . & country == 20
 
 
-* q47
+* q47_v1
 * Colombia okay 
 * Ethiopia - 6 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 3 
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 3 
 * India - 8 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 4 
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 4 
 * Kenya - 3 values recoded
-replace q47 = . if q47 > 600 & q47 < . & country == 5
+replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 5
 * Peru okay 
 * South Africa - 2 values recoded 
-replace q47 = . if q47 > 600 & q47 < . & country == 9 
+replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 9 
 * Uruguay okay, Lao okay 
 * United States - 5 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 12
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 12
 * Mexico okay 
 * Italy - 2 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 14
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 14
 * Korea - 13 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 15
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 15
 * Mendoza okay 
 * UK - 1 value recoded
-replace q47 = . if q47 > 560 & q47 < . & country == 17 
+replace q47_v1 = . if q47_v1 > 560 & q47_v1 < . & country == 17 
 * Greece okay (Todd to review)
 * Romania okay (Todd to review)
 
@@ -389,9 +389,11 @@ replace conf_getafford=.r if conf_sick==.r | conf_afford==.r
 lab val conf_getafford vc_nc_der
 
 *urban/rural
-recode q5 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 ///
-           4015 4016 17001 17002 17003 18018 19021 20022 20023 21001 21002 21003 = 1 "Urban") ///
-          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 4017 17004 18019 19020 20024  21004 = 0 "Rural") ///
+recode q5 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 ///
+		   12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 ///
+           4015 4016 17001 17002 17003 18018 19021 20022 20023 21001 21002 = 1 "Urban") ///
+          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 4017 17004 ///
+		  18019 19020 20024 21003 21004 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
@@ -428,8 +430,8 @@ recode insur_type (.a = 0) if q7_kr == 0
 		  
 * education
 recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 14001 12001 15001 16001 16002 4039 17001 18045 19052 20058 21001 21002 = 0 "None (or no formal education)") ///
-          (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 4040 17002 18046 19053 20059 21003 = 1 "Primary") ///
-		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 15003 15004 16004 4041 17003 18047 19054 19055 20060 21004 21005 21006 = 2 "Secondary") ///
+          (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 4040 17002 18046 19053 20059 21003 21004 = 1 "Primary") ///
+		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 15003 15004 16004 4041 17003 18047 19054 19055 20060 21005 21006 = 2 "Secondary") ///
           (3005 5010 5011 9017 2029 2030 2031 7022 7023 7024 10036 10037 10038 11005 11006 14006 14007 ///
 		  13005 13006 13007 12005 12006 15005 15006 15007 16005 16006 16007 4042 4043 4044 17004 17005 18048 18049 18050 19056 19057 20061 20062 21007 21008 21009 21010 = 3 "Post-secondary") ///
           (.r = .r "Refused"), gen(education)
@@ -447,14 +449,21 @@ recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) & q14
 recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q14_co_pe != .a 
 *recode usual_type_own (.a = .r) if country == 2 & q7 == .r
 
+*Peru recode 
+*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
+* Updated 7-2 SS based on updated data dictionary
+recode usual_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q14_co_pe != .a 
+recode usual_type_own (.a = 1) if country == 7 & q7==7013 & q14_co_pe != .a 
+recode usual_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q14_co_pe != .a 
+
 		
 recode usual_type_own (.a = 0) if (q14_co_pe == 1) | q14_uy == 1 | ///
 								  q14_q15a_la == 1 | q14_q15a_la == 2 |  ///
 								  q14_q15b_la == 1 | q14_q15b_la == 2 | ///
 								  q14_it == 1 | inlist(q14_mx,3,4) | ///
 								  inlist(q15,12003,12004) | q14_kr == 1 | ///
-								  q14_ar == 1 ///
-								  | q14a_gb == 1 | q14b_gb == 1 | q14_gr == 1 
+								  q14_ar == 1 | q14a_gb == 1 | q14b_gb == 1 | ///
+								  q14_gr == 1 
 								  
 								  							  
 recode usual_type_own (.a = 1) if (q14_co_pe == 2) | q14_uy == 2 | ///
@@ -476,17 +485,13 @@ recode usual_type_own (.a = .r) if (q14_co_pe  == .r )| q14_uy == .r | ///
 								   q14_q15a_la == .r | q14_q15b_la == .r | ///
 								   q14_it == .r | q14_mx == .r | ///
 								   (q15 == .r & country == 12) | q14_kr == .r | ///
-								   q14_ar == .r | q14a_gb == .r | q14b_gb == .r
-
-*Peru recode 
-*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode usual_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
+								   q14_ar == .r | q14a_gb == .r | q14b_gb == .r | ///
+								   q14_cn == .r
 
 *China recode
 recode usual_type_own (. = 0) if q14_cn == 1
 recode usual_type_own (. = 1) if q14_cn == 2
 recode usual_type_own (. = 2) if q14_cn == 3
-recode usual_type_own (. = .r) if q14_cn == .r
 recode usual_type_own (. = .a) if q14_cn == .a
 recode usual_type_own (. = .d) if q14_cn == .d
 							   
@@ -542,6 +547,14 @@ recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) & q32_
 recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q32_co_pe != .a 
 *recode last_type_own (.a = .r) if country == 2 & q7 == .r
 
+*Peru recode 
+*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
+*Updated 7-2 SS
+recode usual_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q32_co_pe != .a 
+recode usual_type_own (.a = 1) if country == 7 & q7==7013 & q32_co_pe != .a 
+recode last_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q32_co_pe != .a 
+
+
 *Laos
 recode last_type_own (.a = 0) if q32_la == 1 | q33 == 11002
 recode last_type_own (.a = 1) if q32_la == 2 | q33 == 11003
@@ -568,9 +581,6 @@ recode last_type_own (.a = .r) if (q32_co_pe == .r) | q32_uy == .r | ///
 								  (q33 == .r & country == 12) | q32_kr == .r | ///
 								  q32_ar == .r | q32a_gb == .r | q32b_gb == .r | q32a_gr == .r
 								  
-*Peru recode 
-*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode last_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
 
 * last type level							  
 recode q33 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
@@ -697,7 +707,8 @@ recode visits (144 = .) if country == 9
 * Uruguay: q18 values seem implausible 
 recode visits (200 = .) (156 = .) if country == 10 
 * US visits, 4 values recoded
-replace visits = . if visits > 60 & visits < . & country == 12 
+replace visits = . if visits > 60 & visits < . & country == 12
+recode visits_tele (60 = .) if country == 12  // 1 change  
 * Italy visits, 1 value recoded 
 replace visits = . if visits > 60 & visits < . & country == 14 
 * Korea, 1 visit_home and 1 visit_covid value, 5 visit values
@@ -710,6 +721,14 @@ recode visits_tele (96 = .) if country == 16
 * UK 
 recode visits (150 = .) if country == 17
 recode visits_tele (100 = .) if country == 17
+* Greece:
+replace visits = . if visits > 80 & visits < . & country == 18 // 4 changes
+* Romania: (none)
+*Nigeria
+recode visits_tele (60 = .) if country == 20  // 1 change 
+*China
+replace visits = . if visits > 70 & visits < . & country == 21 // 1 change 
+
 
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") ///
@@ -725,7 +744,7 @@ lab var country_reg "Country (ordered by region)"
 
 
 * Drop trimmed q21 q37 q47 and get back the orignal var
-drop q21 q37 q47_v1 q36
+drop q21 q37 q36
 rename q21_original q21
 rename q37_original q37
 *rename q47_original q47_v1
