@@ -71,7 +71,10 @@ recode q42 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 			(996 = .r "Refused"), gen(recq42)
 
 ren q43_gr q43b_gr
+
 ren q43 q43a_gr
+label values q43a_gr Q43a_gr
+
 ren q43_other q43a_gr_other
 
 ren q46_gr2 q46a

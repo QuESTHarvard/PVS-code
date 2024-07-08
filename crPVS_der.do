@@ -16,7 +16,7 @@ u "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", clear
 
 *------------------------------------------------------------------------------*
 
-* Trim extreme values for for q21, q37 and q47; q36 for IT, MX, US, KR and UK
+* Trim extreme values for for q21, q37 and q47_v1; q36 for IT, MX, US, KR and UK
 
 * Mia's note: check extreme values for Nigeria needed
 qui levelsof country, local(countrylev)
@@ -64,32 +64,32 @@ replace q37 = . if q37 > 600 & q37 < . & country == 19
 * Nigeria -  2 values recoded (Todd to review)
 replace q37 = . if q37 > 720 & q37 < . & country == 20
 
-/*
-* q47
+
+* q47_v1
 * Colombia okay 
 * Ethiopia - 6 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 3 
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 3 
 * India - 8 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 4 
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 4 
 * Kenya - 3 values recoded
-replace q47 = . if q47 > 600 & q47 < . & country == 5
+replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 5
 * Peru okay 
 * South Africa - 2 values recoded 
-replace q47 = . if q47 > 600 & q47 < . & country == 9 
+replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 9 
 * Uruguay okay, Lao okay 
 * United States - 5 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 12
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 12
 * Mexico okay 
 * Italy - 2 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 14
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 14
 * Korea - 13 values recoded
-replace q47 = . if q47 >= 600 & q47 < . & country == 15
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 15
 * Mendoza okay 
 * UK - 1 value recoded
-replace q47 = . if q47 > 560 & q47 < . & country == 17 
+replace q47_v1 = . if q47_v1 > 560 & q47_v1 < . & country == 17 
 * Greece okay (Todd to review)
 * Romania okay (Todd to review)
-*/
+
 
 * q36
 * US - 4 values recoded 
@@ -138,25 +138,24 @@ lab val age_cat age_cat
 gen gender = q3
 lab val gender gender
 
-/* covid_vax
-recode q14 ///
+* covid_vax_v1
+recode q14_v1 ///
 	(0 = 0 "Unvaccinated (0 doses)") (1 = 1 "Partial vaccination (1 dose)") /// 
 	(2 3 4 = 2 "Fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
-	gen(covid_vax)
+	gen(covid_vax_v1)
 	
-recode q14_la ///
+recode q14_la_v1 ///
 	(0 = 0 "Unvaccinated (0 doses)") (1 = 1 "Partial vaccination (1 dose)") /// 
 	(2 3 4 = 2 "Fully vaccinated (2+ doses)") (.r = .r Refused) (.a = .a NA), ///
 	gen(covid_vax_la)
-replace covid_vax = covid_vax_la if country == 11
+replace covid_vax_v1 = covid_vax_la if country == 11
 drop covid_vax_la
 	
-* covid_vax_intent 
-gen covid_vax_intent = q15 
-replace covid_vax_intent = q15_la if country == 11
-lab val covid_vax_intent yes_no_doses
+* covid_vax_intent_v1 
+gen covid_vax_intent_v1 = q15_v1 
+replace covid_vax_intent_v1 = q15_la_v1 if country == 11
+lab val covid_vax_intent_v1 yes_no_doses
 * Note: In Laos, q15 was only asked to those who said 0 doses 
-*/
 
 * region
 gen region = q4
@@ -194,12 +193,10 @@ lab def visits_cat 0 "Non-user (0 visits)" 1 "Occasional user (1-4 visits)" ///
 			   2 "Frequent user (more than 4)" .r "Refused"
 lab val visits_cat visits_cat
 
-/*
-* visits_covid
-gen visits_covid = q25_b
-recode visits_covid (.a = 1) if q25_a == 1
-recode visits_covid (.a = 0) if q25_a == 0
-*/
+* visits_covid_v1
+gen visits_covid_v1 = q25_b_v1
+recode visits_covid_v1 (.a = 1) if q25_a_v1 == 1
+recode visits_covid_v1 (.a = 0) if q25_a_v1 == 0
 
 *fac_number
 * Note: recoded 0's and 1's in q21 during cleaning 
@@ -260,16 +257,15 @@ lab val last_wait_time lwt
 gen last_sched_time = q36
 lab val last_sched_time na_rf
 
-/*
-*last_visit_time
-gen last_visit_time = 0 if q47 <= 15
-recode last_visit_time (. = 1) if q47 > 15 & q47 < .
-recode last_visit_time (. = .a) if q47 == .a
-recode last_visit_time (. = .r) if q47 == .r
+*last_visit_time_v1
+gen last_visit_time_v1 = 0 if q47_v1 <= 15
+recode last_visit_time_v1 (. = 1) if q47_v1 > 15 & q47_v1 < .
+recode last_visit_time_v1 (. = .a) if q47_v1 == .a
+recode last_visit_time_v1 (. = .r) if q47_v1 == .r
 lab def lvt 0 "<= 15 minutes" 1 "> 15 minutes " ///
 			.r "Refused" .a "NA"
-lab val last_visit_time lvt
-*/
+lab val last_visit_time_v1 lvt
+
 
 * last_promote
 gen last_promote = 0 if q39 < 8
@@ -296,8 +292,8 @@ lab val system_reform sr
 * Yes/No/Refused - Q11 Q12 Q13 q13 q26 q29 
 
 gen health_chronic = q11
-*gen ever_covid = q12 // SS: ask todd what to do with V1 vars
-*gen covid_confirmed = q13 
+gen ever_covid_v1 = q12_v1 
+gen covid_confirmed_v1 = q13_v1 
 gen usual_source = q13
 recode usual_source (.a = 1) if (q13a_la == 1 & inlist(q14_q15a_la,1,2,3,4,6)) | q13b_la == 1
 recode usual_source (.a = 0) if q13a_la == 0 | q13a_la == 1 & q13b_la == 0
@@ -393,9 +389,11 @@ replace conf_getafford=.r if conf_sick==.r | conf_afford==.r
 lab val conf_getafford vc_nc_der
 
 *urban/rural
-recode q5 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 ///
-           4015 4016 17001 17002 17003 18018 19021 20022 20023 21001 21002 21003 = 1 "Urban") ///
-          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 4017 17004 18019 19020 20024  21004 = 0 "Rural") ///
+recode q5 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 ///
+		   12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 ///
+           4015 4016 17001 17002 17003 18018 19021 20022 20023 21001 21002 = 1 "Urban") ///
+          (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 4017 17004 ///
+		  18019 19020 20024 21003 21004 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
@@ -422,7 +420,7 @@ recode q7 (2017 2018 3001 5003 2017 2018 7010 10019 11002 12002 12003 ///
 		  (2028 3002 5004 5005 5006 3007 9008 9009 2028 7013 10021 11001 12001 ///
 		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 20036 21004 = 1 "Private") /// 
 		  (2015 2016 16002 16003 16004 13001 13002 13004 7011 7012 10020 10022 = 2 "Social security/military") ///
-		  (2995 9995 12995 13995 4995 18995 19995 20995 = 3 "Other") ///
+		  (2995 9995 12995 13995 4995 18995 19995 20995 21006 = 3 "Other") ///
 		  (.r = .r "Refused") (2030 7014 13014 16007 13003 .a = .a "NA"), gen(insur_type)
 
 recode insur_type (.a = 1) if q6_za == 1
@@ -432,16 +430,14 @@ recode insur_type (.a = 0) if q7_kr == 0
 		  
 * education
 recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 14001 12001 15001 16001 16002 4039 17001 18045 19052 20058 21001 21002 = 0 "None (or no formal education)") ///
-          (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 4040 17002 18046 19053 20059 21003 = 1 "Primary") ///
-		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 15003 15004 16004 4041 17003 18047 19054 19055 20060 21004 21005 21006 = 2 "Secondary") ///
+          (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 15002 16003 4040 17002 18046 19053 20059 21003 21004 = 1 "Primary") ///
+		  (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 15003 15004 16004 4041 17003 18047 19054 19055 20060 21005 21006 = 2 "Secondary") ///
           (3005 5010 5011 9017 2029 2030 2031 7022 7023 7024 10036 10037 10038 11005 11006 14006 14007 ///
 		  13005 13006 13007 12005 12006 15005 15006 15007 16005 16006 16007 4042 4043 4044 17004 17005 18048 18049 18050 19056 19057 20061 20062 21007 21008 21009 21010 = 3 "Post-secondary") ///
           (.r = .r "Refused"), gen(education)
 
 		  
-* usual_type_own
-* SS: confirm for China
-		  
+* usual_type_own	  
 recode q14_multi (1 = 0 "Public") (2 3 = 1 "Private") (4 = 2 "Other") /// 
 		(.a = .a "NA") (.d = .d "Don't Know") (.r = .r "Refused"), ///
 		gen(usual_type_own)
@@ -453,15 +449,22 @@ recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) & q14
 recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q14_co_pe != .a 
 *recode usual_type_own (.a = .r) if country == 2 & q7 == .r
 
+*Peru recode 
+*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
+* Updated 7-2 SS based on updated data dictionary
+recode usual_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q14_co_pe != .a 
+recode usual_type_own (.a = 1) if country == 7 & q7==7013 & q14_co_pe != .a 
+recode usual_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q14_co_pe != .a 
+
 		
 recode usual_type_own (.a = 0) if (q14_co_pe == 1) | q14_uy == 1 | ///
 								  q14_q15a_la == 1 | q14_q15a_la == 2 |  ///
 								  q14_q15b_la == 1 | q14_q15b_la == 2 | ///
 								  q14_it == 1 | inlist(q14_mx,3,4) | ///
 								  inlist(q15,12003,12004) | q14_kr == 1 | ///
-								  q14_ar == 1 ///
-								  | q14a_gb == 1 | q14b_gb == 1 | q14_gr == 1 | ///
-								  q14_cn == 1
+								  q14_ar == 1 | q14a_gb == 1 | q14b_gb == 1 | ///
+								  q14_gr == 1 
+								  
 								  							  
 recode usual_type_own (.a = 1) if (q14_co_pe == 2) | q14_uy == 2 | ///
 								  inlist(q14_q15a_la,3,4,6) | ///
@@ -469,25 +472,29 @@ recode usual_type_own (.a = 1) if (q14_co_pe == 2) | q14_uy == 2 | ///
 								  q14_it == 2 | q14_it == 3 | q14_mx == 6 | ///
 								  inlist(q15,12001,12002,12005,12006) ///
 								  | q14_kr == 3 | q14_ar == 3 ///
-								  | q14a_gb == 2 | q14b_gb == 2 | q14_gr == 2 | ///
-								  q14_cn == 2
+								  | q14a_gb == 2 | q14b_gb == 2 | q14_gr == 2 
+								  
 						  
 recode usual_type_own (.a = 2) if inlist(q14_uy,5,995) | ///
 								  q14_q15a_la == 9 | q14_q15b_la == 7 | ///
 								  q14_it == 4 | inlist(q14_mx,1,2,5,7) | ///
 								  q15 == 12995 | q14_kr == 4 | inlist(q14_ar,2,4,6,7) ///
-								  | q14a_gb == 3 | q14_gr == 3 | q14_cn == 3
+								  | q14a_gb == 3 | q14_gr == 3 
 								  
 recode usual_type_own (.a = .r) if (q14_co_pe  == .r )| q14_uy == .r | ///
 								   q14_q15a_la == .r | q14_q15b_la == .r | ///
 								   q14_it == .r | q14_mx == .r | ///
 								   (q15 == .r & country == 12) | q14_kr == .r | ///
-								   q14_ar == .r | q14a_gb == .r | q14b_gb == .r
+								   q14_ar == .r | q14a_gb == .r | q14b_gb == .r | ///
+								   q14_cn == .r
 
-*Peru recode 
-*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode usual_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
-								   
+*China recode
+recode usual_type_own (. = 0) if q14_cn == 1
+recode usual_type_own (. = 1) if q14_cn == 2
+recode usual_type_own (. = 2) if q14_cn == 3
+recode usual_type_own (. = .a) if q14_cn == .a
+recode usual_type_own (. = .d) if q14_cn == .d
+							   
 * usual type level		
 * SS: placed 21008 "CN: Other" in refused to match the other countries		  
 recode q15 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 ///
@@ -540,6 +547,14 @@ recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) & q32_
 recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q32_co_pe != .a 
 *recode last_type_own (.a = .r) if country == 2 & q7 == .r
 
+*Peru recode 
+*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
+*Updated 7-2 SS
+recode usual_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q32_co_pe != .a 
+recode usual_type_own (.a = 1) if country == 7 & q7==7013 & q32_co_pe != .a 
+recode last_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q32_co_pe != .a 
+
+
 *Laos
 recode last_type_own (.a = 0) if q32_la == 1 | q33 == 11002
 recode last_type_own (.a = 1) if q32_la == 2 | q33 == 11003
@@ -566,9 +581,6 @@ recode last_type_own (.a = .r) if (q32_co_pe == .r) | q32_uy == .r | ///
 								  (q33 == .r & country == 12) | q32_kr == .r | ///
 								  q32_ar == .r | q32a_gb == .r | q32b_gb == .r | q32a_gr == .r
 								  
-*Peru recode 
-*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode last_type_own (0 = 2) if country == 7 & inlist(q7,7011,7012)
 
 * last type level							  
 recode q33 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
@@ -695,7 +707,8 @@ recode visits (144 = .) if country == 9
 * Uruguay: q18 values seem implausible 
 recode visits (200 = .) (156 = .) if country == 10 
 * US visits, 4 values recoded
-replace visits = . if visits > 60 & visits < . & country == 12 
+replace visits = . if visits > 60 & visits < . & country == 12
+recode visits_tele (60 = .) if country == 12  // 1 change  
 * Italy visits, 1 value recoded 
 replace visits = . if visits > 60 & visits < . & country == 14 
 * Korea, 1 visit_home and 1 visit_covid value, 5 visit values
@@ -708,6 +721,14 @@ recode visits_tele (96 = .) if country == 16
 * UK 
 recode visits (150 = .) if country == 17
 recode visits_tele (100 = .) if country == 17
+* Greece:
+replace visits = . if visits > 80 & visits < . & country == 18 // 4 changes
+* Romania: (none)
+*Nigeria
+recode visits_tele (60 = .) if country == 20  // 1 change 
+*China
+replace visits = . if visits > 70 & visits < . & country == 21 // 1 change 
+
 
 *** New country var based on region ***
 recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") ///
@@ -723,10 +744,10 @@ lab var country_reg "Country (ordered by region)"
 
 
 * Drop trimmed q21 q37 q47 and get back the orignal var
-drop q21 q37 q47 q36
+drop q21 q37 q36
 rename q21_original q21
 rename q37_original q37
-*rename q47_original q47
+*rename q47_original q47_v1
 rename q36_origial q36
 
 /*
@@ -780,77 +801,79 @@ lab var education "Highest level of education completed (Q8)"
 lab var	health "Self-rated health (Q9)"
 lab var	health_mental "Self-rated mental health (Q10)"
 lab var	health_chronic "Longstanding illness or health problem (chronic illness) (Q11)"
-*lab var	ever_covid "Ever had COVID-19 or coronavirus (Q12)"
-*lab var	covid_confirmed	"COVID-19 or coronavirus confirmed by a test (Q13)"
-*lab var	covid_vax "COVID-19 vaccination status (Q14)"
-*lab var	covid_vax_intent "Intent to receive all recommended COVID vaccine doses if available (Q15)"
-lab var	activation "Patient activation: manage overall health and tell a provider concerns (q12_a/q12_b)"
-lab var	usual_source "Whether respondent has a usual source of care (q13)"
-lab var	usual_type_own "Facility ownership for usual source of care (q14)"
-lab var	usual_type_lvl "Facility level for usual source of care (q15)"
-lab var	usual_type "Facility ownership and level for usual source of care (q14/q15)"
-lab var	usual_reason "Main reason for choosing usual source of care facility (q16)"
-lab var	usual_quality "Overall quality rating of usual source of care (q17)"
-lab var	visits "Visits (continuous) made in-person to a facility in past 12 months (q18/q19)"
-lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (q18/q19)"
-*lab var	visits_covid "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
-lab var	fac_number "Number of facilities visited during the past 12 months (q20/q21)"
-lab var visits_home "Number of visits made by healthcare provider at home (q22)"
-lab var visits_tele "Number of virtual or telemedicine visits (q23)"
-lab var	visits_total "Total number of healthcare contacts: facility, home, and tele (q18/q22/q23)"
-lab var	inpatient "Stayed overnight at a facility in past 12 months (inpatient care) (q26)"
-lab var	blood_pressure "Blood pressure checked by healthcare provider in past 12 months (q27_a)"
-lab var	mammogram "Mammogram conducted by healthcare provider in past 12 months (q27_b)"
-lab var	cervical_cancer "Cervical cancer screening done by healthcare provider in past 12 months (q27_c)"
-lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (q27_d)"
-lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (q27_e)"
-lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (q27_f)"
-lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (q27_g)"		
-lab var	hiv_test "ZA only: HIV test conducted by healthcare provider in past 12 months (q27_ZA)"
-lab var	care_mental	"Received care for depression, anxiety, or another mental health condition (q27_h)"
-lab var	mistake	"A medical mistake was made in treatment or care in the past 12 months (q28_a)"	
-lab var	discrim	"You were treated unfairly or discriminated against in the past 12 months (q28_b)"	
-lab var	unmet_need "Needed medical attention but did not get healthcare (q29)"
-lab var	unmet_reason "Reason for not getting healthcare when needed medical attention (q30)"
-lab var	last_type_own "Facility ownership for last visit to a healthcare provider (q32)"
-lab var	last_type_lvl "Facility level for last visit to a healthcare provider (q33)"
-lab var last_type "Facility ownership and level for last visit to a healthcare provider (q32/q33)"
-lab var	last_reason	"Reason for last healthcare visit (q34)" 
-lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (q37)"
-*lab var	last_visit_time "Length of time spent with the provider during last healthcare visit (Q47)"
-lab var	last_qual "Last visit rating: overall quality (q38A)"
-lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence) (q38_b)"
-lab var	last_supplies "Last visit rating: equipment and supplies provider had available (q38_c)"
-lab var	last_respect "Last visit rating: provider respect (q38_d)"
-lab var	last_know "Last visit rating: knowledge of prior tests and visits (q38_e)"
-lab var	last_explain "Last visit rating: explained things in an understandable way (q38_f)"
-lab var	last_decisions "Last visit rating: involved you in decisions about your care (q38_g)"
-lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (q38_h)"
-lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (q38_i)"
-lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (q38_j)"
-lab var	last_promote "Net promoter score for facility visited for last visit (q39)"
-lab var	phc_women "Public primary care system rating for: pregnant women (q40_a)"
-lab var	phc_child "Public primary care system rating for: children (q40_b)"
-lab var	phc_chronic "Public primary care system rating for: chronic conditions (q40_c)"
-lab var	phc_mental "Public primary care system rating for: mental health (q40_d)"
-lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick (q41_a)"
-lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (q41_b)"
-lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (q41_c)"
-lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (q42)"
-lab var	qual_private "Overall quality rating of private healthcare system in country (q43)" 
-lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (q45)"
-lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (q46)" 
-lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (q47)" 
+lab var ever_covid_v1 "Ever had COVID-19 or coronavirus (V1.0 - Q12)"
+lab var	covid_confirmed_v1	"COVID-19 or coronavirus confirmed by a test (V1.0 - Q13)"
+lab var	covid_vax_v1 "COVID-19 vaccination status (V1.0 - Q14)"
+lab var	covid_vax_intent_v1 "Intent to receive all recommended COVID vaccine doses if available (V1.0 - Q15)"
+lab var	activation "Patient activation: manage overall health and tell a provider concerns (Q12_a/Q12_b)"
+lab var	usual_source "Whether respondent has a usual source of care (Q13)"
+lab var	usual_type_own "Facility ownership for usual source of care (Q14)"
+lab var	usual_type_lvl "Facility level for usual source of care (Q15)"
+lab var	usual_type "Facility ownership and level for usual source of care (Q14/Q15)"
+lab var	usual_reason "Main reason for choosing usual source of care facility (Q16)"
+lab var	usual_quality "Overall quality rating of usual source of care (Q17)"
+lab var	visits "Visits (continuous) made in-person to a facility in past 12 months (Q18/Q19)"
+lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (Q18/Q19)"
+lab var	visits_covid_v1 "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
+lab var	fac_number "Number of facilities visited during the past 12 months (Q20/Q21)"
+lab var visits_home "Number of visits made by healthcare provider at home (Q22)"
+lab var visits_tele "Number of virtual or telemedicine visits (Q23)"
+lab var	visits_total "Total number of healthcare contacts: facility, home, and tele (Q18/Q22/Q23)"
+lab var	inpatient "Stayed overnight at a facility in past 12 months (inpatient care) (Q26)"
+lab var	blood_pressure "Blood pressure checked by healthcare provider in past 12 months (Q27_a)"
+lab var	mammogram "Mammogram conducted by healthcare provider in past 12 months (Q27_b)"
+lab var	cervical_cancer "Cervical cancer screening done by healthcare provider in past 12 months (Q27_c)"
+lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (Q27_d)"
+lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (Q27_e)"
+lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (Q27_f)"
+lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (Q27_g)"		
+lab var	hiv_test "ZA only: HIV test conducted by healthcare provider in past 12 months (Q27_za)"
+lab var	care_mental	"Received care for depression, anxiety, or another mental health condition (Q27_h)"
+lab var breast_exam "CN only: Breast examination conducted by healtchare provider in past 12 months (Q27i_cn)"
+lab var color_ultrasound "CN: Color Ultrasound Mammography conducted by healtchare provider in past 12 months (Q27j_cn)"
+
+lab var	mistake	"A medical mistake was made in treatment or care in the past 12 months (Q28_a)"	
+lab var	discrim	"You were treated unfairly or discriminated against in the past 12 months (Q28_b)"	
+lab var	unmet_need "Needed medical attention but did not get healthcare (Q29)"
+lab var	unmet_reason "Reason for not getting healthcare when needed medical attention (Q30)"
+lab var	last_type_own "Facility ownership for last visit to a healthcare provider (Q32)"
+lab var	last_type_lvl "Facility level for last visit to a healthcare provider (Q33)"
+lab var last_type "Facility ownership and level for last visit to a healthcare provider (Q32/Q33)"
+lab var	last_reason	"Reason for last healthcare visit (Q34)" 
+lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (Q37)"
+lab var	last_visit_time_v1 "Length of time spent with the provider during last healthcare visit (V1.0 - Q47)"
+lab var	last_qual "Last visit rating: overall quality (Q38A)"
+lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence) (Q38_b)"
+lab var	last_supplies "Last visit rating: equipment and supplies provider had available (Q38_c)"
+lab var	last_respect "Last visit rating: provider respect (Q38_d)"
+lab var	last_know "Last visit rating: knowledge of prior tests and visits (Q38_e)"
+lab var	last_explain "Last visit rating: explained things in an understandable way (Q38_f)"
+lab var	last_decisions "Last visit rating: involved you in decisions about your care (Q38_g)"
+lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (Q38_h)"
+lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q38_i)"
+lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
+lab var	last_promote "Net promoter score for facility visited for last visit (Q39)"
+lab var	phc_women "Public primary care system rating for: pregnant women (Q40_a)"
+lab var	phc_child "Public primary care system rating for: children (Q40_b)"
+lab var	phc_chronic "Public primary care system rating for: chronic conditions (Q40_c)"
+lab var	phc_mental "Public primary care system rating for: mental health (Q40_d)"
+lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick (Q41_a)"
+lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (Q41_b)"
+lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q41_c)"
+lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (Q42)"
+lab var	qual_private "Overall quality rating of private healthcare system in country (Q43)" 
+lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q45)"
+lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q46)" 
+lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q47)" 
 lab var	vignette_poor "Rating of vignette in q48 (poor care)"
 lab var	vignette_good "Rating of vignette in q49 (good care)"
-lab var	minority "Minority group (based on native language, ethnicity or race) (q50)"
-lab var	income "Income group (q51)"
-lab var tele_qual "Overall quality of last telemedicine visit (q25)"
-lab var last_sched_time "Length of days between scheduling visit and seeing provider (q36)"
-lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (q38_k)"
-lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (q41_a/q41_b)"
-*lab var pol_align "Political alignment in respondent's region / district / state"
-
+lab var	minority "Minority group (based on native language, ethnicity or race) (Q50)"
+lab var	income "Income group (Q51)"
+lab var tele_qual "Overall quality of last telemedicine visit (Q25)"
+lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q36)"
+lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q38_k)"
+lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q41_a/Q41_b)"
+*lab var pol_align_v1 "Political alignment in respondent's region / district / state"
 
 
 **************************** Save data *****************************
@@ -860,7 +883,7 @@ compress
 save "$data_mc/02 recoded data/pvs_all_countries_v2.dta", replace
 
 
-/*
+
 **************=Save individual datasets to recoded data folder****************
 
 *Colombia
@@ -962,6 +985,12 @@ restore
 preserve
 keep if country == 20
 save "$data/Nigeria/02 recoded data/pvs_ng_recoded", replace
+restore
+
+*Nigeria 
+preserve
+keep if country == 21
+save "$data/China/02 recoded data/pvs_cn_recoded", replace
 restore
 
 

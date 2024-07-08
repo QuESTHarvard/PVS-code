@@ -267,49 +267,43 @@ recode q1 q2 q3 q4 q4_2 q5 q6 q7 q8 q9 q10 q11 q12_a q12_b ///
 
 * Q20, Q21
 list q18_q19 q21 if q21 > q18_q19 & q21 < . 
-*None
+* None
 
 list q20 q21 if q21 == 0 | q21 == 1
 * None
 
-* Recode 0 values for q27 to .a for q27 and "No" for q26
-* Recode 1 values to 2, because respondent likely meant 1 additional facility 
-* recode q21 (0 = .a) 
-* recode q21 (1 = 2) 
+* List if yes to q20: "all visits in the same facility" but q21: "how many different healthcare facilities did you go to" is more than 0
+list q20 q21 country if q20 == 1 & q21 > 0 & q21 < .
+* None
 
 * Q28a, Q28b 
 * list if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
 egen visits_total = rowtotal(q18_q19 q22 q23) 
 
-* Recoding q28_a and q28_b to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
-
-*SS: double check, doesn't make sense
-/*
-list visits_total q28_a q28_b if q28_a == 3 & visits_total > 0 & visits_total < . /// 
+list q18_q19 q28_a q28_b if q28_a == 3 & visits_total > 0 & visits_total < . /// 
 							  | q28_b == 3 & visits_total > 0 & visits_total < .
+* None
 
 * Recoding q28_a and q28_b to refused if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months 
-*recode q28_a q28_b (3 = .r) if visits_total > 0 & visits_total < .
-							  							  			 
-* List if missing for q39/q40 but does have a visit
-list visits_total q28_a q28_b if q28_a == .a & visits_total > 0 & ///
-								 visits_total < . | ///
-								 q28_b == .a & visits_total > 0 & ///
-								 visits_total < .						 
-							  
-list visits_total q28_a q28_b if q28_a != 3 & visits_total == 0 /// 
-						   | q28_b != 3 & visits_total == 0
-						  
-* Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
-recode q28_a q28_b (1 = 3) (2 = 3) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
-							  
+recode q28_a q28_b (.a = .r) if visits_total > 0 & visits_total < . // 0 changes
+
+* list if it is .a but they have visit values in past 12 months 
+list q18_q19 q28_a q28_b if q28_a == .a & visits_total > 0 & visits_total < . | q28_b == .a & visits_total > 0 & visits_total < .
+* None
+  							  			 
+* list if they chose other than "I did not get healthcare in past 12 months" but visits_total == 0 
+list q18_q19 q28_a q28_b if q28_a != 3 & visits_total == 0 | q28_b != 3 & visits_total == 0
+							  					  
+* Recoding q28_a and q28_b to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
+recode q28_a q28_b (0 = .a) (1 = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+* 267 changes made to q28_a
+* 265 changes made to q28_b		
+				
 * Recoding Q39 and Q40 to "I did not get healthcare in past 12 months" if they choose no but they have no visit values in past 12 months 
 recode q28_a q28_b (.r = .a) if visits_total == 0 //recode no/yes to no visit if they said they had 0 visit in past 12 months
+* No changes
 
-*/
 drop visits_total
-	
-
 
 *------------------------------------------------------------------------------*
 * Recode missing values to NA for intentionally skipped questions
@@ -380,13 +374,16 @@ lab val q2 q2_label
 lab def q3_label 0 "Male" 1 "Female" .a "NA" .d "Don't Know" .r "Refused"
 lab val q3 q3_label
 
-label define q4_label2 21001 "CN:安徽省" 21002"CN:北京市" 21003"CN:福建省" 21004"CN:甘肃省" 21005"CN:广东省" ///
-					 21006"CN:广西壮族自治区" 21007 "CN:贵州省" 21008"CN:海南省" 21009"CN:河北省" 21010"CN:河南省" ///
-					 21011"CN:黑龙江省" 21012"CN:湖北省" 21013 "CN:湖南省" 21014"CN:吉林省" 21015"CN:江苏省" ///
-					 21016"CN:江西省" 21017"CN:辽宁省" 21018"CN:内蒙古自治区" 21019 "CN:宁夏回族自治区" 21020"青海省" ///
-					 21021"CN:山东省" 21022"CN:山西省" 21023"CN:陕西省" 21024"CN:上海市" ///
-					 21025 "CN:四川省" 21026"CN:天津市" 21027"CN:西藏自治区" 21028"CN:新疆维吾尔自治区" 21029"CN:云南省" ///
-					 21030 "CN:浙江省" 21031"CN:重庆市" .a "NA" .d "Don't Know" .r "Refused"
+label define q4_label2 21001 "CN:An Hui Province" 21002 "CN:Bei Jing" 21003 "CN:Fu Jian" 21004 "CN:Gan Su" ///
+					   21005 "CN:Guang Dong" 21006 "CN:Guangxi Zhuang Autonomous Region" 21007 "CN:Gui Zhou" ///
+					   21008 "CN:Hai Nan" 21009 "CN:He Bei" 21010 "CN:He Nan" ///
+					   21011 "CN:Hei Long Jiang" 21012 "CN:Hu Bei" 21013 "CN:Hu Nan" ///
+					   21014 "CN:Ji Lin" 21015 "CN:Jiang Su" 21016"CN: Jiang Xi" 21017 "CN: Liao Ning" ///
+					   21018 "CN:Inner Mongolia Autonomous Region" 21019 "CN:Ningxia Hui Autonomous Region" 21020 "CN:Qing Hai" ///
+					   21021 "CN:Shan Dong" 21022 "CN:Shan Xi" 21023 "CN:Shaan xi" 21024 "CN:Shang Hai" ///
+					   21025 "CN:Si Chuan" 21026 "CN:Tian Jin" 21027"CN:Tibet Autonomous Region" ///
+					   21028 "CN:Xinjiang Uygur Autonomous Region" 21029"CN:Yun Nan" ///
+					   21030 "CN: Zhe Jiang" 21031 "CN: Chong Qing" .a "NA" .d "Don't Know" .r "Refused"
 label val q4 q4_label2
 
 lab def q5_label2 21001 "CN: City" 21002 "CN: Suburb of city" 21003 "CN: Small town" 21004 "CN: Rural area" .a "NA" .d "Don't Know" .r "Refused"
@@ -426,14 +423,14 @@ lab val q14_cn q14_label
 lab def q15_label2 21001 "CN: General hospital (Not including traditional chinese medicine hospital" ///
 				 21002 "CN: Specialized hospital (Not including traditional chinese medicine hospital)" ///
 				 21003 "CN: Chinese medicine hospital" 21004 "CN: Community healthcare center" ///
-				 21005 "CN: Township hospital" ///
+				 21005 "CN: Township health center" ///
 				 21006 "CN: Health care post" 21007 "CN: Village clinic/Private clinic" 21008 "CN: Other" .r "Refused" ///
 				 .d "Don't Know" .a "NA"
 lab val q15 q15_label2
 				 
 lab def q16_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" 4 "Good healthcare provider skills" ///
 				 5 "Staff shows respect" 6 "Medicines and equipment are available" 7 "Only facility available" ///
-				 8 "Covered by insurance" 9 "Other, specify" .a "NA" .d "Don't Know" .r "Refused"
+				 8 "Covered by insurance" 9 "Other, specify" 14 "CN: Trust hospital" .a "NA" .d "Don't Know" .r "Refused"
 lab val q16 q16_label
 
 *NA/Refused/DK
@@ -462,7 +459,7 @@ lab val q32_cn q32_label
 lab def q33_label2 21001 "CN: General hospital (Not including traditional chinese medicine hospital" ///
 				 21002 "CN: Specialized hospital (Not including traditional chinese medicine hospital)" ///
 				 21003 "CN: Chinese medicine hospital" 21004 "CN: Community healthcare center" ///
-				 21005 "CN: Township hospital" 21006 "CN: Health care post" 21007 "CN: Village clinic/Private clinic" ///
+				 21005 "CN: Township health center" 21006 "CN: Health care post" 21007 "CN: Village clinic/Private clinic" ///
 				 21008 "CN: Other" .a "NA" .d "Don't Know" .r "Refused"
 lab val q33 q33_label2
 
@@ -512,8 +509,11 @@ lab def CELL1label 0 "No / No other numbers" 1 "Yes" .a "NA" .d "Don't Know" .r 
 lab val CELL1 CELL1label
 		   
 *------------------------------------------------------------------------------*
-**# PVS ROMANIA - CATEGORIZATION OF "OTHER, SPECIFY" RESPONSES
+**# PVS CHINA - CATEGORIZATION OF "OTHER, SPECIFY" RESPONSES
+* 6-7-2024: AN helped us translate the other,specify text to see if we could further recode.
 
+* AN Translation: I don't Know
+* fixed below
 replace q7_other = "不知道" if q7_other == "不清楚" ///
                               | q7_other == "不知道." ///
 							  | q7_other == "不知道。" ///
@@ -527,21 +527,39 @@ replace q7_other = "不知道" if q7_other == "不清楚" ///
 							  | q7_other == "我也不知道，我没了解过这个方面" ///
 							  | q7_other == "这个我不知道"
 							  
+* AN Translation: social security 
+* not recoded
 replace q7_other = "社保" if q7_other == "个人买的社保" ///
                               | q7_other == "社会医保" ///
 							  | q7_other == "社保。" ///
 							  | q7_other == "社保，不知道是什么" 
+
+* AN Translation: urban employee and private medical insurance	
+* not recoded						  
 replace q7_other = "城镇职工医疗保险和商业医疗保险" if q7_other == "城乡和商业都有，一样重要" ///
                               | q7_other == "城镇职工医疗保险和商业医疗保险都有在用，如果去私立医院就是商业医疗保险，去公立医院就是城镇职工医疗保险。" ///
 							  | q7_other == "我有职工和商业险，我不知道哪个最主要" 
+							  
+* AN Translation: Urban and rural resident medical insurance and private medical insurance 		
+* not recoded					  
 replace q7_other = "城乡居民医疗保险和商业医疗保险" if q7_other=="城镇职工医疗保险和商业医疗保险都有，都重要啊"  ///
 							  | q7_other == "城乡居民医疗保险，和商业医疗"
+
 replace q7= 21002 if q7_other == "每年120元"
+
+* AN Translation: all 4 types of insurances
+* not recoded
 replace q7_other = "4种保险" if q7_other == "什么都有，公费，个人都有，有四个，我不知道哪个最重要"
 replace q7_other=".d" if q7_other == "不知道" ///
 
+* 6-24 SS:
+replace q7 = .d if q7_other == ".d"
+
 replace q14_other="不知道" if q14_other=="不清楚"
 replace q14_other=".d" if q14_other=="不知道"
+
+* 6-24 SS: This matched above code
+replace q14_cn = .d if q14_other == ".d"
 
 replace q15_other = "不知道" if q15_other == "不清楚" ///
                               | q15_other == "三甲医院" ///
@@ -550,7 +568,10 @@ replace q15_other = "不知道" if q15_other == "不清楚" ///
 							  | q15_other == "保健院" ///
 							  | q15_other == "天门市妇幼保健院" ///
 							  | q15_other == "工人医院"
-replace q15_other=".d" if q15_other == "不知道"
+replace q15_other= ".d" if q15_other == "不知道"
+
+* 6-24 SS: This matched above code
+replace q15 = .d if q15_other == ".d"
 
 replace q16=8 if q16_other == "单位附属医院" ///
                | q16_other == "员工" ///
@@ -632,6 +653,9 @@ replace q16=2 if q16_other == "乡镇医院方便" ///
                | q16_other == "综合因素，距离近公立方便多种原因"
 list q16_other if q16_other == "乡镇医院方便" ///
                | q16_other == "综合因素，距离近公立方便多种原因"
+
+* AN Translation: believe in chinese herbal medicine	
+* not recoded		   
 replace q16_other = "相信中医" if q16_other == "中医比西医好一点" ///
                | q16_other == "中药对人体副作用伤害小" ///
 			   | q16_other == "主要是想看中医" ///
@@ -639,13 +663,28 @@ replace q16_other = "相信中医" if q16_other == "中医比西医好一点" //
 			   | q16_other == "我相信中医这块。" ///
 			   | q16_other == "更相信中医" ///
 			   | q16_other == "要看中医"	   
+
+* AN Translation: specialty hospital
+* not recoded
 replace q16_other = "专科" if q16_other == "专病专治" ///
                | q16_other == "这是专科医院" ///
 			   | q16_other == "专业对口"
+			   
+* AN Translation: recommended by friends,AN: can be coded as 13	
+* fixed below		   
 replace q16_other = "朋友推荐" if q16_other == "别人推荐的" ///
-               | q16_other == "熟人介绍" 
+               | q16_other == "熟人介绍" 	   
+			   
+* AN Translation: good environment	
+* not recoded	   
 replace q16_other = "环境好" if q16_other == "环境比较好" 
+
+* AN Translation: good facility condition
+* not recoded
 replace q16_other = "医疗条件好" if q16_other == "医疗条件有保障"
+
+* AN Translation: know someone in the hospital
+* not recoded
 replace q16_other = "有熟人" if q16_other == "有熟人在，可以帮忙" ///
                                 | q16_other == "有熟人，有认识的人" ///
 								| q16_other == "有熟人。" ///
@@ -654,6 +693,8 @@ replace q16_other = "有熟人" if q16_other == "有熟人在，可以帮忙" //
 								| q16_other == "有熟人在，可以帮忙。" ///
 								| q16_other == "我以前在这里工作"
 								
+* AN Translation: trust hospital 
+* fixed below	
 replace q16_other = "信任医院" if q16_other == "具有安全感、靠谱" ///
 								| q16_other == "口碑" ///
 								| q16_other == "口碑好" ///
@@ -666,11 +707,17 @@ replace q16_other = "信任医院" if q16_other == "具有安全感、靠谱" //
 								| q16_other == "比较规范" ///
 								| q16_other == "镇医院有保障撒。" ///
 								| q16_other == "放心一点不会乱收费"
+
+* AN Translation: public hospital	
+* not recoded						
 replace q16_other = "公立医院" if q16_other == "公立医院有保障" ///
                                 | q16_other == "公立医院，比较可靠" ///
 								| q16_other == "国家医院，正规" ///
 								| q16_other == "当地时间最早的公立医院" ///
 								| q16_other == "是公立医院，上公立医院方便"
+
+* AN Translation: get used to go to this hospital		
+* not recoded						
 replace q16_other="习惯了" if q16_other == "习惯" ///
                             | q16_other == "习惯性。" ///
 							| q16_other == "我去习惯了。" ///
@@ -678,16 +725,30 @@ replace q16_other="习惯了" if q16_other == "习惯" ///
 							| q16_other == "长期调理" ///
 							| q16_other == "全家人都在这家机构打疫苗" ///
 							| q16_other == "长期看病的地方"
+
+* AN Translation: trust hospital 	
+* fixed below						
 replace q16_other = "信任医院" if q16_other == "习惯了"
+
+* AN Translation: trust hospital 
+* fixed below	
 replace q16_other = "信任医院" if q16_other == "公立医院"
 *听录音能否这样归类
+
+
+* AN Translation: various reasons
+* not recoded
 replace q16_other="综合原因" if q16_other == "三甲医院.距离近可以报销等综合因素" ///
                             | q16_other == "就是综合方面比较好" ///
 							| q16_other == "医疗资源好" ///
 							| q16_other == "医疗有保障" ///
 							| q16_other == "医疗条件好" ///
 							| q16_other == "环境好"
+							
 
+* 6-24 SS: "Trust hospital"							
+replace q16 = 14 if q16_other == "信任医院"						
+							
 replace q24 = 1 if q24_other == "体检后，发现有问题去检查。"
 list q24_other if q24_other == "体检后，发现有问题去检查。"
 replace q24_other = "" in 526 //526 is the result of "list"
@@ -710,7 +771,10 @@ list q30_other if q30_other == "医保不能报销"  ///
 	| q30_other == "异地报销，不给报销"  ///
 	| q30_other == "没法报销医保" ///
 	| q30_other == "不报销"
-replace q30_other = "" if q30_other == "医保不能报销"  ///
+	
+* AN Translation: same command and data as 737, already coded	
+* removed
+*replace q30_other = "" if q30_other == "医保不能报销"  ///
 	| q30_other == "异地报销，不给报销"  ///
 	| q30_other == "没法报销医保" ///
 	| q30_other == "不报销"	
@@ -724,7 +788,10 @@ replace q30=3 if q30_other=="不好挂号"  ///
 	 | q30_other == "排不上号"  ///
 	 | q30_other == "没挂上号。"  ///
 	 | q30_other == "没有挂到号"  
-replace q30_other = "" if q30_other == "不好挂号"  ///
+	 
+* AN Translation: same command and data as 752, already coded
+* removed	 
+*replace q30_other = "" if q30_other == "不好挂号"  ///
 	 | q30_other == "人员满了，没排上号"  ///
 	 | q30_other == "人太多，医生太少了"  ///
 	 | q30_other == "医护人员不足"  ///
@@ -734,7 +801,13 @@ replace q30_other = "" if q30_other == "不好挂号"  ///
 	 | q30_other == "没挂上号。"  ///
 	 | q30_other == "没有挂到号"  
 replace q30 = 7 if q30_other == "自己在家吃药"
-replace q30_other = "" if q30_other == "自己在家吃药"
+
+* AN Translation: same command and data as 772, already coded
+* removed
+*replace q30_other = "" if q30_other == "自己在家吃药"
+
+* 6-24 SS: This is two values in the data dictionary: 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)", 9 "COVID-19 fear"
+* not recoded, SS: Ask Xiaohui to seperate these out
 replace q30_other = "COVID (COVID restritions or COVID fear)" if q30_other == "因为新冠疫情，医院科室停诊" ///
       | q30_other == "因为新冠的时候出不去。" ///
 	  | q30_other == "新冠期间" ///
@@ -743,24 +816,39 @@ replace q30_other = "COVID (COVID restritions or COVID fear)" if q30_other == "�
 	  | q30_other == "疫情期间医护人员不够" ///
       | q30_other == "疫情期间，医院不接诊，需要转移到别的医院" ///
       | q30_other == "隔离。" 
+	  
+* AN Translation: no time to go to health facilities
+* not recoded  
 replace q30_other = "没有时间" if q30_other == "工作原因" ///
       | q30_other == "没时间" ///
 	  | q30_other == "工作忙。" ///
 	  | q30_other == "没有时间去" ///
 	  | q30_other == "家里走不开。"							
-							
+
+* AN Translation: coded in line 799	 
+* fixed below 
 replace q32_other = "不知道" if q32_other == "不知道。" ///
 	  | q32_other == "没记住。"  ///
 	  | q32_other == "单位固定医疗机构体检"  ///
 	  | q32_other == "农村的诊所，不知道是公立还是私立" 
 replace q32_cn = 2 if q32_other == "国际"
-replace q32_other = "" if q32_other == "国际"
+*replace q32_other = "" if q32_other == "国际"
 replace q32_other = ".d" if q32_other == "不知道"							
 
+* 6-24 SS: match code above
+replace q32_cn = .d if q32_other == ".d" 
+
+* AN Translation: I don't know, should be coded as .d
+* fixed below 
 replace q33_other = "不知道" if q33_other == "不清楚" ///
                 | q33_other == "不清楚。" /// 
 				| q33_other=="忘记了。" ///
 				|q33_other=="私人医院不清楚" 
+				
+replace q33 = .d if q33_other == "不知道" 				
+				
+* AN Translation: physical check up facility	
+* not recoded			
 replace q33_other = "体检机构" if q33_other == "不知道名字，就是一个体检机构" ///
                 | q33_other == "体检中心" /// 
 				| q33_other=="体检医院" ///
@@ -768,10 +856,16 @@ replace q33_other = "体检机构" if q33_other == "不知道名字，就是一�
 				| q33_other=="和谐健康体检中心" ///
 				| q33_other=="实名体检中心" ///
 				| q33_other=="美兆体检中心" 
+				
+* AN Translation: maternal hospital		
+* fixed below
 replace q33_other = "妇幼保健医院" if q33_other == "天门市妇幼保健院" ///
                 | q33_other == "妇幼保健院" 
+replace q33 = 21002 if q33_other == "妇幼保健医院" // SS 6-24 updated					
+				
 replace q33 = 21001 if q33_other == "中西结合医院" | q33_other == "工人医院"
-replace q33_other = "" if q33_other == "中西结合医院" | q33_other == "工人医院"							
+*replace q33_other = "" if q33_other == "中西结合医院" | q33_other == "工人医院"
+						
 							
 replace q34 = 1 if q34_other == "内分泌不调" ///
 	| q34_other == "去医院做手术"  ///
@@ -784,7 +878,9 @@ replace q34 = 1 if q34_other == "内分泌不调" ///
 	| q34_other == "补牙齿"  ///
 	| q34_other == "没事儿干，去医院溜达。我也不知道啥原因了，感觉有点疼，B超，ct,检查后，医生说没什么问题。"  ///
 	| q34_other == "配假牙"
-replace q34_other = ""  if q34_other == "内分泌不调" ///
+	
+* AN Translation: same command and data as 796, already coded	
+*replace q34_other = ""  if q34_other == "内分泌不调" ///
 	| q34_other == "去医院做手术"  ///
 	| q34_other == "囊肿"  ///
 	| q34_other == "拔牙"  ///
@@ -796,7 +892,10 @@ replace q34_other = ""  if q34_other == "内分泌不调" ///
 	| q34_other == "没事儿干，去医院溜达。我也不知道啥原因了，感觉有点疼，B超，ct,检查后，医生说没什么问题。"  ///
 	| q34_other == "配假牙"
 replace q34 = 2 if q34_other == "调理身体"
-replace q34_other = "" if q34_other == "调理身体"
+*replace q34_other = "" if q34_other == "调理身体"
+
+* AN Translation: give birth
+* not recoded
 replace q34_other = "生孩子"  if q34_other == "生产" | ///
 	q34_other == "生孩子去的" | ///
 	q34_other == "生小孩" 
@@ -804,21 +903,24 @@ replace q34_other=".d" if q34_other=="不清楚" ///
       | q34_other=="不知道" ///
 	  | q34_other=="我也不知道，搞不懂"							
 
+* 6-24 SS: matches code above
+replace q34 = .d if q34_other == ".d"	  
 
-/* SS: This needs to be fixed, not working	  
 replace q37=.r if q37_other=="不清楚"
-*replace q37_other = "" in 2259 // SS: confirm with Xiaohui this line of code
-replace q37_other = "24" if q37_other == "第二天"
-replace q37_other = "5" if q37_other == "4-5小时内"
-replace q37_other = "48" if q37_other == "48小时" | q37_other = "两天"
-replace q37_other = "9" if q37_other == "9小时"
-destring q37_other, replace	  	  
-*/
+*replace q37_other = "" in 2259 // 6-24 SS: removed
+
+* 6-24 SS: updated
+replace q37 = 24 if q37_other == "第二天"
+replace q37 = 5 if q37_other == "4-5小时内"
+replace q37 = 48 if q37_other == "48小时" | q37_other == "两天"
+replace q37 = 9 if q37_other == "9小时"
+*destring q37_other, replace // 6-24 SS: removed	  	  
+
 	  
 replace q50_other = "蒙古族" if q50_other == "蒙族" | q50_other == "蒙古"
 replace q50_other = "维吾尔族" if q50_other == "新疆维吾尔族"
 replace q50 = 21001 if q50_other == "闽南语"
-replace q50_other = "" if q50_other == "闽南语"		
+*replace q50_other = "" if q50_other == "闽南语"		
 
 *------------------------------------------------------------------------------*
 * Label variables					
@@ -935,8 +1037,186 @@ drop Operator ContactRecords CELL1 CELL2 retest InterviewerID Interviewlanguage 
 	 q4_1 q4_2 q4_2_1
 
 *------------------------------------------------------------------------------*
+** Creating Sampling weights 
+** Created: 2 Feb 2024
 
-* Save data 
+******age 
+***In the raw data set, q1 is age, q2 is age group (V2.0). Here create the age_cat to be used. Due to small sample from the age>=80 group, creat age_cat_1 & age_cat_2  
+***1) age_cat_1 with 7 age groups, >80 as a seperate group
+**in the data clean stage, we did this 
+/*recode q2 (0 = 0 "under 18") ///
+          (1 = 1 "18-29") ///
+		  (2 = 2 "30-39") ///
+		  (3 = 3 "40-49") ///
+		  (4 = 4 "50-59") ///
+		  (5 = 5 "60-69") ///
+		  (6 = 6 "70-79") ///
+		  (7 = 7 ">80") ///
+		  (999 = .r "refused"), gen(recq2)
+*/
+
+gen age_cat_1 = q2
+label variable age_cat_1 "age cat with >80"
+label define age_cat_1 0 "under 18" 1 "18-29" 2 "30-39" 3 "40-49" 4 "50-59" 5 "60-69" 6 "70-79" 7 ">80"
+label values age_cat_1 age_cat_1
+tab age_cat_1, m // none missing
+
+***2) age_cat_2 with 6 age groups: combine >= 80 with > 70 group due to only 7 samples in >= 80 group
+recode q2 (0 = 0 "under 18") ///
+             (1 = 1 "18-29") ///
+		     (2 = 2 "30-39") ///
+		     (3 = 3 "40-49") ///
+		     (4 = 4 "50-59") ///
+		     (5 = 5 "60-69") ///
+		     (6/7 = 6 ">70") ///
+		     (999 = .r "refused"), gen(age_cat_2)
+label variable age_cat_2 "age_cat with >80 combined"
+
+
+*******edu_cat
+recode q8 (21001/21002=0 "None(or no formal education)" ) ///
+             (21003=1 "Primary") ///
+		     (21004/21006 = 2 "Secondary") ///
+		     (21007/21010 = 3 "Post-secondary") ///
+		     (999 = .r "refused"), gen(edu_cat)
+label var edu_cat "Educational attainment (4 categories)"
+
+
+******region： try 6 region or 4 region
+/*
+recq4 refers to the recoded provinces in China, the samples are from 31 provinces in China. Using the raw data, the first step is to recode regions,as follow: 
+
+*gen recq4 = reccountry*1000 + q4		  
+*label define recq4 21001 "CN:安徽省" 21002"CN:北京市" 21003"CN:福建省" 21004"CN:甘肃省" 21005"CN:广东省" 21006"CN:广西壮族自治区" ///
+                   21007 "CN:贵州省" 21008"CN:海南省" 21009"CN:河北省" 21010"CN:河南省" 21011"CN:黑龙江省" 21012"CN:湖北省" ///
+				   21013 "CN:湖南省" 21014"CN:吉林省" 21015"CN:江苏省" 21016"CN:江西省" 21017"CN:辽宁省" 21018"CN:内蒙古自治区" ///
+				   21019 "CN:宁夏回族自治区" 21020"青海省" 21021"CN:山东省" 21022"CN:山西省" 21023"CN:陕西省" 21024"CN:上海市" ///
+				   21025 "CN:四川省" 21026"CN:天津市" 21027"CN:西藏自治区" 21028"CN:新疆维吾尔自治区" 21029"CN:云南省" ///
+				   21030 "CN:浙江省" 21031"CN:重庆市"
+*label values recq4 recq4	
+
+***regions in China
+1)by georgraph
+**1 = Huabei(华北地区)：北京市、天津市、河北省、山西省、内蒙古自治区
+**2 = Dongbei(东北地区)：辽宁省、吉林省、黑龙江省
+**3 = Huadong(华东地区)：上海市、江苏省、浙江省、安徽省、福建省、江西省、山东省
+**4 = Zhongnan(中南地区)：河南省、湖北省、湖南省、广东省、广西壮族自治区、海南省
+**5 = Xinan(西南地区)：重庆市、四川省、贵州省、云南省、西藏自治区
+**6 = Xibei(西北地区)：陕西省、甘肃省、青海省、宁夏回族自治区、新疆维吾尔自治区
+
+2)by ecomonic 
+**1 = East(东部)：北京、天津、河北、上海、江苏、浙江、福建、山东、广东和海南
+**2 = Middle（中部）：山西、安徽、江西、河南、湖北和湖南
+**3 = West（西部）：内蒙古、广西、重庆、四川、贵州、云南、西藏、陕西、甘肃、青海、宁夏和新疆
+**4 = Northeast（东北）：辽宁、吉林和黑龙江
+*/
+recode q4 (21002 21026 21009 21022 21018 = 1 "Huabei") ///
+             (21017 21014 21011 = 2 "Dongbei") ///
+		     (21024 21015 21030 21001 21003 21016 21021 = 3 "Huadong") ///
+		     (21010 21012 21013 21005 21006 21008 = 4 "Zhongnan" ) ///
+		     (21031 21025 21007 21029 21027 = 5 "Xinan") ///
+		     (21023 21004 21019 21020 21028 = 6 "Xibei") ////
+		     (999 = .r "Refused"), gen(region_cat_1)
+label variable region_cat_1 "RECODE of recq4 (RECODE of q4) 6 regions
+rename region_cat_1 region_6
+
+
+recode q4 (21002 21026 21009 21024 21015 21030 21003 21021 21005 21008 = 1 "East") ///
+             (21022 21001 21016 21010 21012 21013= 2 "Middle") ///
+             (21018 21006 21031 21025 21007 21029 21027 21023 21004 21020 21019 21028 = 3 "West") ///
+             (21017 21014 21011 = 4 "Northeast") ///
+		     (999 = .r "Refused"), gen(region_4)	
+label variable region_4 "RECODE of recq4 (RECODE of q4) 4 regions
+
+*******malefemale is recq3 in China dataset
+gen malefemale = q3
+label define malefemale 0 "Male" 1 "Female"
+label values malefemale malefemale
+label variable malefemale "RECODE of recq3 (RECODE of q4) gender
+
+*******urbanrural
+recode q5 (21001 21002 21003 = 1 "CN:Urban") ///
+             (21004 = 2 "CN:Rural") ///
+		     (9 = 999 "Refused"), gen(urbanrural)
+label values urbanrural urbanrural
+label variable urbanrural "urbanrural"
+
+********urbanrural_edu_cat
+gen urbanrural_edu_cat = 1 if urbanrural==1 & edu_cat== 0
+replace urbanrural_edu_cat = 2 if urbanrural==1 & edu_cat== 1
+replace urbanrural_edu_cat = 3 if urbanrural==1 & edu_cat== 2
+replace urbanrural_edu_cat = 4 if urbanrural==1 & edu_cat== 3  
+replace urbanrural_edu_cat = 5 if urbanrural==2 & edu_cat== 0
+replace urbanrural_edu_cat = 6 if urbanrural==2 & edu_cat== 1
+replace urbanrural_edu_cat = 7 if urbanrural==2 & edu_cat== 2
+replace urbanrural_edu_cat = 8 if urbanrural==2 & edu_cat== 3
+label define urbanrural_edu_cat 1 "Urban, None(or no formal education)" 2 "Urban, primary or less" 3 "Urban, secondary" 4 "Urban, post-secondary" 5 "Rural, primary or lessNone(or no formal education)" 6 "Rural, primary or less" 7 "Rural, secondary" 8 "Rural, post-secondary"
+label values urbanrural_edu_cat urbanrural_edu_cat
+label var urbanrural_edu_cat "Urban-rural * education"
+
+gen urbanrural_age_cat_1 = 1 if urbanrural==1 & age_cat_1==1
+replace urbanrural_age_cat_1 = 2 if urbanrural==1 & age_cat_1==2
+replace urbanrural_age_cat_1 = 3 if urbanrural==1 & age_cat_1==3
+replace urbanrural_age_cat_1 = 4 if urbanrural==1 & age_cat_1==4
+replace urbanrural_age_cat_1 = 5 if urbanrural==1 & age_cat_1==5
+replace urbanrural_age_cat_1 = 6 if urbanrural==1 & age_cat_1==6
+replace urbanrural_age_cat_1 = 7 if urbanrural==1 & age_cat_1==7
+replace urbanrural_age_cat_1 = 8 if urbanrural==2 & age_cat_1==1
+replace urbanrural_age_cat_1 = 9 if urbanrural==2 & age_cat_1==2
+replace urbanrural_age_cat_1 = 10 if urbanrural==2 & age_cat_1==3
+replace urbanrural_age_cat_1 = 11 if urbanrural==2 & age_cat_1==4
+replace urbanrural_age_cat_1 = 12 if urbanrural==2 & age_cat_1==5
+replace urbanrural_age_cat_1 = 13 if urbanrural==2 & age_cat_1==6
+replace urbanrural_age_cat_1 = 14 if urbanrural==2 & age_cat_1==7
+label define urbanrural_age_cat_1 1 "Urban, 18-29" 2 "Urban, 30-39" 3 "Urban, 40-49" 4 "Urban, 50-59" ///
+								  5 "Urban, 60-69" 6 "Urban, 70-79" 7 "Urban, >=80" 8 "Rural, 18-29" ///
+								  9 "Rural, 30-39" 10 "Rural, 40-49" 11 "Rural, 50-59" 12 "Rural, 60-69" ///
+								  13 "Rural, 70-79" 14 "Rural, >=80"  // this approach used the 7 age groups as in the raw dataset
+label val urbanrural_age_cat_1 urbanrural_age_cat_1
+label var urbanrural_age_cat_1 "Urban-rural * age_1"
+*rename urbanrural_age_cat_1 urbanrural_age_1 // SS: repeated below
+
+gen urbanrural_age_cat_2 = 1 if urbanrural==1 & age_cat_2==1
+replace urbanrural_age_cat_2 = 2 if urbanrural==1 & age_cat_2==2
+replace urbanrural_age_cat_2 = 3 if urbanrural==1 & age_cat_2==3
+replace urbanrural_age_cat_2 = 4 if urbanrural==1 & age_cat_2==4
+replace urbanrural_age_cat_2 = 5 if urbanrural==1 & age_cat_2==5
+replace urbanrural_age_cat_2 = 6 if urbanrural==1 & age_cat_2==6
+replace urbanrural_age_cat_2 = 7 if urbanrural==2 & age_cat_2==1
+replace urbanrural_age_cat_2 = 8 if urbanrural==2 & age_cat_2==2
+replace urbanrural_age_cat_2 = 9 if urbanrural==2 & age_cat_2==3
+replace urbanrural_age_cat_2 = 10 if urbanrural==2 & age_cat_2==4
+replace urbanrural_age_cat_2 = 11 if urbanrural==2 & age_cat_2==5
+replace urbanrural_age_cat_2 = 12 if urbanrural==2 & age_cat_2==6
+label define urbanrural_age_cat_2 1 "Urban, 18-29" 2 "Urban, 30-39" 3 "Urban, 40-49" 4 "Urban, 50-59" 5 "Urban, 60-69" 6 "Urban, >70" 7 "Rural, 18-29" 8  "Rural, 30-39" 9 "Rural, 40-49" 10 "Rural, 50-59" 11 "Rural, 60-69" 12 "Rural,>=70" //this approach combined >=80 with >70
+label values urbanrural_age_cat_2 urbanrural_age_cat_2
+label var urbanrural_age_cat_2 "Urban-rural * age_2"
+
+
+******3) Create sampling weights using raking approach
+
+rename urbanrural_age_cat_1 urbanrural_age_1
+rename urbanrural_age_cat_2 urbanrural_age_2
+rename urbanrural_edu_cat urbanrural_edu
+
+********************************weigthing command******************************************* 
+********************use individual variable：gender, region, edcation, age*******************
+********************************************************************************************
+
+***4） 4 region_4，6 age groups(region_4, age_cat_2)
+ipfweight malefemale region_4 edu_cat age_cat_2, gen(wgt_4) ///
+          val(51.15 48.85 ///malefemale values (gender)
+		  40.13 25.86 27.17 6.84 ///region_4 valuse (4 regions)
+		  3.77 26.07 50.68 19.48 ///edu_cat values (4 education categories)
+		  17.55 20.07 18.63	20.01 13.25	10.49) ///age_cat_2 values (combined >=80 group) 
+		  maxit(50)
+
+		  
+rename wgt_4 weight		
+drop age_cat_1 age_cat_2 edu_cat region_6 region_4 malefemale urbanrural urbanrural_edu urbanrural_age_1 urbanrural_age_2 	
+  
+*------------------------------------------------------------------------------*
+* Save data - with weights
 
 save "$data_mc/02 recoded data/input data files/pvs_cn.dta", replace
 
