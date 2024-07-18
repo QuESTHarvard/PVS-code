@@ -559,22 +559,26 @@ recode last_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q32_co_pe
 recode last_type_own (.a = 0) if q32_la == 1 | q33 == 11002
 recode last_type_own (.a = 1) if q32_la == 2 | q33 == 11003
 
+*China
+recode last_type_own (. = 0) if q32_cn == 1 & country ==21
+recode last_type_own (. = 1) if q32_cn == 2 & country ==21
+
+* Other countries:
 recode last_type_own (.a = 0) if (q32_co_pe == 1) | q32_uy == 1 | ///
 								 q32_it == 1 | inlist(q32_mx,3,4) | ///
 								 inlist(q33,12003,12004,12005) | q32_kr == 1 | ///
 								 q32_ar == 1 ///
-								 | q32a_gb == 1 | q32b_gb == 1 | q32a_gr == 1 | ///
-								 q32_cn == 1
-
+								 | q32a_gb == 1 | q32b_gb == 1 | q32a_gr == 1 
+								 
 recode last_type_own (.a = 1) if (q32_co_pe == 2) | q32_uy == 2 | ///
 								 q32_it == 2 | q32_it == 3 | q32_mx == 6 | ///
 								 inlist(q33,12001,12002,12006,12007) | q32_kr == 3 | ///
 								 q32_ar == 3 | q32a_gb == 2 | q32b_gb == 2 | q32a_gr == 2 | ///
-								 q32a_gr == 3 | q32_cn == 2
+								 q32a_gr == 3 
  
 recode last_type_own (.a = 2) if inlist(q32_uy,5,995) | q32_it == 4 | inlist(q32_mx,1,2,5,7) | ///
 								 q33 == 12995 | q32_kr == 4 | inlist(q32_ar,2,4,6,7) ///
-								 | q32a_gb == 3 | q32a_gr == 5 | q32_cn == 3
+								 | q32a_gb == 3 | q32a_gr == 5
 								 
 recode last_type_own (.a = .r) if (q32_co_pe == .r) | q32_uy == .r | ///
 								  q32_it == .r | q32_mx == .r | ///
