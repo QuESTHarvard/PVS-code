@@ -185,35 +185,12 @@ lab def labels65 1 "Yes" 2 "No" .d "Don't Know", modify
 label values q12 yes_no_dk
 lab def q43a_gr 1 "Public" 2 "Private (for-profit)" 3 "Contracted to public" 4 "NGO" 5 "Other, specify",modify
 lab val q43a_gr q43a_gr
-				
+
 *** weights ***
 ren weight_educ weight
 lab var weight "Final weight (based on gender, age, region, education)"
-
-*** Code for survey set ***
-gen respondent_num = _n 
-sort mode psu_id respondent_num
-gen short_id = _n if mode == 1 | mode == 3
-replace psu_id = subinstr(psu_id, " ", "", .) if mode == 1 | mode == 3
-encode psu_id, gen(psu_id_numeric) // this makes a numeric version of psu_id; an integer with a value label 
-gen long psu_id_for_svy_cmds = cond(mode==1 | mode==3, 1e5+short_id, 2e5+psu_id_numeric) 
-drop short_id psu_id_numeric
-label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for CATI/CAWI and 200 prefix for F2F)"
- 
-* This will have values 100001 up to 102006 for the Kenya data CATI folks and (if there were 20 PSUs) 200002 to 200021 for F2F  (200001 is skipped because Stata thinks of psu_id_numeric == 1 as being the CATI respondents.
-* Each person will have their own PSU ID for CATI and each sampled cluster will have a unique ID for the F2F.
- 
-* Now the svyset syntax will simply be:
-* svyset psu_id_for_svy_cmds [pw=weight], strata(mode)
-* or equivalently
-* svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
-
-* Keep variables relevant for data sharing and analysis  
-* Dropping time for now 
-drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id  
-
+				
 *----------- reorder V1 to V2 ------
-
 * renaming questions that were dropped
 ren q12 q12_v1
 ren q13 q13_v1
@@ -404,11 +381,6 @@ label val q33 q33_label2
 label val q51 q51_label2
 
 label drop q4_label q5_label q20_label q62_label q44_label q63_label
-
-* Reorder variables
-order q*, sequential
-order respondent_serial respondent_id mode country language date ///
-	  int_length psu_id_for_svy_cmds weight 
 		
 	
 *Save recoded data
@@ -457,6 +429,30 @@ lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic ha
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def labels26 14 "CN: Trust hospital", modify
+
+
+*** Code for survey set ***
+gen respondent_num = _n 
+sort mode psu_id respondent_num
+gen short_id = _n if mode == 1 | mode == 3
+replace psu_id = subinstr(psu_id, " ", "", .) if mode == 1 | mode == 3
+encode psu_id, gen(psu_id_numeric) // this makes a numeric version of psu_id; an integer with a value label 
+gen long psu_id_for_svy_cmds = cond(mode==1 | mode==3, 1e5+short_id, 2e5+psu_id_numeric) 
+drop short_id psu_id_numeric
+label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for CATI/CAWI and 200 prefix for F2F)"
+ 
+* This will have values 100001 up to 102006 for the Kenya data CATI folks and (if there were 20 PSUs) 200002 to 200021 for F2F  (200001 is skipped because Stata thinks of psu_id_numeric == 1 as being the CATI respondents.
+* Each person will have their own PSU ID for CATI and each sampled cluster will have a unique ID for the F2F.
+ 
+* Now the svyset syntax will simply be:
+* svyset psu_id_for_svy_cmds [pw=weight], strata(mode)
+* or equivalently
+* svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
+
+* Keep variables relevant for data sharing and analysis  
+* Dropping time for now 
+drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id  
+
 					
 * Reorder variables
 order q*, sequential

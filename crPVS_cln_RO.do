@@ -22,7 +22,7 @@ set more off
 *********************** ROMANIA ***********************
 
 * Import data 
-import delimited using "$data/Romania/01 raw data/PVS_Romania_Final weighted_labelled_04.07.23.csv", case(lower)
+import spss using "$data/Romania/01 raw data/PVS_Romania_Final weighted.sav", case(lower)
 
 notes drop _all
 
@@ -99,6 +99,9 @@ gen recq46 = (hh(q46)*60 + mm(q46))
 format q46b %tcHH:MM:SS
 gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
 */
+
+split q46 , parse(:) gen(interim_q46)
+ gen new_q46=interim_q46_1 + interim_q46_2/60
 
 format q47 %tcMM:SS
 gen recq47 = (hh(q47)*60 + mm(q47)) 
