@@ -22,8 +22,9 @@ set more off
 *********************** NIGERIA ***********************
 
 * Import data 
-import spss using "$data/Nigeria/01 raw data/23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
-*import spss using "C:\Users\Mia\Biostat Global Dropbox\Mia Yu\Data\Nigeria\01 raw data\23-015344-01 PVS Nigeria_Weighted Data_V1_InternalUseOnly.sav", case(lower)
+use "$data/Nigeria/01 raw data/23-015344-01 PVS Nigeria_Weighted Data_V2_InternalUseOnly.dta"
+rename *, lower
+ 
 notes drop _all
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
@@ -72,14 +73,14 @@ replace recq63 = .r if q63== 996
 lab def lang 20001 "NG: English" 20030 "NG: Hausa" 20031 "NG: Igbo" 20032 "NG: Pidgin" 20033 "NG: Yoruba"
 lab values reclanguage lang
 
-local q4l labels8
-local q5l labels9
-local q7l labels11
-local q8l labels12
-local q20l labels23
-local q44l labels23
-local q62l labels50
-local q63l labels51
+local q4l Q4
+local q5l Q5
+local q7l Q7
+local q8l Q8
+local q20l Q20
+local q44l Q44
+local q62l Q62
+local q63l Q63
 
 foreach q in q4 q5 q7 q8 q20 q44 q62 q63{
 	qui elabel list ``q'l'
@@ -143,7 +144,7 @@ gen recq47 = (mm(q47)+ ss(q47)/60)
 *------------------------------------------------------------------------------*
 * Fix mode variable
 gen recmode = 1 // 1 is CATI
-label define mode 1 "CATI"
+label define mode 1 "CATI",modify
 label values recmode mode
 
 *------------------------------------------------------------------------------*
