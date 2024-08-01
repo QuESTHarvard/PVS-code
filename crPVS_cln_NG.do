@@ -33,7 +33,7 @@ gen reccountry = 20
 lab def country 20 "Nigeria"
 lab values reccountry country
 
-ren weight weight_educ //for appending purpose
+ren weight2 weight_educ //for appending purpose
 
 * Rename some variables, and some recoding if variable will be dropped 
 
@@ -154,12 +154,12 @@ label define labels49 1 "Our healthcare system has so much wrong with it that we
 * Drop unused variables 
 
 drop ecs_id time_new intlength q4 q5 q7 q8 q20 q44 q46 q47 q62 q63 q66 rim_age rim_region rim_gender ///
-     interviewer_id interviewer_language* country language dw_overall mode
+     interviewer_id interviewer_language* country language dw_overall mode weight
 
 *------------------------------------------------------------------------------*
 
 * Generate variables 
-gen respondent_id = "GR" + string(respondent_serial)
+gen respondent_id = "NG" + string(respondent_serial)
 
 gen q66 = .a
 
