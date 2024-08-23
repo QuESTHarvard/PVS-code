@@ -444,30 +444,32 @@ recode q14_multi (1 = 0 "Public") (2 3 = 1 "Private") (4 = 2 "Other") ///
 
 * Colombia recode
 * Recode based on insurance type (but refusal for insurance defaults to q14_co_pe)
-recode usual_type_own (.a = 1) if country == 2 & q7 == 2028 & q14_co_pe != .a 
-recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) & q14_co_pe != .a 
-recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q14_co_pe != .a 
-*recode usual_type_own (.a = .r) if country == 2 & q7 == .r
+recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) 
+recode usual_type_own (.a = 1) if country == 2 & q7 == 2028 
+recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 
 *Peru recode 
 *Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-* Updated 7-2 SS based on updated data dictionary
-recode usual_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q14_co_pe != .a 
-recode usual_type_own (.a = 1) if country == 7 & q7==7013 & q14_co_pe != .a 
-recode usual_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q14_co_pe != .a 
+recode usual_type_own (.a = 0) if country == 7 & q14_co_pe == 1 & inlist(q7,7010,7014) 
+recode usual_type_own (.a = 1) if country == 7 & q14_co_pe == 1 & q7==7013 
+recode usual_type_own (.a = 2) if country == 7 & q14_co_pe == 1 & inlist(q7,7011,7012) 
+
+*Uruguay recode 
+*Updated 8-22 SS
+recode usual_type_own (.a = 0) if country == 10 & q14_uy == 1
+recode usual_type_own (.a = 1) if country == 10 & q14_uy == 2
+recode usual_type_own (.a = 2) if country == 10 & q14_uy == 5
 
 		
-recode usual_type_own (.a = 0) if (q14_co_pe == 1) | q14_uy == 1 | ///
-								  q14_q15a_la == 1 | q14_q15a_la == 2 |  ///
+recode usual_type_own (.a = 0) if (q14_q15a_la == 1 | q14_q15a_la == 2 |  ///
 								  q14_q15b_la == 1 | q14_q15b_la == 2 | ///
 								  q14_it == 1 | inlist(q14_mx,3,4) | ///
 								  inlist(q15,12003,12004) | q14_kr == 1 | ///
 								  q14_ar == 1 | q14a_gb == 1 | q14b_gb == 1 | ///
-								  q14_gr == 1 
+								  q14_gr == 1 )
 								  
 								  							  
-recode usual_type_own (.a = 1) if (q14_co_pe == 2) | q14_uy == 2 | ///
-								  inlist(q14_q15a_la,3,4,6) | ///
+recode usual_type_own (.a = 1) if inlist(q14_q15a_la,3,4,6) | ///
 								  inlist(q14_q15b_la,3,4,6) | ///
 								  q14_it == 2 | q14_it == 3 | q14_mx == 6 | ///
 								  inlist(q15,12001,12002,12005,12006) ///
@@ -475,14 +477,12 @@ recode usual_type_own (.a = 1) if (q14_co_pe == 2) | q14_uy == 2 | ///
 								  | q14a_gb == 2 | q14b_gb == 2 | q14_gr == 2 
 								  
 						  
-recode usual_type_own (.a = 2) if inlist(q14_uy,5,995) | ///
-								  q14_q15a_la == 9 | q14_q15b_la == 7 | ///
+recode usual_type_own (.a = 2) if q14_q15a_la == 9 | q14_q15b_la == 7 | ///
 								  q14_it == 4 | inlist(q14_mx,1,2,5,7) | ///
 								  q15 == 12995 | q14_kr == 4 | inlist(q14_ar,2,4,6,7) ///
 								  | q14a_gb == 3 | q14_gr == 3 
 								  
-recode usual_type_own (.a = .r) if (q14_co_pe  == .r )| q14_uy == .r | ///
-								   q14_q15a_la == .r | q14_q15b_la == .r | ///
+recode usual_type_own (.a = .r) if q14_q15a_la == .r | q14_q15b_la == .r | ///
 								   q14_it == .r | q14_mx == .r | ///
 								   (q15 == .r & country == 12) | q14_kr == .r | ///
 								   q14_ar == .r | q14a_gb == .r | q14b_gb == .r | ///
@@ -535,25 +535,27 @@ lab val usual_type fac_own_lvl
 
 
 * last_type_own
-
 recode q32_multi (1 = 0 Public) (2 3 = 1 Private) (4 = 2 Other) /// 
 		(.a = .a NA) (.r = .r Refused), ///
 		gen(last_type_own)
 
 * Colombia recode
 * Recode based on insurance type (but refusal for insurance defaults to q32_co_pe)
-recode last_type_own (.a = 1) if country == 2 & q7 == 2028 & q32_co_pe != .a 
-recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) & q32_co_pe != .a 
-recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q32_co_pe != .a 
-*recode last_type_own (.a = .r) if country == 2 & q7 == .r
+recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) 
+recode last_type_own (.a = 1) if country == 2 & q7 == 2028 
+recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 
 *Peru recode 
-*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-*Updated 7-2 SS
-recode last_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q32_co_pe != .a 
-recode last_type_own (.a = 1) if country == 7 & q7==7013 & q32_co_pe != .a 
-recode last_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q32_co_pe != .a 
+*Recode based on q32_co_pe, but those who say public and have SHI are recoded to other 
+recode last_type_own (.a = 0) if country == 7 & q32_co_pe == 1 & inlist(q7,7010,7014) 
+recode last_type_own (.a = 1) if country == 7 & q32_co_pe == 1 & q7==7013 
+recode last_type_own (.a = 2) if country == 7 & q32_co_pe == 1 & inlist(q7,7011,7012) 
 
+*Uruguay recode 
+*Updated 8-22 SS
+recode last_type_own (.a = 0) if country == 10 & q32_uy == 1
+recode last_type_own (.a = 1) if country == 10 & q32_uy == 2
+recode last_type_own (.a = 2) if country == 10 & q32_uy == 5
 
 *Laos
 recode last_type_own (.a = 0) if q32_la == 1 | q33 == 11002
