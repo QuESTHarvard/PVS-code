@@ -550,8 +550,8 @@ recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016) & q32_co_pe
 *Peru recode 
 *Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
 *Updated 7-2 SS
-recode usual_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q32_co_pe != .a 
-recode usual_type_own (.a = 1) if country == 7 & q7==7013 & q32_co_pe != .a 
+recode last_type_own (.a = 0) if country == 7 & inlist(q7,7010,7014) & q32_co_pe != .a 
+recode last_type_own (.a = 1) if country == 7 & q7==7013 & q32_co_pe != .a 
 recode last_type_own (.a = 2) if country == 7 & inlist(q7,7011,7012) & q32_co_pe != .a 
 
 
