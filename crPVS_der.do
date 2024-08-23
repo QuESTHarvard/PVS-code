@@ -451,7 +451,7 @@ recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 *Peru recode 
 *Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
 recode usual_type_own (.a = 0) if country == 7 & q14_co_pe == 1 & inlist(q7,7010,7014) 
-recode usual_type_own (.a = 1) if country == 7 & q14_co_pe == 1 & q7==7013 
+recode usual_type_own (.a = 1) if country == 7 & q14_co_pe == 2 & q7==7013 
 recode usual_type_own (.a = 2) if country == 7 & q14_co_pe == 1 & inlist(q7,7011,7012) 
 
 *Uruguay recode 
@@ -548,7 +548,7 @@ recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 *Peru recode 
 *Recode based on q32_co_pe, but those who say public and have SHI are recoded to other 
 recode last_type_own (.a = 0) if country == 7 & q32_co_pe == 1 & inlist(q7,7010,7014) 
-recode last_type_own (.a = 1) if country == 7 & q32_co_pe == 1 & q7==7013 
+recode last_type_own (.a = 1) if country == 7 & q32_co_pe == 2 & q7==7013 
 recode last_type_own (.a = 2) if country == 7 & q32_co_pe == 1 & inlist(q7,7011,7012) 
 
 *Uruguay recode 
