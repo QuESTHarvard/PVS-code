@@ -277,6 +277,8 @@ lab val last_promote lp
 
 * system_outlook 
 gen system_outlook = q45
+lab def system_outlook 0 "Getting worse" 1 "Staying the same" /// 
+		2 "Getting better" .r "Refused", replace
 lab val system_outlook system_outlook
 
 * system_reform 
