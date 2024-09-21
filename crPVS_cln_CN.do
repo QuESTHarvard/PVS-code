@@ -1035,7 +1035,7 @@ label variable int_length "Interview length"
 order q*, sequential
 order respondent_id country language date int_length mode 
 
-drop Operator ContactRecords CELL1 CELL2 retest InterviewerID Interviewlanguage Interviewscore ///
+drop Operator ContactRecords retest InterviewerID Interviewlanguage Interviewscore ///
 	 q4_1 q4_2 q4_2_1
 
 *------------------------------------------------------------------------------*
