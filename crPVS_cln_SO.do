@@ -31,6 +31,10 @@ notes drop _all
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
+gen reccountry = 22
+lab def country 22 "Somaliland"
+lab values reccountry country
+
 *ren weight2 weight_educ //for appending purpose - SS: not in current dataset
 ren instanceid respondent_serial // SS: confirm this with Todd/team
 ren q12a q12_a
@@ -179,7 +183,8 @@ recode q8 q10 q12_a q12_b q13 q18 q19 q20 q22 q23 q24 q25 q27_a q27_b q27_c q28_
 	   q38_j q39 q40_a_so q40_b_so q40_c q40_d q40_e_so q40_f_so q41_a q41_b q41_c q42 q43 q45 ///
 	   q46 q47 q48 q49 q51 cell2 (999 = .r)
 
-recode q33 (995 = .a)
+recode q33 (22995 = .a)
+recode q33 (22008 = .r)
 
 *------------------------------------------------------------------------------*
 * Check for implausible values - review
@@ -246,10 +251,10 @@ recode q28_a q28_b (. = .a) if q18 == 0 | q19 == 1 | q19 == .r
 recode q30 (. = .a) if q29 == 0 | q29 == .r
 
 * q32_so- na's
-recode q32_so q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_so q33 q33a_so q33b_so q33c_so q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q19 == 1 | q19 == .r
 	  	   	   
-recode q32_so q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_so q33 q33a_so q33b_so q33c_so q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (nonmissing = .a) if q18 == 0 | q19 == 1
    
 recode q33a_so (. = .a) if q32_so !=1  
@@ -266,10 +271,6 @@ recode cell2 (. = .a) if cell1 != 1
 *------------------------------------------------------------------------------*
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:
-
-gen reccountry = 22
-lab def country 22 "Somaliland"
-lab values reccountry country
 
 * Fix mode variable
 recode mode (2 = 4)
@@ -459,4 +460,4 @@ label variable int_length "Interview length"
 *------------------------------------------------------------------------------*
 
 * Save data
-*save "$data_mc/02 recoded data/input data files/pvs_ng.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_so.dta", replace
