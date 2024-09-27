@@ -22,7 +22,7 @@ set more off
 *********************** SOMALILAND ***********************
 
 * Import data 
-import spss "$data/Somaliland/01 raw data/IpsosKY_Somaliland_PVS_F2F_CATI_Fulldata_V2.sav" // used spss data because time vars were off in .dta file
+import spss "$data/Somaliland/01 raw data/IpsosKY_Somaliland_PVS_F2F_CATI_Fulldata_V3.sav" // used spss data because time vars were off in .dta file
 rename *, lower
  
 notes drop _all
@@ -35,8 +35,8 @@ gen reccountry = 22
 lab def country 22 "Somaliland"
 lab values reccountry country
 
-*ren weight2 weight_educ //for appending purpose - SS: not in current dataset
-ren instanceid respondent_serial // SS: confirm this with Todd/team
+ren weight1 weight_educ 
+ren instanceid respondent_serial 
 ren q12a q12_a
 ren q12b q12_b
 ren q14 q14_so
@@ -272,10 +272,6 @@ recode cell2 (. = .a) if cell1 != 1
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:
 
-* Fix mode variable
-recode mode (2 = 4)
-label define labels0 4 "CAPI",modify // SS: confirm with Todd CAPI = 4
-
 *add new option for q16 
 recode q16 (10 = 15)
 lab def q16_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" ///
@@ -304,7 +300,7 @@ lab def q30_label 1 "High cost (e.g., high out of pocket payment, not covered by
 				 .d "Don't Know" .r "Refused"
 lab val q30 q30_label				 
 
-recode q32 (4 = 3) (7 = 4)
+recode q32 (4 = 1) (7 = 4)
 lab def q32_label 1 "Public" 2 "Private (including pharmacies and traditional practitioners)" ///
 	    3 "Community health centre" 4 "Other" .a "NA" .d "Don't Know" .r "Refused"
 lab val q32 q32_label		
@@ -358,7 +354,7 @@ ren rec* *
 *Reorder variables
 order cell1 cell2
 order q*, sequential
-order respondent_id respondent_serial mode country // weight_educ
+order respondent_id weight_educ respondent_serial mode country // 
 
 
 *------------------------------------------------------------------------------*
@@ -415,9 +411,9 @@ label variable q31_a "Q31a. Have you ever needed to borrow money to pay for heal
 label variable q31_b "q31_b. Sell items to pay for healthcare"
 label variable q32_so "Q32_so. SO only: Was this a public, private or another type of facility?"
 label variable q33 "Q33. What type of healthcare facility is this?"
-label variable q33a_so
-label variable q33b_so
-label variable q33c_so
+label variable q33a_so "Q33a. SO only: What type of public healthcare facility was this?"
+label variable q33b_so "Q33b. SO only: What type of private healthcare facility was this?"
+label variable q33c_so "Q33c. SO only: What type of other healthcare facility was this?"
 label variable q34 "Q34. What was the main reason you went?"
 label variable q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"
 label variable q36 "Q36. How long did you wait in days, weeks, or months between scheduling the appointment and seeing the health care provider?"
@@ -438,7 +434,7 @@ label variable q40_a_so "Q40a. How would you rate the quality of care provided f
 label variable q40_b_so "Q40b. Care for infections such as Malaria, Tuberculosis etc?"
 label variable q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
 label variable q40_d "Q40d. How would you rate the quality of care provided for the mental health?"
-label variable q40_e_so "Q40e. How would you rate the quality of care provided for the mental health?"
+label variable q40_e_so "Q40e. SO only: How would you rate the quality of care provided for the mental health?"
 label variable q40_f_so "Q40f. SO only: How would you rate the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
 label variable q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
 label variable q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
