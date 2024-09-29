@@ -71,12 +71,12 @@ ren q38i q38_i
 ren q38j q38_j
 ren q38k q38_k
 
-ren q40a q40_a_so
-ren q40b q40_b_so
+ren q40a q40a_so
+ren q40b q40b_so
 ren q40c q40_c
 ren q40e q40_d
-ren q40d q40_e_so 
-ren q40f q40_f_so
+ren q40d q40e_so 
+ren q40f q40f_so
 
 ren q41a q41_a
 ren q41b q41_b
@@ -180,7 +180,7 @@ recode q14_so q18 q21 q22 q23 q27_a q27_b q27_c q27_d q27_f q27_g q27_h cell1 (9
 	
 recode q8 q10 q12_a q12_b q13 q18 q19 q20 q22 q23 q24 q25 q27_a q27_b q27_c q28_a ///
 	   q28_b q30 q31_b q32_so q34 q35 q37 q38_a q38_b q38_c q38_d q38_e q38_g q38_i ///
-	   q38_j q39 q40_a_so q40_b_so q40_c q40_d q40_e_so q40_f_so q41_a q41_b q41_c q42 q43 q45 ///
+	   q38_j q39 q40a_so q40b_so q40_c q40_d q40e_so q40f_so q41_a q41_b q41_c q42 q43 q45 ///
 	   q46 q47 q48 q49 q51 cell2 (999 = .r)
 
 recode q33 (22995 = .a)
@@ -343,6 +343,22 @@ label define labels44 .a "NA" .d "Don't know" .r "Refused",add
 label define labels45 .a "NA" .d "Don't know" .r "Refused",add
 label define labels48 .a "NA" .d "Don't know" .r "Refused",add
 
+*for appending process:
+label copy q4_label q4_label2
+label copy q5_label q5_label2
+label copy q33_label q33_label2
+label copy q50_label q50_label2
+label copy q51_label q51_label2
+
+label val q4 q4_label2
+label val q5 q5_label2
+lab val q33 q33_label2
+lab val q50 q50_label2
+lab val q51 q51_label2
+
+
+label drop q4_label q5_label q33_label q50_label q51_label
+
 *------------------------------------------------------------------------------*
 
 * Renaming variables 
@@ -430,12 +446,12 @@ label variable q38_i "Q38i. How would you rate the amount of time you waited bef
 label variable q38_j "Q38j. How would you rate the courtesy and helpfulness at the facility?"
 label variable q38_k "Q38k. How would you rate how long it took for you to get this appointment?"
 label variable q39 "Q39. How likely would recommend this facility to a friend or family member?"
-label variable q40_a_so "Q40a. How would you rate the quality of care provided for care for pregnancy and children?"
-label variable q40_b_so "Q40b. Care for infections such as Malaria, Tuberculosis etc?"
+label variable q40a_so "Q40a. How would you rate the quality of care provided for care for pregnancy and children?"
+label variable q40b_so "Q40b. Care for infections such as Malaria, Tuberculosis etc?"
 label variable q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
 label variable q40_d "Q40d. How would you rate the quality of care provided for the mental health?"
-label variable q40_e_so "Q40e. SO only: How would you rate the quality of care provided for the mental health?"
-label variable q40_f_so "Q40f. SO only: How would you rate the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
+label variable q40e_so "Q40e. SO only: How would you rate the quality of care provided for the mental health?"
+label variable q40f_so "Q40f. SO only: How would you rate the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
 label variable q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
 label variable q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
 label variable q41_c "Q41c. How confident are you that the government considers the public's opinion?"

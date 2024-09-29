@@ -381,6 +381,15 @@ label val q33 q33_label2
 label val q51 q51_label2
 
 label drop q4_label q5_label q20_label q62_label q44_label q63_label
+
+* Update CN data labels:
+recode q45 (0 = 1 "Getting worse") (1 = 2 "Staying the same") (2 = 3 "Getting better"), gen(recq45)
+drop q45
+
+recode q2 (0 = 1 "18 to 29") (1 = 2 "30-39") (2 = 3 "40-49" ) (3 = 4 "50-59") (4 = 5 "60-69") (5 = 6 "70-79") (6 = 7 "80+"), gen(recq2)
+drop q2
+ 
+ren rec* *
 		
 	
 *Save recoded data
@@ -396,15 +405,6 @@ save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
 clear all
 use "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta"
 
-* Update CN data labels:
-recode q45 (0 = 1 "Getting worse") (1 = 2 "Staying the same") (2 = 3 "Getting better"), gen(recq45)
-drop q45
-
-recode q2 (0 = 1 "18 to 29") (1 = 2 "30-39") (2 = 3 "40-49" ) (3 = 4 "50-59") (4 = 5 "60-69") (5 = 6 "70-79") (6 = 7 "80+"), gen(recq2)
-drop q2
- 
-ren rec* *
-
 * Append V2 datasets:
 tempfile label10
 label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label10'
@@ -414,14 +414,24 @@ append using "$data_mc/02 recoded data/input data files/pvs_cn.dta"
 
 qui do `label10'
 
+tempfile label_11
+label save q4_label2 q5_label2 q7_label q8_label q33_label2 q50_label2 q51_label2 using `label_11'
+label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q50_label2 q51_label2 
+
+append using "$data_mc/02 recoded data/input data files/pvs_so.dta"
+
+qui do `label_11'
+
+
 * Country
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
-				21 "China", modify
+				21 "China" 22 "Somalia", modify
 
 * Country-specific skip patterns  
 recode q14_cn q27i_cn q27j_cn q32_cn q51_cn (. = .a) if country != 21
+recode q14_so q15a_so q15b_so q15c_so q32_so q33a_so q33b_so q33c_so q40a_so q40b_so q40e_so q40f_so (. = .a) if country != 22
 
 * Other value label modifcations
 lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
