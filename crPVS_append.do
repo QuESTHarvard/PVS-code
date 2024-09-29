@@ -414,13 +414,13 @@ append using "$data_mc/02 recoded data/input data files/pvs_cn.dta"
 
 qui do `label10'
 
-tempfile label_11
-label save q4_label2 q5_label2 q7_label q8_label q33_label2 q50_label2 q51_label2 using `label_11'
+tempfile label11
+label save q4_label2 q5_label2 q7_label q8_label q33_label2 q50_label2 q51_label2 using `label11'
 label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q50_label2 q51_label2 
 
 append using "$data_mc/02 recoded data/input data files/pvs_so.dta"
 
-qui do `label_11'
+qui do `label11'
 
 
 * Country
