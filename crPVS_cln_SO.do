@@ -22,7 +22,7 @@ set more off
 *********************** SOMALILAND ***********************
 
 * Import data 
-import spss "$data/Somaliland/01 raw data/IpsosKY_Somaliland_PVS_F2F_CATI_Fulldata_V3.sav" // used spss data because time vars were off in .dta file
+import spss "$data/Somaliland/01 raw data/IpsosKY_Somaliland_PVS_F2F_CATI_Fulldata_V5.sav" // used spss data because time vars were off in .dta file
 rename *, lower
  
 notes drop _all
@@ -35,7 +35,7 @@ gen reccountry = 22
 lab def country 22 "Somaliland"
 lab values reccountry country
 
-ren weight1 weight_educ 
+ren weight weight_educ 
 ren instanceid respondent_serial 
 ren q12a q12_a
 ren q12b q12_b
