@@ -96,37 +96,6 @@ lab def mode 1 "CATI" 2 "F2F" 3 "CAWI", replace
 label val mode mode
 lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 
-* Country-specific skip patterns - check this 
-recode q19_multi q56_multi (. = .a) if country != 3  | country != 18 | country != 4 | ///
-															country != 5 | country != 19 | country != 9 | country != 20
-recode q43_multi (. = .a) if country != 3 | country != 4 | country != 5 | country != 19 | country != 9 | country != 20
-recode q56_pe (. = .a) if country != 7
-recode q19_co_pe q43_co_pe (. = .a) if country != 2 & country != 7 
-recode q6_za q37_za (. = .a) if country != 9
-recode q6_la q14_la q15_la q18a_la q19_q20a_la q18b_la q19_q20b_la q43_la q62a_la ///		
-		(. = .a) if country != 11
-recode q14 q15 q18 q20 q64 q65 (. = .a) if country == 11 
-recode q6_it q19_it q43_it (. = .a) if country != 14
-recode q19_mx q43_mx q56a_mx q56b_mx q62_mx (. = .a) if country != 13
-recode q62a_us q62b_us q66a_us q66b_us (. = .a) if country != 12
-recode q28_c q46a q46b q46b_refused q48_k ///
-	   (. = .a) if country != 12 | country != 13 | country != 14	   
-recode q66 (. = .a) if country != 13 | country != 14 | country != 15
-recode q6_kr q7_kr q19_kr q43_kr (. = .a) if country != 15
-recode q7 (. = .a) if country == 15 
-* Add the line to recode q6 to .a if the country has country specific q6. This might have been done in each individual cleaning program but do it again here to be sure
-recode q6 (. = .a) if inlist(country,9,11,14,15,17) 
-recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar q13e_co_pe_uy_ar (. = .a) if country != 2 | country != 7 |  country != 11 | country != 16 
-recode q19_ar q43_ar q56a_ar q56b_ar q56c_ar (. = .a) if country != 16 
-recode q37_gr_in_ro (. = .a) if country != 4 | country != 18 | country != 19
-recode q64 q65 q46_refused q47_refused (. = .a) if country == 15 
-recode q6_gb q19a_gb q19b_gb q43a_gb q43b_gb q62_gb q66_gb (. = .a) if country != 17
-recode q19_gr (. = .a) if country !=18
-recode q43a_gr (. = .a) if country !=18
-recode q43b_gr (. = .a) if country !=18
-recode q20a_gr q20b_gr q20c_gr q44a_gr q44b_gr q66a_gr q66b_gr q69_gr (. = .a) if country != 18
-recode q37_ng q50_e_ng (. = .a) if country != 20
-
 * Country-specific value labels -edit for ssrs-
 lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
 				 4001 "IN: English" 4011 "IN: Hindi" 4012 "IN: Kannada" 4013 "IN: Tamil" 4014 "IN: Bengali" 4015 "IN: Telugu" ///
@@ -429,7 +398,54 @@ lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
 				21 "China" 22 "Somalia", modify
 
-* Country-specific skip patterns  
+* Country-specific skip patterns - change to V2 var names
+recode q14_multi q44_multi q32_multi (. = .a) if country != 3 | country != 4 | country != 5 | ///
+									   country != 18 | country != 20 | country != 19 | country != 9 
+
+recode q44_pe (. = .a) if country != 7
+recode q14_co_pe q32_co_pe (. = .a) if country != 2 & country != 7 
+
+recode q6_za q27i_za (. = .a) if country != 9
+
+recode q6_la q13a_la q13b_la q14_la_v1 q14_q15a_la q14_q15b_la ///
+	   q15_la_v1 q32_la q50a_la (. = .a) if country != 11
+		
+recode q14_v1 q15_v1 q13 q15 CELL1 CELL2 (. = .a) if country == 11 
+
+recode q6_it q14_it q32_it (. = .a) if country != 14
+
+recode q14_mx q32_mx q44a_mx q44b_mx q50_mx (. = .a) if country != 13
+
+recode q50a_us q50b_us q52a_us q52b_us (. = .a) if country != 12
+
+recode q25 q35 q36 q37b_refused q38_k (. = .a) if country != 12 | country != 13 | country != 14	
+	   
+recode q52 (. = .a) if country != 13 | country != 14 | country != 15
+
+recode q6_kr q7_kr q14_kr q32_kr (. = .a) if country != 15
+
+recode q7 (. = .a) if country == 15 
+
+* Add the line to recode q6 to .a if the country has country specific q6. 
+**This might have been done in each individual cleaning program but do it again here to be sure
+recode q6 (. = .a) if inlist(country,9,11,14,15,17) 
+
+recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar_v1 q13e_co_pe_uy_ar_v1 (. = .a) if ///
+	   country != 2 | country != 7 |  country != 10 | country != 16 
+
+recode q14_uy q32_uy q44_uy (. = .a) if country !=10
+	   
+recode q14_ar q32_ar q44a_ar q44b_ar q44c_ar (. = .a) if country != 16 
+
+recode q27i_gr_in_ro (. = .a) if country != 4 | country != 18 | country != 19
+
+recode CELL1 CELL2 q37b_refused q47_refused_v1 (. = .a) if country == 15 
+
+recode q6_gb q14a_gb q14b_gb q32a_gb q32b_gb q50_gb q52_gb (. = .a) if country != 17
+
+recode q14_gr q32a_gr q32b_gr q15a_gr q15b_gr q15c_gr q33a_gr q33b_gr q52a_gr q52b_gr ///
+	   q51_gr (. = .a) if country !=18
+recode q27i_ng q40_e_ng (. = .a) if country != 20				
 recode q14_cn q27i_cn q27j_cn q32_cn q51_cn (. = .a) if country != 21
 recode q14_so q15a_so q15b_so q15c_so q32_so q33a_so q33b_so q33c_so q40a_so q40b_so q40e_so q40f_so (. = .a) if country != 22
 
@@ -469,7 +485,7 @@ order q*, sequential
 order respondent_serial respondent_id mode country language date ///
 	  int_length psu_id_for_svy_cmds weight 		  
 
-/*
+
 * Label variables
 lab var respondent_serial "Respondent serial"
 lab var country "Country"
@@ -546,130 +562,135 @@ lab var q17 "Q17. Overall respondent's rating of the quality received in this fa
 lab var q18 "Q18. How many healthcare visits in total have you made in the past 12 months? "
 lab var q18_q19 "Q18/Q19. Total number of visits made in past 12 months (q23, q24 mid-point)"
 lab var q19 "Q19. Total number of healthcare visits in the past 12 months (range)"
-lab var q20 
-lab var q21 
-lab var q22 
-lab var q23 
-lab var q24 
-lab var q24_other 
-lab var q25 
-lab var q25_a_v1
-lab var q25_b_v1 
-lab var q26 
-lab var q27_a 
-lab var q27_b 
-lab var q27_c 
-lab var q27_d 
-lab var q27_e 
-lab var q27_f 
-lab var q27_g 
-lab var q27_h 
-lab var q27i_cn 
-lab var q27i_gr_in_ro 
-lab var q27i_ng 
-lab var q27i_za 
-lab var q27j_cn 
-lab var q28_a 
-lab var q28_b 
-lab var q29 
-lab var q30 
-lab var q30_other 
-lab var q31_a 
-lab var q31_b 
-lab var q32_ar 
-lab var q32_cn 
-lab var q32_co_pe 
-lab var q32_it 
-lab var q32_kr 
-lab var q32_la 
-lab var q32_multi 
-lab var q32_mx 
-lab var q32_other 
-lab var q32_other_gb 
-lab var q32_uy 
-lab var q32a_gb 
-lab var q32a_gr 
-lab var q32a_gr_other 
-lab var q32b_gb 
-lab var q32b_gr 
-lab var q33 
-lab var q33_other 
-lab var q33a_gr 
-lab var q33a_gr_other 
-lab var q33b_gr 
-lab var q33b_gr_other 
-lab var q34 
-lab var q34_other 
-lab var q35 
-lab var q36 
-lab var q37 
-lab var q37_other 
-lab var q37b_refused 
-lab var q38_a 
-lab var q38_b 
-lab var q38_c 
-lab var q38_d 
-lab var q38_e 
-lab var q38_f 
-lab var q38_g 
-lab var q38_h 
-lab var q38_i 
-lab var q38_j 
-lab var q38_k 
-lab var q38f 
-lab var q39 
-lab var q40_a 
-lab var q40_b 
-lab var q40_c 
-lab var q40_d 
-lab var q40_e_ng 
-lab var q41_a 
-lab var q41_b 
-lab var q41_c 
-lab var q42 
-lab var q43 
-lab var q44 
-lab var q44_multi 
-lab var q44_pe 
-lab var q44_uy 
-lab var q44a_ar 
-lab var q44a_mx 
-lab var q44b_ar 
-lab var q44b_mx 
-lab var q44c_ar 
-lab var q45 
-lab var q46 
-lab var q46_refused_v1 
-lab var q47 
-lab var q47_refused_v1 
-lab var q47_v1
-lab var q48 
-lab var q49 
-lab var q50 
-lab var q50_gb 
-lab var q50_mx 
-lab var q50_other 
-lab var q50_other_original 
-lab var q50a_la 
-lab var q50a_other_la 
-lab var q50a_us 
-lab var q50b_other_us 
-lab var q50b_us 
-lab var q51 
-lab var q51_cn 
-lab var q51_gr 
-lab var CELL1 
-lab var CELL2 
-lab var q52 
-lab var q52_gb 
-lab var q52a_gr 
-lab var q52a_us 
-lab var q52b_gr 
-lab var q52b_us 
+lab var q20 "Q20. Were all of the visits you made to the same healthcare facility?"
+lab var q21 "Q21. How many different healthcare facilities did you go to? "
+lab var q22 "Q22. How many visits did you have with a healthcare provider at your home?"
+lab var q23 "Q23. How many virtual or telemedicine visits did you have?"
+lab var q24 "Q24. What was the main reason for the virtual or telemedicine visit?"
+lab var q24_other "Q24. Other"
+lab var q25 "Q25. How would you rate the overall quality of your last telemedicine visit?"
+lab var q25_a_v1 "Q25_A (V1.0). Was this visit for COVID-19?"
+lab var q25_b_v1 "Q25_B (V1.0). How many of these visits were for COVID-19?"
+lab var q26 "Q26. Did you stay overnight at a healthcare facility as a patient?"
+lab var q27_a "Q27_a. Blood pressure tested in the past 12 months"
+lab var q27_b "Q27_b. Received a mammogram in the past 12 months"
+lab var q27_c "Q27_c. Received cervical cancer screening, like a pap test or visual inspection in the past 12 months"
+lab var q27_d "Q27_d. Had your eyes or vision checked in the past 12 months"
+lab var q27_e "Q27_e. Had your teeth checked in the past 12 months"
+lab var q27_f "Q27_f. Had a blood sugar test in the past 12 months"
+lab var q27_g "Q27_g. Had a blood cholesterol test in the past 12 months"
+lab var q27_h "Q27_h. Received care for depression, anxiety, or another mental health condition"
+lab var q27i_cn "Q27i. CN only: Breast colour ultrasound (B-ultrasound)"
+lab var q27i_gr_in_ro "Q27. GR/IN/RO only: Have you received any of the following health services in the past 12 months?"
+lab var q27i_ng "Q27. NG only: Had sexual or reproductive health care such as family planning in the past 12 months"
+lab var q27i_za "Q27. ZA only: Had a test for HIV in the past 12 months"
+lab var q27j_cn "Q27j. CN only: Received a mammogram (a special X-ray of the breast)"
+lab var q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
+lab var q28_b "Q28b. You were treated unfairly or discriminated against in the past 12 months"
+lab var q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
+lab var q30 "Q30. The last time this happened, what was the main reason?"
+lab var q30_other "Q30. Other"
+lab var q31_a "Q31a. In the past 12 months, have you ever needed to borrow money from family, friends, or another source to pay for healthcare"
+lab var q31_b "Q31b. In the past 12 months, have you ever needed to sell items such as furniture or jewelry to pay for healthcare"
+lab var q32_ar "Q32. AR only: Is this facility Public, OSEP, or Private?"
+lab var q32_cn "Q32. CN only: Last visit facility type public/private/social security/NGO/faith-based?"
+lab var q32_co_pe "Q32. CO/PE only: Is this a public or private healthcare facility?"
+lab var q32_it "Q32. IT only: Did you go to a public facility, a private facility accredited by the Servizio Sanitario Nazionale (SSN) or a private facility not accredited by SSN?"
+lab var q32_kr "Q32. KR only: Is this...public, private, or non-profit/religious medical...?"
+lab var q32_la "Q32. LA only: Is this a public or private hospital?"
+lab var q32_multi "Q32. ET/IN/KE/NG/RO/ZA only: Is this a public, private, or NGO/faith-based facility?"
+lab var q32_mx "Q32. MX only: Who runs this healthcare facility?"
+lab var q32_other "Q32. Other"
+lab var q32_other_gb "Q32. GB only: Other"
+lab var q32_uy "Q32. UY only: Is this a public, private, or mutual healthcare facility?"
+lab var q32a_gb "Q32a. GB only: Did you go to a national health service facility (NHS) or private?"
+lab var q32a_gr "Q32a. GR only: Is this a public, private, contracted to public, or NGO healthcare facility?"
+lab var q32a_gr_other "Q32a. Other"
+lab var q32b_gb "Q32b. GB only: Did you go to a health and social care facility (HSC) or private?"
+lab var q32b_gr "Q32b. GR only: In your last visit did you pay part of the healthcare cost or did you not pay at all?"
+lab var q32_cn "Q32. CN only: Is this a public or private healthcare facility?"
+lab var q32_so "Q32b. SO only: Was this a public, private or another type of facility?"
+lab var q33 "Q33. What type of healthcare facility is this?"
+lab var q33_other "Q33. Other"
+lab var q33a_gr "Q33a. GR only: Can you please tell me the specialty of your provider in your last healthcare visit?"
+lab var q33a_gr_other "Q33a. Other"
+lab var q33b_gr "Q33b. GR only: The healthcare provider that you saw in your last visit was the personal doctor that you have registered with?"
+lab var q33b_gr_other "Q33b. Other"
+lab var q33a_so "Q33a. SO only: What type of public healthcare facility was this?"
+lab var q33b_so "Q33b. SO only: What type of private healthcare facility was this?"
+lab var q33c_so  "Q33c. SO only: What type of other healthcare facility was this?"
+lab var q34 "Q34. What was the main reason you went?"
+lab var q34_other "Q34. Other"
+lab var q35 "Q35. Was this a scheduled visit or did you go without an appt.?"
+lab var q36 "Q36. In days: how long between scheduling and seeing provider?"
+lab var q37 "Q37. In minutes: Approximately how long did you wait before seeing the provider?"
+lab var q37_other "Q37_Other. Other"
+lab var q37b_refused "Q37B. Refused (V1.0- Q46B refused)"
+lab var q38_a "Q38a. How would you rate the overall quality of care you received?"
+lab var q38_b "Q38b. How would you rate the knowledge and skills of your provider?"
+lab var q38_c "Q38c. How would you rate the equipment and supplies that the provider had?"
+lab var q38_d "Q38d. How would you rate the level of respect your provider showed you?"
+lab var q38_e "Q38e. How would you rate your provider knowledge about your prior visits?"
+lab var q38_f "Q38f. How would you rate whether your provider explained things clearly?"
+lab var q38_g "Q38g. How would you rate whether you were involved in your care decisions?"
+lab var q38_h "Q38h. How would you rate the amount of time your provider spent with you?"
+lab var q38_i "Q38i. How would you rate the amount of time you waited before being seen?"
+lab var q38_j "Q38j. How would you rate the courtesy and helpfulness at the facility?"
+lab var q38_k "Q38k. How would you rate how long it took for you to get this appointment?"
+lab var q39 "Q39. How likely would recommend this facility to a friend or family member?"
+lab var q40_a "Q40a. How would you rate the quality of care provided for care for pregnancy?"
+lab var q40_b "Q40b. How would you rate the quality of care provided for children?"
+lab var q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
+lab var q40_d "Q40d. How would you rate the quality of care provided for the mental health?"
+lab var q40_e_ng "Q40e. NG only: How would you rate the quality of care provided for sexual or reproductive health?"
+lab var q40a_so "Q40a. SO only: Care for pregnant women and newborns, such as antenatal care, delivery care, postnatal care, and family planning"
+lab var q40b_so "Q40b. SO only: Care for infections such as Malaria, Tuberculosis etc."
+lab var q40e_so "Q40e. SO only: First aid and care for emergency conditions such as injuries etc."
+lab var q40f_so "Q40f. SO only: Care for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
+lab var q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
+lab var q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
+lab var q41_c "Q41c. How confident are you that the government considers the public's opinion?"
+lab var q42 "Q42. How would you rate the quality of public healthcare system in your country?"
+lab var q43 "Q43. How would you rate the quality of private healthcare?"
+lab var q44 "Q44. What type of healthcare facility is this?"
+lab var q44_multi "Q44. ET/GR/IN/KE/NG/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q44_pe "Q44. PE only: How would you rate the quality of the social security system?"
+lab var q44_uy "Q44. UY only: How would you rate the quality of the mutual healthcare system?"
+lab var q44a_ar "Q44a. AR only: How would you rate the quality of care provided by OSEP of Mendoza?"
+lab var q44a_mx "Q44a. MX only: How would you rate the quality of services provided by IMSS?"
+lab var q44b_ar "Q44b. AR only: How would you rate the quality of the other 'obras sociales' health system?"
+lab var q44b_mx "Q44b. MX only: How would you rate the quality of services...IMSS BIENESTAR?"
+lab var q44c_ar "Q44c. AR only: How would you rate the quality of the PAMI health system in the province of Mendoza?"
+lab var q45 "Q45. Is your country's health system is getting better, same or worse?s"
+lab var q46 "Q46. Which of these statements do you agree with the most?"
+lab var q46_refused_v1 "Q46 (V1.0). Refused"
+lab var q47 "Q47. How would you rate the government's management of the COVID-19 pandemic?"
+lab var q47_refused_v1 "Q47 (V1.0). Refused"
+lab var q47_v1 "Q47 (V1.0). In minutes:  Approximately how much time did the provider spend with you?"
+lab var q48 "Q48. How would you rate the quality of care provided? (Vignette, option 1)"
+lab var q49 "Q49. How would you rate the quality of care provided? (Vignette, option 2)"
+lab var q50 "Q50. Respondent's mother tongue or native language"
+lab var q50_gb "Q50. GB only: What is your race?"
+lab var q50_mx "Q50. MX only: Do you speak any indigenous language or dialect?"
+lab var q50_other "Q50. Other"
+*lab var q50_other_original 
+lab var q50a_la "Q50a. LA only: What is your ethnicity?"
+lab var q50a_other_la "Q50a. LA only: Other"
+lab var q50a_us "Q50a. US only: What is your ethnicity?"
+lab var q50b_other_us "Q50b. US only: Other"
+lab var q50b_us "Q50b. US only: What is your race?"
+lab var q51 "Q51. Total monthly household income"
+lab var q51_cn "Q51a. CN only: What is the number of people in the household, including you, who live with you permanently?" 
+lab var q51_gr "Q51. GR only: Including yourself, how many people aged 18 or older currently live in your household"
+*lab var CELL1 "Do you have another mobile phone number besides the one I am calling you on?"
+*lab var CELL2 "How many other mobile phone numbers do you have?"
+lab var q52 "Q52. Which political party did you vote for in the last election?"
+lab var q52_gb "Q52. GB only: Which political party did you vote for in the last election?"
+lab var q52a_gr "Q52a. GR only: Do you happen to have a mobile phone or not?" 
+lab var q52a_us "Q52a. US only: Republican, Democrat, an Independent, or something else?"
+lab var q52b_gr "Q52b. GR only: Is this mobile phone your only phone, or do you also have a landline telephone at home that is used to makeand receive calls?"
+lab var q52b_us "Q52b. US only: Do you lean more towards the Republican or Democratic Party?"
 
-drop check
-
-*/
 *------------------------------------------------------------------------------*
 *Save recoded data
 
