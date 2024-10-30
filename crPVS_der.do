@@ -813,8 +813,7 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income 
-order CELL1 CELL2, before(q52)	  	   	  
+	  vignette_good minority income   	   	  
 	
 ***************************** Labeling variables ***************************** 
  
@@ -905,6 +904,7 @@ lab var conf_getafford "Confidence in receiving and affording healthcare if beca
 
 
 **************************** Save data *****************************
+
 
 notes drop _all
 compress 

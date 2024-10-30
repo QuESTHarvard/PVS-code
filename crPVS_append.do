@@ -461,14 +461,13 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 
 * Keep variables relevant for data sharing and analysis  
 * Dropping time for now 
-drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id  
+drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id qq2 CELL1 CELL2 check cell1 cell2
 
 					
 * Reorder variables
 order q*, sequential
 order respondent_serial respondent_id mode country language date ///
-	  int_length psu_id_for_svy_cmds weight 	
-order CELL1 CELL2, before(q52)	  
+	  int_length psu_id_for_svy_cmds weight 		  
 
 /*
 * Label variables
