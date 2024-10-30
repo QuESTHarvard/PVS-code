@@ -1,5 +1,5 @@
 * People's Voice Survey derived variable creation
-* Date of last update: April 2023
+* Date of last update: October 2024
 * N Kapoor, S Sabwa, M Yu
 
 /*
@@ -318,9 +318,16 @@ gen blood_chol = q27_g
 gen care_mental = q27_h 
 
 gen hiv_test = q27i_za
+recode hiv_test (. = .a) if country !=9 
+
 gen care_srh = q27i_ng
+recode hiv_test (. = .a) if country !=20 
+
 gen breast_exam = q27i_cn
+recode hiv_test (. = .a) if country !=21
+
 gen color_ultrasound = q27j_cn 
+recode hiv_test (. = .a) if country !=21
 
 *SS: confirm with Todd what this should be
 *gen = q27i_gr_in_ro
@@ -358,11 +365,31 @@ lab val last_know exc_pr_visits
 lab val last_courtesy exc_poor_staff
 
 gen phc_women = q40_a
+recode phc_women (. = 0) if q40a_so == 0 & country ==22
+recode phc_women (. = 1) if q40a_so == 1 & country ==22
+recode phc_women (. = 2) if q40a_so == 2 & country ==22
+recode phc_women (. = 3) if q40a_so == 3 & country ==22
+recode phc_women (. = 4) if q40a_so == 4 & country ==22
+recode phc_women (. = 5) if q40a_so == 5 & country ==22
+recode phc_women(. = .r) if q40a_so == .r & country ==22
+
 gen phc_child = q40_b
 gen phc_chronic = q40_c
 gen phc_mental = q40_d
+
 gen qual_srh = q40_e_ng
-lab val phc_women phc_child phc_chronic phc_mental qual_srh exc_poor_judge
+recode qual_srh (. = .a) if country !=20
+
+gen care_infections = q40b_so 
+recode care_infections (. = .a) if country !=22
+
+replace phc_mental = q40e_so if country ==22
+
+gen care_nonurgent = q40f_so 
+recode care_nonurgent (. = .a) if country !=22
+
+lab val phc_women phc_child phc_chronic phc_mental qual_srh care_infections ///
+		care_nonurgent exc_poor_judge
 	
 gen qual_public = q42
 gen qual_private = q43 
@@ -529,10 +556,11 @@ recode usual_type_lvl (.a . .r = 0) if (q15a_gr == 1 | q15a_gr == 2) & country =
 
 recode usual_type_lvl (.a . = 1) if (q15a_gr == 3 | q15a_gr == 4 | q15a_gr == 6) & country == 18
 
-recode usual_type_lvl (.a = 0) if q15a_so == 2 | q15a_so == 3 | q15b_so == 2 | q15b_so == 3 | q15b_so == 4 | q15c_so  == 1 ///
+recode usual_type_lvl (. = 0) if q15a_so == 2 | q15a_so == 3 | q15b_so == 2 | q15b_so == 3 | q15b_so == 4 | q15c_so  == 1 ///
 								  | q15c_so  == 2 | q15c_so  == 3 | q15c_so  == 4 | q15c_so  == 6
 
-recode usual_type_lvl (.a = 1) if q15a_so == 1 | q15b_so == 1 | q15c_so  == 5 | q15c_so == 7
+recode usual_type_lvl (. = 1) if q15a_so == 1 | q15b_so == 1 | q15c_so  == 5 | q15c_so == 7
+recode usual_type_lvl (. = .a) if insured == 0 & country == 22
 
 * NOTE: Maybe add an other for Laos? also for last visit level? But we will see with other, specify data
 		   
@@ -778,6 +806,12 @@ rename q37_original q37
 *rename q47_original q47_v1
 rename q36_origial q36
 
+*adding "NA" for countries' that don't have V1.0 vars
+recode q12_v1 q13_v1 q13b_co_pe_uy_ar_v1 q13e_co_pe_uy_ar_v1 q14_la_v1 ///
+	   q14_v1 q15_la_v1 q15_v1 q25_a_v1 q25_b_v1 q46_refused_v1 q47_refused_v1 q47_v1 covid_vax_v1 ///
+	   covid_vax_intent_v1 visits_covid_v1 last_visit_time_v1 ever_covid_v1 covid_confirmed_v1 ///
+	   (. = .a) if country == 21 | country == 22
+
 /*
 *** Political alignment***
 
@@ -813,8 +847,7 @@ order respondent_serial respondent_id country country_reg language date ///
 	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
-	  vignette_good minority income 
-order CELL1 CELL2, before(q52)	  	   	  
+	  vignette_good minority income   	   	  
 	
 ***************************** Labeling variables ***************************** 
  
@@ -885,6 +918,9 @@ lab var	phc_women "Public primary care system rating for: pregnant women (Q40_a)
 lab var	phc_child "Public primary care system rating for: children (Q40_b)"
 lab var	phc_chronic "Public primary care system rating for: chronic conditions (Q40_c)"
 lab var	phc_mental "Public primary care system rating for: mental health (Q40_d)"
+lab var qual_srh "Rating for quality of care provided for sexual or reproductive health?"
+lab var care_infections "Rating for care for infections such as Malaria, Tuberculosis etc?"
+lab var care_nonurgent "Rating for the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
 lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick (Q41_a)"
 lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (Q41_b)"
 lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q41_c)"
@@ -903,8 +939,8 @@ lab var last_sched_rate "Last visit rating: time between scheduling visit and se
 lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q41_a/Q41_b)"
 *lab var pol_align_v1 "Political alignment in respondent's region / district / state"
 
-
 **************************** Save data *****************************
+
 
 notes drop _all
 compress 
