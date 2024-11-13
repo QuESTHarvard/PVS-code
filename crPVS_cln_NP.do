@@ -24,10 +24,7 @@ set more off
 * Import data 
 use "$data/Nepal/01 raw data/Nepal_PVS_clean_weighted.dta", clear
 
-
-*data cleaning:
-* no date var?
-
+* data cleaning:
 *empty vars:
 drop q28 q40 q41 q27_001 q27_header q31 q38  
 
@@ -55,18 +52,15 @@ drop age_cat
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
-
-**Will need to classify "other,specify data"
 gen reccountry = 23
 lab def country 23 "Nepal"
 lab values reccountry country
-
 
 rename wgt weight_educ
 rename urbanrural urban // SS: confirm that this is recoded correctly in the derived file (team coded their own vars)
 rename education q8 
 rename edu_cat education // SS: Team created derived var
-rename province q4 // confirm
+rename province q4 // confirm this is the correct var to use
 rename region q5 // SS: Team created derived var, confirm this is q5
 
 rename malefemale q3
@@ -153,7 +147,6 @@ rename q052_1_1_15 q52_15_np // Other
 rename q052_1_1_1_1 q52_np_other // Other, specify (string text) */
 
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
-* replace the value to .r if the original one is 999
 
 gen reclanguage = reccountry*1000 + language  
 *gen recinterviewer_id = reccountry*1000 + interviewer_id // SS: missing from dataset
@@ -320,6 +313,11 @@ lab def q16_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" ///
 				 .d "Don't Know" .r "Refused"
 lab val q16 q16_label
 
+*fix q19
+recode q19 (1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") ///
+		   (998 = 998 ".d") (999 = 999 ".r"), pre(rec) label(q19_label)
+drop q19
+
 *fix order of q20/q21
 recode q20 (2 = 1 "Yes") (1 = 0 "No") (.r = .r "Refused") (.a = .a "NA"), ///
 	   pre(rec) label(yes_no)
@@ -466,6 +464,9 @@ label variable q51 "Q51. Total monthly household income"
 label variable q52a_np "Q52a. How aware are you of Basic Health package of services provided free o"
 label variable q52b_np "Q52b. Have you received any such Basic Health package of services availabl"
 
+*drop until confirmed with Todd if we want to look at this data:
+drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other q33_other q34_other language_other
+
 *------------------------------------------------------------------------------*
 * Save data
-*save "$data_mc/02 recoded data/input data files/pvs_so.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_np.dta", replace

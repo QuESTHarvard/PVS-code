@@ -391,16 +391,24 @@ append using "$data_mc/02 recoded data/input data files/pvs_so.dta"
 
 qui do `label11'
 
+tempfile label12
+label save q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 using `label12'
+label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 
+
+append using "$data_mc/02 recoded data/input data files/pvs_np.dta"
+
+qui do `label12'
+
 
 * Country
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
-				21 "China" 22 "Somalia", modify
+				21 "China" 22 "Somalia" 23 "Nepal", modify
 
 * Country-specific skip patterns - change to V2 var names
 recode q14_multi q44_multi q32_multi (. = .a) if country != 3 | country != 4 | country != 5 | ///
-									   country != 18 | country != 20 | country != 19 | country != 9 
+									   country != 18 | country != 20 | country != 19 | country != 9 | country !=23
 
 recode q44_pe (. = .a) if country != 7
 recode q14_co_pe q32_co_pe (. = .a) if country != 2 & country != 7 
@@ -449,13 +457,14 @@ recode q27i_ng q40_e_ng (. = .a) if country != 20
 recode q14_cn q27i_cn q27j_cn q32_cn q51_cn (. = .a) if country != 21
 recode q14_so q15a_so q15b_so q15c_so q32_so q33a_so q33b_so q33c_so q40a_so q40b_so q40e_so q40f_so (. = .a) if country != 22
 
+recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
+
 * Other value label modifcations
 lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def labels26 14 "CN: Trust hospital", modify
-
 
 *** Code for survey set ***
 gen respondent_num = _n 
