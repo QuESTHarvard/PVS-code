@@ -29,7 +29,7 @@ use "$data/Nepal/01 raw data/Nepal_PVS_clean_weighted.dta", clear
 * no date var?
 
 *empty vars:
-drop q28 q40 q41 q27_001 q27_header
+drop q28 q40 q41 q27_001 q27_header q31 q38  
 
 *confirm with Todd we should drop these:
 drop q4_1 q4_1_1 religion other_religion
@@ -49,6 +49,9 @@ drop q51_1 q51_2 q51_3 q51_4 q51_5 q51_6 q51_7 q51_8 q51_9 q51_10 q51_999 q51_12
 *confirm ok dropping - we have a region var
 drop muni muntype ward district 
 
+*dropping their version of age categories (only 3 levels):
+drop age_cat
+
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
@@ -59,7 +62,7 @@ lab def country 23 "Nepal"
 lab values reccountry country
 
 
-rename wgt weight
+rename wgt weight_educ
 rename urbanrural urban // SS: confirm that this is recoded correctly in the derived file (team coded their own vars)
 rename education q8 
 rename edu_cat education // SS: Team created derived var
@@ -72,6 +75,9 @@ rename q4_3_1 language_other
 rename q7_1 q7_other
 rename q12_1 q12_a
 rename q12_2 q12_b
+
+rename q14 q14_np
+
 rename q14_1 q14_other
 rename q15_1 q15_other
 rename q16_1 q16_other
@@ -93,6 +99,7 @@ rename q30_1 q30_other
 rename q31_1 q31_a
 rename q31_2 q31_b
 
+rename q32 q32_np
 rename q32_1 q32_other
 rename q33_1 q33_other
 rename q34_1 q34_other
@@ -117,6 +124,8 @@ rename q40_4 q40_d
 rename q41_1 q41_a
 rename q41_2 q41_b
 rename q41_3 q41_c
+
+rename q44 q44_multi
 
 rename q50 q51
 rename q052 q52a_np
@@ -221,7 +230,8 @@ ren rec* *
 * Generate variables 
 gen respondent_id = "NP" + string(respondent_serial) 
 
-gen q52 = .a
+*gen q52 = .a
+*gen q2 = .a
 
 * q18/q19 mid-point var 
 *SS: note, it looks like q19 is on a scale of 1-4 instead of 0-3 like the data dictionary
@@ -246,7 +256,7 @@ list q20 q21 if q21 == 0 | q21 == 1
 recode q21 (1 = 0) if q20 ==2
 
 * List if yes to q20: "all visits in the same facility" but q21: "how many different healthcare facilities did you go to" is more than 0
-list q20 q21 if q20 ==1 & q21 > 0 & q21 < . // Note: Yes needs to be recoded in q20 to 1
+list q20 q21 if q20 ==1 & q21 > 0 & q21 < . 
 * None
 
 * Q28a, Q28b 
@@ -254,73 +264,53 @@ list q20 q21 if q20 ==1 & q21 > 0 & q21 < . // Note: Yes needs to be recoded in 
 egen visits_total = rowtotal(q18_q19 q22 q23) 
 list visits_total q17 if q17 == 5 & visits_total > 0 & visits_total < . | q17 == 5 & visits_total > 0 & visits_total < .
 *SS: N=4 with issues, this is how we've fixed it in the past
-recode q17 (5 = .r) if visits_total > 0 & visits_total < .
+recode q17 (5 = .r) if visits_total > 0 & visits_total < . // N=131 changes
 
 drop visits_total
 
 *------------------------------------------------------------------------------*
- * Recode missing values to NA for intentionally skipped questions 
-* do some of these have to be the rec version?
+ * Recode missing values to NA for intentionally skipped questions - SS:check q18,q26,q41_a q41_b q41_c, q42,q43,q44,q45 q46,q47,q51,q52b_np 
 
-*q1/q2 
-recode q2 (. = .a) if q1 > 0 & q1 < . //change q2 missing to .a if q1 has an actual value, keep q2 be . if q1 == .
-recode q1 (. = .r) if inrange(q2,2,8) | q2 == .r 
-* Note: Some missing values in q1 that should be refused 
+*q1/q2 - no missing data
 
 * q7 
-recode q7 (. = .a) if q6 == 2 | q6 == .r | q6 == .
-recode q7 (nonmissing = .a) if q6 == 2
+recode q7 (. = .a) if q6 == 0 | q6 == .r | q6 == .
+recode q7 (nonmissing = .a) if q6 == 0
 
-*q14_so-17
-recode q14_so q15a_so q15b_so q15c_so q16 q17 (. = .a) if q13 == 0 | q13 == .r 
-recode q15a_so (. = .a) if q14_so !=1
-recode q15b_so (. = .a) if q14_so !=2
-recode q15c_so (. = .a) if q14_so !=3
+*q14-17
+recode q14_np q15 q16 q17 (. = .a) if q13 !=1
 
 * NA's for q19-21 
-recode q19 (. = .a) if q18 != .d & q18 != .r 
-recode q20 (. = .a) if q18 == 0 | q18 == 1 | q19 == 1 | q19 == .r 
-recode q21 (. = .a) if q20 == 2 | q20 == .a | q20 == .r
+recode q19 (. = .a) if q18 != .
 
-*q24 
-recode q24 (. = .a) if q23 == 0 | q23 == .d | q23 == .r
+recode q20 (. = .a) if q18 == 0 | q18 == 1 | q18 ==. | q19 == . | q19 == .a
 
-*q25
-recode q25 (. = .a) if q23 == 0 | q23 == .d | q23 == .r
+recode q21 (. = .a) if q20 !=0 | q18 == 0 | q18 == 1 | q19 == 2 | q19 == . | q19 == .a
+
+*q24-q25 
+recode q24 q25 (. = .a) if q23 == 0 
 
 * q27_b q27_c
-recode q27_b q27_c (. = .a) if q3 !=1
+recode q27_b q27_c (. = .a) if q3 !=2 | q1 <30 // Female is currently coded as 2 in the dataset, will recode to 1 below.
 
 *q28
-recode q28_a q28_b (. = .a) if q18 == 0 | q19 == 1 | q19 == .r
+recode q28_a q28_b (. = .a) if q18 == 0 | q19 == 0 
 
 * q30
-recode q30 (. = .a) if q29 == 0 | q29 == .r
+recode q30 (. = .a) if q29 !=1
 
-* q32_so- na's
-recode q32_so q33 q33a_so q33b_so q33c_so q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
-	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q19 == 1 | q19 == .r
-	  	   	   
-recode q32_so q33 q33a_so q33b_so q33c_so q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
-	   q38_g q38_h q38_i q38_j q38_k q39 (nonmissing = .a) if q18 == 0 | q19 == 1
-   
-recode q33a_so (. = .a) if q32_so !=1  
-recode q33b_so (. = .a) if q32_so !=2
-recode q33c_so (. = .a) if q32_so !=3
-
-recode q36 (. = .a) if q35!=1 
-
-recode q38_k (. = .a) if q35 !=1
-
-*CELL2
-recode cell2 (. = .a) if cell1 != 1
+* q32-33
+recode q32_np q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q18 == . | q19 == . | q19 == .a
 
 *------------------------------------------------------------------------------*
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:
 
-*add new option for q16 
-recode q16 (10 = 15)
+***recode q3 values 
+recode q3 (1 = 0 "Male") (2 = 1 "Female"), pre(rec) label(gender)
+drop q3
+
 lab def q16_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" ///
 				  4 "Good healthcare provider skills" ///
 				  5 "Staff shows respect" 6 "Medicines and equipment are available" ///
@@ -331,9 +321,9 @@ lab def q16_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" ///
 lab val q16 q16_label
 
 *fix order of q20/q21
-*q21 has two different versions of "2"?
 recode q20 (2 = 1 "Yes") (1 = 0 "No") (.r = .r "Refused") (.a = .a "NA"), ///
 	   pre(rec) label(yes_no)
+drop q20 
 	   
 recode q30 (8 = 10)
 lab def q30_label 1 "High cost (e.g., high out of pocket payment, not covered by insurance)"  ///
@@ -342,94 +332,62 @@ lab def q30_label 1 "High cost (e.g., high out of pocket payment, not covered by
 				 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
 				 5 "Staff don't show respect (e.g., staff is rude, impolite, dismissive)" ///
 				 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
-				 7 "Illness not serious enough" 10 "Other (specify)" 16 "SO: They are closed" ///
-				 17 "SO: Was affected by conflicts" 18 "SO: Doctor was not available" .a "NA" ///
-				 .d "Don't Know" .r "Refused"
+				 7 "Illness not serious enough" 10 "Other (specify)" .a "NA" .d "Don't Know" .r "Refused"
 lab val q30 q30_label				 
 
-recode q32 (4 = 1) (7 = 4)
-lab def q32_label 1 "Public" 2 "Private (including pharmacies and traditional practitioners)" ///
-	    3 "Community health centre" 4 "Other" .a "NA" .d "Don't Know" .r "Refused"
-lab val q32 q32_label		
-
-recode q34 (7 = 6) (8 = 7) (9 = 8) (11 = 9) (12 = 10) (13 = 11)
-lab def q34_label 1 "Care for an urgent or new health problem such as an accident or injury or a new symptom like fever, pain, diarrhea, or depression." 2 "Follow-up care for a longstanding illness or chronic disease such as hypertension or diabetes. This may include mental health conditions." 3 "Preventive care or a visit to check on your health, such as an annual check-up, antenatal care, or vaccination." 4 "Other (specify)" 5 "SO: Allergies" 6 "SO: Blood transfusion" 7 "SO: Dental issue" 8 "SO: Eye problem" 9 "SO: Gastric/stomach ache" 10 "SO: Nerve pain" 11 "SO: Visited a hospitalised member of the family" .a "NA" .d "Don't Know" .r "Refused"
-lab val q34 q34_label
-
-
 * Add value labels 
-label define labels24 .a "NA" .d "Don't know" .r "Refused",add	 
-label define labels25 .a "NA" .d "Don't know" .r "Refused",add	 
-label define q8_label .a "NA" .d "Don't know" .r "Refused",add	 
-label define labels9 .a "NA" .d "Don't know" .r "Refused",add	 
-label define labels11 .a "NA" .d "Don't know" .r "Refused",add	 
-label define labels12 .a "NA" .d "Don't know" .r "Refused",add	 
-label define labels13 .a "NA" .d "Don't know" .r "Refused",add	 
-label define labels14 .a "NA" .d "Don't know" .r "Refused",add	 
-label define labels15 .a "NA" .d "Don't know" .r "Refused",add
-label define labels16 .a "NA" .d "Don't know" .r "Refused",add	
-label define labels17 .a "NA" .d "Don't know" .r "Refused",add
-label define labels18 .a "NA" .d "Don't know" .r "Refused",add	
-label define labels19 .a "NA" .d "Don't know" .r "Refused",add
-label define labels22 .a "NA" .d "Don't know" .r "Refused",add
-label define labels23 .a "NA" .d "Don't know" .r "Refused",add
-label define labels27 .a "NA" .d "Don't know" .r "Refused",add
-label define labels28 .a "NA" .d "Don't know" .r "Refused",add
+label define q14 .a "NA" .d "Don't know" .r "Refused",add	
+label define q15_label .a "NA" .d "Don't know" .r "Refused",add	 
+label define q17 .a "NA" .d "Don't know" .r "Refused",add	
+label define q19 .a "NA" .d "Don't know" .r "Refused",add	
+label define q20 .a "NA" .d "Don't know" .r "Refused",add	 
+label define q21 .a "NA" .d "Don't know" .r "Refused",add	
+label define q24 .a "NA" .d "Don't know" .r "Refused",add	  
+label define q25 .a "NA" .d "Don't know" .r "Refused",add
+label define q27 .a "NA" .d "Don't know" .r "Refused",add	  
+label define q28 .a "NA" .d "Don't know" .r "Refused",add
 label define q33_label .a "NA" .d "Don't know" .r "Refused",add
-label define labels33 .a "NA" .d "Don't know" .r "Refused",add
-label define labels34 .a "NA" .d "Don't know" .r "Refused",add
-label define labels36 .a "NA" .d "Don't know" .r "Refused",add
-label define labels37 .a "NA" .d "Don't know" .r "Refused",add
-label define labels38 .a "NA" .d "Don't know" .r "Refused",add
-label define labels39 .a "NA" .d "Don't know" .r "Refused",add
-label define labels40 .a "NA" .d "Don't know" .r "Refused",add
-label define labels41 .a "NA" .d "Don't know" .r "Refused",add
-label define labels42 .a "NA" .d "Don't know" .r "Refused",add
-label define labels43 .a "NA" .d "Don't know" .r "Refused",add
-label define labels44 .a "NA" .d "Don't know" .r "Refused",add
-label define labels45 .a "NA" .d "Don't know" .r "Refused",add
-label define labels48 .a "NA" .d "Don't know" .r "Refused",add
+label define q34 .a "NA" .d "Don't know" .r "Refused",add
+label define q35 .a "NA" .d "Don't know" .r "Refused",add
+label define q36 .a "NA" .d "Don't know" .r "Refused",add
+label define q37 .a "NA" .d "Don't know" .r "Refused",add
+label define q38 .a "NA" .d "Don't know" .r "Refused",add
 
 *for appending process:
 label copy q4_label q4_label2
 label copy q5_label q5_label2
 label copy q33_label q33_label2
-label copy q50_label q50_label2
 label copy q51_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
 lab val q33 q33_label2
-lab val q50 q50_label2
 lab val q51 q51_label2
 
-
-label drop q4_label q5_label q33_label q50_label q51_label
+label drop q4_label q5_label q33_label q51_label
 
 *------------------------------------------------------------------------------*
-
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop q20 gps_longitude gps_latitude start_time end_time q37_other
 ren rec* *
 
 *Reorder variables
-order cell1 cell2
 order q*, sequential
-order respondent_id weight_educ respondent_serial mode country // 
-
+order respondent_id weight_educ respondent_serial country // add mode back in
 
 *------------------------------------------------------------------------------*
 * Label variables					
 lab var country "Country"
-lab var int_length "Interview length (minutes)" 
+lab var weight_educ "Weight"
+lab var respondent_serial "Respondent Serial #"
+*lab var int_length "Interview length (minutes)" 
 *lab var date "Date of the interview"
 lab var respondent_id "Respondent ID"
-*lab var language "Language"
-lab var mode "mode"
+lab var language "Language"
+*lab var mode "mode"
 lab var q1 "Q1. Respondent's еxact age"
-lab var q2 "Q2. Respondent's age group"
+*lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent's gender"
 lab var q4 "Q4. What region do you live in?"
 lab var q5 "Q5. Which of these options best describes the place where you live?"
@@ -442,10 +400,8 @@ lab var q11 "Q11. By longstanding, I mean illness, health problem, or mental hea
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
 lab var q13 "Q13. Is there one healthcare facility or provider's group you usually go to?" 
-lab var q14_so "q14_so. SO only: Is this a public, private or another type of facility?"
-lab var q15a_so "Q15a. SO only: What type of healthcare facility is this? Government facilities"
-lab var q15b_so "Q15b. SO only: What type of healthcare facility is this? Private Sector"
-lab var q15c_so "Q15c. SO only: What type of healthcare facility is this? Other"
+lab var q14_np "Q14. Is this a public, private, NGO, mission or faith-based facility?"
+lab var q15 "Q15. Considering the organization of health facilities in Nepalese context, what type of facility is that?"
 label variable q16 "Q16. Why did you choose this healthcare facility? Please tell us the main reason."
 label variable q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"
 label variable q18 "Q18. How many healthcare visits in total have you made in the past 12 months?"
@@ -471,12 +427,9 @@ label variable q28_b "Q28b. been treated unfairly or discriminated against by a 
 label variable q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
 label variable q30 "Q30. The last time this happened, what was the main reason?"
 label variable q31_a "Q31a. Have you ever needed to borrow money to pay for healthcare"
-label variable q31_b "q31_b. Sell items to pay for healthcare"
-label variable q32_so "Q32_so. SO only: Was this a public, private or another type of facility?"
+label variable q31_b "Q31b. Sell items to pay for healthcare"
+label variable q32_np "Q32. Was the facility from where you utilized the services public, private, mission or faith based or NGO/INGO managed facility?"
 label variable q33 "Q33. What type of healthcare facility is this?"
-label variable q33a_so "Q33a. SO only: What type of public healthcare facility was this?"
-label variable q33b_so "Q33b. SO only: What type of private healthcare facility was this?"
-label variable q33c_so "Q33c. SO only: What type of other healthcare facility was this?"
 label variable q34 "Q34. What was the main reason you went?"
 label variable q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"
 label variable q36 "Q36. How long did you wait in days, weeks, or months between scheduling the appointment and seeing the health care provider?"
@@ -493,33 +446,26 @@ label variable q38_i "Q38i. How would you rate the amount of time you waited bef
 label variable q38_j "Q38j. How would you rate the courtesy and helpfulness at the facility?"
 label variable q38_k "Q38k. How would you rate how long it took for you to get this appointment?"
 label variable q39 "Q39. How likely would recommend this facility to a friend or family member?"
-label variable q40a_so "Q40a. How would you rate the quality of care provided for care for pregnancy and children?"
-label variable q40b_so "Q40b. Care for infections such as Malaria, Tuberculosis etc?"
+label variable q40_a "Q40a. How would you rate the quality of care during pregnancy and childbirth like antenatal care, postnatal care"
+label variable q40_b "Q40b. How would you rate the quality of childcare such as care of healthy children and treatment of sick children"
 label variable q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
 label variable q40_d "Q40d. How would you rate the quality of care provided for the mental health?"
-label variable q40e_so "Q40e. SO only: How would you rate the quality of care provided for the mental health?"
-label variable q40f_so "Q40f. SO only: How would you rate the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
 label variable q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
 label variable q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
 label variable q41_c "Q41c. How confident are you that the government considers the public's opinion?"
 label variable q42 "Q42. How would you rate the quality of government or public healthcare system in your country?"
 label variable q43 "Q43. How would you rate the quality of the private for-profit healthcare system in your country?"
+label variable q44_multi "Q44. How would you rate quality of NGO/faith-based healthcare?"
 label variable q45 "Q45. Is your country's health system is getting better, staying the same or getting worse?"
 label variable q46 "Q46. Which of these statements do you agree with the most?"
 label variable q47 "Q47. How would you rate the government's management of the COVID-19 pandemic overall?"
 label variable q48 "Q48. How would you rate the quality of care provided? (Vignette, option 1)"
 label variable q49 "Q49. How would you rate the quality of care provided? (Vignette, option 2)"
-label variable q50 "Q50. What is your native language or mother tongue?"
+*label variable q50 "Q50. What is your native language or mother tongue?"
 label variable q51 "Q51. Total monthly household income"
-label variable cell1 "CELL1. Do you have another mobile phone number besides the one I am calling you on?"
-label variable cell2 "CELL2. How many other mobile phone numbers do you have?"
-label variable int_length "Interview length"
-
+label variable q52a_np "Q52a. How aware are you of Basic Health package of services provided free o"
+label variable q52b_np "Q52b. Have you received any such Basic Health package of services availabl"
 
 *------------------------------------------------------------------------------*
-
 * Save data
 *save "$data_mc/02 recoded data/input data files/pvs_so.dta", replace
-
-
-
