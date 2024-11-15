@@ -404,7 +404,7 @@ qui do `label12'
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
-				21 "China" 22 "Somalia" 23 "Nepal", modify
+				21 "China" 22 "Somaliland" 23 "Nepal", modify
 
 * Country-specific skip patterns - change to V2 var names
 recode q14_multi q44_multi q32_multi (. = .a) if country != 3 | country != 4 | country != 5 | ///

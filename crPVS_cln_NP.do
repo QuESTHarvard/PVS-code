@@ -57,9 +57,9 @@ lab def country 23 "Nepal"
 lab values reccountry country
 
 rename wgt weight_educ
-rename urbanrural urban // SS: confirm that this is recoded correctly in the derived file (team coded their own vars)
+rename urbanrural urban_np // SS: confirm that this is recoded correctly in the derived file (team coded their own vars)
 rename education q8 
-rename edu_cat education // SS: Team created derived var
+rename edu_cat education_np // SS: Team created derived var
 rename province q4 // confirm this is the correct var to use
 rename region q5 // SS: Team created derived var, confirm this is q5
 
