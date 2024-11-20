@@ -55,8 +55,8 @@ gen reccountry = 23
 lab def country 23 "Nepal"
 lab values reccountry country
 
-ren wgt weight
 
+ren wgt weight
 rename province q4 // confirm this is the correct var to use
 rename region q5 // SS: Team created derived var, confirm this is q5
 
