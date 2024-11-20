@@ -106,7 +106,8 @@ lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET
 				 13058 "MX: Spanish" 14016 "IT: Italian" 15001 "KR: Korean" 16001 "AR: Spanish" ///
 				 17001 "UK: English" 18002 "GR: Greek" 19002 "RO: Romanian" ///
 				 20001 "NG: English" 20030 "NG: Hausa" 20031 "NG: Igbo" 20032 "NG: Pidgin" 20033 "NG: Yoruba" ///
-				 21001 "CN: Mandarin"
+				 21001 "CN: Mandarin" 23001 "NP: Nepali" 23002 "NP: Maithali" 23003 "NP: Newari" 23004 "NP: Bhojpuri" ///
+				 23005 "NP: Tharu"  23006 "NP: Tamang" 23007 "NP: Doteli" 23008 "NP: Other"
 			 
 lab val language Language
 lab var language "Language of interview"

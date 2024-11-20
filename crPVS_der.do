@@ -23,7 +23,7 @@ qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
 	
-	if inlist(`i',12, 13, 14, 15, 17 18 19) {
+	if inlist(`i',12, 13, 14, 15, 17 18 19)  {
 		extremes q36 country if country == `i', high
 	}
 
@@ -104,7 +104,7 @@ replace q36 = . if q36 > 365 & q36 < . & country == 17
 * Greece - 1 value recoded (Todd to review)
 replace q36 = . if q36 > 720 & q36 < . & country == 18
 * Romania - 12 values recoded (Todd to review)
-replace q36 = . if q36 > 720 & q36 < . & country == 19
+*replace q36 = . if q36 > 720 & q36 < . & country == 19
 * NA for Nigeria
 
 *****************************

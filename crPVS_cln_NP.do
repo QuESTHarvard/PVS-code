@@ -32,10 +32,9 @@ drop q28 q40 q41 q27_001 q27_header q31 q38
 drop q4_1 q4_1_1 religion other_religion
 
 drop q3 // confirm malefemale is what we want to use, it looks more cleaned up
-drop q8 // education more cleaned up
 
 *dropping variables used for weight calc
-drop urbanrural_ed urbanrural_age malefemale_reg malefemale_ed
+drop urbanrural_ed urbanrural_age malefemale_reg malefemale_ed urbanrural education
 
 *dropping until we figure out if we want to keep these vars (multicheckbox)
 drop q052_1_1_1 q052_1_1_2 q052_1_1_17 q052_1_1_3 q052_1_1_4 q052_1_1_5 q052_1_1_6 q052_1_1_7 q052_1_1_8 q052_1_1_9 q052_1_1_10 q052_1_1_11 q052_1_1_12 q052_1_1_13 q052_1_1_14 q052_1_1_16 q052_1_1_999 q052_1_1_15 q052_1_1_1_1
@@ -46,8 +45,8 @@ drop q51_1 q51_2 q51_3 q51_4 q51_5 q51_6 q51_7 q51_8 q51_9 q51_10 q51_999 q51_12
 *confirm ok dropping - we have a region var
 drop muni muntype ward district 
 
-*dropping their version of age categories (only 3 levels):
-drop age_cat
+*dropping their version of age/education categories (only 3 levels):
+drop age_cat edu_cat
 
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
@@ -56,9 +55,8 @@ gen reccountry = 23
 lab def country 23 "Nepal"
 lab values reccountry country
 
-rename urbanrural urban // SS: confirm that this is recoded correctly in the derived file (team coded their own vars)
-rename education q8 
-rename edu_cat education // SS: Team created derived var
+ren wgt weight
+
 rename province q4 // confirm this is the correct var to use
 rename region q5 // SS: Team created derived var, confirm this is q5
 
@@ -371,7 +369,7 @@ ren rec* *
 
 *Reorder variables
 order q*, sequential
-order respondent_id weight_educ respondent_serial country // add mode back in
+order respondent_id weight respondent_serial country // add mode back in
 
 *------------------------------------------------------------------------------*
 * Label variables					
