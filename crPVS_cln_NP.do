@@ -34,7 +34,7 @@ drop q4_1 q4_1_1 religion other_religion
 drop q3 // confirm malefemale is what we want to use, it looks more cleaned up
 
 *dropping variables used for weight calc
-drop urbanrural_ed urbanrural_age malefemale_reg malefemale_ed urbanrural education
+drop urbanrural_ed urbanrural_age malefemale_reg malefemale_ed urbanrural education urbanrural edu_cat
 
 *dropping until we figure out if we want to keep these vars (multicheckbox)
 drop q052_1_1_1 q052_1_1_2 q052_1_1_17 q052_1_1_3 q052_1_1_4 q052_1_1_5 q052_1_1_6 q052_1_1_7 q052_1_1_8 q052_1_1_9 q052_1_1_10 q052_1_1_11 q052_1_1_12 q052_1_1_13 q052_1_1_14 q052_1_1_16 q052_1_1_999 q052_1_1_15 q052_1_1_1_1
@@ -55,8 +55,8 @@ gen reccountry = 23
 lab def country 23 "Nepal"
 lab values reccountry country
 
-ren wgt weight
 
+ren wgt weight
 rename province q4 // confirm this is the correct var to use
 rename region q5 // SS: Team created derived var, confirm this is q5
 
