@@ -27,6 +27,8 @@ rename *, lower
  
 notes drop _all
 
+drop weight
+
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
 gen reccountry = 20
@@ -154,7 +156,7 @@ label define labels49 1 "Our healthcare system has so much wrong with it that we
 * Drop unused variables 
 
 drop ecs_id time_new intlength q4 q5 q7 q8 q20 q44 q46 q47 q62 q63 q66 rim_age rim_region rim_gender ///
-     interviewer_id interviewer_language* country language dw_overall mode weight
+     interviewer_id interviewer_language* country language dw_overall mode
 
 *------------------------------------------------------------------------------*
 
@@ -438,7 +440,7 @@ gen q45_other_original = q45_other
 label var q45_other_original "Q45. Other"	
 
 gen q62_other_original = q62_other
-label var q62_other_original "62. Other"	
+label var q62_other_original "Q62. Other"	
 
 
 *Remove "" from responses for macros to work

@@ -35,7 +35,6 @@ gen reccountry = 22
 lab def country 22 "Somaliland"
 lab values reccountry country
 
-ren weight weight_educ 
 ren instanceid respondent_serial 
 ren q12a q12_a
 ren q12b q12_b
@@ -370,7 +369,7 @@ ren rec* *
 *Reorder variables
 order cell1 cell2
 order q*, sequential
-order respondent_id weight_educ respondent_serial mode country // 
+order respondent_id weight respondent_serial mode country // 
 
 
 *------------------------------------------------------------------------------*

@@ -69,7 +69,7 @@ run "$github/crPVS_der.do"
 
 * Installing packages and commands
 ************************************************
-
+/*
 * IPA's Stata Package for high-frequency checks
 net install ipacheck, all replace from("https://raw.githubusercontent.com/PovertyAction/high-frequency-checks/master")
 ipacheck update
