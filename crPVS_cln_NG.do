@@ -33,7 +33,7 @@ gen reccountry = 20
 lab def country 20 "Nigeria"
 lab values reccountry country
 
-ren weight2 weight_educ //for appending purpose
+ren weight2 weight //for appending purpose
 
 * Rename some variables, and some recoding if variable will be dropped 
 
@@ -415,7 +415,7 @@ ren rec* *
 
 *Reorder variables
 
-order respondent_serial mode respondent_id country weight_educ
+order respondent_serial mode respondent_id country weight
 order q*, sequential
 	
 *------------------------------------------------------------------------------*

@@ -56,7 +56,6 @@ gen reccountry = 23
 lab def country 23 "Nepal"
 lab values reccountry country
 
-rename wgt weight_educ
 rename urbanrural urban // SS: confirm that this is recoded correctly in the derived file (team coded their own vars)
 rename education q8 
 rename edu_cat education // SS: Team created derived var
@@ -377,7 +376,7 @@ order respondent_id weight_educ respondent_serial country // add mode back in
 *------------------------------------------------------------------------------*
 * Label variables					
 lab var country "Country"
-lab var weight_educ "Weight"
+lab var weight "Weight"
 lab var respondent_serial "Respondent Serial #"
 *lab var int_length "Interview length (minutes)" 
 *lab var date "Date of the interview"
