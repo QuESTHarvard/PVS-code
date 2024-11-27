@@ -439,6 +439,7 @@ lab val q16 q16_label
 lab def na_rf .a "NA" .r "Refused" .d "Don't know"
 lab val q1 q18 q20 q21 q22 q23 q39 CELL2 na_rf
 
+recode q19 (1 = 0) (2 = 1) (3 = 2) (4 = 3)
 lab def q19_label 0 "0" 1 "1-4" 2 "5-9" 3 "10 or more" .a "NA" .d "Don't Know" .r "Refused"
 lab val q19 q19_label 
 

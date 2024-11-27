@@ -221,15 +221,28 @@ ren rec* *
 gen respondent_id = "NP" + string(respondent_serial) 
 
 *gen q52 = .a
-*gen q2 = .a
+gen q2 = .
+replace q2=0 if q1 <18
+replace q2 = 1 if q1 >=18 | q1<=39
+replace q2 = 2 if q1 >=30 | q1<=39
+replace q2 = 3 if q1 >=40 | q1<=49
+replace q2 = 4 if q1 >=50 | q1<=59
+replace q2 = 5 if q1 >=60 | q1<=69
+replace q2 = 6 if q1 >=70 | q1<=79
+replace q2 = 7 if q1 >=80 
+replace q2 = .a if q1 == .a | q1 == .d | q1 == .r
+
+lab def q2_label 0 "under 18" 1 "18-29" 2 "30-39" 3 "40-49" 4 "50-59" 5 "60-69" ///
+				6 "70-79" 7 "80 +" .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
+lab val q2 q2_label
 
 * q18/q19 mid-point var 
 *SS: note, it looks like q19 is on a scale of 1-4 instead of 0-3 like the data dictionary
 gen q18_q19 = q18 
-recode q18_q19 (. = 0) if q19 == 1
-recode q18_q19 (. = 2.5) if q19 == 2
-recode q18_q19 (. = 7) if q19 == 3
-recode q18_q19 (. = 10) if q19 == 4
+recode q18_q19 (. = 0) if q19 == 0
+recode q18_q19 (. = 2.5) if q19 == 1
+recode q18_q19 (. = 7) if q19 == 2
+recode q18_q19 (. = 10) if q19 == 3
 
 *------------------------------------------------------------------------------*
 * Recode refused and don't know values -NA in this dataset
