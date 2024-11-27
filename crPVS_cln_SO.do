@@ -170,9 +170,11 @@ recode q18_q19 (999 = 2.5) (998 = 2.5) if q19 == 2
 recode q18_q19 (999 = 7) (998 = 7) if q19 == 3
 recode q18_q19 (999 = 10) (998 = 10) if q19 == 4
 recode q18_q19 (998 = .r) if q19 == 999
+recode q18_q19 (999 = .r) if q19 == 999
 
 format duration %tcHH:MM:SS
 gen int_length = (hh(duration)*60 + mm(duration) + ss(duration)/60)
+drop duration
 
 *------------------------------------------------------------------------------*
 * Recode refused and don't know values 
