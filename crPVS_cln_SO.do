@@ -468,6 +468,22 @@ label variable cell2 "CELL2. How many other mobile phone numbers do you have?"
 label variable int_length "Interview length"
 
 
+*Fixing weight var (per Todd's email 11/26/2024):
+**Calculate the current sum of the weights
+egen total_weight = total(weight)
+ 
+**Rescale the weights so they sum to the sample size
+gen rescaled_weight = (weight / total_weight) * 2500
+ 
+**Check that the rescaled weights sum to the sample size
+egen total_weight_rescaled = total(rescaled_weight)
+tab total_weight  
+tab total_weight_rescaled // to ensure the first sums to 2.1 million and the rescaled sums to 2500
+
+drop weight total_weight total_weight_rescaled
+
+rename rescaled_weight weight
+
 *------------------------------------------------------------------------------*
 
 * Save data
