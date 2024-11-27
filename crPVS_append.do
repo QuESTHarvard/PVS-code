@@ -129,7 +129,6 @@ lab def labels24 .a "NA" .r "Refused", modify
 lab def labels22 .a "NA" .r "Refused", modify
 lab def labels23 .a "NA" .r "Refused", modify
 lab def labels26 .a "NA" .r "Refused", modify
-lab def labels37 11 "AR: Delay to get a turn " .a "NA" .r "Refused", modify
 lab def labels39 .a "NA" .r "Refused", modify
 lab def labels40 .a "NA" .r "Refused", modify
 lab def labels84 .a "NA" .r "Refused", modify
@@ -146,10 +145,14 @@ lab def labels26 10 "AR: Short waiting time to get appointments" ///
 				 12 "GR: Referred from another provider" ///
 				 13 "RO: Recommended by family or friends", modify
 lab def labels27 .a "NA",modify
-lab def labels37 12 "GR: Fear or anxiety of a healthcare procedure, examination or treatment" ///
+lab def labels37  11 "AR: Delay to get a turn" ////
+				  12 "GR: Fear or anxiety of a healthcare procedure, examination or treatment" ///
 				 13 "RO: Fear of examination/medical procedure" ///
 				 14 "RO: Lack of trust in doctors/procedures" ///
-				 15 "RO: Concern about informal payments/gifts", modify
+				 15 "RO: Concern about informal payments/gifts" ///
+				 16 "SO: They are closed" ///
+				 17 "SO: Was affected by conflicts" ///
+				 18 "SO: Doctor was not available" .a "NA" .d "Don't know" .r "Refused", modify
 lab def labels44 .a "NA" .r "Refused", modify	
 lab def labels65 1 "Yes" 2 "No" .d "Don't Know", modify		
 label values q12 yes_no_dk
@@ -465,7 +468,7 @@ lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
-lab def labels26 14 "CN: Trust hospital", modify
+lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities", modify
 
 *** Code for survey set ***
 gen respondent_num = _n 

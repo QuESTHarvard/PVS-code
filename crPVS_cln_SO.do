@@ -177,7 +177,7 @@ recode q18_q19 (998 = .r) if q19 == 999
 * Recode refused and don't know values 
 recode q14_so q18 q21 q22 q23 q27_a q27_b q27_c q27_d q27_f q27_g q27_h cell1 (998 = .d)
 	
-recode q8 q10 q12_a q12_b q13 q18 q19 q20 q22 q23 q24 q25 q27_a q27_b q27_c q28_a ///
+recode q1 q8 q10 q12_a q12_b q13 q18 q19 q20 q22 q23 q24 q25 q27_a q27_b q27_c q28_a ///
 	   q28_b q30 q31_b q32_so q34 q35 q37 q38_a q38_b q38_c q38_d q38_e q38_g q38_i ///
 	   q38_j q39 q40a_so q40b_so q40_c q40_d q40e_so q40f_so q41_a q41_b q41_c q42 q43 q45 ///
 	   q46 q47 q48 q49 q51 cell2 (999 = .r)
@@ -271,6 +271,12 @@ recode cell2 (. = .a) if cell1 != 1
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:
 
+recode q2 (2 = 1) (3 = 2) (4 = 3) (5 = 4) (6 = 5) (7 = 6) (8 = 7)
+lab def q2_label 0 "under 18" 1 "18-29" 2 "30-39" 3 "40-49" 4 "50-59" 5 "60-69" ///
+				6 "70-79" 7 "80 +" .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
+lab val q2 q2_label
+
+
 *add new option for q16 
 recode q16 (10 = 15)
 lab def q16_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" ///
@@ -281,6 +287,10 @@ lab def q16_label 1 "Low cost" 2 "Short distance" 3 "Short waiting time" ///
 				  15 "SO: Determined by the family in the cities " .a "NA" ///
 				 .d "Don't Know" .r "Refused"
 lab val q16 q16_label
+
+recode q19 (1 = 0) (2 = 1) (3 = 2) (4 = 3)
+lab def labels21 0 "0" 1 "1-4" 2 "5-9" 3 "10 or more" .a "NA" .d "Don't know" .r "Refused",replace
+lab val q19 labels21
 
 *fix order of q20/q21
 *q21 has two different versions of "2"?
@@ -299,15 +309,18 @@ lab def q30_label 1 "High cost (e.g., high out of pocket payment, not covered by
 				 .d "Don't Know" .r "Refused"
 lab val q30 q30_label				 
 
-recode q32 (4 = 1) (7 = 4)
-lab def q32_label 1 "Public" 2 "Private (including pharmacies and traditional practitioners)" ///
+recode q32_so (4 = 1) (7 = 4)
+lab def q32_so_label 1 "Public" 2 "Private (including pharmacies and traditional practitioners)" ///
 	    3 "Community health centre" 4 "Other" .a "NA" .d "Don't Know" .r "Refused"
-lab val q32 q32_label		
+lab val q32_so q32_so_label		
 
 recode q34 (7 = 6) (8 = 7) (9 = 8) (11 = 9) (12 = 10) (13 = 11)
 lab def q34_label 1 "Care for an urgent or new health problem such as an accident or injury or a new symptom like fever, pain, diarrhea, or depression." 2 "Follow-up care for a longstanding illness or chronic disease such as hypertension or diabetes. This may include mental health conditions." 3 "Preventive care or a visit to check on your health, such as an annual check-up, antenatal care, or vaccination." 4 "Other (specify)" 5 "SO: Allergies" 6 "SO: Blood transfusion" 7 "SO: Dental issue" 8 "SO: Eye problem" 9 "SO: Gastric/stomach ache" 10 "SO: Nerve pain" 11 "SO: Visited a hospitalised member of the family" .a "NA" .d "Don't Know" .r "Refused"
 lab val q34 q34_label
 
+recode q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k (5=4) (4=3) (3=2) (2=1) (1=0) (6=5) (7=6)
+lab def q38_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA" .d "Don't Know" .r "Refused"
+lab val q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q38_label 
 
 * Add value labels 
 label define labels24 .a "NA" .d "Don't know" .r "Refused",add	 
@@ -467,6 +480,22 @@ label variable cell1 "CELL1. Do you have another mobile phone number besides the
 label variable cell2 "CELL2. How many other mobile phone numbers do you have?"
 label variable int_length "Interview length"
 
+
+*Fixing weight var (per Todd's email 11/26/2024):
+**Calculate the current sum of the weights
+egen total_weight = total(weight)
+ 
+**Rescale the weights so they sum to the sample size
+gen rescaled_weight = (weight / total_weight) * 2500
+ 
+**Check that the rescaled weights sum to the sample size
+egen total_weight_rescaled = total(rescaled_weight)
+tab total_weight  
+tab total_weight_rescaled // to ensure the first sums to 2.1 million and the rescaled sums to 2500
+
+drop weight total_weight total_weight_rescaled
+
+rename rescaled_weight weight
 
 *------------------------------------------------------------------------------*
 

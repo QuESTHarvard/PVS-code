@@ -178,7 +178,7 @@ recode q16 (2 = 1 "Convenience (short distance)") ///
 			(3 5 10  = 4 "Interpersonal quality (short waiting time, respect)") ///
 			(6 = 5 "Service readiness (medicines and equipment available)") ///
 			(7 = 6 "Only facility available") ///
-			(.r 9 11 12 13 = .r "Other or Refused") ///
+			(.r 9 11 12 13 14 15 = .r "Other or Refused") ///
 			(.a = .a "NA") , gen(usual_reason)
 
 * visits
@@ -233,7 +233,7 @@ recode q30 (1 = 1 "Cost (High cost)") ///
 			(4 = 4 "Technical quality (Poor provider skills)") ///
 			(6 = 5 "Service readiness (Medicines and equipment not available)") ///
 			(8 9 = 6 "COVID (COVID restritions or COVID fear)") ///
-			(10 12 13 14 15 = 7 "Other") ///
+			(10 12 13 14 15 16 17 18 = 7 "Other") ///
 			(.a 7 = .a "NA or Illness not serious") ///
 			(.r = .r "Refused"), gen(unmet_reason)
 
@@ -787,15 +787,15 @@ replace visits = . if visits > 70 & visits < . & country == 21 // 1 change
 
 
 *** New country var based on region ***
-recode country (3 = 1 "Ethiopia") (5 = 2 "Kenya") ///
-			   (20 = 3 "Nigeria") (9 = 4 "South Africa") ///
-			   (7 = 5 "Peru") (2 = 6 "Colombia") ///
-			   (13 = 7 "Mexico") (10 = 8 "Uruguay") ///
-			   (16 = 9 "Argentina") (11 = 10 "Lao PDR") ///
-			   (4 = 11 "India") (21 = 12 "China") (15 = 13 "Rep. of Korea") ///
-			   (19 = 14 "Romania") (18 = 15 "Greece") ///
-			   (14 = 16 "Italy") (17 = 17 "United Kingdom") ///
-			   (12 = 18 "United States"), gen(country_reg)
+recode country (22 = 1 "Somaliland") (3 = 2 "Ethiopia") (5 = 3 "Kenya") ///
+			   (20 = 4 "Nigeria") (9 = 5 "South Africa") ///
+			   (7 = 6 "Peru") (2 = 7 "Colombia") ///
+			   (13 = 8 "Mexico") (10 = 9 "Uruguay") ///
+			   (16 = 10 "Argentina") (11 = 11 "Lao PDR") (23 = 12 "Nepal") ///
+			   (4 = 13 "India") (21 = 14 "China") (15 = 15 "Rep. of Korea") ///
+			   (19 = 16 "Romania") (18 = 17 "Greece") ///
+			   (14 = 18 "Italy") (17 = 19 "United Kingdom") ///
+			   (12 = 20 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
 
