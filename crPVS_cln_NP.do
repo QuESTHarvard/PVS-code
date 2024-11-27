@@ -223,12 +223,12 @@ gen respondent_id = "NP" + string(respondent_serial)
 *gen q52 = .a
 gen q2 = .
 replace q2=0 if q1 <18
-replace q2 = 1 if q1 >=18 | q1<=39
-replace q2 = 2 if q1 >=30 | q1<=39
-replace q2 = 3 if q1 >=40 | q1<=49
-replace q2 = 4 if q1 >=50 | q1<=59
-replace q2 = 5 if q1 >=60 | q1<=69
-replace q2 = 6 if q1 >=70 | q1<=79
+replace q2 = 1 if q1 >=18 & q1<=39
+replace q2 = 2 if q1 >=30 & q1<=39
+replace q2 = 3 if q1 >=40 & q1<=49
+replace q2 = 4 if q1 >=50 & q1<=59
+replace q2 = 5 if q1 >=60 & q1<=69
+replace q2 = 6 if q1 >=70 & q1<=79
 replace q2 = 7 if q1 >=80 
 replace q2 = .a if q1 == .a | q1 == .d | q1 == .r
 
