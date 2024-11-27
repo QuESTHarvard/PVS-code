@@ -81,8 +81,6 @@ ren q41a q41_a
 ren q41b q41_b
 ren q41c q41_c
 
-ren duration int_length
-
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 999
 
@@ -172,6 +170,9 @@ recode q18_q19 (999 = 2.5) (998 = 2.5) if q19 == 2
 recode q18_q19 (999 = 7) (998 = 7) if q19 == 3
 recode q18_q19 (999 = 10) (998 = 10) if q19 == 4
 recode q18_q19 (998 = .r) if q19 == 999
+
+format duration %tcHH:MM:SS
+gen int_length = (hh(duration)*60 + mm(duration) + ss(duration)/60)
 
 *------------------------------------------------------------------------------*
 * Recode refused and don't know values 
@@ -388,7 +389,7 @@ order respondent_id weight respondent_serial mode country //
 *------------------------------------------------------------------------------*
 * Label variables					
 lab var country "Country"
-lab var int_length "Interview length (minutes)" 
+*lab var int_length "Interview length (minutes)" 
 *lab var date "Date of the interview"
 lab var respondent_id "Respondent ID"
 *lab var language "Language"
