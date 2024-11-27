@@ -708,6 +708,9 @@ recode minority (.a = .r) if q50_gb == .r
 recode minority (.a = 1) if inlist(q50a_la,11002,11003,11004,11005)
 recode minority (.a = 0) if q50a_la == 11001
 
+*Somaliland (no recoding?)
+replace minority = . if country == 22
+
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
 
