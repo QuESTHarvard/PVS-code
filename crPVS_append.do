@@ -469,6 +469,7 @@ lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic ha
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities", modify
+lab def main_reason 5 "SO: Allergies" 6 "SO: Blood transfusion" 7 "SO: Dental issue" 8 "SO: Eye problem" 9 "SO: Gastric/stomach ache" 10 "SO: Nerve pain" 11 "SO: Visited a hospitalised member of the family" .a "NA" .d "Don't Know" .r "Refused",modify
 
 *** Code for survey set ***
 gen respondent_num = _n 
@@ -490,7 +491,7 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 
 * Keep variables relevant for data sharing and analysis  
 * Dropping time for now 
-drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id qq2 CELL1 CELL2 check cell1 cell2
+drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id qq2 CELL1 CELL2 check cell1 cell2 q44
 
 					
 * Reorder variables
@@ -703,6 +704,8 @@ lab var q52a_gr "Q52a. GR only: Do you happen to have a mobile phone or not?"
 lab var q52a_us "Q52a. US only: Republican, Democrat, an Independent, or something else?"
 lab var q52b_gr "Q52b. GR only: Is this mobile phone your only phone, or do you also have a landline telephone at home that is used to makeand receive calls?"
 lab var q52b_us "Q52b. US only: Do you lean more towards the Republican or Democratic Party?"
+label variable q52a_np "Q52a. NP only: How aware are you of Basic Health package of services provided free of charge?"
+label variable q52b_np "Q52b. NP only: Have you received any such Basic Health package of services available?"
 
 *------------------------------------------------------------------------------*
 *Save recoded data
