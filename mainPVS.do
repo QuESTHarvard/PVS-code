@@ -1,6 +1,6 @@
 * People's Voice Survey main code file 
-* Date of last update: April 2023
-* Last updated by: N Kapoor, S Sabwa, M Yu
+* Date of last update: March 2025
+* Last updated by: S Sabwa
 
 /* Purpose of code file: 
 	
@@ -8,9 +8,11 @@
 	People's Voice Survey. The files create a combined multi-country dataset for 
 	analysis. 
 	
-	Countries included: Ethiopia, India, Kenya, South Africa, Colombia, Peru, 
-	Uruguay, Italy, Mexico, United States, United Kingdom, Lao PDR, Rep. of Korea, 
-	Argentina (Mendoza province)
+	Countries included: Ethiopia, Kenya, Nigeria, South Africa, Peru,
+						Colombia, Mexico, Uruguay, Argentina, Lao PDR,
+                        India, Rep. of Korea, Greece, Italy, United Kingdom
+                        United States
+
 	
 */
 
@@ -31,7 +33,7 @@ global user "/Users/shs8688"
 
 
 * Setting file path globals
-global data "$user/Dropbox (Harvard University)/SPH-Kruk Team/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
+global data "$user/Library/CloudStorage/Box-Box/People's Voice Survey/PVS External/Data"
 *global data "$user/Dropbox/SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
 
 * Path to multi-country data folder (includes input and output folders for data checks)
