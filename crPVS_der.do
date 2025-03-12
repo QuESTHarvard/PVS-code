@@ -5,7 +5,7 @@
 /*
 
 	This file creates derived variables for analysis from the multi-country 
-	dataset after append in the crPVS_append.do file. Test
+	dataset after append in the crPVS_append.do file.
 
 */
 
