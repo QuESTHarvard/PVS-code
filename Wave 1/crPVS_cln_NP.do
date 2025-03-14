@@ -177,7 +177,7 @@ lab def lang 23001 "NP: Nepali" 23002 "NP: Maithali" 23003 "NP: Newari" 23004 "N
 			 23005 "NP: Tharu"  23006 "NP: Tamang" 23007 "NP: Doteli" 23008 "NP: Other"
 lab values reclanguage lang
 
-local q4l province
+local q4_l province
 local q5l region
 local q7l q7
 local q8l education
@@ -239,10 +239,10 @@ lab val q2 q2_label
 * q18/q19 mid-point var 
 *SS: note, it looks like q19 is on a scale of 1-4 instead of 0-3 like the data dictionary
 gen q18_q19 = q18 
-recode q18_q19 (. = 0) if q19 == 0
-recode q18_q19 (. = 2.5) if q19 == 1
-recode q18_q19 (. = 7) if q19 == 2
-recode q18_q19 (. = 10) if q19 == 3
+*recode q18_q19 (. = 0) if q19 == 0
+recode q18_q19 (. = 2.5) if q19 == 2
+recode q18_q19 (. = 7) if q19 == 3
+recode q18_q19 (. = 10) if q19 == 4
 
 *------------------------------------------------------------------------------*
 * Recode refused and don't know values -NA in this dataset

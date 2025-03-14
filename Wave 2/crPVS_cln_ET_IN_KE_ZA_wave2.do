@@ -164,6 +164,52 @@ drop q4 q5 q7 q8 q15 q33 q50 q51 language
 ren rec* *
 
 *------------------------------------------------------------------------------*
+* Fix interview length variable and other time variables 
 
+* Converting interview length to minutes so it can be summarized
+gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60)
+drop intlength
+
+*SS: Re-format date var? currently in %tcDD-Mon-CCYY fmt 
+*format date %tdD_M_CY
+
+* Generate new var for insurance in ZA since question asked differently - confirm with Todd
+gen q6_za = q6 if country == 9
+replace q6 = .a if country == 9
+recode q6_za (. = .a) if country != 9
+
+*------------------------------------------------------------------------------*
 * Generate variables 
-gen respondent_id = "NP" + string(respondent_serial) 
+
+replace q2 = 1 if q1 >=18 & q1<=39
+replace q2 = 2 if q1 >=30 & q1<=39
+replace q2 = 3 if q1 >=40 & q1<=49
+replace q2 = 4 if q1 >=50 & q1<=59
+replace q2 = 5 if q1 >=60 & q1<=69
+replace q2 = 6 if q1 >=70 & q1<=79
+replace q2 = 7 if q1 >=80 
+
+* q18/q19 mid-point var 
+*SS: note, it looks like q19 is on a scale of 1-4 instead of 0-3 like the data dictionary
+gen q18_q19 = q18 
+recode q18_q19 (998 999 = 0) if q19 == 1
+recode q18_q19 (998 999 = 2.5) if q19 == 2
+recode q18_q19 (998 999 = 7) if q19 == 3
+recode q18_q19 (998 999 = 10) if q19 == 4
+
+*------------------------------------------------------------------------------*
+* Recode all Refused and Don't know responses
+
+* In raw data, 997 = "don't know" 
+recode q14 q18 q21 q22 q23 q27a q27b q27c q27d q27e q27f q27g q27h (998 = .d)
+	   
+*NOTE: currently in data q37_za "don't know" is category 3  
+
+* In raw data, 996 = "refused" 
+recode q1 q3 q6 q9 q10 q11 q12a q12b q13 q14 q16 q17 q18 q19 q20 q21 q22 q23 q24 q25 q26 q27a q27b q27d q27e q27f q27g q27h q28a q28b q29 q30 (999 = .r)	
+	   
+*------------------------------------------------------------------------------*
+
+* Check for implausible values 
+
+
