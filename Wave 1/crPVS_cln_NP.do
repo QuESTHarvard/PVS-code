@@ -24,6 +24,8 @@ set more off
 * Import data 
 use "$data/Nepal/01 raw data/Nepal_PVS_clean_weighted.dta", clear
 
+gen wave = 1
+
 * data cleaning:
 *empty vars:
 drop q28 q40 q41 q27_001 q27_header q31 q38  

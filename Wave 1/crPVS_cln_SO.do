@@ -31,6 +31,8 @@ notes drop _all
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
+gen wave = 1
+
 gen reccountry = 22
 lab def country 22 "Somaliland"
 lab values reccountry country

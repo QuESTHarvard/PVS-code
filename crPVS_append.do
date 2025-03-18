@@ -364,6 +364,8 @@ drop q2
  
 ren rec* *
 		
+gen wave = 1
+gen version = 1
 	
 *Save recoded data
 save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace

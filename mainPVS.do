@@ -33,7 +33,7 @@ global user "/Users/shs8688"
 
 
 * Setting file path globals
-global data "$user/Library/CloudStorage/Box-Box/People's Voice Survey/PVS External/Data"
+global data "$user/Library/CloudStorage/Box-Box/People's Voice Survey - new/PVS External/Data"
 *global data "$user/Dropbox/SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
 
 * Path to multi-country data folder (includes input and output folders for data checks)
