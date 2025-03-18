@@ -26,7 +26,6 @@ import spss using "$data/ET IN KE ZA wave2/01 raw data/24-065373-01-02_Harvard_2
 
 
 *Label as wave 2 data:
-
 gen wave = 2
 
 *Deleting unneccessary vars:
@@ -47,7 +46,7 @@ rename (q38a q38b q38c q38d q38e q38f q38g q38h q38i q38j q38k) ///
 	   
 rename (q40a q40b q40c q40d q41a q41b q41c) (q40_a q40_b q40_c q40_d q41_a q41_b q41_c)
 
-*Edit income var - ask Todd how he would like this to be coded, recode all data? If not, add (wave 1) to original income vars?
+*Edit income var - continue from V1.0 values, add "V1.0" to labels
 recode q51 (101 = 101  "< Ksh 1,000") ///
 		   (102 = 102 "Ksh 1,001 – 3,000") ///
 		   (103 = 103 "Ksh 3,001 - 5,000") ///
