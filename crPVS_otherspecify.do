@@ -30,9 +30,7 @@ global all_num 	"q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 
 * This command lists all other, specify values
 * This command requires an input file that lists all the variables with other, specify text 
 
-*use "$data_mc/02 recoded data/pvs_appended.dta", clear
 import spss using "$data/ET IN KE ZA wave2/01 raw data/24-065373-01-02_Harvard_2024_Merged_weighted_SPSS.sav", case(lower)
-
 
 *The code below generates a non-relevant interviewer id for the code to run, however it is not accurate because the interviewer id is deleted at a previous stage of data cleaning.
 *gen interviewer_id = respondent_serial
@@ -56,7 +54,7 @@ replace q43_other = subinstr(q43_other,`"""',  "", .)
 replace q45_other = subinstr(q45_other,`"""',  "", .)
 */
 
-foreach i in 3 4 5 9 {
+foreach i in 5 9 {
  preserve
  keep if country == `i'
   
