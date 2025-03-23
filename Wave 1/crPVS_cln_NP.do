@@ -179,10 +179,10 @@ lab def lang 23001 "NP: Nepali" 23002 "NP: Maithali" 23003 "NP: Newari" 23004 "N
 			 23005 "NP: Tharu"  23006 "NP: Tamang" 23007 "NP: Doteli" 23008 "NP: Other"
 lab values reclanguage lang
 
-local q4_l province
+local q4l province
 local q5l region
 local q7l q7
-local q8l education
+local q8l q8
 local q15l q15
 local q33l q15
 *local q50l labels46
