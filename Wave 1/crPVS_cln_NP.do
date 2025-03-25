@@ -24,6 +24,8 @@ set more off
 * Import data 
 use "$data/Nepal/01 raw data/Nepal_PVS_clean_weighted.dta", clear
 
+gen wave = 1
+
 * data cleaning:
 *empty vars:
 drop q28 q40 q41 q27_001 q27_header q31 q38  
@@ -180,7 +182,7 @@ lab values reclanguage lang
 local q4l province
 local q5l region
 local q7l q7
-local q8l education
+local q8l q8
 local q15l q15
 local q33l q15
 *local q50l labels46
@@ -239,10 +241,10 @@ lab val q2 q2_label
 * q18/q19 mid-point var 
 *SS: note, it looks like q19 is on a scale of 1-4 instead of 0-3 like the data dictionary
 gen q18_q19 = q18 
-recode q18_q19 (. = 0) if q19 == 0
-recode q18_q19 (. = 2.5) if q19 == 1
-recode q18_q19 (. = 7) if q19 == 2
-recode q18_q19 (. = 10) if q19 == 3
+*recode q18_q19 (. = 0) if q19 == 0
+recode q18_q19 (. = 2.5) if q19 == 2
+recode q18_q19 (. = 7) if q19 == 3
+recode q18_q19 (. = 10) if q19 == 4
 
 *------------------------------------------------------------------------------*
 * Recode refused and don't know values -NA in this dataset
