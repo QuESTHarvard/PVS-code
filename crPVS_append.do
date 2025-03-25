@@ -1,12 +1,11 @@
 * People's Voice Survey data append  
-* Date of last update: August 2023
-* Last updated by: N Kapoor, S Sabwa, M Yu
+* Date of last update: March 2025
+* Last updated by: S Sabwa
 
 /*
 
 	This file appends PVS datasets cleaned separately. 
 	Country-specific or dataset-specific variables or values are modified as needed. 
-	It also recodes other, specify values using IPA check command. 
 
 */
 
@@ -270,8 +269,8 @@ ren q44b_gr_other recq33b_gr_other
 ren q45 recq34 
 ren q45_other recq34_other
 ren q46a recq35
-ren q46b recq36 
-ren q46 recq37
+ren q46b recq36_v1
+ren q46 recq37_v1
 ren q46b_refused recq37b_refused
 
 ren q48_a recq38_a
@@ -365,7 +364,6 @@ drop q2
 ren rec* *
 		
 gen wave = 1
-gen version = 1
 	
 *Save recoded data
 save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
@@ -404,6 +402,14 @@ label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2
 append using "$data_mc/02 recoded data/input data files/pvs_np.dta"
 
 qui do `label12'
+
+tempfile label13
+label save q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 using `label13'
+label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 
+
+append using "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dta"
+
+qui do `label13'
 
 
 * Country
@@ -465,6 +471,8 @@ recode q14_so q15a_so q15b_so q15c_so q32_so q33a_so q33b_so q33c_so q40a_so q40
 
 recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
 
+recode q7_ke (. = .a) if country !=5 | wave !=2
+
 * Other value label modifcations
 lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
@@ -492,12 +500,12 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 
 * Keep variables relevant for data sharing and analysis  
 * Dropping time for now 
-drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id qq2 CELL1 CELL2 check cell1 cell2
+drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id qq2 CELL1 CELL2 check cell1 cell2 q44
 
 					
 * Reorder variables
 order q*, sequential
-order respondent_serial respondent_id mode country language date ///
+order respondent_serial respondent_id mode country wave language date ///
 	  int_length psu_id_for_svy_cmds weight 		  
 
 
@@ -667,7 +675,7 @@ lab var q41_b "Q41b. How confident are you that you'd be able to afford the care
 lab var q41_c "Q41c. How confident are you that the government considers the public's opinion?"
 lab var q42 "Q42. How would you rate the quality of public healthcare system in your country?"
 lab var q43 "Q43. How would you rate the quality of private healthcare?"
-lab var q44 "Q44. What type of healthcare facility is this?"
+*lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_multi "Q44. ET/GR/IN/KE/NG/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q44_pe "Q44. PE only: How would you rate the quality of the social security system?"
 lab var q44_uy "Q44. UY only: How would you rate the quality of the mutual healthcare system?"
@@ -709,6 +717,6 @@ lab var q52b_us "Q52b. US only: Do you lean more towards the Republican or Democ
 *------------------------------------------------------------------------------*
 *Save recoded data
 
-save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
+*save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
 
 *------------------------------------------------------------------------------*
