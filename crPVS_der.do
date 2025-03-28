@@ -18,7 +18,7 @@ u "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", clear
 
 * Trim extreme values for for q21, q37 and q47_v1; q36 for IT, MX, US, KR and UK
 
-* Mia's note: check extreme values for Nigeria needed
+/* Mia's note: check extreme values for Nigeria needed
 qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
@@ -35,18 +35,19 @@ foreach i in `countrylev' {
 
 clonevar q21_original = q21
 clonevar q37_original = q37
-clonevar q36_origial = q36
+clonevar q36_origial = q36 */
 
-* All q21 seems fine
+* q21
+replace q21 = . if q21 == 100
 
-* q37
+* q37: Q37. In minutes: Approximately how long did you wait before seeing the provider?
 * Colombia okay
 * Ethiopia - 3 values recoded 
-replace q37 = . if q37 > 600 & q37 < . & country == 3
+replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 3
 * India - 1 value recoded 
-replace q37 = . if q37 > 730 & q37 < . & country == 4 
+replace q37_v1 = . if q37_v1 > 730 & q37 < . & country == 4 
 * Kenya - 1 value recoded 
-replace q37 = . if q37 > 720 & q37 < . & country == 5
+replace q37_v1 = . if q37 > 720 & q37 < . & country == 5
 * Peru okay
 * South Africa - 2 values recoded 
 replace q37 = . if q37 > 600 & q37 < . & country == 9
@@ -107,7 +108,7 @@ replace q36 = . if q36 > 720 & q36 < . & country == 18
 *replace q36 = . if q36 > 720 & q36 < . & country == 19
 * NA for Nigeria
 
-*****************************
+***************************** Derive variable creation
 
 * age: exact respondent age or middle of age range 
 gen age = q1 
@@ -174,7 +175,7 @@ lab val activation pa
 * usual_reason - confirm placements of 11-13
 recode q16 (2 = 1 "Convenience (short distance)") /// 
 			(1 8 = 2 "Cost (low cost, covered by insurance)") ///
-			(4 = 3 "Techincal quality (provider skills)") ///
+			(4 = 3 "Technical quality (provider skills)") ///
 			(3 5 10  = 4 "Interpersonal quality (short waiting time, respect)") ///
 			(6 = 5 "Service readiness (medicines and equipment available)") ///
 			(7 = 6 "Only facility available") ///
@@ -499,7 +500,7 @@ recode usual_type_own (.a = 0) if country == 10 & q14_uy == 1
 recode usual_type_own (.a = 1) if country == 10 & q14_uy == 2
 recode usual_type_own (.a = 2) if country == 10 & q14_uy == 5
 
-		
+*Multi-country - generally adding here:
 recode usual_type_own (.a = 0) if (q14_q15a_la == 1 | q14_q15a_la == 2 |  ///
 								  q14_q15b_la == 1 | q14_q15b_la == 2 | ///
 								  q14_it == 1 | inlist(q14_mx,3,4) | ///
@@ -1069,7 +1070,7 @@ restore
 
 drop if country == 19 // remove once we are able to use Romania data
 
-* ONLY RUN COMMAND BELOW WHEN SHARING TO ALL
+* ONLY RUN COMMAND BELOW WHEN SHARING TO PUBLIC REPOSITORIES
 * save "$data/Multi-country (shared)/pvs_all_countries_3-7-24.dta", replace 
 
 

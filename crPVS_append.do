@@ -163,6 +163,9 @@ ren weight_educ weight
 lab var weight "Final weight (based on gender, age, region, education)"
 				
 *----------- reorder V1 to V2 ------
+* Starting with PVS China, the PVS question items were re-ordered, this part of the do file will:
+	* Re-order V1 vars to match V2 order
+	* Update variable labels to match V2 label names
 * renaming questions that were dropped
 ren q12 q12_v1
 ren q13 q13_v1
@@ -371,8 +374,6 @@ save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
 
 ********************************* PVS V2 *********************************
 * Starting with PVS China, the PVS question items were re-ordered, this part of the do file will:
-	* Re-order V1 vars to match V2 order
-	* Update variable labels to match V2 label names
 	* Append V2 countries
 
 clear all
@@ -411,7 +412,7 @@ append using "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dt
 
 qui do `label13'
 
-
+********************************************************************************
 * Country
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
