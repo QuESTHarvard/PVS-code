@@ -17,8 +17,6 @@ u "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", clear
 *------------------------------------------------------------------------------*
 
 * Trim extreme values for for q21, q37 and q47_v1; q36 for IT, MX, US, KR and UK
-
-/* Mia's note: check extreme values for Nigeria needed
 qui levelsof country, local(countrylev)
 
 foreach i in `countrylev' {
@@ -35,10 +33,9 @@ foreach i in `countrylev' {
 
 clonevar q21_original = q21
 clonevar q37_original = q37
-clonevar q36_origial = q36 */
+clonevar q36_origial = q36
 
-* q21
-replace q21 = . if q21 == 100
+* q21 (no issues)
 
 * q37: Q37. In minutes: Approximately how long did you wait before seeing the provider?
 * Colombia okay
@@ -47,23 +44,23 @@ replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 3
 * India - 1 value recoded 
 replace q37_v1 = . if q37_v1 > 730 & q37 < . & country == 4 
 * Kenya - 1 value recoded 
-replace q37_v1 = . if q37 > 720 & q37 < . & country == 5
+replace q37_v1 = . if q37_v1 > 720 & q37 < . & country == 5
 * Peru okay
 * South Africa - 2 values recoded 
-replace q37 = . if q37 > 600 & q37 < . & country == 9
+replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 9
 * Uruguay okay, Lao okay, US okay, Mexico okay, Italy okay 
 * Korea - 1 value recoded 
-replace q37 = . if q37 > 780 & q37 < . & country == 15
+replace q37_v1 = . if q37_v1 > 780 & q37_v1 < . & country == 15
 * Mendoza - 2 values recoded
-replace q37 = . if q37 > 540 & q37 < . & country == 16
+replace q37_v1 = . if q37_v1 > 540 & q37_v1 < . & country == 16
 * UK - 3 values recoded
-replace q37 = . if q37 > 780 & q37 < . & country == 17
+replace q37_v1 = . if q37_v1 > 780 & q37_v1 < . & country == 17
 * Greece - 1 value recoded (Todd to review)
-replace q37 = . if q37 > 600 & q37 < . & country == 18
+replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 18
 * Romania -  1 value recoded (Todd to review)
-replace q37 = . if q37 > 600 & q37 < . & country == 19
+replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 19
 * Nigeria -  2 values recoded (Todd to review)
-replace q37 = . if q37 > 720 & q37 < . & country == 20
+replace q37_v1 = . if q37_v1 > 720 & q37_v1 < . & country == 20
 
 
 * q47_v1
@@ -94,16 +91,16 @@ replace q47_v1 = . if q47_v1 > 560 & q47_v1 < . & country == 17
 
 * q36
 * US - 4 values recoded 
-replace q36 = . if q36 > 365 & q36 < . & country == 12
+replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 12
 * Mexico okay 
 * Italy - 2 values recoded
-replace q36 = . if q36 > 365 & q36 < . & country == 14
+replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 14
 * Korea - 1 value recoded
-replace q36 = . if q36 > 365 & q36 < . & country == 15
+replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 15
 * UK - 2 values recoded 
-replace q36 = . if q36 > 365 & q36 < . & country == 17
+replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 17
 * Greece - 1 value recoded (Todd to review)
-replace q36 = . if q36 > 720 & q36 < . & country == 18
+replace q36_v1 = . if q36_v1 > 720 & q36_v1 < . & country == 18
 * Romania - 12 values recoded (Todd to review)
 *replace q36 = . if q36 > 720 & q36 < . & country == 19
 * NA for Nigeria

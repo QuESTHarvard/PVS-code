@@ -273,8 +273,8 @@ ren q45 recq34
 ren q45_other recq34_other
 ren q46a recq35
 ren q46b recq36_v1
-ren q46 recq37_v1
-ren q46b_refused recq37b_refused
+ren q46 q37_v1
+ren q46b_refused q37b_refused
 
 ren q48_a recq38_a
 ren q48_b recq38_b
@@ -648,7 +648,7 @@ lab var q34_other "Q34. Other"
 lab var q35 "Q35. Was this a scheduled visit or did you go without an appt.?"
 lab var q36 "Q36. In days: how long between scheduling and seeing provider?"
 lab var q37 "Q37. In minutes: Approximately how long did you wait before seeing the provider?"
-lab var q37_other "Q37_Other. Other"
+lab var q37_v1_other "q37_v1_other. Other"
 lab var q37b_refused "Q37B. Refused (V1.0- Q46B refused)"
 lab var q38_a "Q38a. How would you rate the overall quality of care you received?"
 lab var q38_b "Q38b. How would you rate the knowledge and skills of your provider?"
