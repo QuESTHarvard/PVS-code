@@ -5,7 +5,7 @@
 /*
 
 This file cleans Ipsos data for China. 
-VERSION 2.0 of PVS 
+VERSION 1.0 of PVS 
 
 Cleaning includes:
 	- Recoding skip patterns, refused, and don't know 
@@ -110,7 +110,9 @@ rename q33other q33_other
 
 rename q34other q34_other
 
-rename q37other q37_other
+rename q36 q36_v1
+rename q37 q37_v1
+rename q37other q37_v1_other
 
 rename q38a q38_a
 rename q38b q38_b
@@ -260,7 +262,7 @@ recode q18 q21 q22 q23 q27_a q27_b q27i_cn q27j_cn q27_c q27_d q27_e q27_f q27_g
 recode q1 q2 q3 q4 q4_2 q5 q6 q7 q8 q9 q10 q11 q12_a q12_b ///
        q13 q14_cn q15 q16 q17 q18 q19 q20 q21 q22 q23 q24 q25 q26 q27_a ///
 	   q27_b q27i_cn q27j_cn q27_c q27_d q27_e q27_f q27_g q27_h q28_a q28_b q29 ///
-	   q30 q31_a q31_b q32_cn q33 q34 q35 q36 q37 q38_a ///
+	   q30 q31_a q31_b q32_cn q33 q34 q35 q36_v1 q37_v1 q38_a ///
 	   q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q39 q40_a q40_b ///
 	   q40_c q40_d q41_a q41_b q41_c q42 q43 q45 q46 q47 q48 q49 q50 q51 CELL1 CELL2 (999 = .r)
 	   
@@ -351,17 +353,17 @@ recode q30 (. = .a) if q29 == 0 | q29 == .r
 
 * q43-49 na's  43=32 44=33 45=34 46=35 47=drop 48_a=38_a ...k 49=39
 * There is one case where both q23 and q24 are missing, but they answered q43-49
-recode q32_cn q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_cn q33 q34 q35 q36_v1 q37_v1 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q19 == 1 | q19 == .r
 *648 changes to all
 	  	   	   
-recode q32_cn q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_cn q33 q34 q35 q36_v1 q37_v1 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (nonmissing = .a) if q18 == 0 | q19 == 1
 * 0 changes to all	   
 	      
 recode q33 (. = .a) if q32_cn == 3 | q32_cn == .r
 
-recode q36 (. = .a) if q35!=1 
+recode q36_v1 (. = .a) if q35!=1 
 
 recode q38_k (. = .a) if q35 == 0 | q35 == .r
 
@@ -478,17 +480,17 @@ lab def q35_label 0 "No, I did not have an appointment" ///
 lab val q35 q35_label 
 
 
-lab def q36_label 1 "Same or next day" 2 "2 days to less than one week" 3 "1 week to less than 2 weeks" ///
+lab def q36_v1_label 1 "Same or next day" 2 "2 days to less than one week" 3 "1 week to less than 2 weeks" ///
 				 4 "2 weeks to less than 1 month" 5 "1 month to less than 2 months" ///
 				 6 "2 months to less than 3 months" 7 "3 months to less than 6 months" 8 "6 months or more" ///
 				 .a "NA" .d "Don't Know" .r "Refused"
-lab val q36 q36_label 
+lab val q36_v1 q36_v1_label 
 
-lab def q37_label 1 "Less than 15 minutes" 2 "15 minutes to less than 30 minutes" ///
+lab def q37_v1_label 1 "Less than 15 minutes" 2 "15 minutes to less than 30 minutes" ///
 				 3 "30 minutes to less than 1 hour" 4 "1 hour to less than 2 hours" ///
 				 5 "2 hours to less than 3 hours" 6 "3 hours to less than 4 hours" ///
 				 7 "More than 4 hours (specify)" .a "NA" .d "Don't Know" .r "Refused"
-lab val q37 q37_label
+lab val q37_v1 q37_v1_label
 
 lab def YN_nojudge 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" 5 "I am unable to judge" ///
 				   .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
@@ -911,15 +913,15 @@ replace q34_other=".d" if q34_other=="不清楚" ///
 * 6-24 SS: matches code above
 replace q34 = .d if q34_other == ".d"	  
 
-replace q37=.r if q37_other=="不清楚"
-*replace q37_other = "" in 2259 // 6-24 SS: removed
+replace q37_v1=.r if q37_v1_other=="不清楚"
+*replace q37_v1_other = "" in 2259 // 6-24 SS: removed
 
 * 6-24 SS: updated
-replace q37 = 24 if q37_other == "第二天"
-replace q37 = 5 if q37_other == "4-5小时内"
-replace q37 = 48 if q37_other == "48小时" | q37_other == "两天"
-replace q37 = 9 if q37_other == "9小时"
-*destring q37_other, replace // 6-24 SS: removed	  	  
+replace q37_v1 = 24 if q37_v1_other == "第二天"
+replace q37_v1 = 5 if q37_v1_other == "4-5小时内"
+replace q37_v1 = 48 if q37_v1_other == "48小时" | q37_v1_other == "两天"
+replace q37_v1 = 9 if q37_v1_other == "9小时"
+*destring q37_v1_other, replace // 6-24 SS: removed	  	  
 
 	  
 replace q50_other = "蒙古族" if q50_other == "蒙族" | q50_other == "蒙古"
@@ -995,9 +997,9 @@ label variable q33_other "Q33_Other. Other type of healthcare facility"
 label variable q34 "Q34. What was the main reason you went?"
 label variable q34_other "Q34_Other. Other reasons"
 label variable q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"
-label variable q36 "Q36. How long did you wait in days, weeks, or months between scheduling the appointment and seeing the health care provider?"
-label variable q37 "Q37. At this most recent visit, once you arrived at the facility, approximately how long did you wait before seeing the provider?"
-label variable q37_other "Q37_Other. Other"
+label variable q36_v1 "q36_v1. How long did you wait in days, weeks, or months between scheduling the appointment and seeing the health care provider?"
+label variable q37_v1 "q37_v1. At this most recent visit, once you arrived at the facility, approximately how long did you wait before seeing the provider?"
+label variable q37_v1_other "q37_v1_Other. Other"
 label variable q38_a "Q38a. How would you rate the overall quality of care you received?"
 label variable q38_b "Q38b. How would you rate the knowledge and skills of your provider?"
 label variable q38_c "Q38c. How would you rate the equipment and supplies that the provider had?"
