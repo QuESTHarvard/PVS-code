@@ -1,6 +1,6 @@
 * People's Voice Survey main code file 
-* Date of last update: March 2025
-* Last updated by: S Sabwa
+* Date of last update: April 2025
+* Last updated by: S Sabwa, S Islam
 
 /* Purpose of code file: 
 	
@@ -29,11 +29,13 @@ macro drop _all
 *global user "/Users/nek096"
 *global user "/Users/catherine.arsenault"
 *global user "/Users/tol145"
-global user "/Users/shs8688"
+*global user "/Users/shs8688"
+global user "C:/Users/i.sayeda"
 
 
 * Setting file path globals
-global data "$user/Library/CloudStorage/Box-Box/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
+*global data "$user/Library/CloudStorage/Box-Box/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
+global data "$user/Box/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
 *global data "$user/Dropbox/SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
 
 * Path to multi-country data folder (includes input and output folders for data checks)
