@@ -25,15 +25,15 @@ foreach i in `countrylev' {
 		extremes q36 country if country == `i', high
 	}
 
-	foreach var in q21 q37 {
+	foreach var in q21 q37_v1 {
 		
 		extremes `var' country if country == `i', high
 	}
 }
 
 clonevar q21_original = q21
-clonevar q37_original = q37
-clonevar q36_origial = q36
+clonevar q37_original = q37_v1
+clonevar q36_origial = q36_v1
 
 * q21 (no issues)
 

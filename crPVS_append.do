@@ -647,7 +647,9 @@ lab var q34 "Q34. What was the main reason you went?"
 lab var q34_other "Q34. Other"
 lab var q35 "Q35. Was this a scheduled visit or did you go without an appt.?"
 lab var q36 "Q36. In days: how long between scheduling and seeing provider?"
+lab var q36_v1 "Q36. In days: how long between scheduling and seeing provider? (V1.0)"
 lab var q37 "Q37. In minutes: Approximately how long did you wait before seeing the provider?"
+lab var q37_v1 "Q37. In minutes: Approximately how long did you wait before seeing the provider? (V1.0)"
 lab var q37_v1_other "q37_v1_other. Other"
 lab var q37b_refused "Q37B. Refused (V1.0- Q46B refused)"
 lab var q38_a "Q38a. How would you rate the overall quality of care you received?"
@@ -718,6 +720,6 @@ lab var q52b_us "Q52b. US only: Do you lean more towards the Republican or Democ
 *------------------------------------------------------------------------------*
 *Save recoded data
 
-*save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
 
 *------------------------------------------------------------------------------*
