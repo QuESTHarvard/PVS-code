@@ -15,96 +15,6 @@
 u "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", clear
 
 *------------------------------------------------------------------------------*
-
-* Trim extreme values for for q21, q37 and q47_v1; q36 for IT, MX, US, KR and UK
-qui levelsof country, local(countrylev)
-
-foreach i in `countrylev' {
-	
-	if inlist(`i',12, 13, 14, 15, 17 18 19)  {
-		extremes q36 country if country == `i', high
-	}
-
-	foreach var in q21 q37 {
-		
-		extremes `var' country if country == `i', high
-	}
-}
-
-clonevar q21_original = q21
-clonevar q37_original = q37
-clonevar q36_origial = q36
-
-* q21 (no issues)
-
-* q37: Q37. In minutes: Approximately how long did you wait before seeing the provider?
-* Colombia okay
-* Ethiopia - 3 values recoded 
-replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 3
-* India - 1 value recoded 
-replace q37_v1 = . if q37_v1 > 730 & q37 < . & country == 4 
-* Kenya - 1 value recoded 
-replace q37_v1 = . if q37_v1 > 720 & q37 < . & country == 5
-* Peru okay
-* South Africa - 2 values recoded 
-replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 9
-* Uruguay okay, Lao okay, US okay, Mexico okay, Italy okay 
-* Korea - 1 value recoded 
-replace q37_v1 = . if q37_v1 > 780 & q37_v1 < . & country == 15
-* Mendoza - 2 values recoded
-replace q37_v1 = . if q37_v1 > 540 & q37_v1 < . & country == 16
-* UK - 3 values recoded
-replace q37_v1 = . if q37_v1 > 780 & q37_v1 < . & country == 17
-* Greece - 1 value recoded (Todd to review)
-replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 18
-* Romania -  1 value recoded (Todd to review)
-replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 19
-* Nigeria -  2 values recoded (Todd to review)
-replace q37_v1 = . if q37_v1 > 720 & q37_v1 < . & country == 20
-
-
-* q47_v1
-* Colombia okay 
-* Ethiopia - 6 values recoded
-replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 3 
-* India - 8 values recoded
-replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 4 
-* Kenya - 3 values recoded
-replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 5
-* Peru okay 
-* South Africa - 2 values recoded 
-replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 9 
-* Uruguay okay, Lao okay 
-* United States - 5 values recoded
-replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 12
-* Mexico okay 
-* Italy - 2 values recoded
-replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 14
-* Korea - 13 values recoded
-replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 15
-* Mendoza okay 
-* UK - 1 value recoded
-replace q47_v1 = . if q47_v1 > 560 & q47_v1 < . & country == 17 
-* Greece okay (Todd to review)
-* Romania okay (Todd to review)
-
-
-* q36
-* US - 4 values recoded 
-replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 12
-* Mexico okay 
-* Italy - 2 values recoded
-replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 14
-* Korea - 1 value recoded
-replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 15
-* UK - 2 values recoded 
-replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 17
-* Greece - 1 value recoded (Todd to review)
-replace q36_v1 = . if q36_v1 > 720 & q36_v1 < . & country == 18
-* Romania - 12 values recoded (Todd to review)
-*replace q36 = . if q36 > 720 & q36 < . & country == 19
-* NA for Nigeria
-
 ***************************** Derive variable creation
 
 * age: exact respondent age or middle of age range 
@@ -176,7 +86,7 @@ recode q16 (2 = 1 "Convenience (short distance)") ///
 			(3 5 10  = 4 "Interpersonal quality (short waiting time, respect)") ///
 			(6 = 5 "Service readiness (medicines and equipment available)") ///
 			(7 = 6 "Only facility available") ///
-			(.r 9 11 12 13 14 15 = .r "Other or Refused") ///
+			(.r 9 11 12 13 14 15 997 = .r "Other or Refused") ///
 			(.a = .a "NA") , gen(usual_reason)
 
 * visits
@@ -235,11 +145,11 @@ recode q30 (1 = 1 "Cost (High cost)") ///
 			(.a 7 = .a "NA or Illness not serious") ///
 			(.r = .r "Refused"), gen(unmet_reason)
 
-* last_reason
-gen last_reason = q34
-lab def lr 1 "Urgent or new problem" 2 "Follow-up for chronic disease" ///
-		   3 "Preventative or health check" 4 "Other" .a "NA" .r "Refused"
-lab val last_reason lr
+* last_reason - 4-4 SS: updated "other" category because SO has additional categories
+recode q34 (1 = 1 "Urgent or new problem") (2 = 2 "Follow-up for chronic disease") ///
+		   (3 = 3 "Preventative or health check") (4 5 6 7 8 9 10 11 = 4 "Other") (.a = .a "NA") ///
+		   (.r = .r "Refused"), gen(last_reason)
+
 
 *last_wait_time
 gen last_wait_time = 0 if q37 <= 15
@@ -275,8 +185,8 @@ lab val last_promote lp
 
 * system_outlook 
 gen system_outlook = q45
-lab def system_outlook 1 "Getting worse" 2 "Staying the same" /// 
-		3 "Getting better" .r "Refused", replace
+lab def system_outlook 0 "Getting worse" 1 "Staying the same" /// 
+		2 "Getting better" .r "Refused", replace
 lab val system_outlook system_outlook
 
 * system_reform 
@@ -374,6 +284,12 @@ recode phc_women(. = .r) if q40a_so == .r & country ==22
 gen phc_child = q40_b
 gen phc_chronic = q40_c
 gen phc_mental = q40_d
+
+*Recoding "Iam unable to judge = .d"
+recode phc_women phc_child phc_chronic phc_mental (5 = .d) if country == 21 | country == 22
+
+*"6 = "I am unable to judge" response option in Nepal-only being recoded to missing
+recode phc_women phc_child phc_chronic phc_mental (6 = .d) if country ==23
 
 gen qual_srh = q40_e_ng
 recode qual_srh (. = .a) if country !=20
@@ -534,7 +450,7 @@ recode usual_type_own (. = .d) if q14_cn == .d
 							   
 * usual type level		
 * SS: placed 21008 "CN: Other" in refused to match the other countries		  
-recode q15 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 ///
+recode q15 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5016 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 ///
 			9032 9033 9036 2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 ///
 			10104 14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
 			15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 ///
@@ -544,7 +460,7 @@ recode q15 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 902
 		   15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 17007 17008 17009 19121 19127 19123 19130 ///
 		   20133 20134 20138 20140 21001 21002 21003 = 1 "Secondary (or higher)") ///
 		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 18996 = .a "NA") ///
-		   (3995 9995 12995 4995 18995 20995 21008 .r = .r "Refused"), gen(usual_type_lvl)
+		   (3995 9995 12995 4995 18995 20995 21008 .r 3997 4997 5997 9997 = .r "Refused"), gen(usual_type_lvl)
 
 recode usual_type_lvl (.a = 0) if inlist(q14_q15a_la,2,4,6) | ///
 								  inlist(q14_q15b_la,2,4,6)
@@ -636,7 +552,7 @@ recode last_type_own (.a = .r) if q32_uy == .r | q32_it == .r | q32_mx == .r | /
 								  
 								  
 * last type level							  
-recode q33 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
+recode q33 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5016 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 		   2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
 		   14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
 		   15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 17006 ///
@@ -647,7 +563,7 @@ recode q33 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5017 5018 5020 902
 		   13019 13020 12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 4075 4076 17007 17008 17009 19121 ///
 		   19127 19130 19123 20133 20134 20138 20140 21001 21002 21003 22001 22004 = 1 "Secondary (or higher)") ///
 		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 = .a "NA") ///
-		   (.r 3995 9995 11995 12995 13995 4995 18995 20995 21008 22006 = .r "Refused"), gen(last_type_lvl)
+		   (.r 3995 9995 11995 12995 13995 4995 18995 20995 21008 22006 3997 5997 9997 = .r "Refused"), gen(last_type_lvl)
 
 * Greece recode
 recode last_type_lvl (.a = 0) if q33a_gr == 1 | q33a_gr == 2
@@ -712,19 +628,20 @@ replace minority = . if country == 22
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
 
-recode q51 (2039 2040 2041 3009 5001 7031 7032 9015 9016 9017 10049 ///
-		   10050 10051 11001 11002 12001 12002 13001 14001 14002 15001 15002 ///
-		   15003 15004 16001 16002 16003 17001 17002 4024 4025 18062 19068 ///
-		   20075 20076 20077 21001 21002 22001 = 0 "Lowest income") /// 
-		   (2042 2043 2044 3010 7033 9018 9019 10052 10053 10054 11003 ///
-		   11004 12003 13002 14003 15005 15006 16004 16005 17003 17004 4026 ///
-		   4027 18063 18064 ///
-		   18065 18066 18067 18082 18083 18084 19069 19070 19071 19072 19073 ///
-		   20078 20079 21003 21004 22002 = 1 "Middle income") /// 
-		   (2045 2048 3011 3012 3013 3014 5002 5003 5004 5005 5006 5007 7034 7035 ///
-		   7036 7037 7038 9020 9021 9022 9023 10055 10061 11005 11006 11007 12004 ///
+recode q51 (2039 2040 2041 3009 3111 4024 4025 4127 4128 4129 5001 5101 5102 5103 ///
+		   5104 5105 5106 5107 7031 7032 ///
+		   9015 9016 9017 9118 9119 9120 9121 10049 10050 10051 11001 11002 12001 ///
+		   12002 13001 14001 14002 15001 15002 15003 15004 16001 16002 16003 17001 ///
+		   17002 18062 19068 20075 20076 20077 21001 21002 22001 = 0 "Lowest income") /// 
+		   (2042 2043 2044 3010 3112 3113 4027 4130 4131 4132 7033 9018 9019 9122 ////
+		   9123 9124 10052 10053 10054 11003 11004 12003 13002 14003 15005 15006 ///
+		   16004 16005 17003 17004 4026 18063 18064 18065 18066 18067 18082 18083 ///
+		   18084 19069 19070 19071 19072 19073 20078 20079 21003 21004 22002 = 1 "Middle income") /// 
+		   (2045 2048 3011 3012 3013 3014 3114 3115 3116 3117 4028 4029 4030 4133 ///
+		   4134 4135 5002 5003 5004 5005 5006 5007 5108 5109 5110 7034 7035 7036 7037 7038 9020 9021 ///
+		   9022 9023 9125 9126 10055 10061 11005 11006 11007 12004 ///
 		   12005 13003 13004 13005 14004 14005 14006 14007 15007 15008 16005 16006 ///
-		   16007 17005 17006 4028 4029 4030 18085 19074 20080 20081 21005 21006 ///
+		   16007 17005 17006 18085 19074 20080 20081 21005 21006 ///
 		   22003 22004 22005 22006 22007 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
@@ -948,7 +865,7 @@ compress
 save "$data_mc/02 recoded data/pvs_all_countries_v2.dta", replace
 
 
-
+/*
 **************=Save individual datasets to recoded data folder****************
 
 *Colombia

@@ -178,6 +178,12 @@ format duration %tcHH:MM:SS
 gen int_length = (hh(duration)*60 + mm(duration) + ss(duration)/60)
 drop duration
 
+recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse") ///
+		   (.a = .a "NA") (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q45_label)
+
+drop q45
+ren rec* *		  
+
 *------------------------------------------------------------------------------*
 * Recode refused and don't know values 
 recode q14_so q18 q21 q22 q23 q27_a q27_b q27_c q27_d q27_f q27_g q27_h cell1 (998 = .d)
