@@ -449,10 +449,6 @@ label val q51 q51_label2
 
 label drop q4_label q5_label q20_label q62_label q44_label q63_label
 
-* Update CN data labels:
-recode q45 (0 = 1 "Getting worse") (1 = 2 "Staying the same") (2 = 3 "Getting better"), gen(recq45)
-drop q45
-
 recode q2 (0 = 1 "18 to 29") (1 = 2 "30-39") (2 = 3 "40-49" ) (3 = 4 "50-59") (4 = 5 "60-69") (5 = 6 "70-79") (6 = 7 "80+"), gen(recq2)
 drop q2
  

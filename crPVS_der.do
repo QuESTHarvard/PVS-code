@@ -185,8 +185,8 @@ lab val last_promote lp
 
 * system_outlook 
 gen system_outlook = q45
-lab def system_outlook 1 "Getting worse" 2 "Staying the same" /// 
-		3 "Getting better" .r "Refused", replace
+lab def system_outlook 0 "Getting worse" 1 "Staying the same" /// 
+		2 "Getting better" .r "Refused", replace
 lab val system_outlook system_outlook
 
 * system_reform 
@@ -284,6 +284,12 @@ recode phc_women(. = .r) if q40a_so == .r & country ==22
 gen phc_child = q40_b
 gen phc_chronic = q40_c
 gen phc_mental = q40_d
+
+*Recoding "Iam unable to judge = .d"
+recode phc_women phc_child phc_chronic phc_mental (5 = .d) if country == 21 | country == 22
+
+*"6 = "I am unable to judge" response option in Nepal-only being recoded to missing
+recode phc_women phc_child phc_chronic phc_mental (6 = .d) if country ==23
 
 gen qual_srh = q40_e_ng
 recode qual_srh (. = .a) if country !=20

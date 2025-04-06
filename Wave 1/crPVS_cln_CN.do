@@ -5,7 +5,7 @@
 /*
 
 This file cleans Ipsos data for China. 
-VERSION 1.0 of PVS 
+VERSION 2.0 of PVS 
 
 Cleaning includes:
 	- Recoding skip patterns, refused, and don't know 
@@ -251,6 +251,11 @@ label def q7_label 21001 "CN: Urban employee medical insurance" ///
 label values recq7 q7_label
 drop q7 
 
+recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse") ///
+		   (.a = .a "NA") (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q45_label)
+
+drop q45
+		   
 ren rec* *
 
 *------------------------------------------------------------------------------*
@@ -495,9 +500,6 @@ lab val q37_v1 q37_v1_label
 lab def YN_nojudge 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" 5 "I am unable to judge" ///
 				   .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
 lab val q40_a q40_b q40_c q40_d YN_nojudge	  
-
-lab def q45_label 1 "Getting better" 2 "Staying the same" 3 "Getting worse" .a "NA" .d "Don't Know" .r "Refused"
-lab val q45 q45_label
 
 lab def q46_label 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 				 2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///

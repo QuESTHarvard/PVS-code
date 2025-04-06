@@ -343,7 +343,11 @@ lab def q30_label 1 "High cost (e.g., high out of pocket payment, not covered by
 				 5 "Staff don't show respect (e.g., staff is rude, impolite, dismissive)" ///
 				 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
 				 7 "Illness not serious enough" 10 "Other (specify)" .a "NA" .d "Don't Know" .r "Refused"
-lab val q30 q30_label				 
+lab val q30 q30_label		
+
+recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse") ///
+		   (.a = .a "NA") (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q45_label)
+drop q45	 
 
 * Add value labels 
 label define q14 .a "NA" .d "Don't know" .r "Refused",add	
