@@ -341,6 +341,98 @@ ren q69_gr recq51_gr
 
 ren rec* *
 
+
+* Trim extreme values for for q21, q37_v1 and q47_v1; q36 for IT, MX, US, KR and UK - SS 4-3: moved this from the derived file because we no longer have these vars in continuous format in V2.0
+qui levelsof country, local(countrylev)
+
+foreach i in `countrylev' {
+	
+	if inlist(`i',12,13,14,15,17,18,19)  {
+		extremes q36_v1 country if country == `i', high
+	}
+
+	foreach var in q21 q37_v1 {
+		
+		extremes `var' country if country == `i', high
+	}
+}
+
+
+clonevar q21_original = q21
+clonevar q37_original = q37_v1
+clonevar q36_origial = q36_v1
+
+* q21 (no issues)
+
+* q37: Q37. In minutes: Approximately how long did you wait before seeing the provider?
+* Colombia okay
+* Ethiopia - 3 values recoded 
+replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 3
+* India - 1 value recoded 
+replace q37_v1 = . if q37_v1 > 730 & q37_v1 < . & country == 4 
+* Kenya - 1 value recoded 
+replace q37_v1 = . if q37_v1 > 720 & q37_v1 < . & country == 5
+* Peru okay
+* South Africa - 2 values recoded 
+replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 9
+* Uruguay okay, Lao okay, US okay, Mexico okay, Italy okay 
+* Korea - 1 value recoded 
+replace q37_v1 = . if q37_v1 > 780 & q37_v1 < . & country == 15
+* Mendoza - 2 values recoded
+replace q37_v1 = . if q37_v1 > 540 & q37_v1 < . & country == 16
+* UK - 3 values recoded
+replace q37_v1 = . if q37_v1 > 780 & q37_v1 < . & country == 17
+* Greece - 1 value recoded (Todd to review)
+replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 18
+* Romania -  1 value recoded (Todd to review)
+replace q37_v1 = . if q37_v1 > 600 & q37_v1 < . & country == 19
+* Nigeria -  2 values recoded (Todd to review)
+replace q37_v1 = . if q37_v1 > 720 & q37_v1 < . & country == 20
+
+
+* q47_v1
+* Colombia okay 
+* Ethiopia - 6 values recoded
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 3 
+* India - 8 values recoded
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 4 
+* Kenya - 3 values recoded
+replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 5
+* Peru okay 
+* South Africa - 2 values recoded 
+replace q47_v1 = . if q47_v1 > 600 & q47_v1 < . & country == 9 
+* Uruguay okay, Lao okay 
+* United States - 5 values recoded
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 12
+* Mexico okay 
+* Italy - 2 values recoded
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 14
+* Korea - 13 values recoded
+replace q47_v1 = . if q47_v1 >= 600 & q47_v1 < . & country == 15
+* Mendoza okay 
+* UK - 1 value recoded
+replace q47_v1 = . if q47_v1 > 560 & q47_v1 < . & country == 17 
+* Greece okay (Todd to review)
+* Romania okay (Todd to review)
+
+
+* q36
+* US - 4 values recoded 
+replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 12
+* Mexico okay 
+* Italy - 2 values recoded
+replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 14
+* Korea - 1 value recoded
+replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 15
+* UK - 2 values recoded 
+replace q36_v1 = . if q36_v1 > 365 & q36_v1 < . & country == 17
+* Greece - 1 value recoded (Todd to review)
+replace q36_v1 = . if q36_v1 > 720 & q36_v1 < . & country == 18
+* Romania - 12 values recoded (Todd to review)
+*replace q36 = . if q36 > 720 & q36 < . & country == 19
+* NA for Nigeria
+
+***************** For appending purposes:
 label copy q4_label q5_label2
 label copy q5_label q4_label2
 label copy q20_label q15_label2
@@ -480,6 +572,7 @@ lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic ha
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities", modify
+lab def q15_label2 5016 "Mobile clinic", modify
 
 *** Code for survey set ***
 gen respondent_num = _n 

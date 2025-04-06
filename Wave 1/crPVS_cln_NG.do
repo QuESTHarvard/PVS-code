@@ -27,7 +27,7 @@ rename *, lower
  
 notes drop _all
 
-drop weight
+drop weight rim_education
 
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
