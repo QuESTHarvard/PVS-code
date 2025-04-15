@@ -152,6 +152,7 @@ recode q34 (1 = 1 "Urgent or new problem") (2 = 2 "Follow-up for chronic disease
 
 
 *last_wait_time
+* SS: updated 4-15-25 with V2.0 var - ask Todd about categories 
 gen last_wait_time = 0 if q37_v1 <= 15
 recode last_wait_time (. = 1) if q37_v1 >= 15 & q37_v1 < 60
 recode last_wait_time (. = 2) if q37_v1 >= 60 & q37_v1 < .
@@ -168,8 +169,21 @@ recode last_wait_time (. = .a) if q37 == .a
 recode last_wait_time (. = .r) if q37 == .r
 
 *last_sched_time
-gen last_sched_time = q36_v1
-lab val last_sched_time na_rf
+* SS: updated 4-15-25 with V2.0 var 
+gen last_sched_time = 0 if q36_v1 <=1 // same or next day
+replace last_sched_time = 1 if q36_v1 >1 & q36_v1 <7 // 2 days to less than one week (confirm 7 days = 1 week)
+replace last_sched_time = 2 if q36_v1 >=7 & q36_v1 <14 // 1 week to less than 2 weeks
+replace last_sched_time = 3 if q36_v1 >=14 & q36_v1 <30 // 2 weeks to less than 1 month
+replace last_sched_time = 4 if q36_v1 >=30 & q36_v1 <60 // 1 month to less than 2 months
+replace last_sched_time = 5 if q36_v1 >=60 & q36_v1 <90 // 2 months to less than 3 months
+replace last_sched_time = 6 if q36_v1 >=90 & q36_v1 <180 // 3 months to less than 6 months
+replace last_sched_time = 7 if q36_v1 >=180 // 6 months or more
+
+lab def last_sched_time 0 "Same or next day" 1 "2 days to less than one week" 2 "1 week to less than 2 weeks" ///
+						3 "2 weeks to less than 1 month" 4 "1 month to less than 2 months" ///
+						5 "2 months to less than 3 months" 6 "3 months to less than 6 months" ///
+						7 "6 months or more" .a "NA" .r "Refused"
+lab val last_sched_time last_sched_time						
 
 *last_visit_time_v1
 gen last_visit_time_v1 = 0 if q47_v1 <= 15
@@ -376,8 +390,7 @@ recode q7 (2017 2018 3001 5003 2017 2018 7010 10019 11002 12002 12003 ///
 
 recode insur_type (.a = 1) if q6_za == 1
 recode insur_type (.a = 1) if q7_kr == 1
-recode insur_type (.a = 0) if q7_kr == 0
-		 	  
+recode insur_type (.a = 0) if q7_kr == 0		 	  
 		  
 * education
 recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 ///
