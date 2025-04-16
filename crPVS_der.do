@@ -152,7 +152,7 @@ recode q34 (1 = 1 "Urgent or new problem") (2 = 2 "Follow-up for chronic disease
 
 
 *last_wait_time
-* SS: updated 4-15-25 with V2.0 var - ask Todd about categories 
+* SS: updated 4-15-25 with V2.0 var 
 gen last_wait_time = 0 if q37_v1 <= 15
 recode last_wait_time (. = 1) if q37_v1 >= 15 & q37_v1 < 60
 recode last_wait_time (. = 2) if q37_v1 >= 60 & q37_v1 < .

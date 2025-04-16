@@ -99,12 +99,6 @@ gen recq46 = (hh(q46)*60 + mm(q46))
 format q46b %tcHH:MM:SS
 gen recq46b = (hh(q46b)*60 + mm(q46b) + ss(q46b)/60) 
 
-
-/*To run this command q46 has to be converted from numeric to string, however q46 cannoted be converted reversibly because the data we received already converted string to numeric - need to request the q46 var as the original format (string)
-
-split q46 , parse(:) gen(interim_q46)
- gen new_q46=interim_q46_1 + interim_q46_2/60 */
-
 format q47 %tcMM:SS
 gen recq47 = (hh(q47)*60 + mm(q47)) 
 
@@ -203,7 +197,7 @@ recode q47_refused (. = 0) if q47 != .
 
 * Drop unused variables 
 
-drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q42 q44 q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language // q46b
+drop respondent_id ecs_id time_new intlength q2 q4 q5 q8 q20 q21 q45 q42 q44 q47 q62 q63 q66 rim_age rim_gender rim_region rim_eduction dw_overall interviewer_id interviewer_gender interviewer_language language 
 
 *------------------------------------------------------------------------------*
 
@@ -502,7 +496,7 @@ label define labels26 .a "NA" .r "Refused" .d "Don't know",modify
 drop date q3 q6 q9 q10 q11 q12 q13 q14 q15 q16 q17 q18 q22 q24 q25_a ///
 	 q26 q28_c q29 q41 q30 q31 q32 q33 q34 q35 q36 q37_ro q38 q39 q40 q41 q46a ///
 	  q48_a q48_b q48_c q48_d q48_f q48_g q48_h q48_i q48_k ///
-	 q54 q55 q59 q60 q61 q22 recq46 q46b q48_e q48_j q49 q50_a ///
+	 q54 q55 q59 q60 q61 q22 q46 q46b q48_e q48_j q49 q50_a ///
 	 q50_b q50_c q50_d q51 q52 q53 q54 q55 q56_ro q57 q59 q60 q61 q64 weight
 	 
 ren rec* *
