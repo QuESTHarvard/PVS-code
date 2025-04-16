@@ -170,21 +170,15 @@ recode last_wait_time (. = .r) if q37 == .r
 
 *last_sched_time
 * SS: updated 4-15-25 with V2.0 var 
-gen last_sched_time = 0 if q36_v1 <=1 // same or next day
-replace last_sched_time = 1 if q36_v1 >1 & q36_v1 <7 // 2 days to less than one week (confirm 7 days = 1 week)
-replace last_sched_time = 2 if q36_v1 >=7 & q36_v1 <14 // 1 week to less than 2 weeks
-replace last_sched_time = 3 if q36_v1 >=14 & q36_v1 <30 // 2 weeks to less than 1 month
-replace last_sched_time = 4 if q36_v1 >=30 & q36_v1 <60 // 1 month to less than 2 months
-replace last_sched_time = 5 if q36_v1 >=60 & q36_v1 <90 // 2 months to less than 3 months
-replace last_sched_time = 6 if q36_v1 >=90 & q36_v1 <180 // 3 months to less than 6 months
-replace last_sched_time = 7 if q36_v1 >=180 // 6 months or more
 
-lab def last_sched_time 0 "Same or next day" 1 "2 days to less than one week" 2 "1 week to less than 2 weeks" ///
-						3 "2 weeks to less than 1 month" 4 "1 month to less than 2 months" ///
-						5 "2 months to less than 3 months" 6 "3 months to less than 6 months" ///
-						7 "6 months or more" .a "NA" .r "Refused"
-lab val last_sched_time last_sched_time						
+recode q36 (1 2 3 = 0 "Short (less than 2 weeks)") (4 5 6 = 1 "Moderate (2 weeks to 3 months)") ///
+		   (7 8 = 2 "Long (3 months or greater)") (.a = .a "NA") (.r = .r "Refused") ///
+		   (.d = .d "Don't know"), gen(last_sched_time)
 
+recode last_sched_time (.a = 0) if q36_v1 <=14 
+recode last_sched_time (.a = 1) if q36_v1 >14 & q36_v1 <90 
+recode last_sched_time (.a = 2) if q36_v1 >=90 & q36_v1 < .
+						
 *last_visit_time_v1
 gen last_visit_time_v1 = 0 if q47_v1 <= 15
 recode last_visit_time_v1 (. = 1) if q47_v1 > 15 & q47_v1 < .
