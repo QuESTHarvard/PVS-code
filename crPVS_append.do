@@ -570,7 +570,7 @@ lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had
 lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities", modify
 lab def q15_label2 5016 "Mobile clinic", modify
 
-*** Code for survey set ***
+*** Code for survey set: For accurate SEs when using mixed CATI/CAWI and F2F surveys ***
 gen respondent_num = _n 
 sort mode psu_id respondent_num
 gen short_id = _n if mode == 1 | mode == 3
