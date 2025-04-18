@@ -36,6 +36,10 @@ drop q1_q2
 *dropping interviewer vars:
 drop ecs_id start_time end_time interviewer_id interviewer_gender interviewer_language time_new
 
+*psu_id for ET/KE:
+gen psu_id = .
+replace psu_id = q4*1002 if mode == 2 & (country == 5 | country == 3) & q4 !=999
+
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
@@ -263,7 +267,7 @@ recode q18_q19 (998 999 = 10) if q19 == 4
 
 * In raw data, 997 = "don't know" 
 recode q14 q18 q21 q22 q23 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h ///
-	   q32 cell1 cell2 q18_q19 (998 = .d)
+	   q32 cell1 cell2 q18_q19 psu_id (998 = .d)
 	   
 *NOTE: currently in data q37_za "don't know" is category 3  
 
@@ -273,7 +277,7 @@ recode q1 q3 q6 q9 q10 q11 q12_a q12_b q13 q14 q16 q17 q18 q19 q20 q21 ///
 	   q28_b q29 q30 q31a q31b q32 q34 q35 q36 q37 q38_a q38_b q38_c ///
 	   q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q39 q40_a q40_b q40_c ///
 	   q40_d q41_a q41_b q41_c q42 q43 q44 q45 q46 q47 q48 q49 cell1 ///
-	   cell2 q6_za q18_q19 (999 = .r)	
+	   cell2 q6_za q18_q19 psu_id (999 = .r)	
 	   
 *------------------------------------------------------------------------------*
 * Check for implausible values 
