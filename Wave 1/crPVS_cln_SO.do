@@ -32,12 +32,7 @@ notes drop _all
 * Rename some variables, and some recoding if variable will be dropped 
 
 gen psu_id = ""
-replace psu_id = "SO1" if mode == 2 & q4 == 1
-replace psu_id = "SO2" if mode == 2 & q4 == 2
-replace psu_id = "SO3" if mode == 2 & q4 == 3
-replace psu_id = "SO4" if mode == 2 & q4 == 4
-replace psu_id = "SO5" if mode == 2 & q4 == 5
-replace psu_id = "SO6" if mode == 2 & q4 == 6
+replace psu_id = "SO" + string(q4) if mode == 2
 
 gen wave = 1
 
