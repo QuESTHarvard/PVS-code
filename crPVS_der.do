@@ -152,19 +152,33 @@ recode q34 (1 = 1 "Urgent or new problem") (2 = 2 "Follow-up for chronic disease
 
 
 *last_wait_time
-gen last_wait_time = 0 if q37 <= 15
-recode last_wait_time (. = 1) if q37 >= 15 & q37 < 60
-recode last_wait_time (. = 2) if q37 >= 60 & q37 < .
-recode last_wait_time (. = .a) if q37 == .a
-recode last_wait_time (. = .r) if q37 == .r
+* SS: updated 4-15-25 with V2.0 var 
+gen last_wait_time = 0 if q37_v1 <= 15
+recode last_wait_time (. = 1) if q37_v1 >= 15 & q37_v1 < 60
+recode last_wait_time (. = 2) if q37_v1 >= 60 & q37_v1 < .
+recode last_wait_time (. = .a) if q37_v1 == .a
+recode last_wait_time (. = .r) if q37_v1 == .r
 lab def lwt 0 "Short (15 minutes)" 1 "Moderate (< 1 hour)" 2 "Long (>= 1 hour)" ///
 			.r "Refused" .a "NA"
 lab val last_wait_time lwt
 
-*last_sched_time
-gen last_sched_time = q36
-lab val last_sched_time na_rf
+recode last_wait_time (. = 0) if q37 == 1
+recode last_wait_time (. = 1) if q37 == 2 | q37 == 3
+recode last_wait_time (. = 2) if q37 == 4 | q37 == 5 | q37 == 6 | q37 == 7
+recode last_wait_time (. = .a) if q37 == .a
+recode last_wait_time (. = .r) if q37 == .r
 
+*last_sched_time
+* SS: updated 4-15-25 with V2.0 var 
+
+recode q36 (1 2 3 = 0 "Short (less than 2 weeks)") (4 5 6 = 1 "Moderate (2 weeks to 3 months)") ///
+		   (7 8 = 2 "Long (3 months or greater)") (.a = .a "NA") (.r = .r "Refused") ///
+		   (.d = .d "Don't know"), gen(last_sched_time)
+
+recode last_sched_time (.a = 0) if q36_v1 <=14 
+recode last_sched_time (.a = 1) if q36_v1 >14 & q36_v1 <90 
+recode last_sched_time (.a = 2) if q36_v1 >=90 & q36_v1 < .
+						
 *last_visit_time_v1
 gen last_visit_time_v1 = 0 if q47_v1 <= 15
 recode last_visit_time_v1 (. = 1) if q47_v1 > 15 & q47_v1 < .
@@ -370,8 +384,7 @@ recode q7 (2017 2018 3001 5003 2017 2018 7010 10019 11002 12002 12003 ///
 
 recode insur_type (.a = 1) if q6_za == 1
 recode insur_type (.a = 1) if q7_kr == 1
-recode insur_type (.a = 0) if q7_kr == 0
-		 	  
+recode insur_type (.a = 0) if q7_kr == 0		 	  
 		  
 * education
 recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 ///
@@ -645,28 +658,6 @@ recode q51 (2039 2040 2041 3009 3111 4024 4025 4127 4128 4129 5001 5101 5102 510
 		   22003 22004 22005 22006 22007 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
-* Recode extreme values to missing 
-
-* All visit count variables and wait time variables:
-
-* q18, q22, q23
-
-* Mia's note: check extreme values for Nigeria needed
-qui levelsof country, local(countrylev)
-
-foreach i in `countrylev' {
-	
-	if !inlist(`i', 12, 13, 14, 17) {
-		extremes visits_home country if country == `i', high
-	}
-	
-	foreach var in visits visits_tele {
-
-		
-		extremes `var' country if country == `i', high
-	}
-}
-
 * Colombia q23 values seem implausible
 recode visits_tele (80 = .) if country == 2 
 * Ethiopia: 92 visits for q28 
@@ -703,47 +694,34 @@ recode visits_tele (60 = .) if country == 20  // 1 change
 *China
 replace visits = . if visits > 70 & visits < . & country == 21 // 1 change 
 
+* Recode extreme values to missing 
 
-*** New country var based on region ***
-recode country (22 = 1 "Somaliland") (3 = 2 "Ethiopia") (5 = 3 "Kenya") ///
-			   (20 = 4 "Nigeria") (9 = 5 "South Africa") ///
-			   (7 = 6 "Peru") (2 = 7 "Colombia") ///
-			   (13 = 8 "Mexico") (10 = 9 "Uruguay") ///
-			   (16 = 10 "Argentina") (11 = 11 "Lao PDR") (23 = 12 "Nepal") ///
-			   (4 = 13 "India") (21 = 14 "China") (15 = 15 "Rep. of Korea") ///
-			   (19 = 16 "Romania") (18 = 17 "Greece") ///
-			   (14 = 18 "Italy") (17 = 19 "United Kingdom") ///
-			   (12 = 20 "United States"), gen(country_reg)
-lab var country_reg "Country (ordered by region)" 
+* All visit count variables and wait time variables:
 
+* q18, q22, q23
 
-* Drop trimmed q21 q37 q47 and get back the orignal var
-drop q21 q37 q36
-rename q21_original q21
-rename q37_original q37
-*rename q47_original q47_v1
-rename q36_origial q36
+* Mia's note: check extreme values for Nigeria needed
+qui levelsof country, local(countrylev)
+
+foreach i in `countrylev' {
+	
+	if !inlist(`i', 12, 13, 14, 17) {
+		extremes visits_home country if country == `i', high
+	}
+	
+	foreach var in visits visits_tele {
+
+		
+		extremes `var' country if country == `i', high
+	}
+}
+
 
 *adding "NA" for countries' that don't have V1.0 vars
-recode q12_v1 q13_v1 q13b_co_pe_uy_ar_v1 q13e_co_pe_uy_ar_v1 q14_la_v1 ///
-	   q14_v1 q15_la_v1 q15_v1 q25_a_v1 q25_b_v1 q46_refused_v1 q47_refused_v1 q47_v1 covid_vax_v1 ///
+recode covid_vax_v1 ///
 	   covid_vax_intent_v1 visits_covid_v1 last_visit_time_v1 ever_covid_v1 covid_confirmed_v1 ///
-	   (. = .a) if country == 21 | country == 22
+	   (. = .a) if country == 21 | country == 22 | country == 23
 
-/*
-*** Political alignment***
-
-**Import excel as updatas and save it as .dta
-/*import excel "$data_mc/03 input output/Input/Policial alignment variable/Pol_align_recode_all.xlsx", sheet("pol_al") firstrow clear
-destring q5 pol_align, replace float
-save "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta", replace
-*/
-
-merge m:m q4 using "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta" 
-drop _merge
-lab def pol_align 0 "Aligned (in favor)" 1 "Not aligned (out of favor)" .a "NA"
-lab val pol_align pol_align
-*/
 
 *****************************
 

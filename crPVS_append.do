@@ -272,9 +272,9 @@ ren q44b_gr_other recq33b_gr_other
 ren q45 recq34 
 ren q45_other recq34_other
 ren q46a recq35
-ren q46b recq36_v1
+ren q46b q36_v1
 ren q46 q37_v1
-ren q46b_refused q37b_refused
+ren q46b_refused q37b_refused_v1
 
 ren q48_a recq38_a
 ren q48_b recq38_b
@@ -360,7 +360,7 @@ foreach i in `countrylev' {
 
 clonevar q21_original = q21
 clonevar q37_original = q37_v1
-clonevar q36_origial = q36_v1
+clonevar q36_original = q36_v1
 
 * q21 (no issues)
 
@@ -431,6 +431,32 @@ replace q36_v1 = . if q36_v1 > 720 & q36_v1 < . & country == 18
 * Romania - 12 values recoded (Todd to review)
 *replace q36 = . if q36 > 720 & q36 < . & country == 19
 * NA for Nigeria
+
+* Drop trimmed q21 q37 q47 and get back the orignal var
+drop q21 q37_v1 q36_v1
+rename q21_original q21
+rename q37_original q37_v1
+rename q36_original q36_v1
+
+*adding "NA" for countries' that don't have V1.0 vars
+recode q12_v1 q13_v1 q13b_co_pe_uy_ar_v1 q13e_co_pe_uy_ar_v1 q14_la_v1 ///
+	   q14_v1 q15_la_v1 q15_v1 q25_a_v1 q25_b_v1 q46_refused_v1 q47_refused_v1 q47_v1  ///
+	   (. = .a) if country == 21 | country == 22 | country == 23
+
+/*
+*** Political alignment***
+
+**Import excel as updatas and save it as .dta
+/*import excel "$data_mc/03 input output/Input/Policial alignment variable/Pol_align_recode_all.xlsx", sheet("pol_al") firstrow clear
+destring q5 pol_align, replace float
+save "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta", replace
+*/
+
+merge m:m q4 using "$data_mc/03 input output/Input/Policial alignment variable/pol_align.dta" 
+drop _merge
+lab def pol_align 0 "Aligned (in favor)" 1 "Not aligned (out of favor)" .a "NA"
+lab val pol_align pol_align
+*/
 
 ***************** For appending purposes:
 label copy q4_label q5_label2
@@ -527,7 +553,7 @@ recode q14_mx q32_mx q44a_mx q44b_mx q50_mx (. = .a) if country != 13
 
 recode q50a_us q50b_us q52a_us q52b_us (. = .a) if country != 12
 
-recode q25 q35 q36 q37b_refused q38_k (. = .a) if country != 12 | country != 13 | country != 14	
+recode q25 q35 q36 q37b_refused_v1 q38_k (. = .a) if country != 12 | country != 13 | country != 14	
 	   
 recode q52 (. = .a) if country != 13 | country != 14 | country != 15
 
@@ -548,7 +574,7 @@ recode q14_ar q32_ar q44a_ar q44b_ar q44c_ar (. = .a) if country != 16
 
 recode q27i_gr_in_ro (. = .a) if country != 4 | country != 18 | country != 19
 
-recode CELL1 CELL2 q37b_refused q47_refused_v1 (. = .a) if country == 15 
+recode CELL1 CELL2 q37b_refused_v1 q47_refused_v1 (. = .a) if country == 15 
 
 recode q6_gb q14a_gb q14b_gb q32a_gb q32b_gb q50_gb q52_gb (. = .a) if country != 17
 
@@ -562,6 +588,13 @@ recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
 
 recode q7_ke (. = .a) if country !=5 | wave !=2
 
+recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country == 5 | country == 7 ///
+						 | country == 9 | country == 10 | country == 11 | country == 16 | country == 20 | ///
+						 country != 21 | country != 22 | country != 23 | wave ==2	
+
+*For V1.0 countries that didn't have the new q37 var in V2.0				 
+recode q37 (. = .a) if country != 21 | country != 22 | country != 23 | wave !=2					 
+						 
 * Other value label modifcations
 lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
@@ -570,7 +603,21 @@ lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had
 lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities", modify
 lab def q15_label2 5016 "Mobile clinic", modify
 
+
+*** New country var based on region ***
+recode country (22 = 1 "Somaliland") (3 = 2 "Ethiopia") (5 = 3 "Kenya") ///
+			   (20 = 4 "Nigeria") (9 = 5 "South Africa") ///
+			   (7 = 6 "Peru") (2 = 7 "Colombia") ///
+			   (13 = 8 "Mexico") (10 = 9 "Uruguay") ///
+			   (16 = 10 "Argentina") (11 = 11 "Lao PDR") (23 = 12 "Nepal") ///
+			   (4 = 13 "India") (21 = 14 "China") (15 = 15 "Rep. of Korea") ///
+			   (19 = 16 "Romania") (18 = 17 "Greece") ///
+			   (14 = 18 "Italy") (17 = 19 "United Kingdom") ///
+			   (12 = 20 "United States"), gen(country_reg)
+lab var country_reg "Country (ordered by region)" 
+
 *** Code for survey set: For accurate SEs when using mixed CATI/CAWI and F2F surveys ***
+
 gen respondent_num = _n 
 sort mode psu_id respondent_num
 gen short_id = _n if mode == 1 | mode == 3
@@ -597,7 +644,6 @@ drop respondent_num interviewer_gender interviewer_id time q1_codes intervieweri
 order q*, sequential
 order respondent_serial respondent_id mode country wave language date ///
 	  int_length psu_id_for_svy_cmds weight 		  
-
 
 * Label variables
 lab var respondent_serial "Respondent serial"
@@ -740,7 +786,7 @@ lab var q36_v1 "Q36. In days: how long between scheduling and seeing provider? (
 lab var q37 "Q37. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var q37_v1 "Q37. In minutes: Approximately how long did you wait before seeing the provider? (V1.0)"
 lab var q37_v1_other "q37_v1_other. Other"
-lab var q37b_refused "Q37B. Refused (V1.0- Q46B refused)"
+lab var q37b_refused_v1 "Q37B. Refused (V1.0- Q46B refused)"
 lab var q38_a "Q38a. How would you rate the overall quality of care you received?"
 lab var q38_b "Q38b. How would you rate the knowledge and skills of your provider?"
 lab var q38_c "Q38c. How would you rate the equipment and supplies that the provider had?"

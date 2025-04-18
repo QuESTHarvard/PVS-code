@@ -31,6 +31,9 @@ notes drop _all
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
+gen psu_id = ""
+replace psu_id = "SO" + string(q4) if mode == 2
+
 gen wave = 1
 
 gen reccountry = 22
