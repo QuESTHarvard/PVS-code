@@ -603,6 +603,7 @@ lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had
 lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities", modify
 lab def q15_label2 5016 "Mobile clinic", modify
 
+
 *** New country var based on region ***
 recode country (22 = 1 "Somaliland") (3 = 2 "Ethiopia") (5 = 3 "Kenya") ///
 			   (20 = 4 "Nigeria") (9 = 5 "South Africa") ///
@@ -615,7 +616,8 @@ recode country (22 = 1 "Somaliland") (3 = 2 "Ethiopia") (5 = 3 "Kenya") ///
 			   (12 = 20 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
-*** Code for survey set ***
+*** Code for survey set: For accurate SEs when using mixed CATI/CAWI and F2F surveys ***
+
 gen respondent_num = _n 
 sort mode psu_id respondent_num
 gen short_id = _n if mode == 1 | mode == 3
