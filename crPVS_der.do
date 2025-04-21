@@ -426,6 +426,10 @@ recode usual_type_own (.a = 0) if country == 10 & q14_uy == 1
 recode usual_type_own (.a = 1) if country == 10 & q14_uy == 2
 recode usual_type_own (.a = 2) if country == 10 & q14_uy == 5
 
+*China/Somaliland recode
+recode usual_type_own (.a = 0) if q14_cn == 1 | q14_so == 1
+recode usual_type_own (.a = 1) if q14_cn == 2 | q14_so == 2
+
 *Multi-country - generally adding here:
 recode usual_type_own (.a = 0) if (q14_q15a_la == 1 | q14_q15a_la == 2 |  ///
 								  q14_q15b_la == 1 | q14_q15b_la == 2 | ///
@@ -453,13 +457,6 @@ recode usual_type_own (.a = .r) if q14_q15a_la == .r | q14_q15b_la == .r | ///
 								   (q15 == .r & country == 12) | q14_kr == .r | ///
 								   q14_ar == .r | q14a_gb == .r | q14b_gb == .r | ///
 								   q14_cn == .r
-
-*China recode
-recode usual_type_own (. = 0) if q14_cn == 1 | q14_so == 1
-recode usual_type_own (. = 1) if q14_cn == 2 | q14_so == 2
-recode usual_type_own (. = 2) if q14_cn == 3
-recode usual_type_own (. = .a) if q14_cn == .a
-recode usual_type_own (. = .d) if q14_cn == .d
 							   
 * usual type level		
 * SS: placed 21008 "CN: Other" in refused to match the other countries		  
