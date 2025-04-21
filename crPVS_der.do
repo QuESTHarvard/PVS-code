@@ -169,15 +169,15 @@ recode last_wait_time (. = .a) if q37 == .a
 recode last_wait_time (. = .r) if q37 == .r
 
 *last_sched_time
-* SS: updated 4-15-25 with V2.0 var 
+* SS: updated 4-15-25 with V2.0 var: same or next day, 2 days to 1 week, and greater than one week
 
-recode q36 (1 2 3 = 0 "Short (less than 2 weeks)") (4 5 6 = 1 "Moderate (2 weeks to 3 months)") ///
-		   (7 8 = 2 "Long (3 months or greater)") (.a = .a "NA") (.r = .r "Refused") ///
+recode q36 (1 = 0 "Short (Same or next day)") (2 = 1 "Moderate (2 days to less than 1 week)") ///
+		   (3 4 5 6 7 8 = 2 "Long (1 week or greater)") (.a = .a "NA") (.r = .r "Refused") ///
 		   (.d = .d "Don't know"), gen(last_sched_time)
 
-recode last_sched_time (.a = 0) if q36_v1 <=14 
-recode last_sched_time (.a = 1) if q36_v1 >14 & q36_v1 <90 
-recode last_sched_time (.a = 2) if q36_v1 >=90 & q36_v1 < .
+recode last_sched_time (.a = 0) if q36_v1 <=1 
+recode last_sched_time (.a = 1) if q36_v1 >1 & q36_v1 <7 
+recode last_sched_time (.a = 2) if q36_v1 >=7 & q36_v1 < .
 						
 *last_visit_time_v1
 gen last_visit_time_v1 = 0 if q47_v1 <= 15
