@@ -455,11 +455,11 @@ recode usual_type_own (.a = .r) if q14_q15a_la == .r | q14_q15b_la == .r | ///
 								   q14_cn == .r
 
 *China recode
-recode usual_type_own (. = 0) if q14_cn == 1 | q14_so == 1
-recode usual_type_own (. = 1) if q14_cn == 2 | q14_so == 2
-recode usual_type_own (. = 2) if q14_cn == 3
-recode usual_type_own (. = .a) if q14_cn == .a
-recode usual_type_own (. = .d) if q14_cn == .d
+recode usual_type_own (.a = 0) if q14_cn == 1 | q14_so == 1
+recode usual_type_own (.a = 1) if q14_cn == 2 | q14_so == 2
+recode usual_type_own (.a = 2) if q14_cn == 3
+*recode usual_type_own (.a = .a) if q14_cn == .a
+recode usual_type_own (.a = .d) if q14_cn == .d | q14_so == .d
 							   
 * usual type level		
 * SS: placed 21008 "CN: Other" in refused to match the other countries		  
