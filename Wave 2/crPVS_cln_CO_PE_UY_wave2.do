@@ -363,7 +363,6 @@ recode cell1 (. = .a) if mode !=1
 recode cell2 (. = .a) if cell1 !=1
 									 
 *------------------------------------------------------------------------------*
-* Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:
 
 * q2 - just fixing labels (not creating new var)
@@ -380,23 +379,30 @@ recode q3 ///
 	pre(rec) label(gender2)
 				 
 				 
-* All Yes/No questions
-recode q11 q13 /// 
-	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (.a = .a "NA"), ///
+********* All Yes/No questions *********
+recode q11 q13 q20 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a /// 
+		q28_b q29 ///
+	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (.a = .a "NA") ///
+	   (.d = .d "Don't know")  ///
 	   pre(rec) label(yes_no)					 
 
-* All Excellent to Poor scales
-
-recode q9 q10  ///
+********* All Excellent to Poor scales *********
+recode q9 q10 q25 ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
-	   (5 = 0 "Poor") .r = .r "Refused") (.a = .a "NA"), /// 
+	   (5 = 0 "Poor") (.r = .r "Refused") (.a = .a "NA"), /// 
 	   pre(rec) label(exc_poor)
 	   
-recode q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j ///
-	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) ///
-	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") ///
-	   (7 = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
+recode q17  ///
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
+	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") /// 
+	   (.r = .r Refused), /// 
+	   pre(rec) label(exc_pr_hlthcare)	   
+	   
+recode q38_a q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j ///
+	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
+	   (5 = 0 "Poor") ///
+	   (.a = .a "NA or I did not receive healthcare form this provider in the past 12 months") ///
+	   (.a = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor_staff)	
 	   
 recode q38_k ///
@@ -415,23 +421,40 @@ recode q40_a ///
 	   (.a = .a NA), /// 
 	   pre(rec) label(exc_poor_judge)	   
 	   
-* All Very Confident to Not at all Confident scales 
+********* All Very Confident to Not at all Confident scales *********
 recode q12_a q12_b  ///
 	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
 	   (3 = 1 "Not too confident") (5 = 0 "Not at all confident") /// 
 	   (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(vc_nc)		
 		
-* Miscellaneous questions with unique answer options
-		
-* SS: confirm translation of 10	
+********* Miscellaneous questions with unique answer options *********
+
+*q14- confirm translations
+recode q14 (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualista") (5 = 5 "Private") (6 = 6 "Armed Forces or Police") (7 = 7 "Other"), gen(q14_co_pe)
+
+* SS: confirm translations	
 recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting time") ///
 			(4 = 4 "Good healthcare provider skills") (5 = 5 "Staff shows respect") ///
 			(6 = 6 "Medicines and equipment are available") (7 = 7 "Only facility available") ///
 			(8 = 8 "Covered by insurance") (9 = 10 "Short waiting time to get appointments") ///
 			(10 = 9 "Other, specify") (.a = .a "NA") (.d = .d "Don't know") (11 = .r "Refused"), ///
 			pre(rec) label(q16_label)
-		
+
+*translating q24
+label define labels156 1 "Care for an urgent or acute health problem (accident or injury, fever, diarrhea, or a new pain or symptom)" 2	"Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes; mental health conditions" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4 "Other", modify 
+			
+* recode 9 and 10 for q30 -confirm translation
+
+recode q30 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") ///
+		   (2 = 2 "Far distance (e.g., too far to walk or drive, transport not readily available)") ///
+		   (3 = 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)") ///
+		   (4 = 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)") ///
+		   (5 = 5 "Staff don't show respect (e.g., staff is rude, impolite, dismissive)") ///
+		   (6 = 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
+		   (7 = 7 "Illness not serious enough") ///
+		   (8 = 19 "LAC: Problems with coverage") ///
+		   (9 = 20 "LAC: Difficulty getting an appointment") (10 = 10 "Other")
 		
 *q41_c (5 needs to be recoded to 4) - why was this done?
 		
@@ -440,5 +463,195 @@ recode q49 ///
 	(7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
 	(.r = .r Refused) (.a = .a NA), pre(rec) label(prom_score)	
 	
+*drop q19 q14 q24 q30 q32 q34 q45 q38_e q38_j q40_a q40_b q40_c q40_d
 	
+* all vars missing labels from values:
+label define q51_label .a "NA" .d "Don't know" .r "Refused",add
+
+
+*for appending process:
+label copy q4_label q4_label2
+label copy q5_label q5_label2
+label copy q33_label q33_label2
+label copy q51_label q51_label2
+
+label val q4 q4_label2
+label val q5 q5_label2
+lab val q33 q33_label2
+lab val q51 q51_label2
+
+label drop q4_label q5_label q33_label q51_label
+
+*------------------------------------------------------------------------------*
+* Renaming variables 
+* Rename variables to match question numbers in current survey
+
+ren rec* *
+
+*Reorder variables
+order q*, sequential
+order respondent_serial respondent_id mode country wave language date int_length weight
+
+*------------------------------------------------------------------------------*
+
+/* Other specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+gen q7_other_original = q7_other
+label var q7_other_original "Q7_other. Other"
+
+gen q14_other_original = q14_other
+label var q14_other_original "Q14_other. Other"
+	
+gen q15_other_original = q15_other
+label var q15_other_original "Q15. Other"
+
+gen q16_other_original = q16_other
+label var q16_other_original "Q16. Other"
+
+gen q24_other_original = q24_other
+label var q24_other_original "Q24. Other"
+
+gen q30_other_original = q30_other
+label var q30_other_original "Q30. Other"
+
+gen q32_other_original = q32_other
+label var q32_other_original "Q32. Other"
+
+gen q33_other_original = q33_other
+label var q33_other_original "Q33. Other"
+	
+gen q34_other_original = q34_other
+label var q34_other_original "Q34. Other"	
+
+gen q50_other_original = q50_other
+label var q50_other_original "Q50. Other"	
+
+
+foreach i in 3 4 5 9 {
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+ 
+}	
+
+drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other ///
+	 q33_other q34_other q50_other
+	 
+ren q7_other_original q7_other
+ren q14_other_original q14_other
+ren q15_other_original q15_other
+ren q16_other_original q16_other
+ren q24_other_original q24_other
+ren q30_other_original q30_other
+ren q32_other_original q32_other
+ren q33_other_original q33_other
+ren q34_other_original q34_other
+ren q50_other_original q50_other
+
+order q*, sequential
+order respondent_serial respondent_id mode country language date int_length weight
+
+*------------------------------------------------------------------------------*/
+
+* Label variables - double check matches the instrument					
+lab var country "Country"
+lab var weight "Weight"
+lab var respondent_serial "Respondent Serial #"
+lab var int_length "Interview length (minutes)" 
+lab var date "Date of the interview"
+lab var respondent_id "Respondent ID"
+lab var language "Language"
+lab var mode "mode"
+lab var q1 "Q1. Respondent's еxact age"
+lab var q2 "Q2. Respondent's age group"
+lab var q3 "Q3. Respondent's gender"
+lab var q4 "Q4. What region do you live in?"
+lab var q5 "Q5. Which of these options best describes the place where you live?"
+lab var q6 "Q6. Do you have health insurance?"
+lab var q7 "Q7. What type of health insurance do you have?"
+lab var q7_ke "Q7. KE only: Were you previously enrolled with NHIF before SHIF began on October 1, 2024?"
+lab var q8 "Q8. What is the highest level of education that you have completed?"
+lab var q9 "Q9. In general, would you say your health is:"
+lab var q10 "Q10. In general, would you say your mental health, including your mood and your ability to think clearly, is:"
+lab var q11 "Q11. Do you have any longstanding illness or health problem?"
+lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
+lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
+lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
+*lab var q14_multi "Q14. Is this a public, private, NGO or faith-based facility?" // change to LAC var
+lab var q15 "Q15. What type of healthcare facility is this?"
+label var q16 "Q16. Why did you choose this healthcare facility? Please tell us the main reason."
+label var q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"
+label var q18 "Q18. How many healthcare visits in total have you made in the past 12 months?"
+label var q19 "Q19. Total number of healthcare visits in the past 12 months choice(range)"
+label var q18_q19 "Q18/Q19. Total mumber of visits made in past 12 months (q18, q19 mid-point)"
+label var q20 "Q20. You said you made * visits. Were they all to the same facility?"
+label var q21 "Q21. How many different healthcare facilities did you go to in total?"
+label var q22 "Q22. How many visits did you have with a healthcare provider at your home?"
+label var q23 "Q23. How many virtual or telemedicine visits did you have in the past 12 months?"
+label var q24 "Q24. What was the main reason for the virtual or telemedicine visit?"
+label var q25 "Q25. How would you rate the overall quality of your last telemedicine visit?"
+label var q26 "Q26. Stayed overnight at a facility in past 12 months (inpatient care)"
+label var q27_a "Q27a. Blood pressure tested in the past 12 months"
+label var q27_b "Q27b. Breast examination"
+label var q27_c "Q27c. Received cervical cancer screening, like a pap test or visual inspection"
+label var q27_d "Q27d. Had your eyes or vision checked in the past 12 months"
+label var q27_e "Q27e. Had your teeth checked in the past 12 months"
+label var q27_f "Q27f. Had a blood sugar test in the past 12 months"
+label var q27_g "Q27g. Had a blood cholesterol test in the past 12 months"
+label var q27_h "Q27h. Received care for depression, anxiety, or another mental health condition"
+label var q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
+label var q28_b "Q28b. been treated unfairly or discriminated against by a doctor, nurse, or..."
+label var q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
+label var q30 "Q30. The last time this happened, what was the main reason you did not receive healthcare?"
+label var q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
+label var q31b "Q31b. Sell items to pay for healthcare"
+*label var q32_multi "Q32. Was this a public, private, NGO or faith-based facility?" // change to LAC var
+label var q33 "Q33. What type of healthcare facility was this?"
+label var q34 "Q34. What was the main reason you went?"
+label var q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"
+label var q36 "Q36. How long did you wait in days, weeks, or months between making the appointment and seeing the health care provider?"
+label var q37 "Q37. At this most recent visit, once you arrived at the facility, approximately how long did you wait before seeing the provider?"
+label var q38_a "Q38a. How would you rate the overall quality of care you received?"
+label var q38_b "Q38b. How would you rate the knowledge and skills of your provider?"
+label var q38_c "Q38c. How would you rate the equipment and supplies that the provider had?"
+label var q38_d "Q38d. How would you rate the level of respect your provider showed you?"
+label var q38_e "Q38e. How would you rate your provider knowledge about your prior visits and test results?"
+label var q38_f "Q38f. How would you rate whether your provider explained things clearly?"
+label var q38_g "Q38g. How would you rate whether you were involved in your care decisions?"
+label var q38_h "Q38h. How would you rate the amount of time your provider spent with you?"
+label var q38_i "Q38i. How would you rate the amount of time you waited before being seen?"
+label var q38_j "Q38j. How would you rate the courtesy and helpfulness at the facility?"
+label var q38_k "Q38k. How would you rate how long it took for you to get this appointment?"
+label var q39 "Q39. How likely would recommend this facility to a friend or family member?"
+label var q40_a "Q40a. How would you rate the quality of care during pregnancy and childbirth like antenatal care, postnatal care"
+label var q40_b "Q40b. How would you rate the quality of childcare such as care of healthy children and treatment of sick children"
+label var q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
+label var q40_d "Q40d. How would you rate the quality of care provided for the mental health?"
+label var q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
+label var q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
+label var q41_c "Q41c. How confident are you that the government considers the public's opinion?"
+label var q42 "Q42. How would you rate the quality of government or public healthcare system in your country?"
+label var q43 "Q43. How would you rate the quality of the private for-profit healthcare system in your country?"
+*label var q44_multi "Q44. How would you rate quality of NGO/faith-based healthcare system in your country?" // change to LAC var
+label var q45 "Q45. Is your country's health system is getting better, staying the same or getting worse?"
+label var q46 "Q46. Which of these statements do you agree with the most?"
+label var q47 "Q47. How would you rate the government's management of the COVID-19 pandemic overall?"
+label var q48 "Q48. How would you rate the quality of care provided? (Vignette, option 1)"
+label var q49 "Q49. How would you rate the quality of care provided? (Vignette, option 2)"
+label var q50 "Q50. What is your native language or mother tongue?"
+label var q51 "Q51. Total monthly household income"
+label var cell1 "Do you have another mobile phone number besides the one I am calling you on?"
+label var cell2 "CELL2. 	How many other mobile phone numbers do you have?"
+
+*------------------------------------------------------------------------------*
+* Save data
+
+save "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dta", replace
+
+*------------------------------------------------------------------------------*
+
 	
