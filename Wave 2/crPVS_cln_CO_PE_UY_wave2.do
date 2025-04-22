@@ -237,8 +237,16 @@ ren rec* *
 *------------------------------------------------------------------------------*
 * Generate variables 
 
-* q18/q19 mid-point var 
+replace q2 = 1 if q1 >=18 & q1<=39
+replace q2 = 2 if q1 >=30 & q1<=39
+replace q2 = 3 if q1 >=40 & q1<=49
+replace q2 = 4 if q1 >=50 & q1<=59
+replace q2 = 5 if q1 >=60 & q1<=69
+replace q2 = 6 if q1 >=70 & q1<=79
+replace q2 = 7 if q1 >=80 
 
+
+* q18/q19 mid-point var 
 gen q18_q19 = q18 
 recode q18_q19 (998 999 = 0) if q19 == 1
 recode q18_q19 (998 999 = 2.5) if q19 == 2
@@ -262,8 +270,21 @@ recode q36 (9 = .r)
 recode q38_a (7 = .r)
 recode q39 (12 = .r)
 
-* NA or The clinic had no other staff
-recode  (7 = .a) 
+*Confirm: "No reponse = Refused?" (matched data dictionary)
+recode q3a_co_pe_uy_ar q45 q46 (4 = .r)
+recode q12_a q12_b q42 q43 q44 q47 q48 q49 (6 = .r)
+recode q26 q31_a q31_c (3 = .r)
+recode q40_a q40_b q40_c q40_d (7 = .r)
+recode q41_a q41_b  (5 = .r)
+
+* NA or I did not receive healthcare from this provider in the past 12 months 
+recode q17 q38_e q38_f q38_g q38_h q38_i q38_j  (6 = .a) 
+
+* Recoding "I am unable to judge" to "Don't know"
+recode q40_a q40_b q40_c q40_d (6 = .d)
+
+* Recoding "The clinic had no other staff" to NA
+recode q38_j (7 = .a)
 	  
 *------------------------------------------------------------------------------*
 * Check for implausible values
@@ -345,11 +366,20 @@ recode cell2 (. = .a) if cell1 !=1
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:
 
-* q2
-
+* q2 - just fixing labels (not creating new var)
 label define labels1 1 "18 to 29" 2	"30-39" 3 "40-49" 4	"50-59" 5 "60-69" ///
 					 6 "70-79" 7 "80 or older" .a "NA" .r "Refused", modify 
-					 
+
+* q3 (SS: i think q3 and q3a might be reversed, confirm - if correct here update wave 1 code)
+recode q3a_co_pe_uy_ar ///
+	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
+	pre(rec) label(gender)
+				 
+recode q3 ///
+	(1 = 0 Man) (2 = 1 Woman) (.r = .r Refused) (.a = .a "NA"), ///
+	pre(rec) label(gender2)
+				 
+				 
 * All Yes/No questions
 recode q11 q13 /// 
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (.a = .a "NA"), ///
@@ -386,7 +416,6 @@ recode q40_a ///
 	   pre(rec) label(exc_poor_judge)	   
 	   
 * All Very Confident to Not at all Confident scales 
-	   
 recode q12_a q12_b  ///
 	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
 	   (3 = 1 "Not too confident") (5 = 0 "Not at all confident") /// 
@@ -404,6 +433,7 @@ recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting tim
 			pre(rec) label(q16_label)
 		
 		
+*q41_c (5 needs to be recoded to 4) - why was this done?
 		
 recode q49 ///
 	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
