@@ -96,7 +96,7 @@ recode q51 (101 = 101  "< Ksh 1,000") ///
 		   (999 = .r "Refused") (998 = .d "Don't know"), gen(recq51)
 		   
 	
-* Value 11 was 21 in wave 1 data and value 10 was 11 in wave 1 data, recoding here	
+* Value 11 was 21 in wave 1 data and value 10 was 11 in wave 1 data, recoding here	(what is 10 and 22?)
 recode q15 (1 = 1 "Health Post") (2	= 2 "Health center") (2	= 2 "Health center") ///
 		   (3 = 3 "Primary hospital") (4 = 4 "General hospital") (5 = 5 "Referral/specialized hospital") ///
 		   (6 = 6 "Lower clinic") (7 = 7 "Medium clinic") (8 = 8 "Higher or specialty clinic") ///
@@ -119,7 +119,7 @@ recode q15 (1 = 1 "Health Post") (2	= 2 "Health center") (2	= 2 "Health center")
 		   (76 = 76 "Faith-based or charitable hospital (religion or sect-based facility") ///
 		   (997	= 997 "Other, specify") (998 = 998 "Don't know") (999 = 999 "Refused"), gen(recq15)	
 		   
-recode q33 (1 = 1 "Health Post") (2	= 2 "Health center") (3	 = 3 "Primary hospital") (4	= 4 "General hospital") ///
+recode q33 (1 = 1 "Health Post") (2	= 2 "Health center") (3	= 3 "Primary hospital") (4 = 4 "General hospital") ///
 		   (5 = 5 "Referral/specialized hospital") (6 = 6 "Lower clinic") (7 = 7 "Medium clinic") ///
 		   (8 = 8 "Higher or specialty clinic") (9 = 9 "Hospital/Speciality centre") ///
 		   (11 = 21 "NGO/Faith-based hospital") (10 = 11 "NGO/Faith-based health center/clinic")  ///
@@ -307,7 +307,7 @@ list q20 q21 if q20 ==1 & q21 > 0 & q21 < .
 egen visits_total = rowtotal(q18_q19 q22 q23) 
 list visits_total q17 if q17 == 5 & visits_total > 0 & visits_total < . | q17 == 5 & visits_total > 0 & visits_total < .
 *SS: N=4 with issues, this is how we've fixed it in the past
-recode q17 (5 = .r) if visits_total > 0 & visits_total < . // N=100 changes
+recode q17 (5 = .r) if visits_total > 0 & visits_total < . // N=99 changes
 
 drop visits_total
 
