@@ -476,6 +476,12 @@ recode q24 (1 = 1 "Care for an urgent or new health problem such as an accident 
 		   (4 = 4 "Other (specify)") (99 = .r "Refused") (.a = .a "NA") ///
 		   (.d = .d "Don't know"), pre(rec) label(q24_label)
 		   
+recode q26 (2 = 0 "No") (1 = 1 "Yes") ///
+(.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q26_label)
+		   
+/// Note: Women with "true missing" for mammogram and cervical cancer screening	recoded as refused (.r)
+replace q27_b = .r if q27_b == . & q3 == 1
+replace q27_c = .r if q27_c == . & q3 == 1
 recode q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h (0 = 0 "No") (1 = 1 "Yes") ///
 (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q27_label)
 
@@ -550,14 +556,14 @@ recode q50 ///
 recode q51 ///
 	(1001 = 1001 "EC: Less than USD 90") (1002 = 1002 "EC: USD 91 - USD 430") ///
 	(1003 = 1003 "EC: USD 431 - USD 800") (1004 = 1004 "EC: USD 801 - USD 1300") ///
-	(.r = .r "Refused"), pre(rec) label(q51_label)
+	(1005 = 1005 "EC: Greater than USD 1300") (.r = .r "Refused"), pre(rec) label(q51_label)
 	
 recode cell1 (0 = 0 "No, no other numbers") (1 = 1 "Yes") (.r = .r "Refused") (.a = .a "NA"), pre(rec) label(cell1_label)
 
 recode cell2 (.r = .r "Refused") (.a = .a "NA"), pre(rec) label(cell2_label)
 
 * Recoding all yes/no qs together
-recode q11 q13 q20 q26 q29 q31a q31b q31c_ec (0 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
+recode q11 q13 q20 q29 q31a q31b q31c_ec (0 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
 pre(rec) label(yesno)
 
 * Recoding all poor-excellent rating qs together
