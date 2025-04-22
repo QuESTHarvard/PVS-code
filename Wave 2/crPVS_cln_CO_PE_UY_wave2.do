@@ -38,13 +38,12 @@ drop p4_col p4_per p4_uru p5_col p5_per p5_uru p6_latam_col1 p6_latam_col2 p6_la
 drop p2_2 p2_3 p4_col_2 p4_per_2 p4_uru_2 p4_2 p5_2 p7_total p7_total2 p8_2 p9_2 p10_2 _v1 _v2 p13_g p13_g2 p13_2 p15_2 p22_2 p23_2 p27a_2 p27a_3 p27b_2 p27c_2 p27d_2 p27f_2 p27g_2 p27h_2 p27h_3 p31_2 p31_3 _v3 p33_2 p36_2 p37_2 p38a_2 p38b_2 p38c_2 p38d_2 p38e_2 p38f_2 p38g_2 p38h_2 p38i_2 p38j_2 p38k_2 p39_2 p41_2 p_user p_consult_all p_expect p51_2 p2_pesos p4_col_pesos p4_per_pesos p4_uru_pesos p4_pesos p8_pesos categorias_pesos newpeso
 
 *confirm dropping these:
-drop p12_all p19_all2 dia1 mes1 anio1 fecha1 tipo_base nombre_encuestador enc total wtvar hhini hhfin p1n p18n p21n p22n p23n cell2n zona region_per pond_edad originalrespondentserial originalfile region_col region_uru minutos segundos duracion_humana peso p50_2 p50_3 p6_1
+drop p12_all p19_all2 dia1 mes1 anio1 fecha1 tipo_base nombre_encuestador enc total wtvar hhini hhfin p1n p18n p21n p22n p23n cell2n zona region_per pond_edad originalrespondentserial originalfile region_col region_uru minutos segundos duracion_humana peso p50_2 p50_3 
  
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
 recode pais (1 = 2 "CO") (2 = 7 "Peru") (3 = 10 "Uruguay"), gen(country) 
-
 
 rename (p1 p2) (q1 q2)
 
@@ -237,6 +236,10 @@ ren rec* *
 *------------------------------------------------------------------------------*
 * Generate variables 
 
+gen mode = 1
+lab def mode 1 "CATI",modify
+lab val mode mode
+
 replace q2 = 1 if q1 >=18 & q1<=39
 replace q2 = 2 if q1 >=30 & q1<=39
 replace q2 = 3 if q1 >=40 & q1<=49
@@ -244,7 +247,6 @@ replace q2 = 4 if q1 >=50 & q1<=59
 replace q2 = 5 if q1 >=60 & q1<=69
 replace q2 = 6 if q1 >=70 & q1<=79
 replace q2 = 7 if q1 >=80 
-
 
 * q18/q19 mid-point var 
 gen q18_q19 = q18 
@@ -324,9 +326,6 @@ drop visits_total
 
 *q1/q2 - no missing data
 
-* q6 was not asked, all respondents were asked q7
-recode q6 (. = .a)
-
 *q14-17
 recode q14 q15 q16 q17 (. = .a) if q13 !=1
 
@@ -358,8 +357,15 @@ recode q32 q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f ///
 
 recode q36 q38_k (. = .a) if q35 !=1		
 
+encode cell1, gen(reccell1)
+drop cell1
+recode reccell1 (1 = 0 "No") (2 = 1 "Yes") (3 = .d "Don't know") (4 = .r "Refused"), gen(cell1)
+
 recode cell1 (. = .a) if mode !=1
 
+encode cell2, gen(reccell2)
+drop cell2
+ren reccell2 cell2
 recode cell2 (. = .a) if cell1 !=1
 									 
 *------------------------------------------------------------------------------*
@@ -383,7 +389,7 @@ recode q3 ///
 recode q11 q13 q20 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a /// 
 		q28_b q29 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (.a = .a "NA") ///
-	   (.d = .d "Don't know")  ///
+	   (.d = .d "Don't know"),  ///
 	   pre(rec) label(yes_no)					 
 
 ********* All Excellent to Poor scales *********
@@ -422,11 +428,17 @@ recode q40_a ///
 	   pre(rec) label(exc_poor_judge)	   
 	   
 ********* All Very Confident to Not at all Confident scales *********
-recode q12_a q12_b  ///
+recode q12_a q12_b q41_c  ///
 	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
 	   (3 = 1 "Not too confident") (5 = 0 "Not at all confident") /// 
 	   (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(vc_nc)		
+	   
+recode q41_a q41_b ///
+	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
+	   (3 = 1 "Not too confident") (4 = 0 "Not at all confident") /// 
+	   (.r = .r Refused) (.a = .a NA), /// 
+	   pre(rec) label(vc_nc)		   
 		
 ********* Miscellaneous questions with unique answer options *********
 
@@ -454,19 +466,19 @@ recode q30 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 		   (6 = 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
 		   (7 = 7 "Illness not serious enough") ///
 		   (8 = 19 "LAC: Problems with coverage") ///
-		   (9 = 20 "LAC: Difficulty getting an appointment") (10 = 10 "Other")
+		   (9 = 20 "LAC: Difficulty getting an appointment") (10 = 10 "Other"),pre(rec) label(q30_label)
 		
 *q41_c (5 needs to be recoded to 4) - why was this done?
-		
-recode q49 ///
-	(1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") ///
-	(7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
-	(.r = .r Refused) (.a = .a NA), pre(rec) label(prom_score)	
+
+
+
+
+*******************************************************************************
 	
 *drop q19 q14 q24 q30 q32 q34 q45 q38_e q38_j q40_a q40_b q40_c q40_d
 	
-* all vars missing labels from values:
-label define q51_label .a "NA" .d "Don't know" .r "Refused",add
+/* all vars missing labels from values:
+*label define q51_label .a "NA" .d "Don't know" .r "Refused",add
 
 
 *for appending process:
@@ -571,7 +583,7 @@ lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent's gender"
 lab var q4 "Q4. What region do you live in?"
 lab var q5 "Q5. Which of these options best describes the place where you live?"
-lab var q6 "Q6. Do you have health insurance?"
+*lab var q6 "Q6. Do you have health insurance?"
 lab var q7 "Q7. What type of health insurance do you have?"
 lab var q7_ke "Q7. KE only: Were you previously enrolled with NHIF before SHIF began on October 1, 2024?"
 lab var q8 "Q8. What is the highest level of education that you have completed?"

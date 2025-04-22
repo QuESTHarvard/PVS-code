@@ -37,9 +37,10 @@ drop q1_q2
 drop ecs_id start_time end_time interviewer_id interviewer_gender interviewer_language time_new
 
 *psu_id for ET/KE:
-gen psu_id = ""
-replace psu_id = "ET" + string(q4) if mode == 2 & country == 3
-replace psu_id = "KE" + string(q4) if mode == 2 & country == 5
+gen psu_id2 = ""
+replace psu_id2 = "ET" + string(q4) if mode == 2 & country == 3
+replace psu_id2 = "KE" + string(q4) if mode == 2 & country == 5
+replace psu_id2 = respondent_id if mode == 2 & q4 == 999
 
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
