@@ -106,7 +106,7 @@ rename p30_all q30
 rename p31a q31_a
 rename p31b q31_b
 rename p31c q31_c
-rename p32_all q32
+rename p32_all q32_co_pe_uy
 rename p33_all q33
 rename p34_all q34
 rename p35_all q35
@@ -287,6 +287,7 @@ recode q40_a q40_b q40_c q40_d (6 = .d)
 
 * Recoding "The clinic had no other staff" to NA
 recode q38_j (7 = .a)
+recode q38_a (6 = .a) // confirm
 	  
 *------------------------------------------------------------------------------*
 * Check for implausible values
@@ -340,7 +341,8 @@ recode q21 (. = .a) if q20 !=0
 recode q24 q25 (. = .a) if q23 == 0  | q23 == .d | q23 == .r
 
 * q27_b q27_c
-recode q27_b q27_c (. = .a) if q3 !=1 
+recode q27_b q27_c (. = .a) if q3 !=1 // SS: fix, still missing values
+
 
 *q28
 recode q28_a q28_b (. = .a) if q18 == 0 | q18 == .d | q18 == .r | q19 == 1 | q19 == .d | ///
@@ -360,7 +362,7 @@ recode q36 q38_k (. = .a) if q35 !=1
 encode cell1, gen(reccell1)
 drop cell1
 recode reccell1 (1 = 0 "No") (2 = 1 "Yes") (3 = .d "Don't know") (4 = .r "Refused"), gen(cell1)
-
+drop reccell1
 recode cell1 (. = .a) if mode !=1
 
 encode cell2, gen(reccell2)
@@ -379,30 +381,35 @@ label define labels1 1 "18 to 29" 2	"30-39" 3 "40-49" 4	"50-59" 5 "60-69" ///
 recode q3a_co_pe_uy_ar ///
 	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
-				 
+drop q3a_co_pe_uy_ar
+	
 recode q3 ///
 	(1 = 0 Man) (2 = 1 Woman) (.r = .r Refused) (.a = .a "NA"), ///
 	pre(rec) label(gender2)
-				 
+drop q3				 
 				 
 ********* All Yes/No questions *********
 recode q11 q13 q20 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a /// 
-		q28_b q29 ///
+		q28_b q29 q31_a q31_b q31_c  q35 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (.a = .a "NA") ///
 	   (.d = .d "Don't know"),  ///
 	   pre(rec) label(yes_no)					 
-
+drop q11 q13 q20 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a /// 
+		q28_b q29 q31_a q31_b q31_c q35
+	   
 ********* All Excellent to Poor scales *********
-recode q9 q10 q25 ///
+recode q9 q10 q25 q40_b q40_c q40_d q42 q43 q44 ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
-	   (5 = 0 "Poor") (.r = .r "Refused") (.a = .a "NA"), /// 
+	   (5 = 0 "Poor") (.r = .r "Refused") (.a = .a "NA") (.d = .d "Don't know"), /// 
 	   pre(rec) label(exc_poor)
+drop q9 q10 q25 q40_b q40_c q40_d q42 q43 q44
 	   
 recode q17  ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
 	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") /// 
 	   (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_hlthcare)	   
+drop q17	   
 	   
 recode q38_a q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
@@ -410,22 +417,26 @@ recode q38_a q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j ///
 	   (.a = .a "NA or I did not receive healthcare form this provider in the past 12 months") ///
 	   (.a = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor_staff)	
+drop q38_a q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j
 	   
 recode q38_k ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (.r = .r Refused), pre(rec) label(exc_poor_staff)	
+drop q38_k
 	   
 recode q38_b  ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
 	    /// 
 	   (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_hlthcare)
-
+drop q38_b
+	   
 recode q40_a ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (6 = .d "I am unable to judge") (.r = .r Refused) ///
 	   (.a = .a NA), /// 
 	   pre(rec) label(exc_poor_judge)	   
+drop q40_a
 	   
 ********* All Very Confident to Not at all Confident scales *********
 recode q12_a q12_b q41_c  ///
@@ -433,13 +444,15 @@ recode q12_a q12_b q41_c  ///
 	   (3 = 1 "Not too confident") (5 = 0 "Not at all confident") /// 
 	   (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(vc_nc)		
+drop q12_a q12_b q41_c
 	   
 recode q41_a q41_b ///
 	   (1 = 3 "Very confident") (2 = 2 "Somewhat confident") /// 
 	   (3 = 1 "Not too confident") (4 = 0 "Not at all confident") /// 
 	   (.r = .r Refused) (.a = .a NA), /// 
 	   pre(rec) label(vc_nc)		   
-		
+drop q41_a q41_b
+ 		
 ********* Miscellaneous questions with unique answer options *********
 
 *q14- confirm translations
@@ -452,7 +465,8 @@ recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting tim
 			(8 = 8 "Covered by insurance") (9 = 10 "Short waiting time to get appointments") ///
 			(10 = 9 "Other, specify") (.a = .a "NA") (.d = .d "Don't know") (11 = .r "Refused"), ///
 			pre(rec) label(q16_label)
-
+drop q16
+			
 *translating q24
 label define labels156 1 "Care for an urgent or acute health problem (accident or injury, fever, diarrhea, or a new pain or symptom)" 2	"Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes; mental health conditions" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4 "Other", modify 
 			
@@ -466,22 +480,39 @@ recode q30 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 		   (6 = 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
 		   (7 = 7 "Illness not serious enough") ///
 		   (8 = 19 "LAC: Problems with coverage") ///
-		   (9 = 20 "LAC: Difficulty getting an appointment") (10 = 10 "Other"),pre(rec) label(q30_label)
+		   (9 = 20 "LAC: Difficulty getting an appointment") (10 = 10 "Other") (.a = .a "NA") ///
+		   (.d = .d "Don't know") (.r = .r "Refused") ,pre(rec) label(q30_label)
 		
-*q41_c (5 needs to be recoded to 4) - why was this done?
+drop q30
+
+*q34
+
+label define labels165 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" 2	"Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4	"Other,specify" .a "NA" .d "Don't know" .r "Refused", modify 
+
+label define labels167 1 "Same or next day" 2 "2 days to less than one week" 3 "1 week to less than 2 weeks" ///
+					   4 "2 weeks to less than 1 month" 5 "1 month to less than 2 months" ///
+					   6 "2 months to less than 3 months" 7 "3 months to less than 6 months" ///
+					   8 "6 months or more" .a "NA" .d "Don't know" .r "Refused",modify
 
 
-
-
+label define labels93 1 "Less than 15 minutes" 2 "15 minutes to less than 30 minutes" ///
+					  3 "30 minutes to less than 1 hour" 4 "1 hour to less than 2 hours" ///
+					  5 "2 hours to less than 3 hours" 6 "3 hours to less than 4 hours" ///
+					  7 "More than 4 hours (specify)" .a "NA" .d "Don't know" .r "Refused"				   
+					   
+ren rec* *
 *******************************************************************************
 	
-*drop q19 q14 q24 q30 q32 q34 q45 q38_e q38_j q40_a q40_b q40_c q40_d
 	
-/* all vars missing labels from values:
-*label define q51_label .a "NA" .d "Don't know" .r "Refused",add
+* all vars missing labels from values:
+label define labels149 .a "NA" .d "Don't know" .r "Refused",add
+label define q15_label .a "NA" .d "Don't know" .r "Refused",add
+label define labels156 .a "NA" .d "Don't know" .r "Refused",add
+label define labels160 .a "NA" .d "Don't know" .r "Refused",add
+label define q33_label .a "NA" .d "Don't know" .r "Refused",add
 
 
-*for appending process:
+/*for appending process:
 label copy q4_label q4_label2
 label copy q5_label q5_label2
 label copy q33_label q33_label2
