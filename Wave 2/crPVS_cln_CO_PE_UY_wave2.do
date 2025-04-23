@@ -38,12 +38,15 @@ drop p4_col p4_per p4_uru p5_col p5_per p5_uru p6_latam_col1 p6_latam_col2 p6_la
 drop p2_2 p2_3 p4_col_2 p4_per_2 p4_uru_2 p4_2 p5_2 p7_total p7_total2 p8_2 p9_2 p10_2 _v1 _v2 p13_g p13_g2 p13_2 p15_2 p22_2 p23_2 p27a_2 p27a_3 p27b_2 p27c_2 p27d_2 p27f_2 p27g_2 p27h_2 p27h_3 p31_2 p31_3 _v3 p33_2 p36_2 p37_2 p38a_2 p38b_2 p38c_2 p38d_2 p38e_2 p38f_2 p38g_2 p38h_2 p38i_2 p38j_2 p38k_2 p39_2 p41_2 p_user p_consult_all p_expect p51_2 p2_pesos p4_col_pesos p4_per_pesos p4_uru_pesos p4_pesos p8_pesos categorias_pesos newpeso
 
 *confirm dropping these:
-drop p12_all p19_all2 dia1 mes1 anio1 fecha1 tipo_base nombre_encuestador enc total wtvar hhini hhfin p1n p18n p21n p22n p23n cell2n zona region_per pond_edad originalrespondentserial originalfile region_col region_uru minutos segundos duracion_humana peso p50_2 p50_3 
+drop p12_all p19_all2 dia1 mes1 anio1 tipo_base nombre_encuestador enc total wtvar hhini hhfin p1n p18n p21n p22n p23n cell2n zona region_per pond_edad originalrespondentserial originalfile region_col region_uru minutos segundos duracion_humana p50_2 p50_3 
  
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
 recode pais (1 = 2 "CO") (2 = 7 "Peru") (3 = 10 "Uruguay"), gen(country) 
+
+rename fecha1 date
+rename peso weight // confirm translation
 
 rename (p1 p2) (q1 q2)
 
@@ -52,7 +55,7 @@ rename p3 q3a_co_pe_uy_ar // similar to how we coded q3 for wave 1 because of th
 
 rename p4_all q4
 rename p5_all q5
-
+rename p6_1 q6_lac // add to data dictionary
 rename p7_all q7
 rename p8_all q8
 rename p9 q9
@@ -61,7 +64,7 @@ rename p11 q11
 rename p12a q12_a
 rename p12b q12_b
 rename p13 q13
-rename p13a_all q13a_co_pe_uy
+rename p13a_all q13a_co_pe_uy // add to data dictionary
 rename p14_all q14
 rename p15_all q15
 rename p16_all q16
@@ -103,9 +106,9 @@ rename p28a q28_a
 rename p28b q28_b
 rename p29 q29
 rename p30_all q30
-rename p31a q31_a
-rename p31b q31_b
-rename p31c q31_c
+rename p31a q31a
+rename p31b q31b
+rename p31c q31c // new LAC var?
 rename p32_all q32_co_pe_uy
 rename p33_all q33
 rename p34_all q34
@@ -231,7 +234,9 @@ ren rec* *
 *------------------------------------------------------------------------------*
 * Fix interview length variable and other time variables 
 
-* NA
+*reformating date
+g date2= date(substr(date, 1, 10), "DMY")
+format date2 %td
 
 *------------------------------------------------------------------------------*
 * Generate variables 
@@ -275,19 +280,19 @@ recode q39 (12 = .r)
 *Confirm: "No reponse = Refused?" (matched data dictionary)
 recode q3a_co_pe_uy_ar q45 q46 (4 = .r)
 recode q12_a q12_b q42 q43 q44 q47 q48 q49 (6 = .r)
-recode q26 q31_a q31_c (3 = .r)
+recode q26 q31a q31c (3 = .r)
 recode q40_a q40_b q40_c q40_d (7 = .r)
 recode q41_a q41_b  (5 = .r)
 
 * NA or I did not receive healthcare from this provider in the past 12 months 
-recode q17 q38_e q38_f q38_g q38_h q38_i q38_j  (6 = .a) 
+recode q17 (6 = .a) 
 
 * Recoding "I am unable to judge" to "Don't know"
 recode q40_a q40_b q40_c q40_d (6 = .d)
 
 * Recoding "The clinic had no other staff" to NA
 recode q38_j (7 = .a)
-recode q38_a (6 = .a) // confirm
+
 	  
 *------------------------------------------------------------------------------*
 * Check for implausible values
@@ -390,19 +395,19 @@ drop q3
 				 
 ********* All Yes/No questions *********
 recode q11 q13 q20 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a /// 
-		q28_b q29 q31_a q31_b q31_c  q35 ///
+		q28_b q29 q31a q31b q31c  q35 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (.a = .a "NA") ///
 	   (.d = .d "Don't know"),  ///
 	   pre(rec) label(yes_no)					 
 drop q11 q13 q20 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a /// 
-		q28_b q29 q31_a q31_b q31_c q35
+		q28_b q29 q31a q31b q31c q35
 	   
 ********* All Excellent to Poor scales *********
-recode q9 q10 q25 q40_b q40_c q40_d q42 q43 q44 ///
+recode q9 q10 q25 q40_b q40_c q40_d q42 q43 q44 q47 q48 q49  ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
 	   (5 = 0 "Poor") (.r = .r "Refused") (.a = .a "NA") (.d = .d "Don't know"), /// 
 	   pre(rec) label(exc_poor)
-drop q9 q10 q25 q40_b q40_c q40_d q42 q43 q44
+drop q9 q10 q25 q40_b q40_c q40_d q42 q43 q44 q47 q48 q49 
 	   
 recode q17  ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
@@ -414,8 +419,8 @@ drop q17
 recode q38_a q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
 	   (5 = 0 "Poor") ///
-	   (.a = .a "NA or I did not receive healthcare form this provider in the past 12 months") ///
-	   (.a = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
+	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") ///
+	   (7 = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
 	   pre(rec) label(exc_poor_staff)	
 drop q38_a q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j
 	   
@@ -486,23 +491,31 @@ recode q30 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 drop q30
 
 *q34
-
 label define labels165 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" 2	"Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4	"Other,specify" .a "NA" .d "Don't know" .r "Refused", modify 
 
+* q36
 label define labels167 1 "Same or next day" 2 "2 days to less than one week" 3 "1 week to less than 2 weeks" ///
 					   4 "2 weeks to less than 1 month" 5 "1 month to less than 2 months" ///
 					   6 "2 months to less than 3 months" 7 "3 months to less than 6 months" ///
 					   8 "6 months or more" .a "NA" .d "Don't know" .r "Refused",modify
 
-
+* q37					   
 label define labels93 1 "Less than 15 minutes" 2 "15 minutes to less than 30 minutes" ///
 					  3 "30 minutes to less than 1 hour" 4 "1 hour to less than 2 hours" ///
 					  5 "2 hours to less than 3 hours" 6 "3 hours to less than 4 hours" ///
-					  7 "More than 4 hours (specify)" .a "NA" .d "Don't know" .r "Refused"				   
-					   
-ren rec* *
-*******************************************************************************
+					  7 "More than 4 hours (specify)" .a "NA" .d "Don't know" .r "Refused", modify				   
+recode q45 ///
+	(3 = 0 "Getting worse") (2 = 1 "Staying the same") (1 = 2 "Getting better") ///
+	(.r = .r "Refused") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
+	pre(rec) label(system_outlook)					  
+drop q45
+
+* q46	
+label define labels133 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." 2 "There are some good things in our healthcare system, but major changes are needed to make it work better." 3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." .r "Refused",modify	
 	
+ren rec* *
+
+*******************************************************************************
 	
 * all vars missing labels from values:
 label define labels149 .a "NA" .d "Don't know" .r "Refused",add
@@ -510,9 +523,10 @@ label define q15_label .a "NA" .d "Don't know" .r "Refused",add
 label define labels156 .a "NA" .d "Don't know" .r "Refused",add
 label define labels160 .a "NA" .d "Don't know" .r "Refused",add
 label define q33_label .a "NA" .d "Don't know" .r "Refused",add
+label define q50_label .a "NA" .d "Don't know" .r "Refused",add
+label define q51_label .a "NA" .d "Don't know" .r "Refused",add
 
-
-/*for appending process:
+* for appending process:
 label copy q4_label q4_label2
 label copy q5_label q5_label2
 label copy q33_label q33_label2
@@ -526,14 +540,10 @@ lab val q51 q51_label2
 label drop q4_label q5_label q33_label q51_label
 
 *------------------------------------------------------------------------------*
-* Renaming variables 
-* Rename variables to match question numbers in current survey
-
-ren rec* *
 
 *Reorder variables
 order q*, sequential
-order respondent_serial respondent_id mode country wave language date int_length weight
+order respondent_serial respondent_id mode country wave date int_length weight // language not in dataset
 
 *------------------------------------------------------------------------------*
 
@@ -594,11 +604,11 @@ ren q32_other_original q32_other
 ren q33_other_original q33_other
 ren q34_other_original q34_other
 ren q50_other_original q50_other
-
+*/
 order q*, sequential
-order respondent_serial respondent_id mode country language date int_length weight
+order respondent_serial respondent_id mode country date int_length weight // language not in dataset
 
-*------------------------------------------------------------------------------*/
+*-------------------------------------------------------------------------------*
 
 * Label variables - double check matches the instrument					
 lab var country "Country"
@@ -607,7 +617,7 @@ lab var respondent_serial "Respondent Serial #"
 lab var int_length "Interview length (minutes)" 
 lab var date "Date of the interview"
 lab var respondent_id "Respondent ID"
-lab var language "Language"
+*lab var language "Language"
 lab var mode "mode"
 lab var q1 "Q1. Respondent's еxact age"
 lab var q2 "Q2. Respondent's age group"
@@ -616,7 +626,7 @@ lab var q4 "Q4. What region do you live in?"
 lab var q5 "Q5. Which of these options best describes the place where you live?"
 *lab var q6 "Q6. Do you have health insurance?"
 lab var q7 "Q7. What type of health insurance do you have?"
-lab var q7_ke "Q7. KE only: Were you previously enrolled with NHIF before SHIF began on October 1, 2024?"
+
 lab var q8 "Q8. What is the highest level of education that you have completed?"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health, including your mood and your ability to think clearly, is:"
@@ -693,7 +703,7 @@ label var cell2 "CELL2. 	How many other mobile phone numbers do you have?"
 *------------------------------------------------------------------------------*
 * Save data
 
-save "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_co_pe_uy_wave2.dta", replace
 
 *------------------------------------------------------------------------------*
 
