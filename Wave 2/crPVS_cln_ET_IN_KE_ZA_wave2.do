@@ -24,7 +24,6 @@ set more off
 * Import raw data 
 import spss using "$data/ET IN KE ZA wave2/01 raw data/24-065373-01-02_Harvard_2024_Merged_weighted_SPSS.sav", case(lower)
 
-
 *Label as wave 2 data:
 gen wave = 2
 
