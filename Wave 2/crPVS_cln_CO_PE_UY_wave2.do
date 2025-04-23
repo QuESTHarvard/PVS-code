@@ -50,8 +50,8 @@ rename peso weight // confirm translation
 
 rename (p1 p2) (q1 q2)
 
-rename p3_a q3 // double check which q3 var is sex vs gender
-rename p3 q3a_co_pe_uy_ar // similar to how we coded q3 for wave 1 because of the gender and mammogram derived vars
+rename p3_a q3 // similar to how we coded q3 (sex) for wave 1 because of the cervical and mammogram derived vars
+rename p3 q3a_co_pe_uy_ar // gender
 
 rename p4_all q4
 rename p5_all q5
@@ -108,7 +108,7 @@ rename p29 q29
 rename p30_all q30
 rename p31a q31a
 rename p31b q31b
-rename p31c q31c // new LAC var?
+rename p31c q31_lac // new LAC var, add to data dictionary
 rename p32_all q32_co_pe_uy
 rename p33_all q33
 rename p34_all q34
@@ -253,6 +253,8 @@ replace q2 = 5 if q1 >=60 & q1<=69
 replace q2 = 6 if q1 >=70 & q1<=79
 replace q2 = 7 if q1 >=80 
 
+gen q6 = .a
+
 * q18/q19 mid-point var 
 gen q18_q19 = q18 
 recode q18_q19 (998 999 = 0) if q19 == 1
@@ -277,23 +279,13 @@ recode q36 (9 = .r)
 recode q38_a (7 = .r)
 recode q39 (12 = .r)
 
-*Confirm: "No reponse = Refused?" (matched data dictionary)
+* "No reponse = Refused?" 
 recode q3a_co_pe_uy_ar q45 q46 (4 = .r)
 recode q12_a q12_b q42 q43 q44 q47 q48 q49 (6 = .r)
-recode q26 q31a q31c (3 = .r)
+recode q26 q31a q31_lac (3 = .r)
 recode q40_a q40_b q40_c q40_d (7 = .r)
 recode q41_a q41_b  (5 = .r)
 
-* NA or I did not receive healthcare from this provider in the past 12 months 
-recode q17 (6 = .a) 
-
-* Recoding "I am unable to judge" to "Don't know"
-recode q40_a q40_b q40_c q40_d (6 = .d)
-
-* Recoding "The clinic had no other staff" to NA
-recode q38_j (7 = .a)
-
-	  
 *------------------------------------------------------------------------------*
 * Check for implausible values
 
@@ -364,6 +356,8 @@ recode q32 q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f ///
 
 recode q36 q38_k (. = .a) if q35 !=1		
 
+recode q50 (. = .a) if country == 10
+
 encode cell1, gen(reccell1)
 drop cell1
 recode reccell1 (1 = 0 "No") (2 = 1 "Yes") (3 = .d "Don't know") (4 = .r "Refused"), gen(cell1)
@@ -382,7 +376,7 @@ recode cell2 (. = .a) if cell1 !=1
 label define labels1 1 "18 to 29" 2	"30-39" 3 "40-49" 4	"50-59" 5 "60-69" ///
 					 6 "70-79" 7 "80 or older" .a "NA" .r "Refused", modify 
 
-* q3 (SS: i think q3 and q3a might be reversed, confirm - if correct here update wave 1 code)
+
 recode q3a_co_pe_uy_ar ///
 	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
@@ -395,19 +389,19 @@ drop q3
 				 
 ********* All Yes/No questions *********
 recode q11 q13 q20 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a /// 
-		q28_b q29 q31a q31b q31c  q35 ///
+		q28_b q29 q31a q31b q31_lac  q35 ///
 	   (1 = 1 "Yes") (2 = 0 "No") (.r = .r "Refused") (.a = .a "NA") ///
 	   (.d = .d "Don't know"),  ///
 	   pre(rec) label(yes_no)					 
 drop q11 q13 q20 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a /// 
-		q28_b q29 q31a q31b q31c q35
+		q28_b q29 q31a q31b q31_lac q35
 	   
 ********* All Excellent to Poor scales *********
-recode q9 q10 q25 q40_b q40_c q40_d q42 q43 q44 q47 q48 q49  ///
+recode q9 q10 q25 q40_c q40_d q42 q43 q44 q47 q48 q49  ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
 	   (5 = 0 "Poor") (.r = .r "Refused") (.a = .a "NA") (.d = .d "Don't know"), /// 
 	   pre(rec) label(exc_poor)
-drop q9 q10 q25 q40_b q40_c q40_d q42 q43 q44 q47 q48 q49 
+drop q9 q10 q25 q40_c q40_d q42 q43 q44 q47 q48 q49 
 	   
 recode q17  ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
@@ -436,7 +430,7 @@ recode q38_b  ///
 	   pre(rec) label(exc_pr_hlthcare)
 drop q38_b
 	   
-recode q40_a ///
+recode q40_a q40_b q40_c q40_d ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
 	   (5 = 0 Poor) (6 = .d "I am unable to judge") (.r = .r Refused) ///
 	   (.a = .a NA), /// 
@@ -490,16 +484,16 @@ recode q30 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 		
 drop q30
 
-*q34
+*q34 - just fixing labels (not creating new var)
 label define labels165 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" 2	"Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" 3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" 4	"Other,specify" .a "NA" .d "Don't know" .r "Refused", modify 
 
-* q36
+* q36- just fixing labels (not creating new var)
 label define labels167 1 "Same or next day" 2 "2 days to less than one week" 3 "1 week to less than 2 weeks" ///
 					   4 "2 weeks to less than 1 month" 5 "1 month to less than 2 months" ///
 					   6 "2 months to less than 3 months" 7 "3 months to less than 6 months" ///
 					   8 "6 months or more" .a "NA" .d "Don't know" .r "Refused",modify
 
-* q37					   
+* q37- just fixing labels (not creating new var)				   
 label define labels93 1 "Less than 15 minutes" 2 "15 minutes to less than 30 minutes" ///
 					  3 "30 minutes to less than 1 hour" 4 "1 hour to less than 2 hours" ///
 					  5 "2 hours to less than 3 hours" 6 "3 hours to less than 4 hours" ///
@@ -510,7 +504,7 @@ recode q45 ///
 	pre(rec) label(system_outlook)					  
 drop q45
 
-* q46	
+* q46- just fixing labels (not creating new var)
 label define labels133 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." 2 "There are some good things in our healthcare system, but major changes are needed to make it work better." 3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." .r "Refused",modify	
 	
 ren rec* *
@@ -617,14 +611,14 @@ lab var respondent_serial "Respondent Serial #"
 lab var int_length "Interview length (minutes)" 
 lab var date "Date of the interview"
 lab var respondent_id "Respondent ID"
-*lab var language "Language"
+
 lab var mode "mode"
 lab var q1 "Q1. Respondent's еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent's gender"
 lab var q4 "Q4. What region do you live in?"
 lab var q5 "Q5. Which of these options best describes the place where you live?"
-*lab var q6 "Q6. Do you have health insurance?"
+lab var q6 "Q6. Do you have health insurance?"
 lab var q7 "Q7. What type of health insurance do you have?"
 
 lab var q8 "Q8. What is the highest level of education that you have completed?"
@@ -698,7 +692,7 @@ label var q49 "Q49. How would you rate the quality of care provided? (Vignette, 
 label var q50 "Q50. What is your native language or mother tongue?"
 label var q51 "Q51. Total monthly household income"
 label var cell1 "Do you have another mobile phone number besides the one I am calling you on?"
-label var cell2 "CELL2. 	How many other mobile phone numbers do you have?"
+label var cell2 "How many other mobile phone numbers do you have?"
 
 *------------------------------------------------------------------------------*
 * Save data
