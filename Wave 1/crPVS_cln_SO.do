@@ -89,26 +89,38 @@ ren q41c q41_c
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 * replace the value to .r if the original one is 999
 
+* Combine q33a, b, and c with q33 variable
+replace q33 = q33a_so if missing(q33) & !missing(q33a_so)
+replace q33 = q33b_so if missing(q33) & !missing(q33b_so)
+replace q33 = q33c_so if missing(q33) & !missing(q33c_so)
+drop q33a_so q33b_so q33c_so
+
+* Recode extra categories in q33
+
+replace q33 = 3 if q33 == 61          	// Clinic → PHU
+replace q33 = 2 if inlist(q33, 64, 65) 	// Community health centre & Gov MCH → Health Center
+replace q33 = 8 if q33 == .           	// . → refused 
+
 *gen reclanguage = reccountry*1000 + language  // SS: missing from dataset
 *gen recinterviewer_id = reccountry*1000 + interviewer_id // SS: missing from dataset
 
 gen recq4 = reccountry*1000 + q4
-replace recq4 = .r if q4 == 998
+*replace recq4 = .r if q4 == 998 // not needed in SO
 
 gen recq5 = reccountry*1000 + q5  
-replace recq5 = .r if q5 == 999
+*replace recq5 = .r if q5 == 999 // not needed in SO
 
 gen recq7 = reccountry*1000 + q7
-replace recq7 = .r if q7== 999
+replace recq7 = .r if q7== .
 
 gen recq8 = reccountry*1000 + q8
 replace recq8 = .r if q8== 999
 
 gen recq33 = reccountry*1000 + q33
-replace recq33 = .r if q33== 999 
+replace recq33 = .r if q33== 8		
 
 gen recq50 = reccountry*1000 + q50
-replace recq50 = .r if q50== 999
+*replace recq50 = .r if q50== 999 // not needed in SO
 
 gen recq51 = reccountry*1000 + q51
 replace recq51 = .r if q51== 999
@@ -264,15 +276,11 @@ recode q28_a q28_b (. = .a) if q18 == 0 | q19 == 1 | q19 == .r
 recode q30 (. = .a) if q29 == 0 | q29 == .r
 
 * q32_so- na's
-recode q32_so q33 q33a_so q33b_so q33c_so q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_so q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q19 == 1 | q19 == .r
 	  	   	   
-recode q32_so q33 q33a_so q33b_so q33c_so q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_so q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (nonmissing = .a) if q18 == 0 | q19 == 1
-   
-recode q33a_so (. = .a) if q32_so !=1  
-recode q33b_so (. = .a) if q32_so !=2
-recode q33c_so (. = .a) if q32_so !=3
 
 recode q36 (. = .a) if q35!=1 
 
@@ -453,9 +461,6 @@ label variable q31_a "Q31a. Have you ever needed to borrow money to pay for heal
 label variable q31_b "q31_b. Sell items to pay for healthcare"
 label variable q32_so "Q32_so. SO only: Was this a public, private or another type of facility?"
 label variable q33 "Q33. What type of healthcare facility is this?"
-label variable q33a_so "Q33a. SO only: What type of public healthcare facility was this?"
-label variable q33b_so "Q33b. SO only: What type of private healthcare facility was this?"
-label variable q33c_so "Q33c. SO only: What type of other healthcare facility was this?"
 label variable q34 "Q34. What was the main reason you went?"
 label variable q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"
 label variable q36 "Q36. How long did you wait in days, weeks, or months between scheduling the appointment and seeing the health care provider?"

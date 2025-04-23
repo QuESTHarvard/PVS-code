@@ -585,7 +585,7 @@ recode q14_gr q32a_gr q32b_gr q15a_gr q15b_gr q15c_gr q33a_gr q33b_gr q52a_gr q5
 	   q51_gr (. = .a) if country !=18
 recode q27i_ng q40_e_ng (. = .a) if country != 20				
 recode q14_cn q27i_cn q27j_cn q32_cn q51_cn (. = .a) if country != 21
-recode q14_so q15a_so q15b_so q15c_so q32_so q33a_so q33b_so q33c_so q40a_so q40b_so q40e_so q40f_so (. = .a) if country != 22
+recode q14_so q15a_so q15b_so q15c_so q32_so q40a_so q40b_so q40e_so q40f_so (. = .a) if country != 22
 
 recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
 
@@ -778,9 +778,6 @@ lab var q33a_gr "Q33a. GR only: Can you please tell me the specialty of your pro
 lab var q33a_gr_other "Q33a. Other"
 lab var q33b_gr "Q33b. GR only: The healthcare provider that you saw in your last visit was the personal doctor that you have registered with?"
 lab var q33b_gr_other "Q33b. Other"
-lab var q33a_so "Q33a. SO only: What type of public healthcare facility was this?"
-lab var q33b_so "Q33b. SO only: What type of private healthcare facility was this?"
-lab var q33c_so  "Q33c. SO only: What type of other healthcare facility was this?"
 lab var q34 "Q34. What was the main reason you went?"
 lab var q34_other "Q34. Other"
 lab var q35 "Q35. Was this a scheduled visit or did you go without an appt.?"

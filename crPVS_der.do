@@ -568,7 +568,7 @@ recode last_type_own (.a = .r) if q32_uy == .r | q32_it == .r | q32_mx == .r | /
 								  q32_ar == .r | q32a_gb == .r | q32b_gb == .r | ///
 								  q32a_gr == .r 
 								  
-								  
+							  
 * last type level							  
 recode q33 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5016 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
 		   2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10100 10102 10104 11002 11003 ///
@@ -587,6 +587,9 @@ recode q33 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5016 5017 5018 502
 recode last_type_lvl (.a = 0) if q33a_gr == 1 | q33a_gr == 2
 recode last_type_lvl (.a = 1) if q33a_gr == 3 | q33a_gr == 4 | q33a_gr == 6		   
 		   
+* Somaliland recode
+recode last_type_lvl (.a = 0) if q33a_gr == 1 | q33a_gr == 2
+recode last_type_lvl (.a = 1) if q33a_gr == 3 | q33a_gr == 4 | q33a_gr == 6
 		      
 * last_type - ownership and level
 gen last_type = . 
