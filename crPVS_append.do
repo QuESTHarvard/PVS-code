@@ -167,6 +167,9 @@ lab var weight "Final weight (based on gender, age, region, education)"
 	* Re-order V1 vars to match V2 order
 	* Update variable labels to match V2 label names
 * renaming questions that were dropped
+
+ren q14_co_pe q14_co_pe_v1
+
 ren q12 q12_v1
 ren q13 q13_v1
 ren q13b_co_pe_uy_ar q13b_co_pe_uy_ar_v1
