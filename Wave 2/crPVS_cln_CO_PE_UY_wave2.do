@@ -338,7 +338,7 @@ recode q21 (. = .a) if q20 !=0
 recode q24 q25 (. = .a) if q23 == 0  | q23 == .d | q23 == .r
 
 * q27_b q27_c
-recode q27_b q27_c (. = .a) if q3 !=1 // SS: fix, still missing values
+recode q27_b q27_c (. = .a) if q3 !=1
 
 
 *q28
@@ -397,11 +397,11 @@ drop q11 q13 q20 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a ///
 		q28_b q29 q31a q31b q31_lac q35
 	   
 ********* All Excellent to Poor scales *********
-recode q9 q10 q25 q40_c q40_d q42 q43 q44 q47 q48 q49  ///
+recode q9 q10 q25 q42 q43 q44 q47 q48 q49  ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
 	   (5 = 0 "Poor") (.r = .r "Refused") (.a = .a "NA") (.d = .d "Don't know"), /// 
 	   pre(rec) label(exc_poor)
-drop q9 q10 q25 q40_c q40_d q42 q43 q44 q47 q48 q49 
+drop q9 q10 q25 q42 q43 q44 q47 q48 q49 
 	   
 recode q17  ///
 	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
@@ -435,7 +435,7 @@ recode q40_a q40_b q40_c q40_d ///
 	   (5 = 0 Poor) (6 = .d "I am unable to judge") (.r = .r Refused) ///
 	   (.a = .a NA), /// 
 	   pre(rec) label(exc_poor_judge)	   
-drop q40_a
+drop q40_a q40_b q40_c q40_d
 	   
 ********* All Very Confident to Not at all Confident scales *********
 recode q12_a q12_b q41_c  ///
