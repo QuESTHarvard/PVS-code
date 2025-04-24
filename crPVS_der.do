@@ -311,7 +311,7 @@ recode qual_srh (. = .a) if country !=20
 gen care_infections = q40b_so 
 recode care_infections (. = .a) if country !=22
 
-replace phc_mental = q40e_so if country ==22
+*replace phc_mental = q40e_so if country ==22
 
 gen care_nonurgent = q40f_so 
 recode care_nonurgent (. = .a) if country !=22
