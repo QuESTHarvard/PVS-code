@@ -22,6 +22,7 @@ set more off
 *********************** SOMALILAND ***********************
 
 * Import data 
+
 import spss "$data/Somaliland/01 raw data/IpsosKY_Somaliland_PVS_F2F_CATI_Fulldata_V5.sav" // used spss data because time vars were off in .dta file
 rename *, lower
  
@@ -516,7 +517,7 @@ tab total_weight_rescaled // to ensure the first sums to 2.1 million and the res
 drop weight total_weight total_weight_rescaled
 
 rename rescaled_weight weight
-rename CELL1 cell1
+*rename CELL1 cell1
 
 *------------------------------------------------------------------------------*
 

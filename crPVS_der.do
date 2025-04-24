@@ -540,14 +540,14 @@ recode last_type_own (.a = 0) if q32_la == 1 | q33 == 11002
 recode last_type_own (.a = 1) if q32_la == 2 | q33 == 11003
 
 *China
-recode last_type_own (. = 0) if q32_cn == 1 & country ==21
-recode last_type_own (. = 1) if q32_cn == 2 & country ==21
+recode last_type_own (.a = 0) if q32_cn == 1 & country ==21
+recode last_type_own (.a = 1) if q32_cn == 2 & country ==21
 
 *Somaliland
-recode last_type_own (. = 0) if q32_so == 1 & country ==22
-recode last_type_own (. = 1) if q32_so == 2 & country ==22
-recode last_type_own (. = 2) if q32_so == 4 & country ==22
-recode last_type_own (. = .r) if q32_so == .r & country ==22
+recode last_type_own (.a = 0) if q32_so == 1 & country ==22
+recode last_type_own (.a = 1) if q32_so == 2 & country ==22
+recode last_type_own (.a = 2) if q32_so == 4 & country ==22
+recode last_type_own (.a = .r) if q32_so == .r & country ==22
 
 * Other countries:
 recode last_type_own (.a = 0) if q32_uy == 1 | q32_it == 1 | inlist(q32_mx,3,4) | ///
