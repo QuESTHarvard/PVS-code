@@ -26,16 +26,14 @@ set more off
 macro drop _all
 
 * Setting user globals 
-*global user "/Users/nek096"
-*global user "/Users/catherine.arsenault"
+
 *global user "/Users/tol145"
+*global user "/Users/toddlewis" 
 *global user "/Users/shs8688/Library/CloudStorage/Box-Box"
 *global user "C:/Users/i.sayeda/Box"
 
-
 * Setting file path globals
 global data "$user/QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
-*global data "$user/Dropbox/SPH Kruk QuEST Network/Core Research/People's Voice Survey/PVS External/Data"
 
 * Path to multi-country data folder (includes input and output folders for data checks)
 global data_mc "$data/Multi-country"
@@ -50,17 +48,20 @@ global github "$user/Documents/GitHub/PVS-code"
 ************************************************
 
 * Clean each dataset separately 
-run "$github/crPVS_cln_ET_IN_KE_ZA.do"
-run "$github/crPVS_cln_CO_PE_UY.do"
-run "$github/crPVS_cln_LA.do"
-run "$github/crPVS_cln_IT_MX_US.do"
-run "$github/crPVS_cln_KR.do"
-run "$github/crPVS_cln_AR.do"
-run "$github/crPVS_cln_GB.do"
-run "$github/crPVS_cln_GR.do"
-run "$github/crPVS_cln_RO.do"
-run "$github/crPVS_cln_NG.do"
-run "$github/crPVS_cln_ET_IN_KE_ZA_wave2.do"
+run "$github/Wave 1/crPVS_cln_ET_IN_KE_ZA.do"
+run "$github/Wave 1/crPVS_cln_CO_PE_UY.do"
+run "$github/Wave 1/crPVS_cln_LA.do"
+run "$github/Wave 1/crPVS_cln_IT_MX_US.do"
+run "$github/Wave 1/crPVS_cln_KR.do"
+run "$github/Wave 1/crPVS_cln_AR.do"
+run "$github/Wave 1/crPVS_cln_GB.do"
+run "$github/Wave 1/crPVS_cln_GR.do"
+run "$github/Wave 1/crPVS_cln_RO.do"
+run "$github/Wave 1/crPVS_cln_NG.do"
+run "$github/Wave 2/crPVS_cln_ET_IN_KE_ZA_wave2.do"
+run "$github/Wave 1/crPVS_cln_NG.do"
+run "$github/Wave 1/crPVS_cln_EC.do"
+run "$github/Wave 2/crPVS_cln_CO_PE_UY_wave2.do"
 
 * Append datasets 
 run "$github/crPVS_append.do"

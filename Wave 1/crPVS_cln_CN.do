@@ -109,8 +109,7 @@ rename q32other q32_other
 rename q33other q33_other
 
 rename q34other q34_other
-
-rename q37other q37_other
+rename q37other q37_v1_other
 
 rename q38a q38_a
 rename q38b q38_b
@@ -249,6 +248,11 @@ label def q7_label 21001 "CN: Urban employee medical insurance" ///
 label values recq7 q7_label
 drop q7 
 
+recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse") ///
+		   (.a = .a "NA") (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q45_label)
+
+drop q45
+		   
 ren rec* *
 
 *------------------------------------------------------------------------------*
@@ -493,9 +497,6 @@ lab val q37 q37_label
 lab def YN_nojudge 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" 5 "I am unable to judge" ///
 				   .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
 lab val q40_a q40_b q40_c q40_d YN_nojudge	  
-
-lab def q45_label 1 "Getting better" 2 "Staying the same" 3 "Getting worse" .a "NA" .d "Don't Know" .r "Refused"
-lab val q45 q45_label
 
 lab def q46_label 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 				 2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
@@ -911,15 +912,16 @@ replace q34_other=".d" if q34_other=="不清楚" ///
 * 6-24 SS: matches code above
 replace q34 = .d if q34_other == ".d"	  
 
-replace q37=.r if q37_other=="不清楚"
-*replace q37_other = "" in 2259 // 6-24 SS: removed
+replace q37 =.r if q37_v1_other=="不清楚"
+*replace q37_v1_other = "" in 2259 // 6-24 SS: removed
 
 * 6-24 SS: updated
-replace q37 = 24 if q37_other == "第二天"
-replace q37 = 5 if q37_other == "4-5小时内"
-replace q37 = 48 if q37_other == "48小时" | q37_other == "两天"
-replace q37 = 9 if q37_other == "9小时"
-*destring q37_other, replace // 6-24 SS: removed	  	  
+* 4-15-25: updated to v2.0 labels
+replace q37 = 7 if q37_v1_other == "第二天"
+replace q37 = 7 if q37_v1_other == "4-5小时内"
+replace q37 = 7 if q37_v1_other == "48小时" | q37_v1_other == "两天"
+replace q37 = 7 if q37_v1_other == "9小时"
+*destring q37_v1_other, replace // 6-24 SS: removed	  	  
 
 	  
 replace q50_other = "蒙古族" if q50_other == "蒙族" | q50_other == "蒙古"
@@ -995,9 +997,9 @@ label variable q33_other "Q33_Other. Other type of healthcare facility"
 label variable q34 "Q34. What was the main reason you went?"
 label variable q34_other "Q34_Other. Other reasons"
 label variable q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"
-label variable q36 "Q36. How long did you wait in days, weeks, or months between scheduling the appointment and seeing the health care provider?"
-label variable q37 "Q37. At this most recent visit, once you arrived at the facility, approximately how long did you wait before seeing the provider?"
-label variable q37_other "Q37_Other. Other"
+label variable q36 "q36. How long did you wait in days, weeks, or months between scheduling the appointment and seeing the health care provider?"
+label variable q37 "q37. At this most recent visit, once you arrived at the facility, approximately how long did you wait before seeing the provider?"
+label variable q37_v1_other "Q37_Other. Other (V1.0)"
 label variable q38_a "Q38a. How would you rate the overall quality of care you received?"
 label variable q38_b "Q38b. How would you rate the knowledge and skills of your provider?"
 label variable q38_c "Q38c. How would you rate the equipment and supplies that the provider had?"

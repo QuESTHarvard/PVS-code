@@ -24,7 +24,6 @@ set more off
 * Import raw data 
 import spss using "$data/ET IN KE ZA wave2/01 raw data/24-065373-01-02_Harvard_2024_Merged_weighted_SPSS.sav", case(lower)
 
-
 *Label as wave 2 data:
 gen wave = 2
 
@@ -35,6 +34,12 @@ drop q1_q2
 
 *dropping interviewer vars:
 drop ecs_id start_time end_time interviewer_id interviewer_gender interviewer_language time_new
+
+*psu_id for ET/KE:
+gen psu_id2 = ""
+replace psu_id2 = "ET" + string(q4) if mode == 2 & country == 3
+replace psu_id2 = "KE" + string(q4) if mode == 2 & country == 5
+replace psu_id2 = respondent_id if mode == 2 & q4 == 999
 
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
@@ -90,7 +95,52 @@ recode q51 (101 = 101  "< Ksh 1,000") ///
 		   (110 = 135 "> 50,000 INR") ///
 		   (999 = .r "Refused") (998 = .d "Don't know"), gen(recq51)
 		   
-drop q51
+	
+* Value 11 was 21 in wave 1 data and value 10 was 11 in wave 1 data, recoding here	(what is 10 and 22?)
+recode q15 (1 = 1 "Health Post") (2	= 2 "Health center") (2	= 2 "Health center") ///
+		   (3 = 3 "Primary hospital") (4 = 4 "General hospital") (5 = 5 "Referral/specialized hospital") ///
+		   (6 = 6 "Lower clinic") (7 = 7 "Medium clinic") (8 = 8 "Higher or specialty clinic") ///
+		   (9 = 9 "Hospital / Speciality centre") (11 = 21 "NGO/Faith-based hospital") ///
+		   (10 = 11 "NGO /Faith-based health center/clinic") (12 = 12 "Government dispensary") ///
+		   (13 = 13 "Government/district/county hospital") (14 = 14 "Government health center or clinic") ///
+		   (15 = 15	"Community health worker or outreach") (16 = 16 "Mobile clinic") ///
+		   (17 = 17 "Private clinic or doctor's office") (18 = 18 "Private medical center") ///
+		   (19 = 19 "Private hospital") (20	= 20 "NGO faith-based clinic") (21 = 21 "NGO/faith-based hospital") ///
+		   (23 = 23 "Mobile clinic") (24 = 24 "Ward-based outreach care") (25 = 25 "Health posts") ///
+		   (26 = 26 "Department of health clinic") (27 = 27 "Municipal clinic") ///
+		   (28 = 28 "Department of health community health centre") (29	= 29 "District hospital") ///
+		   (30 = 30	"Department of health hospital (Regional, Tertiary and Central hospitals)") ///
+		   (31 = 31	"General practitioner practices") (32 = 32 "Private clinics") (33 = 33 "Private health centres")  ///
+		   (34 = 34 "Specialist private practices") (35	= 35 "Private hospital") (36 = 36 "Faith-based or mission clinic") ///
+		   (37 = 37 "Faith-based or mission hospital") (67 = 67 "Sub-centre/Health and Wellness Centre") ///
+		   (68 = 68 "Primary Health Centre") (69 = 69 "Community Health Centre") (70 = 70 "District Hospital") ///
+		   (71 = 71 "Medical College") (72 = 72 "Informal Providers (RMP)") (73	= 73 "Private clinic") ///
+		   (74 = 74 "Private nursing home") (75 = 75 "Private hospital") ///
+		   (76 = 76 "Faith-based or charitable hospital (religion or sect-based facility") ///
+		   (997	= 997 "Other, specify") (998 = 998 "Don't know") (999 = 999 "Refused"), gen(recq15)	
+		   
+recode q33 (1 = 1 "Health Post") (2	= 2 "Health center") (3	= 3 "Primary hospital") (4 = 4 "General hospital") ///
+		   (5 = 5 "Referral/specialized hospital") (6 = 6 "Lower clinic") (7 = 7 "Medium clinic") ///
+		   (8 = 8 "Higher or specialty clinic") (9 = 9 "Hospital/Speciality centre") ///
+		   (11 = 21 "NGO/Faith-based hospital") (10 = 11 "NGO/Faith-based health center/clinic")  ///
+		   (12 = 12 "Government dispensary") (13 = 13 "Government/district/county hospital") ///
+		   (14 = 14	"Government health center or clinic") (15 = 15 "Community health worker or outreach") ///
+		   (16 = 16 "Mobile clinic") (17 = 17 "Private clinic or doctor's office") (18 = 18 "Private medical center") ///
+		   (19 = 19 "Private hospital") (20	= 20 "NGO faith-based clinic") (21 = 21 "NGO/faith-based hospital") ///
+		   (23 = 23 "Mobile clinic") (24 = 24 "Ward-based outreach care") (25 = 25 "Health posts") ///
+		   (26 = 26 "Department of health clinic") (27 = 27 "Municipal clinic") ///
+		   (28	= 28 "Department of health community health centre") (29 = 29 "District hospital") ///
+		   (30 = 30 "Department of health hospital (Regional, Tertiary and Central hospitals)") ///
+		   (31 = 31 "General practitioner practices") (32 = 32 "Private clinics") (33 = 33 "Private health centres") ///
+		   (34 = 34 "Specialist private practices") (35	= 35 "Private hospital") (36 = 36 "Faith-based or mission clinic") ///
+		   (37 = 37 "Faith-based or mission hospital") (67 = 67 "Sub-centre/Health and Wellness Centre") ///
+		   (68 = 68 "Primary Health Centre") (69 = 69 "Community Health Centre") (70 = 70 "District Hospital") ///
+		   (71 = 71 "Medical College") (72 = 72 "Informal Providers (RMP)") (73	= 73 "Private clinic") ///
+		   (74 = 74 "Private nursing home") (75	= 75 "Private hospital") ///
+		   (76 = 76 "Faith-based or charitable hospital (religion or sect based facility)") ///
+		   (997	= 997 "Other, specify") (998 = 998 "Don't know") (999 = 999 "Refused"), gen(recq33)
+		   
+drop q51 q15 q33
 ren rec* *
 
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
@@ -218,7 +268,7 @@ recode q18_q19 (998 999 = 10) if q19 == 4
 
 * In raw data, 997 = "don't know" 
 recode q14 q18 q21 q22 q23 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h ///
-	   q32 cell1 cell2 (998 = .d)
+	   q32 cell1 cell2 q18_q19 (998 = .d)
 	   
 *NOTE: currently in data q37_za "don't know" is category 3  
 
@@ -228,7 +278,7 @@ recode q1 q3 q6 q9 q10 q11 q12_a q12_b q13 q14 q16 q17 q18 q19 q20 q21 ///
 	   q28_b q29 q30 q31a q31b q32 q34 q35 q36 q37 q38_a q38_b q38_c ///
 	   q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q39 q40_a q40_b q40_c ///
 	   q40_d q41_a q41_b q41_c q42 q43 q44 q45 q46 q47 q48 q49 cell1 ///
-	   cell2 q6_za (999 = .r)	
+	   cell2 q6_za q18_q19 (999 = .r)	
 	   
 *------------------------------------------------------------------------------*
 * Check for implausible values 
@@ -257,7 +307,7 @@ list q20 q21 if q20 ==1 & q21 > 0 & q21 < .
 egen visits_total = rowtotal(q18_q19 q22 q23) 
 list visits_total q17 if q17 == 5 & visits_total > 0 & visits_total < . | q17 == 5 & visits_total > 0 & visits_total < .
 *SS: N=4 with issues, this is how we've fixed it in the past
-recode q17 (5 = .r) if visits_total > 0 & visits_total < . // N=100 changes
+recode q17 (5 = .r) if visits_total > 0 & visits_total < . // N=99 changes
 
 drop visits_total
 
@@ -311,14 +361,12 @@ recode cell2 (. = .a) if cell1 !=1
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:
 
-
-*fix q19
-recode q19 (1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") (.a = .a "NA") ///
-		   (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q19_label)
-
 recode q14 (1 = 1 "Public") (2 = 2 "Private") (4 = 3 "NGO/Faith-based") ///
 		   (997 = 4 "Other, specify") (.a = .a "NA") ///
-		   (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q14_label)
+		   (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q14_label)  	   
+		   		   
+recode q19 (1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") (.a = .a "NA") ///
+		   (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q19_label)		   
 
 recode q24 (1 = 1 "Care for an urgent or new health problem such as an accident or injury or a new symptom like fever, pain, diarrhea, or depression.") ///
 		   (2 = 2 "Follow-up care for a longstanding illness or chronic disease such as hypertension or diabetes. This may include mental health conditions.") ///
@@ -469,7 +517,7 @@ order respondent_serial respondent_id mode country wave language date int_length
 
 *------------------------------------------------------------------------------*
 
-/* Other specify recode 
+* Other specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
@@ -507,7 +555,7 @@ label var q50_other_original "Q50. Other"
 
 foreach i in 3 4 5 9 {
 
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_id)	
  
@@ -528,7 +576,7 @@ ren q34_other_original q34_other
 ren q50_other_original q50_other
 
 order q*, sequential
-order respondent_serial respondent_id mode country language date time int_length weight_educ
+order respondent_serial respondent_id mode country language date int_length weight
 
 *------------------------------------------------------------------------------*/
 
