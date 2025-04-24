@@ -30,6 +30,7 @@ notes drop _all
 * Note: .a means NA, .r means refused, .d is don't know, . is missing 
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
+drop qq2
 
 gen psu_id = ""
 replace psu_id = "SO" + string(q4) if mode == 2
@@ -515,6 +516,7 @@ tab total_weight_rescaled // to ensure the first sums to 2.1 million and the res
 drop weight total_weight total_weight_rescaled
 
 rename rescaled_weight weight
+rename CELL1 cell1
 
 *------------------------------------------------------------------------------*
 

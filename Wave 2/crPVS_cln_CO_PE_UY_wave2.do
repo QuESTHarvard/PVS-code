@@ -44,6 +44,7 @@ drop p12_all p19_all2 dia1 mes1 anio1 tipo_base nombre_encuestador enc total wtv
 * Rename some variables, and some recoding if variable will be dropped 
 
 recode pais (1 = 2 "CO") (2 = 7 "Peru") (3 = 10 "Uruguay"), gen(country) 
+drop pais
 
 rename fecha1 date
 rename peso weight // confirm translation
@@ -77,7 +78,8 @@ drop p18_codes
 
 recode p19_all (1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") ///
 		   (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"),gen(q19) label(q19_label)
-
+drop p19_all
+		   
 rename p20 q20
 rename p21 q21
 
@@ -237,9 +239,14 @@ ren rec* *
 *reformating date
 g date2= date(substr(date, 1, 10), "DMY")
 format date2 %td
+drop date
+rename date2 date
 
 *------------------------------------------------------------------------------*
 * Generate variables 
+
+encode respondent_serial,gen(recrespondent_serial)
+drop respondent_serial
 
 gen mode = 1
 lab def mode 1 "CATI",modify
@@ -285,6 +292,7 @@ recode q12_a q12_b q42 q43 q44 q47 q48 q49 (6 = .r)
 recode q26 q31a q31_lac (3 = .r)
 recode q40_a q40_b q40_c q40_d (7 = .r)
 recode q41_a q41_b  (5 = .r)
+recode q6_lac (22 = .r)
 
 *------------------------------------------------------------------------------*
 * Check for implausible values
