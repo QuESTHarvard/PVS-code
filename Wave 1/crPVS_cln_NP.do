@@ -308,6 +308,9 @@ recode q30 (. = .a) if q29 !=1
 recode q32_np q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q18 == . | q19 == . | q19 == .a
 
+* q40a-d
+recode q40_a q40_b q40_c q40_d (6 = .d)
+	   
 *------------------------------------------------------------------------------*
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:

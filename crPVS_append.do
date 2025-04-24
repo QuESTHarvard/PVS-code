@@ -85,7 +85,7 @@ append using "$data_mc/02 recoded data/input data files/pvs_ng.dta"
 
 qui do `label9'
 
-* Country
+* Country 
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" 15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria", modify
 
@@ -151,7 +151,7 @@ lab def labels37  11 "AR: Delay to get a turn" ////
 				 15 "RO: Concern about informal payments/gifts" ///
 				 16 "SO: They are closed" ///
 				 17 "SO: Was affected by conflicts" ///
-				 18 "SO: Doctor was not available" .a "NA" .d "Don't know" .r "Refused", modify
+				 18 "SO: Doctor was not available" 19 "LAC: Problems with coverage" 20 "LAC: Difficulty getting an appointment" .a "NA" .d "Don't know" .r "Refused", modify
 lab def labels44 .a "NA" .r "Refused", modify	
 lab def labels65 1 "Yes" 2 "No" .d "Don't Know", modify		
 label values q12 yes_no_dk
@@ -167,8 +167,6 @@ lab var weight "Final weight (based on gender, age, region, education)"
 	* Re-order V1 vars to match V2 order
 	* Update variable labels to match V2 label names
 * renaming questions that were dropped
-
-ren q14_co_pe q14_co_pe_v1
 
 ren q12 q12_v1
 ren q13 q13_v1
@@ -195,7 +193,7 @@ ren q18 recq13
 ren q18a_la recq13a_la
 ren q18b_la recq13b_la
 ren q19_ar recq14_ar
-ren q19_co_pe recq14_co_pe
+ren q19_co_pe recq14_co_pe_v1
 ren q19_gr recq14_gr
 ren q19_gr_other recq14_gr_other
 ren q19_it recq14_it
@@ -489,7 +487,7 @@ gen wave = 1
 save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
 
 
-********************************* PVS V2 *********************************
+********************************* PVS V2 ***************************************
 * Starting with PVS China, the PVS question items were re-ordered, this part of the do file will:
 	* Append V2 countries
 
@@ -529,75 +527,111 @@ append using "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dt
 
 qui do `label13'
 
+tempfile label14
+label save q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 using `label14'
+label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 
+
+append using "$data_mc/02 recoded data/input data files/pvs_co_pe_uy_wave2.dta"
+
+qui do `label14'
+
 ********************************************************************************
-* Country
+* Country - add new countries here
 lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
-				21 "China" 22 "Somaliland" 23 "Nepal", modify
+				21 "China" 22 "Somaliland" 23 "Nepal", modify				
 
-* Country-specific skip patterns - change to V2 var names
-recode q14_multi q44_multi q32_multi (. = .a) if country != 3 | country != 4 | country != 5 | ///
-									   country != 18 | country != 20 | country != 19 | country != 9 | country !=23
-
-recode q44_pe (. = .a) if country != 7
-recode q14_co_pe q32_co_pe (. = .a) if country != 2 & country != 7 
-
-recode q6_za q27i_za (. = .a) if country != 9
-
-recode q6_la q13a_la q13b_la q14_la_v1 q14_q15a_la q14_q15b_la ///
-	   q15_la_v1 q32_la q50a_la (. = .a) if country != 11
-		
-recode q14_v1 q15_v1 q13 q15 CELL1 CELL2 (. = .a) if country == 11 
-
-recode q6_it q14_it q32_it (. = .a) if country != 14
-
-recode q14_mx q32_mx q44a_mx q44b_mx q50_mx (. = .a) if country != 13
-
-recode q50a_us q50b_us q52a_us q52b_us (. = .a) if country != 12
-
-recode q25 q35 q36 q37b_refused_v1 q38_k (. = .a) if country != 12 | country != 13 | country != 14	
-	   
-recode q52 (. = .a) if country != 13 | country != 14 | country != 15
-
-recode q6_kr q7_kr q14_kr q32_kr (. = .a) if country != 15
-
-recode q7 (. = .a) if country == 15 
+*-------------------------------------------------------------------------------*					
+* Country-specific skip patterns 
 
 * Add the line to recode q6 to .a if the country has country specific q6. 
 **This might have been done in each individual cleaning program but do it again here to be sure
 recode q6 (. = .a) if inlist(country,9,11,14,15,17) 
 
+* Ethiopia, India, Kenya, Greece, Nigeria, Romania, South Africa, Nepal
+recode q14_multi q44_multi q32_multi (. = .a) if country != 3 | country != 4 | country != 5 | ///
+									   country != 18 | country != 20 | country != 19 | country != 9 | country !=23
+
+* Peru:
+recode q44_pe (. = .a) if country != 7
+recode q14_co_pe_v1 q32_co_pe (. = .a) if country != 2 & country != 7 
+
+* South Africa:
+recode q6_za q27i_za (. = .a) if country != 9
+
+* Lao PDR:
+recode q6_la q13a_la q13b_la q14_la_v1 q14_q15a_la q14_q15b_la ///
+	   q15_la_v1 q32_la q50a_la (. = .a) if country != 11
+		
+recode q14_v1 q15_v1 q13 q15 CELL1 CELL2 (. = .a) if country == 11 
+
+* Italy
+recode q6_it q14_it q32_it (. = .a) if country != 14
+
+* Mexico
+recode q14_mx q32_mx q44a_mx q44b_mx q50_mx (. = .a) if country != 13
+
+* USA
+recode q50a_us q50b_us q52a_us q52b_us (. = .a) if country != 12
+
+* USA/Mexico/Italy
+recode q25 q35 q36 q37b_refused_v1 q38_k (. = .a) if country != 12 | country != 13 | country != 14	
+recode q52 (. = .a) if country != 13 | country != 14 | country != 15
+
+* Korea:
+recode q6_kr q7_kr q14_kr q32_kr (. = .a) if country != 15
+recode q7 (. = .a) if country == 15 
+recode CELL1 CELL2 q37b_refused_v1 q47_refused_v1 (. = .a) if country == 15 
+
+* Coolmbia/Peru/Uruguay/Argentina:
 recode q3a_co_pe_uy_ar q13b_co_pe_uy_ar_v1 q13e_co_pe_uy_ar_v1 (. = .a) if ///
 	   country != 2 | country != 7 |  country != 10 | country != 16 
 
+* Uruguay:   
 recode q14_uy q32_uy q44_uy (. = .a) if country !=10
-	   
+
+* Argentina:
 recode q14_ar q32_ar q44a_ar q44b_ar q44c_ar (. = .a) if country != 16 
 
+* India/Greece/Romania:
 recode q27i_gr_in_ro (. = .a) if country != 4 | country != 18 | country != 19
 
-recode CELL1 CELL2 q37b_refused_v1 q47_refused_v1 (. = .a) if country == 15 
-
+* United Kingdom:
 recode q6_gb q14a_gb q14b_gb q32a_gb q32b_gb q50_gb q52_gb (. = .a) if country != 17
 
+* Greece:
 recode q14_gr q32a_gr q32b_gr q15a_gr q15b_gr q15c_gr q33a_gr q33b_gr q52a_gr q52b_gr ///
 	   q51_gr (. = .a) if country !=18
-recode q27i_ng q40_e_ng (. = .a) if country != 20				
+	   
+* Nigeria:	   
+recode q27i_ng q40_e_ng (. = .a) if country != 20			
+
+* China:	
 recode q14_cn q27i_cn q27j_cn q32_cn q51_cn (. = .a) if country != 21
+
+* Somaliland:
 recode q14_so q15a_so q15b_so q15c_so q32_so q40a_so q40b_so q40e_so q40f_so (. = .a) if country != 22
 
+* Nepal:
 recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
 
+* Kenya
 recode q7_ke (. = .a) if country !=5 | wave !=2
 
+* All wave 2 countries plus Colombia, Ethiopia, India, Kenya, Peru, South Africa, Uruguay, Lao PDR, Argentina, Nigeria, China, Somaliland, Nepal 
 recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country == 5 | country == 7 ///
 						 | country == 9 | country == 10 | country == 11 | country == 16 | country == 20 | ///
 						 country != 21 | country != 22 | country != 23 | wave ==2	
 
 *For V1.0 countries that didn't have the new q37 var in V2.0				 
-recode q37 (. = .a) if country != 21 | country != 22 | country != 23 | wave !=2					 
-						 
+recode q37 (. = .a) if country != 21 | country != 22 | country != 23 | wave !=2		
+
+*LAC wave 2:
+recode q6_lac q31_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	 
+	
+*-------------------------------------------------------------------------------*	
+	
 * Other value label modifcations
 lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
@@ -619,6 +653,7 @@ recode country (22 = 1 "Somaliland") (3 = 2 "Ethiopia") (5 = 3 "Kenya") ///
 			   (12 = 20 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
+*-------------------------------------------------------------------------------*	
 *** Code for survey set: For accurate SEs when using mixed CATI/CAWI and F2F surveys ***
 
 gen respondent_num = _n 
@@ -634,18 +669,19 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 * Each person will have their own PSU ID for CATI and each sampled cluster will have a unique ID for the F2F.
  
 * Now the svyset syntax will simply be:
-* svyset psu_id_for_svy_cmds [pw=weight], strata(mode)
-* or equivalently
-* svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
+	* svyset psu_id_for_svy_cmds [pw=weight], strata(mode)
+	* or equivalently
+	* svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
+*-------------------------------------------------------------------------------*	
 
 * Keep variables relevant for data sharing and analysis  
 * Dropping time for now 
-drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id qq2 CELL1 CELL2 check cell1 cell2 q44
+drop respondent_num interviewer_gender interviewer_id time q1_codes interviewerid_recoded psu_id ecs_id CELL1 CELL2 check cell1 cell2 q44
 
 					
 * Reorder variables
 order q*, sequential
-order respondent_serial respondent_id mode country wave language date ///
+order respondent_serial respondent_id mode country country_reg wave language date ///
 	  int_length psu_id_for_svy_cmds weight 		  
 
 * Label variables
@@ -690,7 +726,7 @@ lab var q13e_co_pe_uy_ar_v1 "Q13E (V1.0). CO/PE/UY/AR only: Why didn't you recei
 lab var q13e_other_co_pe_uy_ar_v1 "Q13E_Other (V1.0). CO/PE/UY only: Other"
 lab var q14_ar "Q14. AR only: Is this facility Public, OSEP, Other 'obras sociales', A medical center/hospital owned by PAMI, or Private/prepaid?"
 lab var q14_cn "Q14. CN only: Is this a public, private, or NGO/faith-based healthcare facility?"
-lab var q14_co_pe "Q14. CO/PE only: Is this a public or private healthcare facility?"
+lab var q14_co_pe_v1 "Q14. CO/PE only: Is this a public or private healthcare facility?"
 lab var q14_gr "Q14. GR only: Is this a public, private, contracted to public, or an NGO healthcare facility?"
 lab var q14_gr_other "Q14. Other"
 lab var q14_it "Q14. IT only: Is this facility… public, private SSN, or private not SSN?"
