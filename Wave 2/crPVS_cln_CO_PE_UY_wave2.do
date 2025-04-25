@@ -278,7 +278,7 @@ recode q27_a q27_b q27_d q27_e q27_f q27_g q27_h q28_a q28_b q29 (4 = .d)
 * Refused
 recode q9 q10 q25 q38_k (6 = .r)
 recode q11 q13 q20 q27_a q27_c q27_d q27_e q27_f q28_a q28_b q29 q35 (3 = .r)
-recode q14 q32 q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j (8 = .r)
+recode q14 q32_co_pe_uy q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j (8 = .r)
 recode q16 q30 (11 = .r)	  
 recode q17 (7 = .r)
 recode q24 q34 (5 = .r)
@@ -358,7 +358,7 @@ recode q28_a q28_b (. = .a) if q18 == 0 | q18 == .d | q18 == .r | q19 == 1 | q19
 recode q30 (. = .a) if q29 !=1
 
 * q32-33
-recode q32 q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_co_pe_uy q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q18 == .d | q18 == .r | ///
 													 q19 == 1 | q19 == .d | q19 == .r
 
@@ -463,7 +463,7 @@ drop q41_a q41_b
 ********* Miscellaneous questions with unique answer options *********
 
 *q14- confirm translations
-recode q14 (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualista") (5 = 5 "Private") (6 = 6 "Armed Forces or Police") (7 = 7 "Other"), gen(q14_co_pe)
+recode q14 (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualista") (5 = 5 "Private") (6 = 6 "Armed Forces or Police") (7 = 7 "Other"), gen(q14_lac)
 
 * SS: confirm translations	
 recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting time") ///
@@ -664,7 +664,7 @@ label var q29 "Q29. Have you needed medical attention but you did not get it in 
 label var q30 "Q30. The last time this happened, what was the main reason you did not receive healthcare?"
 label var q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
 label var q31b "Q31b. Sell items to pay for healthcare"
-*label var q32_multi "Q32. Was this a public, private, NGO or faith-based facility?" // change to LAC var
+*label var q32_co_pe_uy "Q32. Was this a public, private, NGO or faith-based facility?" // change to LAC var
 label var q33 "Q33. What type of healthcare facility was this?"
 label var q34 "Q34. What was the main reason you went?"
 label var q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"
