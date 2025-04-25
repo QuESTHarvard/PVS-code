@@ -619,6 +619,7 @@ recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
 * Kenya
 recode q7_ke (. = .a) if country !=5 | wave !=2
 
+
 * All wave 2 countries plus Colombia, Ethiopia, India, Kenya, Peru, South Africa, Uruguay, Lao PDR, Argentina, Nigeria, China, Somaliland, Nepal 
 recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country == 5 | country == 7 ///
 						 | country == 9 | country == 10 | country == 11 | country == 16 | country == 20 | ///
