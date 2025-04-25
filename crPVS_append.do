@@ -628,7 +628,7 @@ recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country =
 recode q37 (. = .a) if country != 21 | country != 22 | country != 23 | wave !=2		
 
 *LAC wave 2:
-recode q6_lac q31_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	 
+recode q6_lac q31_lac q14_co_pe (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	 
 	
 *-------------------------------------------------------------------------------*	
 	
