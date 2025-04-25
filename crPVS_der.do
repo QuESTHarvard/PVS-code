@@ -311,7 +311,7 @@ recode qual_srh (. = .a) if country !=20
 gen care_infections = q40b_so 
 recode care_infections (. = .a) if country !=22
 
-replace phc_mental = q40e_so if country ==22
+*replace phc_mental = q40e_so if country ==22
 
 gen care_nonurgent = q40f_so 
 recode care_nonurgent (. = .a) if country !=22
@@ -371,15 +371,15 @@ recode insured (.a = .r) if q6_za == .r
 * For Colombia, moved "no insurance" to "yes" in insured and "public" in "insur_type"
 * insur_type 
 
-recode q7 (2017 2018 3001 5003 2017 2018 7010 10019 11002 12002 12003 ///
+recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 10019 11002 12002 12003 ///
 		   12005 14002 16001 4023 4024 4025 4026 17002 2030 ///
 		   18029 19031 20034 20037 21001 21002 21003 21005 22002 = 0 "Public") ///
-		  (2028 3002 5004 5005 5006 3007 9008 9009 2028 7013 10021 11001 12001 ///
+		  (2028 2010 2011 3002 5004 5005 5006 3007 9008 9009 2028 7013 10021 11001 12001 ///
 		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 ///
 		  20036 21004 22001 22003 22004 = 1 "Private") /// 
-		  (2015 2016 16002 16003 16004 13001 13002 13004 7011 7012 10020 10022 ///
+		  (2015 2016 2006 2007 16002 16003 16004 13001 13002 13004 7011 7012 10020 10022 ///
 		  = 2 "Social security/military") ///
-		  (2995 9995 12995 13995 4995 18995 19995 20995 21006 = 3 "Other") ///
+		  (2995 2020 9995 12995 13995 4995 18995 19995 20995 21006 = 3 "Other") ///
 		  (.r = .r "Refused") (2030 7014 13014 16007 13003 .a = .a "NA"), gen(insur_type)
 
 recode insur_type (.a = 1) if q6_za == 1
@@ -540,14 +540,14 @@ recode last_type_own (.a = 0) if q32_la == 1 | q33 == 11002
 recode last_type_own (.a = 1) if q32_la == 2 | q33 == 11003
 
 *China
-recode last_type_own (. = 0) if q32_cn == 1 & country ==21
-recode last_type_own (. = 1) if q32_cn == 2 & country ==21
+recode last_type_own (.a = 0) if q32_cn == 1 & country ==21
+recode last_type_own (.a = 1) if q32_cn == 2 & country ==21
 
 *Somaliland
-recode last_type_own (. = 0) if q32_so == 1 & country ==22
-recode last_type_own (. = 1) if q32_so == 2 & country ==22
-recode last_type_own (. = 2) if q32_so == 4 & country ==22
-recode last_type_own (. = .r) if q32_so == .r & country ==22
+recode last_type_own (.a = 0) if q32_so == 1 & country ==22
+recode last_type_own (.a = 1) if q32_so == 2 & country ==22
+recode last_type_own (.a = 2) if q32_so == 4 & country ==22
+recode last_type_own (.a = .r) if q32_so == .r & country ==22
 
 * Other countries:
 recode last_type_own (.a = 0) if q32_uy == 1 | q32_it == 1 | inlist(q32_mx,3,4) | ///
