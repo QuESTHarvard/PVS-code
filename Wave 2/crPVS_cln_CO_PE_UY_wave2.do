@@ -85,14 +85,16 @@ rename p13a_all q13a_co_pe_uy // add to data dictionary
 
 recode p14_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
 			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = .r "No response"),gen(q14) label(q14_label)
-
+drop p14_all
+			   
 * confirm translations			   
 recode p15_all (1 = 101 "Health Center/Primary Care Center") (2 = 102 "Post/Health Center") (3 = 103 "Post/Health Center/UBAP") ///
 			   (4 = 104 "Health Center") (5 = 105 "Private Practice") (6 = 106 "Polyclinic") (7 = 107 "Polyclinic") ///
 			   (8 = 108 "Other Primary Care Facility") (9 = 109 "Hospital") (10 = 110 "Clinic") (11 = 111 "Clinic/Hospital") ///
 			   (12 = 112 "Hospital/Sanitorium") (13 = 113 "Clinic/Sanitorium") (14 = 114 "National Institute") ///
 			   (15 = 115 "Other Secondary Care Facility or more") (16 = .r "No response"),gen(q15)
-
+drop p15_all
+			   
 rename p16_all q16
 rename p17 q17
 
@@ -147,6 +149,7 @@ recode p33_all (1 = 101 "Health Center/Primary Care Center") (2 = 102 "Post/Heal
 			   (8 = 108 "Other Primary Care Facility") (9 = 109 "Hospital") (10 = 110 "Clinic") (11 = 111 "Clinic/Hospital") ///
 			   (12 = 112 "Hospital/Sanitorium") (13 = 113 "Clinic/Sanitorium") (14 = 114 "National Institute") ///
 			   (15 = 115 "Other Secondary Care Facility or More") (16 = .r "No response"), gen(q33) 
+drop p33_all
 
 rename p34_all q34
 rename p35_all q35
