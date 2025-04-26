@@ -55,10 +55,26 @@ rename p3_a q3 // similar to how we coded q3 (sex) for wave 1 because of the cer
 rename p3 q3a_co_pe_uy_ar // gender
 
 rename p4_all q4
-rename p5_all q5
+
+recode p5_all (1 = 1 "City") (2 = 2 "Town") (3 = 3 "Rural area") (4 = 4 "No response"),gen(q5)
+drop p5_all 
+
 rename p6_1 q6_lac // add to data dictionary
-rename p7_all q7
-rename p8_all q8
+
+* confirm translations
+recode p7_all (1 = 1 "There isn't one that you use most frequently") (2 = 2 "There isn't one that you use most frequently") ///
+			  (3 = 3 "Subsidized") (4 = 4 "SIS") (5 = 5 "ASSE") (6 = 6 "Contributory") (7 = 7 "Contributory with a complementary plan") ///
+			  (8 = 8 "EsSalud") (9 = 9 "Mutualists") (10 = 10 "Prepaid medicine") (11 = 11 "More than one prepaid medicine") ///
+			  (12 = 12 "Health insurance policy") (13 = 13 "More than one health insurance policy") (14 = 14 "Private") ///
+			  (15 = 15 "More than one private insurance policy") (16 =16 "Private") (17 = 17 "More than one private coverage") ///
+			  (18 = 18 "Special Regimes") (19 = 19 "Armed Forces and Police") (20 = 20 "Other") (21 = 21 "Other") (22 = 22 "No response"),gen(q7)
+drop p7_all
+
+recode p8_all (1 = 1 "None") (2 = 2 "Preschool/Kindergarten") (3 = 3 "Elementary") (4 = 4 "Secondary") (5 = 5 "Non-university higher education") ///
+			  (6 = 6 "University higher education") (7 = 7 "Postgraduate"),gen(q8)
+drop p8_all
+
+
 rename p9 q9
 rename p10 q10
 rename p11 q11
@@ -66,8 +82,18 @@ rename p12a q12_a
 rename p12b q12_b
 rename p13 q13
 rename p13a_all q13a_co_pe_uy // add to data dictionary
-rename p14_all q14
-rename p15_all q15
+
+recode p14_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
+			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = 8 "No response"),gen(q14) label(q14_label)
+
+* confirm translations			   
+recode p15_all (1 = 1 "Health Center/Primary Care Center") (2 = 2 "Post/Health Center") (3 = 3 "Post/Health Center/UBAP") ///
+			   (4 = 4 "Health Center") (5 = 5 "Private Practice") (6 = 6 "Polyclinic") (7 = 7 "Polyclinic") ///
+			   (8 = 8 "Other Primary Care Facility") (9 = 9 "Hospital") (10 = 10 "Clinic") (11 = 11 "Clinic/Hospital") ///
+			   (12 = 12 "Hospital/Sanitorium") (13 = 13 "Clinic/Sanitorium") (14 = 14 "National Institute") ///
+			   (15 = 15 "Other Secondary Care Facility or more") (16 = 16 "No response"),gen(q15)
+
+
 rename p16_all q16
 rename p17 q17
 
@@ -111,8 +137,18 @@ rename p30_all q30
 rename p31a q31a
 rename p31b q31b
 rename p31c q31_lac // new LAC var, add to data dictionary
-rename p32_all q32_co_pe_uy
-rename p33_all q33
+
+recode p32_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
+			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = 8 "No reponse"), gen(q32_co_pe_uy)
+drop p32_all		   
+
+* confirm translations
+recode p33_all (1 = 1 "Health Center/Primary Care Center") (2 = 2 "Post/Health Center") (3 = 3 "Post/Health Center/UBAP") ///
+			   (4 = 4 "Health Center") (5 = 5 "Private Practice") (6 = 6 "Polyclinic") (7 = 7 "Polyclinic") ///
+			   (8 = 8 "Other Primary Care Facility") (9 = 9 "Hospital") (10 = 10 "Clinic") (11 = 11 "Clinic/Hospital") ///
+			   (12 = 12 "Hospital/Sanitorium") (13 = 13 "Clinic/Sanitorium") (14 = 14 "National Institute") ///
+			   (15 = 15 "Other Secondary Care Facility or More") (16 = 16 "No response"), gen(q33) 
+
 rename p34_all q34
 rename p35_all q35
 rename p36_all q36
@@ -144,8 +180,22 @@ rename p46 q46
 rename p47 q47
 rename p48 q48
 rename p49 q49
-rename p50_all q50
-rename p51_all q51
+
+*confirm translations
+recode p50_all (1 = 1 "Spanish") (2 = 2 "Lenguas caribes") (3 = 3 "Lenguas chocó") (4 = 4 "Lenguas tucanas") ///
+			   (5 = 5 "Quechua") (6 = 6 "Aimara") (7 = 7 "Awajún/Aguaruna") (8 = 8 "Shipibo/Konibo") ///
+			   (9 = 9 "Shawi/Chayahuita") (10 = 10 "Other native language") (11 = 11 "Portuguese") ///
+			   (12 = 12 "English") (13 = 13 "Another foreign language") (14 = 14 "Other") (15 = 15 "No response"), gen(q50)
+drop p50_all			   
+
+recode p51_all (1 = 1 "Less than 500,000 pesos") (2 = 2 "Between 500,000 and 1 million pesos") ///
+			   (3 = 3 "Between 1 million and 3 million pesos") (4 = 4 "Between 3 million and 5 million pesos") ///
+			   (5 = 5 "More than 5 million pesos") (6 = 6 "Less than 1,200 soles") (7 = 7 "Between 1,200 and 2,000 soles") ///
+			   (8 = 8 "Between 2,000 and 3,000 soles") (9 = 9 "Between 3,000 and 5,000 soles") (10 = 10 "More than 5,000 soles") ///
+			   (11 = 11 "Less than 18,000 pesos") (12 = 12 "Between 18,000 and 30,000 pesos") (13 = 13 "Between 30,000 and 40,000 pesos") ///
+			   (14 = 14 "Between 40,000 and 70,000 pesos") (15 = 15 "More than 70,000 pesos") (16 = 16 "No response"),gen(q51)
+drop p51_all
+
 rename duracion int_length
 			  
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
@@ -191,13 +241,13 @@ local countryval = r(values)
 local countrylab = r(labels)
 
 local q4l labels142
-local q5l labels143
-local q7l labels145
-local q8l labels147
-local q15l labels153
-local q33l labels164
-local q50l labels176
-local q51l labels177
+local q5l q5
+local q7l q7
+local q8l q8
+local q15l q15
+local q33l q33
+local q50l q50
+local q51l q51
 
 
 foreach q in q4 q5 q7 q8 q15 q33 q50 q51{
