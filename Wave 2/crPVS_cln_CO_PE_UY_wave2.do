@@ -84,7 +84,7 @@ rename p13 q13
 rename p13a_all q13a_co_pe_uy // add to data dictionary
 
 recode p14_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
-			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = .r "No response"),gen(q14) label(q14_label)
+			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = .r "No response"),gen(q14_lac) label(q14_label)
 drop p14_all
 			   
 * confirm translations			   
@@ -330,7 +330,7 @@ recode q27_a q27_b q27_d q27_e q27_f q27_g q27_h q28_a q28_b q29 (4 = .d)
 * Refused
 recode q9 q10 q25 q38_k (6 = .r)
 recode q11 q13 q20 q27_a q27_c q27_d q27_e q27_f q28_a q28_b q29 q35 (3 = .r)
-recode q14 q32_co_pe_uy q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j (8 = .r)
+recode q14_lac q32_co_pe_uy q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j (8 = .r)
 recode q16 q30 (11 = .r)	  
 recode q17 (7 = .r)
 recode q24 q34 (5 = .r)
@@ -385,7 +385,7 @@ drop visits_total
 *q1/q2 - no missing data
 
 *q14-17
-recode q14 q15 q16 q17 (. = .a) if q13 !=1
+recode q14_lac q15 q16 q17 (. = .a) if q13 !=1
 
 * NA's for q19-21 
 recode q19 (. = .a) if q18 != .d | q18 !=.r
@@ -513,9 +513,6 @@ recode q41_a q41_b ///
 drop q41_a q41_b
  		
 ********* Miscellaneous questions with unique answer options *********
-
-*q14- confirm translations
-recode q14 (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualista") (5 = 5 "Private") (6 = 6 "Armed Forces or Police") (7 = 7 "Other"), gen(q14_lac)
 
 * SS: confirm translations	
 recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting time") ///
@@ -692,7 +689,6 @@ lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
 lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
-*lab var q14_multi "Q14. Is this a public, private, NGO or faith-based facility?" // change to LAC var
 lab var q15 "Q15. What type of healthcare facility is this?"
 label var q16 "Q16. Why did you choose this healthcare facility? Please tell us the main reason."
 label var q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"

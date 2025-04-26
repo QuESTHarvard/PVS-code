@@ -546,9 +546,9 @@ recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 
 *Peru recode 
 *Recode based on q32_co_pe, but those who say public and have SHI are recoded to other 
-recode last_type_own (.a = 0) if country == 7 & q32_co_pe == 1 & inlist(q7,7010,7014) 
-recode last_type_own (.a = 1) if country == 7 & q32_co_pe == 2 & q7==7013 
-recode last_type_own (.a = 2) if country == 7 & q32_co_pe == 1 & inlist(q7,7011,7012) 
+recode last_type_own (.a = 0) if country == 7 & q32_co_pe_v1 == 1 & inlist(q7,7010,7014) 
+recode last_type_own (.a = 1) if country == 7 & q32_co_pe_v1 == 2 & q7==7013 
+recode last_type_own (.a = 2) if country == 7 & q32_co_pe_v1 == 1 & inlist(q7,7011,7012) 
 
 	* Wave 2:
 	recode usual_type_own (.a = 0) if country == 7 & q14_lac == 1 & inlist(q7,7004,7014) 
@@ -770,19 +770,19 @@ recode covid_vax_v1 ///
 **** Order Variables ****
 
 order q*, sequential	   
-order respondent_serial respondent_id country country_reg language date /// 
+order respondent_serial respondent_id country country_reg wave language date /// 
 	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
 	  insured insur_type education health health_mental health_chronic ///
-	  activation ///
+	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
-	  usual_reason usual_quality visits visits_cat ///
+	  usual_reason usual_quality visits visits_cat visits_covid_v1 ///
 	  fac_number visits_home visits_tele tele_qual visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_srh care_mental /// 
-	  mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
-	  last_type last_reason last_wait_time last_sched_time ///
+	  breast_exam color_ultrasound mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
+	  last_type last_reason last_wait_time last_visit_time_v1 last_sched_time ///
 	   last_qual last_skills last_supplies last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate ///
-	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh conf_sick ///
+	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh care_infections care_nonurgent conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
 	  vignette_good minority income   	   	  
