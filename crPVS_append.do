@@ -246,7 +246,7 @@ ren q41 recq29
 ren q42 recq30
 ren q42_other recq30_other
 ren q43_ar recq32_ar
-ren q43_co_pe recq32_co_pe
+ren q43_co_pe recq32_co_pe_v1
 ren q43_it recq32_it
 ren q43_kr recq32_kr
 ren q43_la recq32_la
@@ -486,7 +486,6 @@ gen wave = 1
 *Save recoded data
 save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
 
-
 ********************************* PVS V2 ***************************************
 * Starting with PVS China, the PVS question items were re-ordered, this part of the do file will:
 	* Append V2 countries
@@ -512,8 +511,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_so.dta"
 qui do `label11'
 
 tempfile label12
-label save q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 using `label12'
-label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q51_label2 using `label12'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q51_label2 
 
 append using "$data_mc/02 recoded data/input data files/pvs_np.dta"
 
@@ -528,8 +527,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dt
 qui do `label13'
 
 tempfile label14
-label save q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 using `label14'
-label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label14'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 
 
 append using "$data_mc/02 recoded data/input data files/pvs_co_pe_uy_wave2.dta"
 
@@ -555,7 +554,7 @@ recode q14_multi q44_multi q32_multi (. = .a) if country != 3 | country != 4 | c
 
 * Peru:
 recode q44_pe (. = .a) if country != 7
-recode q14_co_pe_v1 q32_co_pe (. = .a) if country != 2 & country != 7 
+recode q14_co_pe_v1 q32_co_pe_v1 (. = .a) if country != 2 & country != 7 
 
 * South Africa:
 recode q6_za q27i_za (. = .a) if country != 9
@@ -619,6 +618,7 @@ recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
 * Kenya
 recode q7_ke (. = .a) if country !=5 | wave !=2
 
+
 * All wave 2 countries plus Colombia, Ethiopia, India, Kenya, Peru, South Africa, Uruguay, Lao PDR, Argentina, Nigeria, China, Somaliland, Nepal 
 recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country == 5 | country == 7 ///
 						 | country == 9 | country == 10 | country == 11 | country == 16 | country == 20 | ///
@@ -628,7 +628,7 @@ recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country =
 recode q37 (. = .a) if country != 21 | country != 22 | country != 23 | wave !=2		
 
 *LAC wave 2:
-recode q6_lac q31_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	 
+recode q6_lac q31_lac q14_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	 
 	
 *-------------------------------------------------------------------------------*	
 	
@@ -707,6 +707,7 @@ lab var q6_it
 lab var q6_kr 
 lab var q6_la 
 lab var q6_za */ 
+lab var q6_lac "Q6. LAC only: What type of health insurance do you have?" //confirm translation, found this one the change log doc
 lab var q7 "Q7. What type of health insurance do you have?"
 *lab var q7_kr 
 lab var q7_other "Q7. Other type of health insurance" 
@@ -724,9 +725,11 @@ lab var q13b_co_pe_uy_ar_v1 "Q13B (V1.0). CO/PE/UY/AR only: Did you seek health 
 lab var q13b_la "Q13B. LA only: Is there one hospital, health center, or clinic you usually...?"
 lab var q13e_co_pe_uy_ar_v1 "Q13E (V1.0). CO/PE/UY/AR only: Why didn't you receive health care for COVID-19?"
 lab var q13e_other_co_pe_uy_ar_v1 "Q13E_Other (V1.0). CO/PE/UY only: Other"
+lab var q13a_co_pe_uy "Q13a. LAC only: Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
+lab var q14_lac "Q14. LAC only: Usual type"
 lab var q14_ar "Q14. AR only: Is this facility Public, OSEP, Other 'obras sociales', A medical center/hospital owned by PAMI, or Private/prepaid?"
 lab var q14_cn "Q14. CN only: Is this a public, private, or NGO/faith-based healthcare facility?"
-lab var q14_co_pe_v1 "Q14. CO/PE only: Is this a public or private healthcare facility?"
+lab var q14_co_pe_v1 "Q14. (V1.0) CO/PE only: Is this a public or private healthcare facility?"
 lab var q14_gr "Q14. GR only: Is this a public, private, contracted to public, or an NGO healthcare facility?"
 lab var q14_gr_other "Q14. Other"
 lab var q14_it "Q14. IT only: Is this facility… public, private SSN, or private not SSN?"
@@ -790,9 +793,11 @@ lab var q30 "Q30. The last time this happened, what was the main reason?"
 lab var q30_other "Q30. Other"
 lab var q31_a "Q31a. In the past 12 months, have you ever needed to borrow money from family, friends, or another source to pay for healthcare"
 lab var q31_b "Q31b. In the past 12 months, have you ever needed to sell items such as furniture or jewelry to pay for healthcare"
+lab var q31_lac "Q31. LAC only: In the last 12 months, have you stopped paying any utility bills (cable, electricity, water, etc.) to pay for healthcare?"
 lab var q32_ar "Q32. AR only: Is this facility Public, OSEP, or Private?"
 lab var q32_cn "Q32. CN only: Last visit facility type public/private/social security/NGO/faith-based?"
-lab var q32_co_pe "Q32. CO/PE only: Is this a public or private healthcare facility?"
+lab var q32_co_pe_v1 "Q32 (V1.0). CO/PE only: Is this a public or private healthcare facility?"
+lab var q32_co_pe_uy "Q32. CO/PE/UY only: Facility ownership"
 lab var q32_it "Q32. IT only: Did you go to a public facility, a private facility accredited by the Servizio Sanitario Nazionale (SSN) or a private facility not accredited by SSN?"
 lab var q32_kr "Q32. KR only: Is this...public, private, or non-profit/religious medical...?"
 lab var q32_la "Q32. LA only: Is this a public or private hospital?"
@@ -821,7 +826,7 @@ lab var q36 "Q36. In days: how long between scheduling and seeing provider?"
 lab var q36_v1 "Q36. In days: how long between scheduling and seeing provider? (V1.0)"
 lab var q37 "Q37. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var q37_v1 "Q37. In minutes: Approximately how long did you wait before seeing the provider? (V1.0)"
-lab var q37_v1_other "q37_v1_other. Other"
+lab var q37_v1_other "Q37_Other (V1.0). Other"
 lab var q37b_refused_v1 "Q37B. Refused (V1.0- Q46B refused)"
 lab var q38_a "Q38a. How would you rate the overall quality of care you received?"
 lab var q38_b "Q38b. How would you rate the knowledge and skills of your provider?"

@@ -55,10 +55,26 @@ rename p3_a q3 // similar to how we coded q3 (sex) for wave 1 because of the cer
 rename p3 q3a_co_pe_uy_ar // gender
 
 rename p4_all q4
-rename p5_all q5
+
+recode p5_all (1 = 1 "City") (2 = 2 "Town") (3 = 3 "Rural area") (4 = 4 "No response"),gen(q5)
+drop p5_all 
+
 rename p6_1 q6_lac // add to data dictionary
-rename p7_all q7
-rename p8_all q8
+
+* confirm translations
+recode p7_all (1 = 1 "There isn't one that you use most frequently") (2 = 2 "There isn't one that you use most frequently") ///
+			  (3 = 3 "Subsidized") (4 = 4 "SIS") (5 = 5 "ASSE") (6 = 6 "Contributory") (7 = 7 "Contributory with a complementary plan") ///
+			  (8 = 8 "EsSalud") (9 = 9 "Mutualists") (10 = 10 "Prepaid medicine") (11 = 11 "More than one prepaid medicine") ///
+			  (12 = 12 "Health insurance policy") (13 = 13 "More than one health insurance policy") (14 = 14 "Private") ///
+			  (15 = 15 "More than one private insurance policy") (16 =16 "Private") (17 = 17 "More than one private coverage") ///
+			  (18 = 18 "Special Regimes") (19 = 19 "Armed Forces and Police") (20 = 20 "Other") (21 = 21 "Other") (22 = .r "No response"),gen(q7)
+drop p7_all
+
+recode p8_all (1 = 1 "None") (2 = 2 "Preschool/Kindergarten") (3 = 3 "Elementary") (4 = 4 "Secondary") (5 = 5 "Non-university higher education") ///
+			  (6 = 6 "University higher education") (7 = 7 "Postgraduate"),gen(q8)
+drop p8_all
+
+
 rename p9 q9
 rename p10 q10
 rename p11 q11
@@ -66,8 +82,19 @@ rename p12a q12_a
 rename p12b q12_b
 rename p13 q13
 rename p13a_all q13a_co_pe_uy // add to data dictionary
-rename p14_all q14
-rename p15_all q15
+
+recode p14_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
+			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = .r "No response"),gen(q14_lac) label(q14_label)
+drop p14_all
+			   
+* confirm translations			   
+recode p15_all (1 = 101 "Health Center/Primary Care Center") (2 = 102 "Post/Health Center") (3 = 103 "Post/Health Center/UBAP") ///
+			   (4 = 104 "Health Center") (5 = 105 "Private Practice") (6 = 106 "Polyclinic") (7 = 107 "Polyclinic") ///
+			   (8 = 108 "Other Primary Care Facility") (9 = 109 "Hospital") (10 = 110 "Clinic") (11 = 111 "Clinic/Hospital") ///
+			   (12 = 112 "Hospital/Sanitorium") (13 = 113 "Clinic/Sanitorium") (14 = 114 "National Institute") ///
+			   (15 = 115 "Other Secondary Care Facility or more") (16 = .r "No response"),gen(q15)
+drop p15_all
+			   
 rename p16_all q16
 rename p17 q17
 
@@ -111,8 +138,19 @@ rename p30_all q30
 rename p31a q31a
 rename p31b q31b
 rename p31c q31_lac // new LAC var, add to data dictionary
-rename p32_all q32_co_pe_uy
-rename p33_all q33
+
+recode p32_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
+			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = .r "No reponse"), gen(q32_co_pe_uy)
+drop p32_all		   
+
+* confirm translations
+recode p33_all (1 = 101 "Health Center/Primary Care Center") (2 = 102 "Post/Health Center") (3 = 103 "Post/Health Center/UBAP") ///
+			   (4 = 104 "Health Center") (5 = 105 "Private Practice") (6 = 106 "Polyclinic") (7 = 107 "Polyclinic") ///
+			   (8 = 108 "Other Primary Care Facility") (9 = 109 "Hospital") (10 = 110 "Clinic") (11 = 111 "Clinic/Hospital") ///
+			   (12 = 112 "Hospital/Sanitorium") (13 = 113 "Clinic/Sanitorium") (14 = 114 "National Institute") ///
+			   (15 = 115 "Other Secondary Care Facility or More") (16 = .r "No response"), gen(q33) 
+drop p33_all
+
 rename p34_all q34
 rename p35_all q35
 rename p36_all q36
@@ -144,8 +182,22 @@ rename p46 q46
 rename p47 q47
 rename p48 q48
 rename p49 q49
-rename p50_all q50
-rename p51_all q51
+
+*confirm translations
+recode p50_all (1 = 1 "Spanish") (2 = 2 "Lenguas caribes") (3 = 3 "Lenguas chocó") (4 = 4 "Lenguas tucanas") ///
+			   (5 = 5 "Quechua") (6 = 6 "Aimara") (7 = 7 "Awajún/Aguaruna") (8 = 8 "Shipibo/Konibo") ///
+			   (9 = 9 "Shawi/Chayahuita") (10 = 10 "Other native language") (11 = 11 "Portuguese") ///
+			   (12 = 12 "English") (13 = 13 "Another foreign language") (14 = 14 "Other") (15 = .r "No response"), gen(q50)
+drop p50_all			   
+
+recode p51_all (1 = 1 "Less than 500,000 pesos") (2 = 2 "Between 500,000 and 1 million pesos") ///
+			   (3 = 3 "Between 1 million and 3 million pesos") (4 = 4 "Between 3 million and 5 million pesos") ///
+			   (5 = 5 "More than 5 million pesos") (6 = 6 "Less than 1,200 soles") (7 = 7 "Between 1,200 and 2,000 soles") ///
+			   (8 = 8 "Between 2,000 and 3,000 soles") (9 = 9 "Between 3,000 and 5,000 soles") (10 = 10 "More than 5,000 soles") ///
+			   (11 = 11 "Less than 18,000 pesos") (12 = 12 "Between 18,000 and 30,000 pesos") (13 = 13 "Between 30,000 and 40,000 pesos") ///
+			   (14 = 14 "Between 40,000 and 70,000 pesos") (15 = 15 "More than 70,000 pesos") (16 = .r "No response"),gen(q51)
+drop p51_all
+
 rename duracion int_length
 			  
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
@@ -191,13 +243,13 @@ local countryval = r(values)
 local countrylab = r(labels)
 
 local q4l labels142
-local q5l labels143
-local q7l labels145
-local q8l labels147
-local q15l labels153
-local q33l labels164
-local q50l labels176
-local q51l labels177
+local q5l q5
+local q7l q7
+local q8l q8
+local q15l q15
+local q33l q33
+local q50l q50
+local q51l q51
 
 
 foreach q in q4 q5 q7 q8 q15 q33 q50 q51{
@@ -278,7 +330,7 @@ recode q27_a q27_b q27_d q27_e q27_f q27_g q27_h q28_a q28_b q29 (4 = .d)
 * Refused
 recode q9 q10 q25 q38_k (6 = .r)
 recode q11 q13 q20 q27_a q27_c q27_d q27_e q27_f q28_a q28_b q29 q35 (3 = .r)
-recode q14 q32 q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j (8 = .r)
+recode q14_lac q32_co_pe_uy q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j (8 = .r)
 recode q16 q30 (11 = .r)	  
 recode q17 (7 = .r)
 recode q24 q34 (5 = .r)
@@ -333,7 +385,7 @@ drop visits_total
 *q1/q2 - no missing data
 
 *q14-17
-recode q14 q15 q16 q17 (. = .a) if q13 !=1
+recode q14_lac q15 q16 q17 (. = .a) if q13 !=1
 
 * NA's for q19-21 
 recode q19 (. = .a) if q18 != .d | q18 !=.r
@@ -358,7 +410,7 @@ recode q28_a q28_b (. = .a) if q18 == 0 | q18 == .d | q18 == .r | q19 == 1 | q19
 recode q30 (. = .a) if q29 !=1
 
 * q32-33
-recode q32 q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+recode q32_co_pe_uy q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q18 == .d | q18 == .r | ///
 													 q19 == 1 | q19 == .d | q19 == .r
 
@@ -462,9 +514,6 @@ drop q41_a q41_b
  		
 ********* Miscellaneous questions with unique answer options *********
 
-*q14- confirm translations
-recode q14 (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualista") (5 = 5 "Private") (6 = 6 "Armed Forces or Police") (7 = 7 "Other"), gen(q14_co_pe)
-
 * SS: confirm translations	
 recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting time") ///
 			(4 = 4 "Good healthcare provider skills") (5 = 5 "Staff shows respect") ///
@@ -531,13 +580,17 @@ label define q51_label .a "NA" .d "Don't know" .r "Refused",add
 * for appending process:
 label copy q4_label q4_label2
 label copy q5_label q5_label2
+label copy q15_label q15_label2
 label copy q33_label q33_label2
+label copy q50_label q50_label2
 label copy q51_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
-lab val q33 q33_label2
-lab val q51 q51_label2
+label val q15 q15_label2
+label val q33 q33_label2
+label val q50 q50_label2
+label val q51 q51_label2
 
 label drop q4_label q5_label q33_label q51_label
 
@@ -636,7 +689,6 @@ lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
 lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
-*lab var q14_multi "Q14. Is this a public, private, NGO or faith-based facility?" // change to LAC var
 lab var q15 "Q15. What type of healthcare facility is this?"
 label var q16 "Q16. Why did you choose this healthcare facility? Please tell us the main reason."
 label var q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"
@@ -664,7 +716,7 @@ label var q29 "Q29. Have you needed medical attention but you did not get it in 
 label var q30 "Q30. The last time this happened, what was the main reason you did not receive healthcare?"
 label var q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
 label var q31b "Q31b. Sell items to pay for healthcare"
-*label var q32_multi "Q32. Was this a public, private, NGO or faith-based facility?" // change to LAC var
+*label var q32_co_pe_uy "Q32. Was this a public, private, NGO or faith-based facility?" // change to LAC var
 label var q33 "Q33. What type of healthcare facility was this?"
 label var q34 "Q34. What was the main reason you went?"
 label var q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"

@@ -348,9 +348,10 @@ lab val conf_getafford vc_nc_der
 *urban/rural
 recode q5 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 ///
 		   12001 13001 14001 12002 13002 14002 12003 13003 14003 15001 16001 16002 ///
-           4015 4016 17001 17002 17003 18018 19021 20022 20023 21001 21002 22001 = 1 "Urban") ///
+           4015 4016 17001 17002 17003 18018 19021 20022 20023 21001 21002 22001 2001 2002 ///
+		   7001 7002 10001 10002 = 1 "Urban") ///
           (9004 5008 7008 2011 3011 10014 11002 12004 13004 14004 15002 16003 4017 17004 ///
-		  18019 19020 20024 21003 21004 22002 22003 = 0 "Rural") ///
+		  18019 19020 20024 21003 21004 22002 22003 2003 7003 10003 = 0 "Rural") ///
 		  (.r = .r "Refused"), gen(urban)
 
 * insurance status
@@ -371,15 +372,15 @@ recode insured (.a = .r) if q6_za == .r
 * For Colombia, moved "no insurance" to "yes" in insured and "public" in "insur_type"
 * insur_type 
 
-recode q7 (2017 2018 3001 5003 2017 2018 7010 10019 11002 12002 12003 ///
+recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 11002 12002 12003 ///
 		   12005 14002 16001 4023 4024 4025 4026 17002 2030 ///
-		   18029 19031 20034 20037 21001 21002 21003 21005 22002 = 0 "Public") ///
-		  (2028 3002 5004 5005 5006 3007 9008 9009 2028 7013 10021 11001 12001 ///
+		   18029 19031 20034 20037 21001 21002 21003 21005 22002 10005 10019 = 0 "Public") ///
+		  (2028 2010 2011 3002 5004 5005 5006 3007 9008 9009 2028 7013 7015 10021 11001 12001 ///
 		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 ///
-		  20036 21004 22001 22003 22004 = 1 "Private") /// 
-		  (2015 2016 16002 16003 16004 13001 13002 13004 7011 7012 10020 10022 ///
+		  20036 21004 22001 22003 22004 10016 10017 = 1 "Private") /// 
+		  (2015 2016 2006 2007 16002 16003 16004 13001 13002 13004 7011 7012 7008 7019 10020 10022 ///
 		  = 2 "Social security/military") ///
-		  (2995 9995 12995 13995 4995 18995 19995 20995 21006 = 3 "Other") ///
+		  (2995 2020 9995 12995 13995 4995 18995 19995 20995 21006 7021 10009 10020 5997 9997 = 3 "Other") ///
 		  (.r = .r "Refused") (2030 7014 13014 16007 13003 .a = .a "NA"), gen(insur_type)
 
 recode insur_type (.a = 1) if q6_za == 1
@@ -389,17 +390,18 @@ recode insur_type (.a = 0) if q7_kr == 0
 * education
 recode q8 (3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 ///
 		   14001 12001 15001 16001 16002 4039 17001 18045 19052 20058 21001 21002 ///
-		   22001 22002 = 0 "None (or no formal education)") ///
+		   22001 22002 2001 2002 7001 7002 = 0 "None (or no formal education)") ///
           (3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 ///
 		   15002 16003 4040 17002 18046 19053 20059 21003 21004 22003 22004 ///
-		   = 1 "Primary") ///
+		   2003 7003 10003 = 1 "Primary") ///
 		   (3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 ///
 		   15003 15004 16004 4041 17003 18047 19054 19055 20060 21005 21006 ///
-		   22005 = 2 "Secondary") ///
+		   22005 2004 7004 10004 = 2 "Secondary") ///
           (3005 5010 5011 9017 2029 2030 2031 7022 7023 7024 10036 10037 10038 11005 ///
 		   11006 14006 14007 13005 13006 13007 12005 12006 15005 15006 15007 16005 ///
 		   16006 16007 4042 4043 4044 17004 17005 18048 18049 18050 19056 19057 20061 ///
-		   20062 21007 21008 21009 21010 22006 = 3 "Post-secondary") ///
+		   20062 21007 21008 21009 21010 22006 2005 2006 2007 7005 7006 7007 10005 ///
+		   10006 10007 = 3 "Post-secondary") ///
           (.r = .r "Refused"), gen(education)
 
 		  
@@ -414,17 +416,33 @@ recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030)
 recode usual_type_own (.a = 1) if country == 2 & q7 == 2028 
 recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 
+	* Wave 2:
+	recode usual_type_own (.a = 0) if country ==2 & inlist(q7,2003,2012,2013,2018)
+	recode usual_type_own (.a = 1) if country == 2 & q7 == 2010 | q7 == 2011 
+	recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2006,2007)
+
 *Peru recode 
 *Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode usual_type_own (.a = 0) if country == 7 & q14_co_pe == 1 & inlist(q7,7010,7014) 
-recode usual_type_own (.a = 1) if country == 7 & q14_co_pe == 2 & q7==7013 
-recode usual_type_own (.a = 2) if country == 7 & q14_co_pe == 1 & inlist(q7,7011,7012) 
+recode usual_type_own (.a = 0) if country == 7 & q14_co_pe_v1 == 1 & inlist(q7,7010,7014) 
+recode usual_type_own (.a = 1) if country == 7 & q14_co_pe_v1 == 2 & q7==7013 
+recode usual_type_own (.a = 2) if country == 7 & q14_co_pe_v1 == 1 & inlist(q7,7011,7012) 
+
+	* Wave 2: 
+	recode usual_type_own (.a = 0) if country == 7 & q14_lac == 1 & inlist(q7,7004,7014) 
+	recode usual_type_own (.a = 1) if country == 7 & q14_lac == 5 & q7==7015 
+	recode usual_type_own (.a = 2) if country == 7 & q14_lac == 1 & inlist(q7,7008,7019)
 
 *Uruguay recode 
 *Updated 8-22 SS
 recode usual_type_own (.a = 0) if country == 10 & q14_uy == 1
 recode usual_type_own (.a = 1) if country == 10 & q14_uy == 2
 recode usual_type_own (.a = 2) if country == 10 & q14_uy == 5
+
+	* Wave 2: 
+	recode usual_type_own (.a = 0) if country == 10 & q14_uy == 1
+	recode usual_type_own (.a = 1) if country == 10 & q14_uy == 5
+	recode usual_type_own (.a = 2) if country == 10 & q14_uy == 4
+
 
 *China/Somaliland recode
 recode usual_type_own (.a = 0) if q14_cn == 1 | q14_so == 1
@@ -466,17 +484,17 @@ recode usual_type_own (.a = 2) if q14_cn == 3
 recode usual_type_own (.a = .d) if q14_cn == .d | q14_so == .d
 
 							   
-* usual type level		
-* SS: placed 21008 "CN: Other" in refused to match the other countries		  
+* usual type level			  
 recode q15 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5016 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 ///
-			9032 9033 9036 2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 ///
+			9032 9033 9036 2080 2085 2090 7001 7002 7008 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 ///
 			10104 14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
 			15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 ///
-			17006 19120 19122 19126 19124 19125 19129 19128 20131 20132 20135 20136 20137 20139 21004 21005 21006 21007 = 0 "Primary") /// 
-		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7041 7042 7044 7046 7049 ///
+			17006 19120 19122 19126 19124 19125 19129 19128 20131 20132 20135 20136 20137 20139 21004 21005 21006 21007 ///
+			2101 2108 7102 7103 7105 7108 10104 10108 = 0 "Primary") /// 
+		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7041 7042 7044 7046 7049 ///
 		   10093 10097 10101 10105 14003 14004 13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 12005 12006 ///
 		   15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 17007 17008 17009 19121 19127 19123 19130 ///
-		   20133 20134 20138 20140 21001 21002 21003 = 1 "Secondary (or higher)") ///
+		   20133 20134 20138 20140 21001 21002 21003 2109 2111 2115 7106 7109 7110 7114 7115 10107 10112 10113 10115 = 1 "Secondary (or higher)") ///
 		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 18996 = .a "NA") ///
 		   (3995 9995 12995 4995 18995 20995 21008 .r 3997 4997 5997 9997 = .r "Refused"), gen(usual_type_lvl)
 
@@ -493,8 +511,6 @@ recode usual_type_lvl (. = 0) if q15a_so == 2 | q15a_so == 3 | q15b_so == 2 | q1
 
 recode usual_type_lvl (. = 1) if q15a_so == 1 | q15b_so == 1 | q15c_so  == 5 | q15c_so == 7
 recode usual_type_lvl (. = .a) if insured == 0 & country == 22
-
-* NOTE: Maybe add an other for Laos? also for last visit level? But we will see with other, specify data
 		   
 * usual_type - ownership and level 
 gen usual_type = . 
@@ -523,17 +539,32 @@ recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030)
 recode last_type_own (.a = 1) if country == 2 & q7 == 2028 
 recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 
+	* Wave 2:
+	recode usual_type_own (.a = 0) if country ==2 & inlist(q7,2003,2012,2013,2018)
+	recode usual_type_own (.a = 1) if country == 2 & q7 == 2010 | q7 == 2011 
+	recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2006,2007)
+
 *Peru recode 
 *Recode based on q32_co_pe, but those who say public and have SHI are recoded to other 
-recode last_type_own (.a = 0) if country == 7 & q32_co_pe == 1 & inlist(q7,7010,7014) 
-recode last_type_own (.a = 1) if country == 7 & q32_co_pe == 2 & q7==7013 
-recode last_type_own (.a = 2) if country == 7 & q32_co_pe == 1 & inlist(q7,7011,7012) 
+recode last_type_own (.a = 0) if country == 7 & q32_co_pe_v1 == 1 & inlist(q7,7010,7014) 
+recode last_type_own (.a = 1) if country == 7 & q32_co_pe_v1 == 2 & q7==7013 
+recode last_type_own (.a = 2) if country == 7 & q32_co_pe_v1 == 1 & inlist(q7,7011,7012) 
+
+	* Wave 2:
+	recode usual_type_own (.a = 0) if country == 7 & q14_lac == 1 & inlist(q7,7004,7014) 
+	recode usual_type_own (.a = 1) if country == 7 & q14_lac == 5 & q7==7015 
+	recode usual_type_own (.a = 2) if country == 7 & q14_lac == 1 & inlist(q7,7008,7019)
 
 *Uruguay recode 
 *Updated 8-22 SS
 recode last_type_own (.a = 0) if country == 10 & q32_uy == 1
 recode last_type_own (.a = 1) if country == 10 & q32_uy == 2
 recode last_type_own (.a = 2) if country == 10 & q32_uy == 5
+
+	* Wave 2:
+	recode last_type_own (.a = 0) if country == 10 & q32_co_pe_uy == 1
+	recode last_type_own (.a = 1) if country == 10 & q32_co_pe_uy == 5
+	recode last_type_own (.a = 2) if country == 10 & q32_co_pe_uy == 4 | q32_co_pe_uy == 7
 
 *Laos
 recode last_type_own (.a = 0) if q32_la == 1 | q33 == 11002
@@ -575,11 +606,12 @@ recode q33 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5016 5017 5018 502
 		   14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
 		   15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 17006 ///
 		   19120 19122 19124 19125 19128 19129 20131 20132 20135 20136 20137 20139 21004 21005 21006 21007 22002 22003 ///
-		   22005 22061 22064 = 0 "Primary") /// 
+		   22005 22061 22064 2101 2108 7102 7103 7105 7108 10104 10108 = 0 "Primary") /// 
 		   (3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 2087 7008 7009 7041 7042 ///
 		   7044 7046 7049 10093 10097 10101 10103 10105 11001 14003 14004 13003 13004 13006 13007 13010 13014 13016 ///
 		   13019 13020 12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 4075 4076 17007 17008 17009 19121 ///
-		   19127 19130 19123 20133 20134 20138 20140 21001 21002 21003 22001 22004 = 1 "Secondary (or higher)") ///
+		   19127 19130 19123 20133 20134 20138 20140 21001 21002 21003 22001 22004 2109 2111 2115 7106 7109 7110 7114 ///
+		   7115 10107 10112 10113 10115 = 1 "Secondary (or higher)") ///
 		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 = .a "NA") ///
 		   (.r 3995 9995 11995 12995 13995 4995 18995 20995 21008 22006 3997 5997 9997 = .r "Refused"), gen(last_type_lvl)
 
@@ -615,10 +647,10 @@ recode q50 (5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
 		   3026 3027 3028 3029 3030 3031 3032 7044 7045 7049 2081  ///
 		   15002 9035 9036 9037 9038 9041 9044 2995 3995 5995 11995 3995 9995 ///
 		   4055 4062 4063 4064 4066 4068 4070 4071 4072 4073 4995 11002 11003 11005 18995 19092 19093 19995 ///
-		   20097 20099 20103 20104 20105 20107 20108 20109 20995 21002 = 1 "Minority group") /// 
+		   20097 20099 20103 20104 20105 20107 20108 20109 20995 21002 2002 2003 2004 2011 2012 2014 = 1 "Minority group") /// 
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 15001 9033 ///
 		   9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 11001 18090 19091 ///
-		   20094 20095 20096 20098 20100 20101 20102 20106 21001 = 0 "Majority group") /// 
+		   20094 20095 20096 20098 20100 20101 20102 20106 21001 2001 = 0 "Majority group") /// 
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 		   
 *US & MX:
@@ -653,17 +685,19 @@ recode q51 (2039 2040 2041 3009 3111 4024 4025 4127 4128 4129 5001 5101 5102 510
 		   5104 5105 5106 5107 7031 7032 ///
 		   9015 9016 9017 9118 9119 9120 9121 10049 10050 10051 11001 11002 12001 ///
 		   12002 13001 14001 14002 15001 15002 15003 15004 16001 16002 16003 17001 ///
-		   17002 18062 19068 20075 20076 20077 21001 21002 22001 = 0 "Lowest income") /// 
+		   17002 18062 19068 20075 20076 20077 21001 21002 22001 2001 7006 7007 10011 ///
+		   = 0 "Lowest income") /// 
 		   (2042 2043 2044 3010 3112 3113 4027 4130 4131 4132 7033 9018 9019 9122 ////
 		   9123 9124 10052 10053 10054 11003 11004 12003 13002 14003 15005 15006 ///
 		   16004 16005 17003 17004 4026 18063 18064 18065 18066 18067 18082 18083 ///
-		   18084 19069 19070 19071 19072 19073 20078 20079 21003 21004 22002 = 1 "Middle income") /// 
+		   18084 19069 19070 19071 19072 19073 20078 20079 21003 21004 22002 2002 ///
+		   7008 7009 7010 10012 10013 = 1 "Middle income") /// 
 		   (2045 2048 3011 3012 3013 3014 3114 3115 3116 3117 4028 4029 4030 4133 ///
 		   4134 4135 5002 5003 5004 5005 5006 5007 5108 5109 5110 7034 7035 7036 7037 7038 9020 9021 ///
 		   9022 9023 9125 9126 10055 10061 11005 11006 11007 12004 ///
 		   12005 13003 13004 13005 14004 14005 14006 14007 15007 15008 16005 16006 ///
 		   16007 17005 17006 18085 19074 20080 20081 21005 21006 ///
-		   22003 22004 22005 22006 22007 = 2 "Highest income") ///
+		   22003 22004 22005 22006 22007 2003 2004 2005 10014 10015 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
 * Colombia q23 values seem implausible
@@ -736,19 +770,19 @@ recode covid_vax_v1 ///
 **** Order Variables ****
 
 order q*, sequential	   
-order respondent_serial respondent_id country country_reg language date /// 
+order respondent_serial respondent_id country country_reg wave language date /// 
 	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
 	  insured insur_type education health health_mental health_chronic ///
-	  activation ///
+	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
-	  usual_reason usual_quality visits visits_cat ///
+	  usual_reason usual_quality visits visits_cat visits_covid_v1 ///
 	  fac_number visits_home visits_tele tele_qual visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_srh care_mental /// 
-	  mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
-	  last_type last_reason last_wait_time last_sched_time ///
+	  breast_exam color_ultrasound mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
+	  last_type last_reason last_wait_time last_visit_time_v1 last_sched_time ///
 	   last_qual last_skills last_supplies last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate ///
-	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh conf_sick ///
+	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh care_infections care_nonurgent conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
 	  system_outlook system_reform covid_manage vignette_poor /// 
 	  vignette_good minority income   	   	  
