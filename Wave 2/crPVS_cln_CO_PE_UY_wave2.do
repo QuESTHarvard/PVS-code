@@ -67,7 +67,7 @@ recode p7_all (1 = 1 "There isn't one that you use most frequently") (2 = 2 "The
 			  (8 = 8 "EsSalud") (9 = 9 "Mutualists") (10 = 10 "Prepaid medicine") (11 = 11 "More than one prepaid medicine") ///
 			  (12 = 12 "Health insurance policy") (13 = 13 "More than one health insurance policy") (14 = 14 "Private") ///
 			  (15 = 15 "More than one private insurance policy") (16 =16 "Private") (17 = 17 "More than one private coverage") ///
-			  (18 = 18 "Special Regimes") (19 = 19 "Armed Forces and Police") (20 = 20 "Other") (21 = 21 "Other") (22 = 22 "No response"),gen(q7)
+			  (18 = 18 "Special Regimes") (19 = 19 "Armed Forces and Police") (20 = 20 "Other") (21 = 21 "Other") (22 = .r "No response"),gen(q7)
 drop p7_all
 
 recode p8_all (1 = 1 "None") (2 = 2 "Preschool/Kindergarten") (3 = 3 "Elementary") (4 = 4 "Secondary") (5 = 5 "Non-university higher education") ///
@@ -84,15 +84,14 @@ rename p13 q13
 rename p13a_all q13a_co_pe_uy // add to data dictionary
 
 recode p14_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
-			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = 8 "No response"),gen(q14) label(q14_label)
+			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = .r "No response"),gen(q14) label(q14_label)
 
 * confirm translations			   
-recode p15_all (1 = 1 "Health Center/Primary Care Center") (2 = 2 "Post/Health Center") (3 = 3 "Post/Health Center/UBAP") ///
-			   (4 = 4 "Health Center") (5 = 5 "Private Practice") (6 = 6 "Polyclinic") (7 = 7 "Polyclinic") ///
-			   (8 = 8 "Other Primary Care Facility") (9 = 9 "Hospital") (10 = 10 "Clinic") (11 = 11 "Clinic/Hospital") ///
-			   (12 = 12 "Hospital/Sanitorium") (13 = 13 "Clinic/Sanitorium") (14 = 14 "National Institute") ///
-			   (15 = 15 "Other Secondary Care Facility or more") (16 = 16 "No response"),gen(q15)
-
+recode p15_all (1 = 101 "Health Center/Primary Care Center") (2 = 102 "Post/Health Center") (3 = 103 "Post/Health Center/UBAP") ///
+			   (4 = 104 "Health Center") (5 = 105 "Private Practice") (6 = 106 "Polyclinic") (7 = 107 "Polyclinic") ///
+			   (8 = 108 "Other Primary Care Facility") (9 = 109 "Hospital") (10 = 110 "Clinic") (11 = 111 "Clinic/Hospital") ///
+			   (12 = 112 "Hospital/Sanitorium") (13 = 113 "Clinic/Sanitorium") (14 = 114 "National Institute") ///
+			   (15 = 115 "Other Secondary Care Facility or more") (16 = .r "No response"),gen(q15)
 
 rename p16_all q16
 rename p17 q17
@@ -139,15 +138,15 @@ rename p31b q31b
 rename p31c q31_lac // new LAC var, add to data dictionary
 
 recode p32_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
-			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = 8 "No reponse"), gen(q32_co_pe_uy)
+			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = .r "No reponse"), gen(q32_co_pe_uy)
 drop p32_all		   
 
 * confirm translations
-recode p33_all (1 = 1 "Health Center/Primary Care Center") (2 = 2 "Post/Health Center") (3 = 3 "Post/Health Center/UBAP") ///
-			   (4 = 4 "Health Center") (5 = 5 "Private Practice") (6 = 6 "Polyclinic") (7 = 7 "Polyclinic") ///
-			   (8 = 8 "Other Primary Care Facility") (9 = 9 "Hospital") (10 = 10 "Clinic") (11 = 11 "Clinic/Hospital") ///
-			   (12 = 12 "Hospital/Sanitorium") (13 = 13 "Clinic/Sanitorium") (14 = 14 "National Institute") ///
-			   (15 = 15 "Other Secondary Care Facility or More") (16 = 16 "No response"), gen(q33) 
+recode p33_all (1 = 101 "Health Center/Primary Care Center") (2 = 102 "Post/Health Center") (3 = 103 "Post/Health Center/UBAP") ///
+			   (4 = 104 "Health Center") (5 = 105 "Private Practice") (6 = 106 "Polyclinic") (7 = 107 "Polyclinic") ///
+			   (8 = 108 "Other Primary Care Facility") (9 = 109 "Hospital") (10 = 110 "Clinic") (11 = 111 "Clinic/Hospital") ///
+			   (12 = 112 "Hospital/Sanitorium") (13 = 113 "Clinic/Sanitorium") (14 = 114 "National Institute") ///
+			   (15 = 115 "Other Secondary Care Facility or More") (16 = .r "No response"), gen(q33) 
 
 rename p34_all q34
 rename p35_all q35
@@ -185,7 +184,7 @@ rename p49 q49
 recode p50_all (1 = 1 "Spanish") (2 = 2 "Lenguas caribes") (3 = 3 "Lenguas chocó") (4 = 4 "Lenguas tucanas") ///
 			   (5 = 5 "Quechua") (6 = 6 "Aimara") (7 = 7 "Awajún/Aguaruna") (8 = 8 "Shipibo/Konibo") ///
 			   (9 = 9 "Shawi/Chayahuita") (10 = 10 "Other native language") (11 = 11 "Portuguese") ///
-			   (12 = 12 "English") (13 = 13 "Another foreign language") (14 = 14 "Other") (15 = 15 "No response"), gen(q50)
+			   (12 = 12 "English") (13 = 13 "Another foreign language") (14 = 14 "Other") (15 = .r "No response"), gen(q50)
 drop p50_all			   
 
 recode p51_all (1 = 1 "Less than 500,000 pesos") (2 = 2 "Between 500,000 and 1 million pesos") ///
@@ -193,7 +192,7 @@ recode p51_all (1 = 1 "Less than 500,000 pesos") (2 = 2 "Between 500,000 and 1 m
 			   (5 = 5 "More than 5 million pesos") (6 = 6 "Less than 1,200 soles") (7 = 7 "Between 1,200 and 2,000 soles") ///
 			   (8 = 8 "Between 2,000 and 3,000 soles") (9 = 9 "Between 3,000 and 5,000 soles") (10 = 10 "More than 5,000 soles") ///
 			   (11 = 11 "Less than 18,000 pesos") (12 = 12 "Between 18,000 and 30,000 pesos") (13 = 13 "Between 30,000 and 40,000 pesos") ///
-			   (14 = 14 "Between 40,000 and 70,000 pesos") (15 = 15 "More than 70,000 pesos") (16 = 16 "No response"),gen(q51)
+			   (14 = 14 "Between 40,000 and 70,000 pesos") (15 = 15 "More than 70,000 pesos") (16 = .r "No response"),gen(q51)
 drop p51_all
 
 rename duracion int_length

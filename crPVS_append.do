@@ -486,7 +486,6 @@ gen wave = 1
 *Save recoded data
 save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
 
-
 ********************************* PVS V2 ***************************************
 * Starting with PVS China, the PVS question items were re-ordered, this part of the do file will:
 	* Append V2 countries
