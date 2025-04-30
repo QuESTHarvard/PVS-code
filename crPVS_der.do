@@ -357,16 +357,18 @@ recode q5 (9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11
 * insurance status
 * Note: All are insured in Laos, Italy, Mendoza and UK
 gen insured = q6 
-recode insured (.a = 1) if country == 11 | country == 14 | country == 17
-recode insured (.a = 0) if inlist(q7,2030,7014,13003,13014) | inlist(q6_kr, 3) 
+recode insured (.a = 1) if country == 11 | country == 14 | country == 17 | q6_za == 1 
+recode insured (.a = 0) if inlist(q7,2030,7014,13003,13014) | inlist(q6_kr, 3) | q6_za == 0 
 recode insured (.a = 1) if inlist(q7,2015, 2016, 2017, 2018, 2028, 7010, 7011, 7012, 7013, 10019, 10020, 10021, 10022, 13001, 13002, 13004, 13005, 16001, ///
 								     16002, 16003, 16004, 16005) | inlist(q6_kr, 1, 2)
-recode insured (.a = .r) if q7 == .r | inlist(q7,13995) | q6_kr == .r
+recode insured (.a = .r) if q7 == .r | inlist(q7,13995) | q6_kr == .r | q6_za == .r
 lab val insured yes_no
 
-recode insured (.a = 1) if q6_za == 1
-recode insured (.a = 0) if q6_za == 0
-recode insured (.a = .r) if q6_za == .r
+	* LAC:
+	recode insured (.a = 0) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == 1 | q6_lac == 2
+	recode insured (.a = .a) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == .a
+	recode insured (.a = .t) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == .r
+	recode insured (.a = 1) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac != 1 | q6_lac != 2 | q6_lac !=.a | q6_lac !=.r
 
 
 * For Colombia, moved "no insurance" to "yes" in insured and "public" in "insur_type"
@@ -374,7 +376,7 @@ recode insured (.a = .r) if q6_za == .r
 
 recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 11002 12002 12003 ///
 		   12005 14002 16001 4023 4024 4025 4026 17002 2030 ///
-		   18029 19031 20034 20037 21001 21002 21003 21005 22002 10005 10019 = 0 "Public") ///
+		   18029 19031 20034 20037 21001 21002 21003 21005 22002 10005 10019 2001 = 0 "Public") ///
 		  (2028 2010 2011 3002 5004 5005 5006 3007 9008 9009 2028 7013 7015 10021 11001 12001 ///
 		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 ///
 		  20036 21004 22001 22003 22004 10016 10017 = 1 "Private") /// 
@@ -417,9 +419,9 @@ recode usual_type_own (.a = 1) if country == 2 & q7 == 2028
 recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 
 	* Wave 2:
-	recode usual_type_own (.a = 0) if country ==2 & inlist(q7,2003,2012,2013,2018)
-	recode usual_type_own (.a = 1) if country == 2 & q7 == 2010 | q7 == 2011 
-	recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2006,2007)
+	recode usual_type_own (.a = 0) if p14_col == 1
+	recode usual_type_own (.a = 1) if p14_col == 2
+	recode usual_type_own (.a = 2) if p14_col == 3
 
 *Peru recode 
 *Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
@@ -428,9 +430,9 @@ recode usual_type_own (.a = 1) if country == 7 & q14_co_pe_v1 == 2 & q7==7013
 recode usual_type_own (.a = 2) if country == 7 & q14_co_pe_v1 == 1 & inlist(q7,7011,7012) 
 
 	* Wave 2: 
-	recode usual_type_own (.a = 0) if country == 7 & q14_lac == 1 & inlist(q7,7004,7014) 
-	recode usual_type_own (.a = 1) if country == 7 & q14_lac == 5 & q7==7015 
-	recode usual_type_own (.a = 2) if country == 7 & q14_lac == 1 & inlist(q7,7008,7019)
+	recode usual_type_own (.a = 0) if p14_per == 1 
+	recode usual_type_own (.a = 1) if p14_per == 3
+	recode usual_type_own (.a = 2) if p14_per == 2 | p14_per == 4 | p14_per == 5 // confirm (is EsSalud, Other?)
 
 *Uruguay recode 
 *Updated 8-22 SS
@@ -439,9 +441,9 @@ recode usual_type_own (.a = 1) if country == 10 & q14_uy == 2
 recode usual_type_own (.a = 2) if country == 10 & q14_uy == 5
 
 	* Wave 2: 
-	recode usual_type_own (.a = 0) if country == 10 & q14_uy == 1
-	recode usual_type_own (.a = 1) if country == 10 & q14_uy == 5
-	recode usual_type_own (.a = 2) if country == 10 & q14_uy == 4
+	recode usual_type_own (.a = 0) if p14_uru == 1
+	recode usual_type_own (.a = 1) if p14_uru == 3
+	recode usual_type_own (.a = 2) if p14_uru == 5 | p14_uru == 2
 
 
 *China/Somaliland recode
@@ -539,21 +541,21 @@ recode last_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030)
 recode last_type_own (.a = 1) if country == 2 & q7 == 2028 
 recode last_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
 
-	* Wave 2:
-	recode usual_type_own (.a = 0) if country ==2 & inlist(q7,2003,2012,2013,2018)
-	recode usual_type_own (.a = 1) if country == 2 & q7 == 2010 | q7 == 2011 
-	recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2006,2007)
+	* Wave 2: (shouldn't use q7 for ownership)
+	recode last_type_own (.a = 0) if p32_col == 1
+	recode last_type_own (.a = 1) if p32_col == 2
+	recode last_type_own (.a = 2) if p32_col == 3
 
 *Peru recode 
 *Recode based on q32_co_pe, but those who say public and have SHI are recoded to other 
-recode last_type_own (.a = 0) if country == 7 & q32_co_pe_v1 == 1 & inlist(q7,7010,7014) 
+recode last_type_own (.a = 0) if country == 7 & q32_co_pe_v1 == 1 & inlist(q7,7010,7014)
 recode last_type_own (.a = 1) if country == 7 & q32_co_pe_v1 == 2 & q7==7013 
 recode last_type_own (.a = 2) if country == 7 & q32_co_pe_v1 == 1 & inlist(q7,7011,7012) 
 
-	* Wave 2:
-	recode usual_type_own (.a = 0) if country == 7 & q14_lac == 1 & inlist(q7,7004,7014) 
-	recode usual_type_own (.a = 1) if country == 7 & q14_lac == 5 & q7==7015 
-	recode usual_type_own (.a = 2) if country == 7 & q14_lac == 1 & inlist(q7,7008,7019)
+	* Wave 2: 
+	recode last_type_own (.a = 0) if p32_per == 1 
+	recode last_type_own (.a = 1) if p32_per == 3
+	recode last_type_own (.a = 2) if p32_per == 2 | p32_per == 4 | p32_per == 5 // confirm (is EsSalud, Other?)
 
 *Uruguay recode 
 *Updated 8-22 SS
@@ -561,10 +563,10 @@ recode last_type_own (.a = 0) if country == 10 & q32_uy == 1
 recode last_type_own (.a = 1) if country == 10 & q32_uy == 2
 recode last_type_own (.a = 2) if country == 10 & q32_uy == 5
 
-	* Wave 2:
-	recode last_type_own (.a = 0) if country == 10 & q32_co_pe_uy == 1
-	recode last_type_own (.a = 1) if country == 10 & q32_co_pe_uy == 5
-	recode last_type_own (.a = 2) if country == 10 & q32_co_pe_uy == 4 | q32_co_pe_uy == 7
+	* Wave 2: 
+	recode last_type_own (.a = 0) if p32_uru == 1
+	recode last_type_own (.a = 1) if p32_uru == 3
+	recode last_type_own (.a = 2) if p32_uru == 5
 
 *Laos
 recode last_type_own (.a = 0) if q32_la == 1 | q33 == 11002
@@ -638,6 +640,9 @@ lab def fac_own_lvl 0 "Public primary" 1 "Public secondary (or higher)" 2 "Priva
 					.a NA .r Refused, replace
 lab val last_type fac_own_lvl
 
+* drop lac vars for usual_type_own + usual_type_lvl
+*drop p14_col p14_per p14_uru p32_col p32_per p32_uru p33_col p33_per p33_uru
+
 * minority
 
 *Notes: No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet.
@@ -685,19 +690,19 @@ recode q51 (2039 2040 2041 3009 3111 4024 4025 4127 4128 4129 5001 5101 5102 510
 		   5104 5105 5106 5107 7031 7032 ///
 		   9015 9016 9017 9118 9119 9120 9121 10049 10050 10051 11001 11002 12001 ///
 		   12002 13001 14001 14002 15001 15002 15003 15004 16001 16002 16003 17001 ///
-		   17002 18062 19068 20075 20076 20077 21001 21002 22001 2001 7006 7007 10011 ///
+		   17002 18062 19068 20075 20076 20077 21001 21002 22001 2001 7006 10011 ///
 		   = 0 "Lowest income") /// 
 		   (2042 2043 2044 3010 3112 3113 4027 4130 4131 4132 7033 9018 9019 9122 ////
 		   9123 9124 10052 10053 10054 11003 11004 12003 13002 14003 15005 15006 ///
 		   16004 16005 17003 17004 4026 18063 18064 18065 18066 18067 18082 18083 ///
 		   18084 19069 19070 19071 19072 19073 20078 20079 21003 21004 22002 2002 ///
-		   7008 7009 7010 10012 10013 = 1 "Middle income") /// 
+		   7007 10012 10013 = 1 "Middle income") /// 
 		   (2045 2048 3011 3012 3013 3014 3114 3115 3116 3117 4028 4029 4030 4133 ///
 		   4134 4135 5002 5003 5004 5005 5006 5007 5108 5109 5110 7034 7035 7036 7037 7038 9020 9021 ///
 		   9022 9023 9125 9126 10055 10061 11005 11006 11007 12004 ///
 		   12005 13003 13004 13005 14004 14005 14006 14007 15007 15008 16005 16006 ///
 		   16007 17005 17006 18085 19074 20080 20081 21005 21006 ///
-		   22003 22004 22005 22006 22007 2003 2004 2005 10014 10015 = 2 "Highest income") ///
+		   22003 22004 22005 22006 22007 2003 2004 2005 7008 7009 7010 10014 10015 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 		  
 * Colombia q23 values seem implausible
