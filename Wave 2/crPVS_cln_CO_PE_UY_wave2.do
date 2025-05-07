@@ -436,7 +436,6 @@ recode cell2 (. = .a) if cell1 !=1
 label define labels1 1 "18 to 29" 2	"30-39" 3 "40-49" 4	"50-59" 5 "60-69" ///
 					 6 "70-79" 7 "80 or older" .a "NA" .r "Refused", modify 
 
-
 recode q3a_co_pe_uy_ar ///
 	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
 	pre(rec) label(gender)
@@ -563,6 +562,9 @@ drop q45
 
 * q46- just fixing labels (not creating new var)
 label define labels133 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it." 2 "There are some good things in our healthcare system, but major changes are needed to make it work better." 3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." .r "Refused",modify	
+
+recode q39 (1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") (7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") (12 = .r "Refused"), pre(rec)
+drop q39
 	
 ren rec* *
 
