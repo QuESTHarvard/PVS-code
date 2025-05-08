@@ -485,7 +485,7 @@ drop q38_a
 	   
 recode q38_k ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
-	   (5 = 0 "Poor") (6 = .r "Refused"), pre(rec) label(exc_poor_staff_3)	
+	   (5 = 0 "Poor") (6 = .r "Refused") (.a = .a "NA"), pre(rec) label(exc_poor_staff_3)	
 drop q38_k
 	   
 	   
