@@ -328,15 +328,13 @@ recode q18_q19 (998 999 = 10) if q19 == 4
 recode q27_a q27_b q27_d q27_e q27_f q27_g q27_h q28_a q28_b q29 (4 = .d)
 
 * Refused
-recode q9 q10 q25 q38_k (6 = .r)
+recode q9 q10 q25 (6 = .r)
 recode q11 q13 q20 q27_a q27_c q27_d q27_e q27_f q28_a q28_b q29 q35 (3 = .r)
-recode q14_lac q32_co_pe_uy q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j (8 = .r)
+recode q14_lac q32_co_pe_uy (8 = .r)
 recode q16 q30 (11 = .r)	  
 recode q17 (7 = .r)
 recode q24 q34 (5 = .r)
 recode q36 (9 = .r)
-recode q38_a (7 = .r)
-recode q39 (12 = .r)
 
 * "No reponse = Refused?" 
 recode q3a_co_pe_uy_ar q45 q46 (4 = .r)
@@ -437,12 +435,12 @@ label define labels1 1 "18 to 29" 2	"30-39" 3 "40-49" 4	"50-59" 5 "60-69" ///
 					 6 "70-79" 7 "80 or older" .a "NA" .r "Refused", modify 
 
 recode q3a_co_pe_uy_ar ///
-	(1 = 0 Male) (2 = 1 Female) (3 = 2 "Another gender") (.r = .r Refused), ///
+	(1 = 0 "Male") (2 = 1 "Female") (3 = 2 "Another gender") (.r = .r "Refused"), ///
 	pre(rec) label(gender)
 drop q3a_co_pe_uy_ar
 	
 recode q3 ///
-	(1 = 0 Man) (2 = 1 Woman) (.r = .r Refused) (.a = .a "NA"), ///
+	(1 = 0 "Man") (2 = 1 "Woman") (.r = .r "Refused") (.a = .a "NA"), ///
 	pre(rec) label(gender2)
 drop q3				 
 				 
@@ -463,36 +461,38 @@ recode q9 q10 q25 q42 q43 q44 q47 q48 q49  ///
 drop q9 q10 q25 q42 q43 q44 q47 q48 q49 
 	   
 recode q17  ///
-	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
+	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") (5 = 0 "Poor") /// 
 	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") /// 
 	   (.r = .r Refused), /// 
 	   pre(rec) label(exc_pr_hlthcare)	   
 drop q17	   
 	   
-recode q38_a q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j ///
+recode q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
 	   (5 = 0 "Poor") ///
 	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") ///
-	   (7 = .a "NA or The clinic had no other staff") (.r = .r Refused), /// 
+	   (7 = .a "NA or The clinic had no other staff") (8 = .r "Refused"), /// 
 	   pre(rec) label(exc_poor_staff)	
-drop q38_a q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j
+drop q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j
+
+recode q38_a  ///
+	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
+	   (5 = 0 "Poor") ///
+	   (6 = .a "NA or I did not receive healthcare form this provider in the past 12 months") ///
+	   (7 = .r "Refused"), /// 
+	   pre(rec) label(exc_poor_staff_2)	
+drop q38_a 
 	   
 recode q38_k ///
-	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (.r = .r Refused), pre(rec) label(exc_poor_staff)	
+	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
+	   (5 = 0 "Poor") (6 = .r "Refused"), pre(rec) label(exc_poor_staff_3)	
 drop q38_k
 	   
-recode q38_b  ///
-	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) (5 = 0 Poor) /// 
-	    /// 
-	   (.r = .r Refused), /// 
-	   pre(rec) label(exc_pr_hlthcare)
-drop q38_b
 	   
 recode q40_a q40_b q40_c q40_d ///
-	   (1 = 4 Excellent) (2 = 3 "Very Good") (3 = 2 Good) (4 = 1 Fair) /// 
-	   (5 = 0 Poor) (6 = .d "I am unable to judge") (.r = .r Refused) ///
-	   (.a = .a NA), /// 
+	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
+	   (5 = 0 "Poor") (6 = .r "Refused") ///
+	   (.a = .a "NA"), /// 
 	   pre(rec) label(exc_poor_judge)	   
 drop q40_a q40_b q40_c q40_d
 	   
