@@ -342,8 +342,8 @@ recode q34 (7 = 6) (8 = 7) (9 = 8) (11 = 9) (12 = 10) (13 = 11)
 lab def q34_label 1 "Care for an urgent or new health problem such as an accident or injury or a new symptom like fever, pain, diarrhea, or depression." 2 "Follow-up care for a longstanding illness or chronic disease such as hypertension or diabetes. This may include mental health conditions." 3 "Preventive care or a visit to check on your health, such as an annual check-up, antenatal care, or vaccination." 4 "Other (specify)" 5 "SO: Allergies" 6 "SO: Blood transfusion" 7 "SO: Dental issue" 8 "SO: Eye problem" 9 "SO: Gastric/stomach ache" 10 "SO: Nerve pain" 11 "SO: Visited a hospitalised member of the family" .a "NA" .d "Don't Know" .r "Refused"
 lab val q34 q34_label
 
-recode q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k (5=4) (4=3) (3=2) (2=1) (1=0) (6=5) (7=6)
-lab def q38_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA" .d "Don't Know" .r "Refused"
+recode q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k (5=4) (4=3) (3=2) (2=1) (1=0) (6=.a) (7=.a)
+lab def q38_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA" .d "Don't Know" .r "Refused"
 lab val q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q38_label 
 
 * Add value labels 

@@ -417,7 +417,9 @@ lab def q8_label 21001 "CN:No formal education (illiterate)" 21002 "CN:Did not f
 lab val q8 q8_label				
 
 *Endorsement
-lab def endorse 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" 5 "I did not receive healthcare from this provider in the past 12 months" .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
+recode q38_b q38_e (5 = .a)
+recode q38_j (6 = .a)
+lab def endorse 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .r "Refused" .a "NA" .d "Don't Know" .r "Refused"
 lab val q9 q10 q17 q25 q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q42 ///
         q43 q47 q48 q49 endorse
 
