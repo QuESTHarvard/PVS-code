@@ -43,7 +43,7 @@ drop p12_all p19_all2 dia1 mes1 anio1 tipo_base nombre_encuestador enc total wtv
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
-recode pais (1 = 2 "CO") (2 = 7 "Peru") (3 = 10 "Uruguay"), gen(country) 
+recode pais (1 = 2 "Colombia") (2 = 7 "Peru") (3 = 10 "Uruguay"), gen(country) 
 drop pais
 
 rename fecha1 date
