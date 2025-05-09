@@ -108,7 +108,11 @@ recode p19_all (1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") ///
 drop p19_all
 		   
 rename p20 q20
+
 rename p21 q21
+replace q21 = .d if p21_codes == "998. (NO LEER) No sabe"
+replace q21 = .r if p21_codes == "999. (NO LEER)No responde"
+drop p21_codes
 
 rename p22 q22
 replace q22 = .d if p22_codes == "998. (NO LEER) No sabe"
