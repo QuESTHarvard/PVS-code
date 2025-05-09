@@ -519,8 +519,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_np.dta"
 qui do `label12'
 
 tempfile label13
-label save q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 using `label13'
-label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 
+label save q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 Language using `label13'
+label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 Language
 
 append using "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dta"
 

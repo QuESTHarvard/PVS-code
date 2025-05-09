@@ -35,12 +35,6 @@ drop q1_q2
 *dropping interviewer vars:
 drop ecs_id start_time end_time interviewer_id interviewer_gender interviewer_language time_new
 
-*psu_id for ET/KE:
-gen psu_id2 = ""
-replace psu_id2 = "ET" + string(q4) if mode == 2 & country == 3
-replace psu_id2 = "KE" + string(q4) if mode == 2 & country == 5
-replace psu_id2 = respondent_id if mode == 2 & q4 == 999
-
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
@@ -146,7 +140,6 @@ ren rec* *
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 
 gen reclanguage = country*1000 + language  
-*gen recinterviewer_id = country*1000 + interviewer_id *interviewer_id in a string fmt
 
 gen recq4 = country*1000 + q4
 replace recq4 = .r if q4 == 999
@@ -185,7 +178,6 @@ local countryn = r(k)
 local countryval = r(values)
 local countrylab = r(labels)
 
-** SS: eventually change wave 1/v1.0 labels to new v2.0 ordering/add labels to data dictionary?
 local q4l labels9
 local q5l labels8
 local q7l labels11
@@ -223,6 +215,27 @@ foreach q in q4 q5 q7 q8 q15 q33 q50 q51 {
 	label val rec`q' `q'_label
 }
 
+
+lab def Language  9004  "ZA: isiXhosa" ///
+              9005  "ZA: isiZulu" ///
+              9006  "ZA: Sepedi" ///
+              4008  "IN: Bangla" ///
+              4009  "IN: Kannada" ///
+              9010  "ZA: Sesotho" ///
+              4011  "IN: Tamil" ///
+              9013  "ZA: Afrikaans" ///
+              4014  "IN: Hindi" ///
+              5015  "KE: Swahili" ///
+              4018  "IN: Telugu" ///
+              5021  "KE: English" ///
+              9022  "ZA: English" ///
+              4027  "IN: English" ///
+              3077  "ET: Amharic" ///
+              3083  "ET: Tigrinya" ///
+              3100  "ET: Oromo" ///
+              3104  "ET: Somali" 
+
+lab values reclanguage Language
 
 *****************************
 
