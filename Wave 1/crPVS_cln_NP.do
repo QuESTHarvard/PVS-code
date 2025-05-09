@@ -308,6 +308,9 @@ recode q30 (. = .a) if q29 !=1
 recode q32_np q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q18 == . | q19 == . | q19 == .a
 
+replace q38_e = .a if q38_e == 5  // I have not had prior visits or tests or The clinic had no other staff
+replace q38_j = .a if q38_j == 5  // I have not had prior visits or tests or The clinic had no other staff
+	   
 * q40a-d
 recode q40_a q40_b q40_c q40_d (6 = .d)
 	   
@@ -347,6 +350,7 @@ lab def q30_label 1 "High cost (e.g., high out of pocket payment, not covered by
 				 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
 				 7 "Illness not serious enough" 10 "Other (specify)" .a "NA" .d "Don't Know" .r "Refused"
 lab val q30 q30_label		
+
 
 recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse") ///
 		   (.a = .a "NA") (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q45_label)
