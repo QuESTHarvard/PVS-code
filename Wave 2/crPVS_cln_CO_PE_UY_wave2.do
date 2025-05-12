@@ -24,7 +24,6 @@ clear all
 
 import spss using "$data/LAC wave2/01 raw data/PVS_LATAM_wave2_weighted.sav", case(lower)
 
-
 *Label as wave 2 data:
 gen wave = 2
 
