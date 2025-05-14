@@ -421,10 +421,10 @@ recode usual_type_own (.a = 1) if country == 2 & wave == 1 & q7 == 2028
 recode usual_type_own (.a = 2) if country == 2 & wave == 1 & inlist(q7,2015,2016)
 
 	* Wave 2:
-	recode usual_type_own (.a = 0) if country == 2 & wave ==2 & p14_col == 1
-	recode usual_type_own (.a = 1) if country == 2 & wave ==2 & p14_col == 2
-	recode usual_type_own (.a = 2) if country == 2 & wave ==2 & p14_col == 3
-	recode usual_type_own (.a = .r) if country == 2 & wave ==2 & q14_lac == 4
+	recode usual_type_own (.a = 0) if country == 2 & wave ==2 & q14_co == 1
+	recode usual_type_own (.a = 1) if country == 2 & wave ==2 & q14_co == 2
+	recode usual_type_own (.a = 2) if country == 2 & wave ==2 & q14_co == 3
+	recode usual_type_own (.a = .r) if country == 2 & wave ==2 & q14_co == 4
 
 *Peru recode 
 *Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
@@ -433,9 +433,9 @@ recode usual_type_own (.a = 1) if country == 7 & wave ==1 & q14_co_pe_v1 == 2 & 
 recode usual_type_own (.a = 2) if country == 7 & wave ==1 & q14_co_pe_v1 == 1 & inlist(q7,7011,7012) 
 
 	* Wave 2: 
-	recode usual_type_own (.a = 0) if country == 7 & wave ==2 & p14_per == 1 
-	recode usual_type_own (.a = 1) if country == 7 & wave ==2 & p14_per == 3
-	recode usual_type_own (.a = 2) if country == 7 & wave ==2 & p14_per == 2 | p14_per == 4 | p14_per == 5 
+	recode usual_type_own (.a = 0) if country == 7 & wave ==2 & q14_pe == 1 
+	recode usual_type_own (.a = 1) if country == 7 & wave ==2 & q14_pe == 3
+	recode usual_type_own (.a = 2) if country == 7 & wave ==2 & q14_pe == 2 | q14_pe == 4 | q14_pe == 5 
 
 *Uruguay recode 
 *Updated 8-22 SS
@@ -444,9 +444,9 @@ recode usual_type_own (.a = 1) if country == 10 & wave ==1 & q14_uy == 2
 recode usual_type_own (.a = 2) if country == 10 & wave ==1 & q14_uy == 5
 
 	* Wave 2: 
-	recode usual_type_own (.a = 0) if country == 10 & wave ==2 & p14_uru == 1
-	recode usual_type_own (.a = 1) if country == 10 & wave ==2 & p14_uru == 3
-	recode usual_type_own (.a = 2) if country == 10 & wave ==2 & p14_uru == 5 | p14_uru == 2
+	recode usual_type_own (.a = 0) if country == 10 & wave ==2 & q14_uy == 1
+	recode usual_type_own (.a = 1) if country == 10 & wave ==2 & q14_uy == 3
+	recode usual_type_own (.a = 2) if country == 10 & wave ==2 & q14_uy == 5 | q14_uy == 2
 
 
 *China/Somaliland recode
@@ -888,6 +888,7 @@ lab var conf_getafford "Confidence in receiving and affording healthcare if beca
 
 **************************** Save data *****************************
 
+drop p32_col p32_per p32_uru p33_col p33_per p33_uru
 
 notes drop _all
 compress 
