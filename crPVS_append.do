@@ -96,7 +96,7 @@ label val mode mode
 lab var mode "Mode of interview (CATI, F2F, or CAWI)"
 
 * Country-specific value labels -edit for ssrs-
-lab def Language 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
+lab def Language 1001 "EC: Spanish" 2011 "CO: Spanish" 3003 "ET: Amharic" 3004 "ET: Oromo" 3005 "ET: Somali" ///
 				 4001 "IN: English" 4011 "IN: Hindi" 4012 "IN: Kannada" 4013 "IN: Tamil" 4014 "IN: Bengali" 4015 "IN: Telugu" ///
 				 5001 "KE: English" 5002 "KE: Swahili" 7011 "PE: Spanish" 9001 "ZA: English" ///
 				 9006 "ZA: Sesotho" 9007 "ZA: isiZulu" 9008 "ZA: Afrikaans" ///
@@ -151,7 +151,7 @@ lab def labels37  11 "AR: Delay to get a turn" ////
 				 15 "RO: Concern about informal payments/gifts" ///
 				 16 "SO: They are closed" ///
 				 17 "SO: Was affected by conflicts" ///
-				 18 "SO: Doctor was not available" 19 "LAC: Problems with coverage" 20 "LAC: Difficulty getting an appointment" .a "NA" .d "Don't know" .r "Refused", modify
+				 18 "SO: Doctor was not available" 19 "LAC: Problems with coverage" 20 "LAC: Difficulty getting an appointment" 21 "EC: Insurance problems (e.g., my insurance expired, I was not eligible for it)" 22 "EC: Difficulty getting an appointment (e.g., there was no appointment, appointments were scheduled far in advance)" .a "NA" .d "Don't know" .r "Refused", modify
 lab def labels44 .a "NA" .r "Refused", modify	
 lab def labels65 1 "Yes" 2 "No" .d "Don't Know", modify		
 label values q12 yes_no_dk
@@ -534,12 +534,20 @@ append using "$data_mc/02 recoded data/input data files/pvs_co_pe_uy_wave2.dta"
 
 qui do `label14'
 
+tempfile label15
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label15'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2
+
+append using "$data_mc/02 recoded data/input data files/pvs_ec.dta"
+
+qui do `label15'
+
 ********************************************************************************
 * Country - add new countries here
-lab def labels0 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
+lab def labels0  1 "Ecuador" 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
-				21 "China" 22 "Somaliland" 23 "Nepal", modify				
+				21 "China" 22 "Somaliland" 23 "Nepal", modify	
 
 *-------------------------------------------------------------------------------*					
 * Country-specific skip patterns 
@@ -618,6 +626,9 @@ recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
 * Kenya
 recode q7_ke (. = .a) if country !=5 | wave !=2
 
+* Ecuador: 
+recode q13a_ec q14_ec q31c_ec q32_ec q44_ec (. = .a) if country != 1
+
 
 * All wave 2 countries plus Colombia, Ethiopia, India, Kenya, Peru, South Africa, Uruguay, Lao PDR, Argentina, Nigeria, China, Somaliland, Nepal 
 recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country == 5 | country == 7 ///
@@ -637,7 +648,7 @@ lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
-lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities", modify
+lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities" 16 "EC: Ease of getting appointment", modify
 lab def q15_label2 5016 "Mobile clinic", modify
 
 
@@ -646,11 +657,11 @@ recode country (22 = 1 "Somaliland") (3 = 2 "Ethiopia") (5 = 3 "Kenya") ///
 			   (20 = 4 "Nigeria") (9 = 5 "South Africa") ///
 			   (7 = 6 "Peru") (2 = 7 "Colombia") ///
 			   (13 = 8 "Mexico") (10 = 9 "Uruguay") ///
-			   (16 = 10 "Argentina") (11 = 11 "Lao PDR") (23 = 12 "Nepal") ///
-			   (4 = 13 "India") (21 = 14 "China") (15 = 15 "Rep. of Korea") ///
-			   (19 = 16 "Romania") (18 = 17 "Greece") ///
-			   (14 = 18 "Italy") (17 = 19 "United Kingdom") ///
-			   (12 = 20 "United States"), gen(country_reg)
+			   (16 = 10 "Argentina") (1 = 11 "Ecuador") (11 = 12 "Lao PDR") (23 = 13 "Nepal") ///
+			   (4 = 14 "India") (21 = 15 "China") (15 = 16 "Rep. of Korea") ///
+			   (19 = 17 "Romania") (18 = 18 "Greece") ///
+			   (14 = 19 "Italy") (17 = 20 "United Kingdom") ///
+			   (12 = 21 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
 *-------------------------------------------------------------------------------*	
@@ -697,7 +708,7 @@ lab var weight  "Weight"
 lab var q1 "Q1. Respondent's еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent's gender"
-lab var q3a_co_pe_uy_ar "Q3a. CO/PE/UY/AR only: Are you a man or a woman?"
+lab var q3a_co_pe_uy_ar "Q3a. CO/PE/UY/AR/EC only: Are you a man or a woman?"
 lab var q4 "Q4. County, state, region where respondent lives"
 lab var q4_other_it "Q4. Other"
 lab var q5 "Q5. Type of area where respondent lives"
@@ -727,6 +738,8 @@ lab var q13e_co_pe_uy_ar_v1 "Q13E (V1.0). CO/PE/UY/AR only: Why didn't you recei
 lab var q13e_other_co_pe_uy_ar_v1 "Q13E_Other (V1.0). CO/PE/UY only: Other"
 lab var q13a_co_pe_uy "Q13a. LAC only: Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
 lab var q14_lac "Q14. LAC only: Usual type"
+lab var q14_ec "Q14. EC only: Is this facility...?"
+lab var q14_ec_other "Q14. EC only: Other"
 lab var q14_ar "Q14. AR only: Is this facility Public, OSEP, Other 'obras sociales', A medical center/hospital owned by PAMI, or Private/prepaid?"
 lab var q14_cn "Q14. CN only: Is this a public, private, or NGO/faith-based healthcare facility?"
 lab var q14_co_pe_v1 "Q14. (V1.0) CO/PE only: Is this a public or private healthcare facility?"
@@ -794,10 +807,13 @@ lab var q30_other "Q30. Other"
 lab var q31_a "Q31a. In the past 12 months, have you ever needed to borrow money from family, friends, or another source to pay for healthcare"
 lab var q31_b "Q31b. In the past 12 months, have you ever needed to sell items such as furniture or jewelry to pay for healthcare"
 lab var q31_lac "Q31. LAC only: In the last 12 months, have you stopped paying any utility bills (cable, electricity, water, etc.) to pay for healthcare?"
+lab var q31c_ec "Q31c. EC only: Stopped paying any utilities (cable, electricity, water, etc.) to pay for healthcare"
 lab var q32_ar "Q32. AR only: Is this facility Public, OSEP, or Private?"
 lab var q32_cn "Q32. CN only: Last visit facility type public/private/social security/NGO/faith-based?"
 lab var q32_co_pe_v1 "Q32 (V1.0). CO/PE only: Is this a public or private healthcare facility?"
 lab var q32_co_pe_uy "Q32. CO/PE/UY only: Facility ownership"
+lab var q32_ec "Q32. EC only: The facility of your last face-to-face visit is ... ?"
+lab var q32_ec_other "Q32. EC only: Other"
 lab var q32_it "Q32. IT only: Did you go to a public facility, a private facility accredited by the Servizio Sanitario Nazionale (SSN) or a private facility not accredited by SSN?"
 lab var q32_kr "Q32. KR only: Is this...public, private, or non-profit/religious medical...?"
 lab var q32_la "Q32. LA only: Is this a public or private hospital?"
@@ -856,6 +872,7 @@ lab var q42 "Q42. How would you rate the quality of public healthcare system in 
 lab var q43 "Q43. How would you rate the quality of private healthcare?"
 *lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_multi "Q44. ET/GR/IN/KE/NG/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
+lab var q44_ec "Q44. EC only: How would you rate quality of the social security health system (IESS)?"
 lab var q44_pe "Q44. PE only: How would you rate the quality of the social security system?"
 lab var q44_uy "Q44. UY only: How would you rate the quality of the mutual healthcare system?"
 lab var q44a_ar "Q44a. AR only: How would you rate the quality of care provided by OSEP of Mendoza?"
