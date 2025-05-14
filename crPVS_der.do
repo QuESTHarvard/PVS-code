@@ -382,7 +382,7 @@ recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 110
 		  (2028 2010 2011 3002 5004 5005 5006 3007 9008 9009 2028 7013 7015 10021 11001 12001 ///
 		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 ///
 		  20036 21004 22001 22003 22004 10016 10017 = 1 "Private") /// 
-		  (2015 2016 2006 2007 16002 16003 16004 13001 13002 13004 7011 7012 7008 7019 10020 10022 ///
+		  (2015 2016 2006 2007 16002 16003 16004 13001 13002 13004 7011 7012 7008 7019 10022 ///
 		  = 2 "Social security/military") ///
 		  (2995 2020 9995 12995 13995 4995 18995 19995 20995 21006 7021 10009 10020 5997 9997 = 3 "Other") ///
 		  (.r = .r "Refused") (2030 7014 13014 16007 13003 .a 7002 10001 = .a "NA"), gen(insur_type)
@@ -416,36 +416,37 @@ recode q14_multi (1 = 0 "Public") (2 3 = 1 "Private") (4 = 2 "Other") ///
 
 * Colombia recode
 * Recode based on insurance type (but refusal for insurance defaults to q14_co_pe)
-recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) 
-recode usual_type_own (.a = 1) if country == 2 & q7 == 2028 
-recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
+recode usual_type_own (.a = 0) if country == 2 & wave == 1 & inlist(q7,2017,2018,2030) 
+recode usual_type_own (.a = 1) if country == 2 & wave == 1 & q7 == 2028 
+recode usual_type_own (.a = 2) if country == 2 & wave == 1 & inlist(q7,2015,2016)
 
 	* Wave 2:
-	recode usual_type_own (.a = 0) if p14_col == 1
-	recode usual_type_own (.a = 1) if p14_col == 2
-	recode usual_type_own (.a = 2) if p14_col == 3
+	recode usual_type_own (.a = 0) if country == 2 & wave ==2 & q14_co == 1
+	recode usual_type_own (.a = 1) if country == 2 & wave ==2 & q14_co == 2
+	recode usual_type_own (.a = 2) if country == 2 & wave ==2 & q14_co == 3
+	recode usual_type_own (.a = .r) if country == 2 & wave ==2 & q14_co == 4
 
 *Peru recode 
 *Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode usual_type_own (.a = 0) if country == 7 & q14_co_pe_v1 == 1 & inlist(q7,7010,7014) 
-recode usual_type_own (.a = 1) if country == 7 & q14_co_pe_v1 == 2 & q7==7013 
-recode usual_type_own (.a = 2) if country == 7 & q14_co_pe_v1 == 1 & inlist(q7,7011,7012) 
+recode usual_type_own (.a = 0) if country == 7 & wave ==1 & q14_co_pe_v1 == 1 & inlist(q7,7010,7014) 
+recode usual_type_own (.a = 1) if country == 7 & wave ==1 & q14_co_pe_v1 == 2 & q7==7013 
+recode usual_type_own (.a = 2) if country == 7 & wave ==1 & q14_co_pe_v1 == 1 & inlist(q7,7011,7012) 
 
 	* Wave 2: 
-	recode usual_type_own (.a = 0) if p14_per == 1 
-	recode usual_type_own (.a = 1) if p14_per == 3
-	recode usual_type_own (.a = 2) if p14_per == 2 | p14_per == 4 | p14_per == 5 // confirm (is EsSalud, Other?)
+	recode usual_type_own (.a = 0) if country == 7 & wave ==2 & q14_pe == 1 
+	recode usual_type_own (.a = 1) if country == 7 & wave ==2 & q14_pe == 3
+	recode usual_type_own (.a = 2) if country == 7 & wave ==2 & q14_pe == 2 | q14_pe == 4 | q14_pe == 5 
 
 *Uruguay recode 
 *Updated 8-22 SS
-recode usual_type_own (.a = 0) if country == 10 & q14_uy == 1
-recode usual_type_own (.a = 1) if country == 10 & q14_uy == 2
-recode usual_type_own (.a = 2) if country == 10 & q14_uy == 5
+recode usual_type_own (.a = 0) if country == 10 & wave ==1 & q14_uy == 1
+recode usual_type_own (.a = 1) if country == 10 & wave ==1 & q14_uy == 2
+recode usual_type_own (.a = 2) if country == 10 & wave ==1 & q14_uy == 5
 
 	* Wave 2: 
-	recode usual_type_own (.a = 0) if p14_uru == 1
-	recode usual_type_own (.a = 1) if p14_uru == 3
-	recode usual_type_own (.a = 2) if p14_uru == 5 | p14_uru == 2
+	recode usual_type_own (.a = 0) if country == 10 & wave ==2 & q14_uy == 1
+	recode usual_type_own (.a = 1) if country == 10 & wave ==2 & q14_uy == 3
+	recode usual_type_own (.a = 2) if country == 10 & wave ==2 & q14_uy == 5 | q14_uy == 2
 
 
 *China/Somaliland recode
@@ -887,6 +888,7 @@ lab var conf_getafford "Confidence in receiving and affording healthcare if beca
 
 **************************** Save data *****************************
 
+drop p32_col p32_per p32_uru p33_col p33_per p33_uru
 
 notes drop _all
 compress 
