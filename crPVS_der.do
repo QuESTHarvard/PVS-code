@@ -280,6 +280,8 @@ last_explain last_decisions last_visit_rate last_wait_rate last_sched_rate vigne
 vignette_good exc_poor
 	   
 gen usual_quality = q17
+recode usual_quality (5 = .a)
+ 
 gen last_know = q38_e
 gen last_courtesy = q38_j
 lab val usual_quality exc_pr_hlthcare
@@ -414,36 +416,37 @@ recode q14_multi (1 = 0 "Public") (2 3 = 1 "Private") (4 = 2 "Other") ///
 
 * Colombia recode
 * Recode based on insurance type (but refusal for insurance defaults to q14_co_pe)
-recode usual_type_own (.a = 0) if country == 2 & inlist(q7,2017,2018,2030) 
-recode usual_type_own (.a = 1) if country == 2 & q7 == 2028 
-recode usual_type_own (.a = 2) if country == 2 & inlist(q7,2015,2016)
+recode usual_type_own (.a = 0) if country == 2 & wave == 1 & inlist(q7,2017,2018,2030) 
+recode usual_type_own (.a = 1) if country == 2 & wave == 1 & q7 == 2028 
+recode usual_type_own (.a = 2) if country == 2 & wave == 1 & inlist(q7,2015,2016)
 
 	* Wave 2:
-	recode usual_type_own (.a = 0) if p14_col == 1
-	recode usual_type_own (.a = 1) if p14_col == 2
-	recode usual_type_own (.a = 2) if p14_col == 3
+	recode usual_type_own (.a = 0) if country == 2 & wave ==2 & q14_co == 1
+	recode usual_type_own (.a = 1) if country == 2 & wave ==2 & q14_co == 2
+	recode usual_type_own (.a = 2) if country == 2 & wave ==2 & q14_co == 3
+	recode usual_type_own (.a = .r) if country == 2 & wave ==2 & q14_co == 4
 
 *Peru recode 
 *Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode usual_type_own (.a = 0) if country == 7 & q14_co_pe_v1 == 1 & inlist(q7,7010,7014) 
-recode usual_type_own (.a = 1) if country == 7 & q14_co_pe_v1 == 2 & q7==7013 
-recode usual_type_own (.a = 2) if country == 7 & q14_co_pe_v1 == 1 & inlist(q7,7011,7012) 
+recode usual_type_own (.a = 0) if country == 7 & wave ==1 & q14_co_pe_v1 == 1 & inlist(q7,7010,7014) 
+recode usual_type_own (.a = 1) if country == 7 & wave ==1 & q14_co_pe_v1 == 2 & q7==7013 
+recode usual_type_own (.a = 2) if country == 7 & wave ==1 & q14_co_pe_v1 == 1 & inlist(q7,7011,7012) 
 
 	* Wave 2: 
-	recode usual_type_own (.a = 0) if p14_per == 1 
-	recode usual_type_own (.a = 1) if p14_per == 3
-	recode usual_type_own (.a = 2) if p14_per == 2 | p14_per == 4 | p14_per == 5 // confirm (is EsSalud, Other?)
+	recode usual_type_own (.a = 0) if country == 7 & wave ==2 & q14_pe == 1 
+	recode usual_type_own (.a = 1) if country == 7 & wave ==2 & q14_pe == 3
+	recode usual_type_own (.a = 2) if country == 7 & wave ==2 & q14_pe == 2 | q14_pe == 4 | q14_pe == 5 
 
 *Uruguay recode 
 *Updated 8-22 SS
-recode usual_type_own (.a = 0) if country == 10 & q14_uy == 1
-recode usual_type_own (.a = 1) if country == 10 & q14_uy == 2
-recode usual_type_own (.a = 2) if country == 10 & q14_uy == 5
+recode usual_type_own (.a = 0) if country == 10 & wave ==1 & q14_uy == 1
+recode usual_type_own (.a = 1) if country == 10 & wave ==1 & q14_uy == 2
+recode usual_type_own (.a = 2) if country == 10 & wave ==1 & q14_uy == 5
 
 	* Wave 2: 
-	recode usual_type_own (.a = 0) if p14_uru == 1
-	recode usual_type_own (.a = 1) if p14_uru == 3
-	recode usual_type_own (.a = 2) if p14_uru == 5 | p14_uru == 2
+	recode usual_type_own (.a = 0) if country == 10 & wave ==2 & q14_uy == 1
+	recode usual_type_own (.a = 1) if country == 10 & wave ==2 & q14_uy == 3
+	recode usual_type_own (.a = 2) if country == 10 & wave ==2 & q14_uy == 5 | q14_uy == 2
 
 
 *China/Somaliland recode
@@ -506,7 +509,6 @@ recode q15 (1001 1003 1005 1006 1007 1009 1011 1013 1015 1017 1019 1023 1025 102
 		   20133 20134 20138 20140 21001 21002 21003 2109 2111 2115 7106 7109 7110 7114 7115 10107 10112 10113 10115 = 1 "Secondary (or higher)") ///
 		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 18996 = .a "NA") ///
 		   (3995 9995 12995 4995 18995 20995 21008 .r 3997 4997 5997 9997 = .r "Refused"), gen(usual_type_lvl)
-
 recode usual_type_lvl (.a = 0) if inlist(q14_q15a_la,2,4,6) | ///
 								  inlist(q14_q15b_la,2,4,6)
 recode usual_type_lvl (.a = 1) if q14_q15a_la == 1 | q14_q15a_la == 3 | q14_q15b_la == 1 | q14_q15b_la == 3
@@ -754,7 +756,7 @@ replace visits = . if visits > 80 & visits < . & country == 18 // 4 changes
 recode visits_tele (60 = .) if country == 20  // 1 change 
 *China
 replace visits = . if visits > 70 & visits < . & country == 21 // 1 change 
-*Ecuador: (none) 
+*Ecuador: (none)
 
 * Recode extreme values to missing 
 
@@ -899,6 +901,7 @@ lab var conf_getafford "Confidence in receiving and affording healthcare if beca
 
 **************************** Save data *****************************
 
+drop p32_col p32_per p32_uru p33_col p33_per p33_uru
 
 notes drop _all
 compress 

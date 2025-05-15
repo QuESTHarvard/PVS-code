@@ -151,7 +151,12 @@ lab def labels37  11 "AR: Delay to get a turn" ////
 				 15 "RO: Concern about informal payments/gifts" ///
 				 16 "SO: They are closed" ///
 				 17 "SO: Was affected by conflicts" ///
-				 18 "SO: Doctor was not available" 19 "LAC: Problems with coverage" 20 "LAC: Difficulty getting an appointment" 21 "EC: Insurance problems (e.g., my insurance expired, I was not eligible for it)" 22 "EC: Difficulty getting an appointment (e.g., there was no appointment, appointments were scheduled far in advance)" .a "NA" .d "Don't know" .r "Refused", modify
+				 18 "SO: Doctor was not available" ///
+				 19 "LAC: Problems with coverage" ///
+				 20 "LAC: Difficulty getting an appointment" ///
+				 21 "EC: Insurance problems (e.g., my insurance expired, I was not eligible for it)" ///
+				 22 "EC: Difficulty getting an appointment (e.g., there was no appointment, appointments were scheduled far in advance)" ///
+				 .a "NA" .d "Don't know" .r "Refused", modify
 lab def labels44 .a "NA" .r "Refused", modify	
 lab def labels65 1 "Yes" 2 "No" .d "Don't Know", modify		
 label values q12 yes_no_dk
@@ -544,10 +549,10 @@ qui do `label15'
 
 ********************************************************************************
 * Country - add new countries here
-lab def labels0  1 "Ecuador" 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
+lab def labels0 1 "Ecuador" 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
-				21 "China" 22 "Somaliland" 23 "Nepal", modify	
+				21 "China" 22 "Somaliland" 23 "Nepal", modify				
 
 *-------------------------------------------------------------------------------*					
 * Country-specific skip patterns 
@@ -629,7 +634,6 @@ recode q7_ke (. = .a) if country !=5 | wave !=2
 * Ecuador: 
 recode q13a_ec q14_ec q31c_ec q32_ec q44_ec (. = .a) if country != 1
 
-
 * All wave 2 countries plus Colombia, Ethiopia, India, Kenya, Peru, South Africa, Uruguay, Lao PDR, Argentina, Nigeria, China, Somaliland, Nepal 
 recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country == 5 | country == 7 ///
 						 | country == 9 | country == 10 | country == 11 | country == 16 | country == 20 | ///
@@ -639,7 +643,10 @@ recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country =
 recode q37 (. = .a) if country != 21 | country != 22 | country != 23 | wave !=2		
 
 *LAC wave 2:
-recode q6_lac q31_lac q14_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	 
+recode q6_lac q31_lac q14_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	
+recode q44_co q14_co (. = .a) if wave !=2 | country !=2 
+recode q44_pe q14_pe (. = .a) if wave !=2 | country !=7
+recode q44_uy (. = .a) if wave !=2 | country !=10	
 	
 *-------------------------------------------------------------------------------*	
 	
