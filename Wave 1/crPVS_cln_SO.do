@@ -59,8 +59,8 @@ ren q27g q27_g
 ren q27h q27_h
 ren q28a q28_a
 ren q28b q28_b
-ren q31a q31_a
-ren q31b q31_b
+ren q31a q31a
+ren q31b q31b
 ren q32 q32_so
 ren q33a q33a_so 
 ren q33b q33b_so
@@ -206,7 +206,7 @@ ren rec* *
 recode q14_so q18 q21 q22 q23 q27_a q27_b q27_c q27_d q27_f q27_g q27_h cell1 (998 = .d)
 	
 recode q1 q8 q10 q12_a q12_b q13 q18 q19 q20 q22 q23 q24 q25 q27_a q27_b q27_c q28_a ///
-	   q28_b q30 q31_b q32_so q34 q35 q37 q38_a q38_b q38_c q38_d q38_e q38_g q38_i ///
+	   q28_b q30 q31b q32_so q34 q35 q37 q38_a q38_b q38_c q38_d q38_e q38_g q38_i ///
 	   q38_j q39 q40a_so q40b_so q40_c q40_d q40e_so q40f_so q41_a q41_b q41_c q42 q43 q45 ///
 	   q46 q47 q48 q49 q51 cell2 (999 = .r)
 
@@ -459,8 +459,8 @@ label variable q28_a "Q28a. A medical mistake was made in your treatment or care
 label variable q28_b "Q28b. been treated unfairly or discriminated against by a doctor, nurse, or..."
 label variable q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
 label variable q30 "Q30. The last time this happened, what was the main reason?"
-label variable q31_a "Q31a. Have you ever needed to borrow money to pay for healthcare"
-label variable q31_b "q31_b. Sell items to pay for healthcare"
+label variable q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
+label variable q31b "q31b. Sell items to pay for healthcare"
 label variable q32_so "Q32_so. SO only: Was this a public, private or another type of facility?"
 label variable q33 "Q33. What type of healthcare facility is this?"
 label variable q34 "Q34. What was the main reason you went?"

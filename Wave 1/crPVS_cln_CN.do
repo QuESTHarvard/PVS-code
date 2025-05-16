@@ -102,7 +102,7 @@ rename q28b q28_b
 
 rename q30other q30_other
 rename q31a q31a
-rename q31b q31_b
+rename q31b q31b
 
 rename q32 q32_cn
 rename q32other q32_other
@@ -264,7 +264,7 @@ recode q18 q21 q22 q23 q27_a q27_b q27i_cn q27j_cn q27_c q27_d q27_e q27_f q27_g
 recode q1 q2 q3 q4 q4_2 q5 q6 q7 q8 q9 q10 q11 q12_a q12_b ///
        q13 q14_cn q15 q16 q17 q18 q19 q20 q21 q22 q23 q24 q25 q26 q27_a ///
 	   q27_b q27i_cn q27j_cn q27_c q27_d q27_e q27_f q27_g q27_h q28_a q28_b q29 ///
-	   q30 q31a q31_b q32_cn q33 q34 q35 q36 q37 q38_a ///
+	   q30 q31a q31b q32_cn q33 q34 q35 q36 q37 q38_a ///
 	   q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q39 q40_a q40_b ///
 	   q40_c q40_d q41_a q41_b q41_c q42 q43 q45 q46 q47 q48 q49 q50 q51 CELL1 CELL2 (999 = .r)
 	   
@@ -400,7 +400,7 @@ lab val q5 q5_label2
 *Yes, No, Refused, Don't Know, NA
 lab def YNRF 0 "No" 1 "Yes" .a "NA" .d "Don't Know" .r "Refused"
 lab val q6 q11 q13 q26 q27_a q27_b q27i_cn q27j_cn q27_c q27_d q27_e q27_f q27_g q27_h q28_a ///
-		q28_b q29 q31a q31_b YNRF
+		q28_b q29 q31a q31b YNRF
 
 /*		
 lab def q7_label 1 "Urban employee medical insurance" 2 "Urban and rural resident medical insurance" ///
@@ -991,7 +991,7 @@ label variable q29 "Q29. Have you needed medical attention but you did not get i
 label variable q30 "Q30. The last time this happened, what was the main reason?"
 label variable q30_other "Q30_Other. Other"
 label variable q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
-label variable q31_b "Q31b. Sell items to pay for healthcare"
+label variable q31b "Q31b. Sell items to pay for healthcare"
 label variable q32_cn "q32_cn. Last visit facility type public/private/social security/NGO/faith-based?"
 label variable q32_other "q32_Other. other last visit facility type"
 label variable q33 "Q33. What type of healthcare facility is this?"
