@@ -416,16 +416,10 @@ recode q14_multi (1 = 0 "Public") (2 3 = 1 "Private") (4 = 2 "Other") ///
 
 * Colombia recode
 * Recode based on insurance type (but refusal for insurance defaults to q14_co_pe)
-<<<<<<< Updated upstream
-recode usual_type_own (.a = 0) if country == 2 & wave == 1 & inlist(q7,2017,2018,2030) 
-recode usual_type_own (.a = 1) if country == 2 & wave == 1 & q7 == 2028 
-recode usual_type_own (.a = 2) if country == 2 & wave == 1 & inlist(q7,2015,2016)
-=======
 recode usual_type_own (.a = 0) if country == 2 & wave == 1 & inlist(q7,2017,2018,2030) & usual_source==1
 recode usual_type_own (.a = 1) if country == 2 & wave == 1 & q7 == 2028 & usual_source==1
 recode usual_type_own (.a = 2) if country == 2 & wave == 1 & inlist(q7,2015,2016) & usual_source==1
-recode usual_type_own (.a = .r) if country == 2 & wave == 1 & q7==.r & usual_source==1
->>>>>>> Stashed changes
+
 
 	* Wave 2:
 	recode usual_type_own (.a = 0) if country == 2 & wave ==2 & q14_co == 1
