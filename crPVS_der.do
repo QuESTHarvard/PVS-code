@@ -426,17 +426,6 @@ recode usual_type_own (.a = 2) if country == 2 & wave == 1 & inlist(q7,2015,2016
 	recode usual_type_own (.a = 2) if country == 2 & wave ==2 & q14_co == 3
 	recode usual_type_own (.a = .r) if country == 2 & wave ==2 & q14_co == 4
 
-*Peru recode 
-*Recode based on q14_co_pe, but those who say public and have SHI are recoded to other 
-recode usual_type_own (.a = 0) if country == 7 & wave ==1 & q14_co_pe_v1 == 1 & inlist(q7,7010,7014) & usual_source==1 
-recode usual_type_own (.a = 1) if country == 7 & wave ==1 & q14_co_pe_v1 == 2 & q7==7013 & usual_source==1
-recode usual_type_own (.a = 2) if country == 7 & wave ==1 & q14_co_pe_v1 == 1 & inlist(q7,7011,7012) & usual_source==1
-
-	* Wave 2: 
-	recode usual_type_own (.a = 0) if country == 7 & wave ==2 & q14_pe == 1 
-	recode usual_type_own (.a = 1) if country == 7 & wave ==2 & q14_pe == 3
-	recode usual_type_own (.a = 2) if country == 7 & wave ==2 & q14_pe == 2 | q14_pe == 4 | q14_pe == 5 
-
 *Uruguay recode 
 *Updated 8-22 SS
 recode usual_type_own (.a = 0) if country == 10 & wave ==1 & q14_uy == 1
@@ -488,7 +477,29 @@ recode usual_type_own (.a = 2) if q14_cn == 3
 *recode usual_type_own (.a = .a) if q14_cn == .a
 recode usual_type_own (.a = .d) if q14_cn == .d | q14_so == .d
 
-							   
+
+*Peru recode, wave 1
+replace usual_type_own = . if country == 7 & wave == 1
+
+* For skipped type (no usual source)
+replace usual_type_own = .a if country == 7 & wave == 1 & usual_source == 0
+
+* For refused usual source
+replace usual_type_own = .r if country == 7 & wave == 1 & usual_source == .r
+
+* For usual source == yes, assign usual_type_own based on q14_co_pe_v1 and q7
+replace usual_type_own = 0 if country == 7 & wave == 1 & usual_source == 1 & q14_co_pe_v1 == 1 & inlist(q7, 7010, 7014, 7013) //public
+replace usual_type_own = 0 if country == 7 & wave == 1 & usual_source == 1 & q14_co_pe_v1 == 1 & q7 == .r //public //refusals in insurance
+replace usual_type_own = 1 if country == 7 & wave == 1 & usual_source == 1 & q14_co_pe_v1 == 2 //private
+replace usual_type_own = 2 if country == 7 & wave == 1 & usual_source == 1 & q14_co_pe_v1 == 1 & inlist(q7, 7011, 7012) //social security
+replace usual_type_own = .r if country == 7 & wave == 1 & usual_source == 1 & q14_co_pe_v1 == .r //refusals in usual source type
+
+	*Peru recode, wave 2
+	recode usual_type_own (.a = 0) if country == 7 & wave ==2 & q14_pe == 1 
+	recode usual_type_own (.a = 1) if country == 7 & wave ==2 & q14_pe == 3
+	recode usual_type_own (.a = 2) if country == 7 & wave ==2 & q14_pe == 2 | q14_pe == 4 | q14_pe == 5 
+		
+	
 * usual type level			  
 recode q15 (3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5016 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 ///
 			9032 9033 9036 2080 2085 2090 7001 7002 7008 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 ///
