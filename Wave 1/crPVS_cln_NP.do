@@ -57,6 +57,9 @@ gen reccountry = 23
 lab def country 23 "Nepal"
 lab values reccountry country
 
+gen mode = 1
+lab def mode 1 "CATI",modify
+lab val mode mode
 
 ren wgt weight
 rename province q4 // confirm this is the correct var to use
