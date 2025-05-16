@@ -58,8 +58,14 @@ rename p4_all q4
 recode p5_all (1 = 1 "City") (2 = 2 "Town") (3 = 3 "Rural area") (4 = 4 "No response"),gen(q5)
 drop p5_all 
 
-rename p6_1 q6_lac // add to data dictionary
-
+recode p6_1 (1 = 1 "None") (2 = 2 "None")(3 = 3 "Subsidized")(4 = 4 "SIS (Integral Health System – Peru)") ///
+            (5 = 5 "ASSE (State Health Services Administration – Uruguay)") (6 = 6 "Contributory") (7 = 7 "Contributory with complementary plan") ///
+			(8 = 8 "EsSalud (Social Health Insurance – Peru)") (9 = 9 "Mutual Insurance Providers") (10 = 10  "Prepaid Medical Plan") (11 = 11 "More than one prepaid medical plan") ///
+			(12 = 12 "Health Insurance Policy") (13 = 13 "More than one health insurance policy") (14 = 14 "Private") (15 = 15 "More than one private insurance") ///
+			(16 = 16 "Private") (17 = 17 "More than one private insurance") (18 = 18 "Special Regimes") (19 = 19 "Armed Forces and Police Coverage") ///
+			(20 = 20 "Other") (21 = 21 "Other") (22 = 22 "No response"),gen(q6_lac) // add to data dictionary
+drop p6_1
+			
 * confirm translations
 recode p7_all (1 = 1 "There isn't one that you use most frequently") (2 = 2 "There isn't one that you use most frequently") ///
 			  (3 = 3 "Subsidized") (4 = 4 "SIS") (5 = 5 "ASSE") (6 = 6 "Contributory") (7 = 7 "Contributory with a complementary plan") ///
@@ -80,7 +86,10 @@ rename p11 q11
 rename p12a q12_a
 rename p12b q12_b
 rename p13 q13
-rename p13a_all q13a_co_pe_uy // add to data dictionary
+
+recode p13a_all (1 = 1 "No") (2 = 2 "Yes, pharmacy") (3 = 3 "Yes, healer/traditional medicine") ///
+				(4 = 4 "Yes, alternative medicine") (5 = 5 "Yes, other") (6 = 6 "No response"),gen(q13a_co_pe_uy) // add to data dictionary
+drop p13a_all
 
 recode p14_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
 			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = .r "No response"),gen(q14_lac) label(q14_lac_label)
