@@ -27,6 +27,158 @@ import spss using "$data/LAC wave2/01 raw data/PVS_LATAM_wave2_weighted.sav", ca
 *Label as wave 2 data:
 gen wave = 2
 
+
+*------------------------------------------------------------------------------*
+
+* Other specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+gen p13_a_col_4_original = p13_a_col_4
+gen p14_col_3_original = p14_col_3	
+gen p15a_col_3_original = p15a_col_3
+gen p15b_col_3_original = p15b_col_3
+gen p15c_col_1_original = p15c_col_1
+gen p15c_col_2_original = p15c_col_2
+gen p16_col_10_original = p16_col_10
+gen p24_col_4_original = p24_col_4
+gen p30_col_10_original = p30_col_10
+gen p32_col_3_original = p32_col_3
+gen p33a_col_4_original = p33a_col_4
+gen p33a_col_5_original = p33a_col_5
+gen p33b_col_4_original = p33b_col_4
+gen p33b_col_5_original = p33b_col_5
+gen p33c_col_1_original = p33c_col_1
+gen p34_col_4_original = p34_col_4
+gen p37_7_original = p37_7
+
+gen p13_a_per_4_original = p13_a_per_4
+gen p14_per_5_original = p14_per_5
+gen p15a_per_4_original = p15a_per_4
+gen p15b_per_5_original = p15b_per_5
+gen p15b_per_6_original = p15b_per_6
+gen p15c_per_4_original = p15c_per_4
+gen p15c_per_5_original = p15c_per_5
+gen p15d_per_4_original = p15d_per_4
+gen p15e_per_1_original = p15e_per_1
+gen p15e_per_2_original = p15e_per_2
+gen p16_per_10_original = p16_per_10
+gen p24_per_4_original = p24_per_4
+gen p30_per_10_original = p30_per_10
+gen p30_p0_original = p30_p0
+gen p32_per_5_original = p32_per_5
+gen p33a_per_4_original = p33a_per_4
+gen p33b_per_5_original = p33b_per_5
+gen p33c_per_4_original = p33c_per_4
+gen p33d_per_3_original = p33d_per_3
+gen p33d_per_4_original = p33d_per_4
+gen p33e_per_1_original = p33e_per_1
+gen p33e_per_2_original = p33e_per_2
+gen p34_per_4_original = p34_per_4
+
+gen p13_a_uru_4_original = p13_a_uru_4
+gen p14_uru_4_original = p14_uru_4
+gen p15a_uru_3_original = p15a_uru_3
+gen p15b_uru_3_original = p15b_uru_3
+gen p15b_uru_4_original = p15b_uru_4
+gen p15c_uru_3_original = p15c_uru_3
+gen p15c_uru_4_original = p15c_uru_4
+gen p15d_uru_1_original = p15d_uru_1
+gen p15d_uru_2_original = p15d_uru_2
+gen p16_uru_10_original = p16_uru_10
+gen p24_uru_4_original = p24_uru_4
+gen p30_uru_10_original = p30_uru_10
+gen p32_uru_4_original = p32_uru_4
+gen p33a_uru_4_original = p33a_uru_4
+gen p33b_uru_4_original = p33b_uru_4
+gen p33c_uru_4_original = p33c_uru_4
+gen p33d_uru_2_original = p33d_uru_2
+gen p34_uru_4_original = p34_uru_4
+
+
+
+foreach i in 2 7 10 {
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
+	sheet(other_specify_recode)	 ///	
+	id(respondent_id)	
+ 
+}	
+
+
+drop p13_a_col_4 p14_col_3 p15a_col_3 p15b_col_3 p15c_col_1 p15c_col_2 p16_col_10 ///
+	 p24_col_4 p30_col_10 p32_col_3 p33a_col_4 p33a_col_5 p33b_col_4 p33b_col_5 ///
+	 p33c_col_1 p34_col_4 p37_7 p33e_per_1 p34_per_4 p33e_per_2 p33d_per_4 p33d_per_3 ///
+	 p33c_per_4 p33a_per_4 p33b_per_5 p32_per_5 p30_p0 p30_per_10 p24_per_4 p16_per_10 ///
+	 p15e_per_2 p15e_per_1 p15d_per_4 p15c_per_5 p15c_per_4 p15b_per_6 p15b_per_5 p15a_per_4 ///
+	 p14_per_5 p13_a_per_4 p13_a_uru_4 p14_uru_4 p15a_uru_3 p15b_uru_3 p15b_uru_4 p15c_uru_3 ///
+	 p15c_uru_4 p15d_uru_1 p15d_uru_2 p16_uru_10 p24_uru_4 p30_uru_10 p32_uru_4 p33a_uru_4 ///
+	 p33b_uru_4 p33c_uru_4 p33d_uru_2 p34_uru_4
+	 
+rename p13_a_col_4_original p13_a_col_4
+rename p14_col_3_original p14_col_3	
+rename p15a_col_3_original p15a_col_3
+rename p15b_col_3_original p15b_col_3
+rename p15c_col_1_original p15c_col_1
+rename p15c_col_2_original p15c_col_2
+rename p16_col_10_original p16_col_10
+rename p24_col_4_original p24_col_4
+rename p30_col_10_original p30_col_10
+rename p32_col_3_original p32_col_3
+rename p33a_col_4_original p33a_col_4
+rename p33a_col_5_original p33a_col_5
+rename p33b_col_4_original p33b_col_4
+rename p33b_col_5_original p33b_col_5
+rename p33c_col_1_original p33c_col_1
+rename p34_col_4_original p34_col_4
+rename p37_7_original p37_7
+
+rename p13_a_per_4_original p13_a_per_4
+rename p14_per_5_original p14_per_5
+rename p15a_per_4_original p15a_per_4
+rename p15b_per_5_original p15b_per_5
+rename p15b_per_6_original p15b_per_6
+rename p15c_per_4_original p15c_per_4
+rename p15c_per_5_original p15c_per_5
+rename p15d_per_4_original p15d_per_4
+rename p15e_per_1_original p15e_per_1
+rename p15e_per_2_original p15e_per_2
+rename p16_per_10_original p16_per_10
+rename p24_per_4_original p24_per_4
+rename p30_per_10_original p30_per_10
+rename p30_p0_original p30_p0
+rename p32_per_5_original p32_per_5
+rename p33a_per_4_original p33a_per_4
+rename p33b_per_5_original p33b_per_5
+rename p33c_per_4_original p33c_per_4
+rename p33d_per_3_original p33d_per_3
+rename p33d_per_4_original p33d_per_4
+rename p33e_per_1_original p33e_per_1
+rename p33e_per_2_original p33e_per_2
+rename p34_per_4_original p34_per_4
+
+rename p13_a_uru_4_original p13_a_uru_4
+rename p14_uru_4_original p14_uru_4
+rename p15a_uru_3_original p15a_uru_3
+rename p15b_uru_3_original p15b_uru_3
+rename p15b_uru_4_original p15b_uru_4
+rename p15c_uru_3_original p15c_uru_3
+rename p15c_uru_4_original p15c_uru_4
+rename p15d_uru_1_original p15d_uru_1
+rename p15d_uru_2_original p15d_uru_2
+rename p16_uru_10_original p16_uru_10
+rename p24_uru_4_original p24_uru_4
+rename p30_uru_10_original p30_uru_10
+rename p32_uru_4_original p32_uru_4
+rename p33a_uru_4_original p33a_uru_4
+rename p33b_uru_4_original p33b_uru_4
+rename p33c_uru_4_original p33c_uru_4
+rename p33d_uru_2_original p33d_uru_2
+rename p34_uru_4_original p34_uru_4
+
+*------------------------------------------------------------------------------*/
+
 *dropping interviewer vars:
 drop respondent_serial_sourcefile intro intro_repregunta pa pa_repregunta red_quest control_calidad ///	
 	 p1_codes 
@@ -645,69 +797,6 @@ label drop labels69 labels70 labels71
 *Reorder variables
 order q*, sequential
 order respondent_serial respondent_id mode country wave date int_length weight // language not in dataset
-
-*------------------------------------------------------------------------------*
-
-/* Other specify recode 
-* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
-* This command requires an input file that lists all the variables to be recoded and their new values
-* The command in data quality checks below extracts other, specify values 
-
-gen q7_other_original = q7_other
-label var q7_other_original "Q7_other. Other"
-
-gen q14_other_original = q14_other
-label var q14_other_original "Q14_other. Other"
-	
-gen q15_other_original = q15_other
-label var q15_other_original "Q15. Other"
-
-gen q16_other_original = q16_other
-label var q16_other_original "Q16. Other"
-
-gen q24_other_original = q24_other
-label var q24_other_original "Q24. Other"
-
-gen q30_other_original = q30_other
-label var q30_other_original "Q30. Other"
-
-gen q32_other_original = q32_other
-label var q32_other_original "Q32. Other"
-
-gen q33_other_original = q33_other
-label var q33_other_original "Q33. Other"
-	
-gen q34_other_original = q34_other
-label var q34_other_original "Q34. Other"	
-
-gen q50_other_original = q50_other
-label var q50_other_original "Q50. Other"	
-
-
-foreach i in 3 4 5 9 {
-
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
-	sheet(other_specify_recode)							///	
-	id(respondent_id)	
- 
-}	
-
-drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other ///
-	 q33_other q34_other q50_other
-	 
-ren q7_other_original q7_other
-ren q14_other_original q14_other
-ren q15_other_original q15_other
-ren q16_other_original q16_other
-ren q24_other_original q24_other
-ren q30_other_original q30_other
-ren q32_other_original q32_other
-ren q33_other_original q33_other
-ren q34_other_original q34_other
-ren q50_other_original q50_other
-*/
-order q*, sequential
-order respondent_serial respondent_id mode country date int_length weight // language not in dataset
 
 *-------------------------------------------------------------------------------*
 
