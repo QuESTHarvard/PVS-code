@@ -24,16 +24,167 @@ clear all
 
 import spss using "$data/LAC wave2/01 raw data/PVS_LATAM_wave2_weighted.sav", case(lower)
 
-
 *Label as wave 2 data:
 gen wave = 2
+
+
+*------------------------------------------------------------------------------*
+
+* Other specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+gen p13_a_col_4_original = p13_a_col_4
+gen p14_col_3_original = p14_col_3	
+gen p15a_col_3_original = p15a_col_3
+gen p15b_col_3_original = p15b_col_3
+gen p15c_col_1_original = p15c_col_1
+gen p15c_col_2_original = p15c_col_2
+gen p16_col_10_original = p16_col_10
+gen p24_col_4_original = p24_col_4
+gen p30_col_10_original = p30_col_10
+gen p32_col_3_original = p32_col_3
+gen p33a_col_4_original = p33a_col_4
+gen p33a_col_5_original = p33a_col_5
+gen p33b_col_4_original = p33b_col_4
+gen p33b_col_5_original = p33b_col_5
+gen p33c_col_1_original = p33c_col_1
+gen p34_col_4_original = p34_col_4
+gen p37_7_original = p37_7
+
+gen p13_a_per_4_original = p13_a_per_4
+gen p14_per_5_original = p14_per_5
+gen p15a_per_4_original = p15a_per_4
+gen p15b_per_5_original = p15b_per_5
+gen p15b_per_6_original = p15b_per_6
+gen p15c_per_4_original = p15c_per_4
+gen p15c_per_5_original = p15c_per_5
+gen p15d_per_4_original = p15d_per_4
+gen p15e_per_1_original = p15e_per_1
+gen p15e_per_2_original = p15e_per_2
+gen p16_per_10_original = p16_per_10
+gen p24_per_4_original = p24_per_4
+gen p30_per_10_original = p30_per_10
+gen p30_p0_original = p30_p0
+gen p32_per_5_original = p32_per_5
+gen p33a_per_4_original = p33a_per_4
+gen p33b_per_5_original = p33b_per_5
+gen p33c_per_4_original = p33c_per_4
+gen p33d_per_3_original = p33d_per_3
+gen p33d_per_4_original = p33d_per_4
+gen p33e_per_1_original = p33e_per_1
+gen p33e_per_2_original = p33e_per_2
+gen p34_per_4_original = p34_per_4
+
+gen p13_a_uru_4_original = p13_a_uru_4
+gen p14_uru_4_original = p14_uru_4
+gen p15a_uru_3_original = p15a_uru_3
+gen p15b_uru_3_original = p15b_uru_3
+gen p15b_uru_4_original = p15b_uru_4
+gen p15c_uru_3_original = p15c_uru_3
+gen p15c_uru_4_original = p15c_uru_4
+gen p15d_uru_1_original = p15d_uru_1
+gen p15d_uru_2_original = p15d_uru_2
+gen p16_uru_10_original = p16_uru_10
+gen p24_uru_4_original = p24_uru_4
+gen p30_uru_10_original = p30_uru_10
+gen p32_uru_4_original = p32_uru_4
+gen p33a_uru_4_original = p33a_uru_4
+gen p33b_uru_4_original = p33b_uru_4
+gen p33c_uru_4_original = p33c_uru_4
+gen p33d_uru_2_original = p33d_uru_2
+gen p34_uru_4_original = p34_uru_4
+
+
+
+foreach i in 2 7 10 {
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
+	sheet(other_specify_recode)	 ///	
+	id(respondent_id)	
+ 
+}	
+
+
+drop p13_a_col_4 p14_col_3 p15a_col_3 p15b_col_3 p15c_col_1 p15c_col_2 p16_col_10 ///
+	 p24_col_4 p30_col_10 p32_col_3 p33a_col_4 p33a_col_5 p33b_col_4 p33b_col_5 ///
+	 p33c_col_1 p34_col_4 p37_7 p33e_per_1 p34_per_4 p33e_per_2 p33d_per_4 p33d_per_3 ///
+	 p33c_per_4 p33a_per_4 p33b_per_5 p32_per_5 p30_p0 p30_per_10 p24_per_4 p16_per_10 ///
+	 p15e_per_2 p15e_per_1 p15d_per_4 p15c_per_5 p15c_per_4 p15b_per_6 p15b_per_5 p15a_per_4 ///
+	 p14_per_5 p13_a_per_4 p13_a_uru_4 p14_uru_4 p15a_uru_3 p15b_uru_3 p15b_uru_4 p15c_uru_3 ///
+	 p15c_uru_4 p15d_uru_1 p15d_uru_2 p16_uru_10 p24_uru_4 p30_uru_10 p32_uru_4 p33a_uru_4 ///
+	 p33b_uru_4 p33c_uru_4 p33d_uru_2 p34_uru_4
+	 
+rename p13_a_col_4_original p13_a_col_4
+rename p14_col_3_original p14_col_3	
+rename p15a_col_3_original p15a_col_3
+rename p15b_col_3_original p15b_col_3
+rename p15c_col_1_original p15c_col_1
+rename p15c_col_2_original p15c_col_2
+rename p16_col_10_original p16_col_10
+rename p24_col_4_original p24_col_4
+rename p30_col_10_original p30_col_10
+rename p32_col_3_original p32_col_3
+rename p33a_col_4_original p33a_col_4
+rename p33a_col_5_original p33a_col_5
+rename p33b_col_4_original p33b_col_4
+rename p33b_col_5_original p33b_col_5
+rename p33c_col_1_original p33c_col_1
+rename p34_col_4_original p34_col_4
+rename p37_7_original p37_7
+
+rename p13_a_per_4_original p13_a_per_4
+rename p14_per_5_original p14_per_5
+rename p15a_per_4_original p15a_per_4
+rename p15b_per_5_original p15b_per_5
+rename p15b_per_6_original p15b_per_6
+rename p15c_per_4_original p15c_per_4
+rename p15c_per_5_original p15c_per_5
+rename p15d_per_4_original p15d_per_4
+rename p15e_per_1_original p15e_per_1
+rename p15e_per_2_original p15e_per_2
+rename p16_per_10_original p16_per_10
+rename p24_per_4_original p24_per_4
+rename p30_per_10_original p30_per_10
+rename p30_p0_original p30_p0
+rename p32_per_5_original p32_per_5
+rename p33a_per_4_original p33a_per_4
+rename p33b_per_5_original p33b_per_5
+rename p33c_per_4_original p33c_per_4
+rename p33d_per_3_original p33d_per_3
+rename p33d_per_4_original p33d_per_4
+rename p33e_per_1_original p33e_per_1
+rename p33e_per_2_original p33e_per_2
+rename p34_per_4_original p34_per_4
+
+rename p13_a_uru_4_original p13_a_uru_4
+rename p14_uru_4_original p14_uru_4
+rename p15a_uru_3_original p15a_uru_3
+rename p15b_uru_3_original p15b_uru_3
+rename p15b_uru_4_original p15b_uru_4
+rename p15c_uru_3_original p15c_uru_3
+rename p15c_uru_4_original p15c_uru_4
+rename p15d_uru_1_original p15d_uru_1
+rename p15d_uru_2_original p15d_uru_2
+rename p16_uru_10_original p16_uru_10
+rename p24_uru_4_original p24_uru_4
+rename p30_uru_10_original p30_uru_10
+rename p32_uru_4_original p32_uru_4
+rename p33a_uru_4_original p33a_uru_4
+rename p33b_uru_4_original p33b_uru_4
+rename p33c_uru_4_original p33c_uru_4
+rename p33d_uru_2_original p33d_uru_2
+rename p34_uru_4_original p34_uru_4
+
+*------------------------------------------------------------------------------*/
 
 *dropping interviewer vars:
 drop respondent_serial_sourcefile intro intro_repregunta pa pa_repregunta red_quest control_calidad ///	
 	 p1_codes 
 
 *dropping country specific vars:
-drop p4_col p4_per p4_uru p5_col p5_per p5_uru p6_latam_col1 p6_latam_col2 p6_latam_col3 p6_latam_col4 p6_latam_col5 p6_latam_col6 p6_latam_col7 p6_latam_col8 p6_latam_col9 p6_latam_col_9 p6_latam_per1 p6_latam_per2 p6_latam_per3 p6_latam_per4 p6_latam_per5 p6_latam_per6 p6_latam_per_6 p6_latam_uru1 p6_latam_uru2 p6_latam_uru3 p6_latam_uru4 p6_latam_uru5 p6_latam_uru6 p6_latam_uru_6 p7_latam_col p7_latam_col_9 p7_latam_per p7_latam_per_6 respondio_p6col todas_na_p6col p6_col_all respondio_p6per todas_na_p6per p6_per_all respondio_p6uru todas_na_p6uru p6_uru_all p7_latam_uru p8_col p8_per p8_uru p13_a_col p13_a_col_4 p13_a_per p13_a_per_4 p13_a_uru_4 p13_a_uru p14_col_3 p14_per_5  p14_uru_4 p15a_col p15a_col_3 p15a_col_4 p15a_per p15a_per_4 p15a_per_5 p15a_uru p15a_uru_3 p15a_uru_4 p15b_col p15b_col_3 p15b_col_4 p15b_per p15b_per_5 p15b_per_6 p15b_uru p15b_uru_3 p15b_uru_4 p15b_uru_5 p15c_col p15c_col_1 p15c_col_2 p15c_per p15c_per_4 p15c_per_5 p15c_uru p15c_uru_3 p15c_uru_4 p15c_uru_5 p15d_per p15d_per_3 p15d_per_4 p15d_uru p15d_uru_1 p15d_uru_2 p15e_per p15e_per_1 p15e_per_2 p15_col p15_per p15_uru p16_col p16_col_10 p16_per p16_per_10 p16_uru p16_uru_10 p19 p21_codes p24_col p24_col_4 p24_per p24_per_4 p24_uru p24_uru_4 p27c_col p27c_per p27c_uru p30_col p30_col_10 p30_per p30_per_10 p30_p0 p30_uru p30_uru_10 p31_c p32_col_3 p32_per_5 p32_uru_4 p33a_col p33a_col_4 p33a_col_5 p33a_per p33a_per_4 p33a_per_5 p33a_uru p33a_uru_4 p33a_uru_5 p33b_col p33b_col_4 p33b_col_5 p33b_per p33b_per_5 p33b_per_6 p33b_uru p33b_uru_4 p33b_uru_5 p33c_col p33c_col_1 p33c_col_2 p33c_per p33c_per_4 p33c_per_5 p33c_uru p33c_uru_4 p33c_uru_5 p33d_per p33d_per_3 p33d_per_4 p33d_uru p33d_uru_1 p33d_uru_2 p33e_per p33e_per_1 p33e_per_2 p34_col p34_col_4 p34_per p34_per_4 p34_uru p34_uru_4 p35_col p35_per p35_uru p36_col p36_uru p36_per p37_7 p38_k_col p38_k_per p38_k_uru p40a_col p40a_per p40a_uru p40b_col p40b_per p40b_uru p40c_col p40c_per p40c_uru p40d_col p40d_per p40d_uru p42_col p42_per p42_uru p43_col p43_per p43_uru p44_col p44_per p44_uru p50_col p50_per p51_col p51_per p51_uru cell2_codes
+drop p4_col p4_per p4_uru p5_col p5_per p5_uru p6_latam_col1 p6_latam_col2 p6_latam_col3 p6_latam_col4 p6_latam_col5 p6_latam_col6 p6_latam_col7 p6_latam_col8 p6_latam_col9 p6_latam_col_9 p6_latam_per1 p6_latam_per2 p6_latam_per3 p6_latam_per4 p6_latam_per5 p6_latam_per6 p6_latam_per_6 p6_latam_uru1 p6_latam_uru2 p6_latam_uru3 p6_latam_uru4 p6_latam_uru5 p6_latam_uru6 p6_latam_uru_6 p7_latam_col p7_latam_col_9 p7_latam_per p7_latam_per_6 respondio_p6col todas_na_p6col p6_col_all respondio_p6per todas_na_p6per p6_per_all respondio_p6uru todas_na_p6uru p6_uru_all p7_latam_uru p8_col p8_per p8_uru p13_a_col p13_a_col_4 p13_a_per p13_a_per_4 p13_a_uru_4 p13_a_uru p14_col_3 p14_per_5  p14_uru_4 p15a_col p15a_col_3 p15a_col_4 p15a_per p15a_per_4 p15a_per_5 p15a_uru p15a_uru_3 p15a_uru_4 p15b_col p15b_col_3 p15b_col_4 p15b_per p15b_per_5 p15b_per_6 p15b_uru p15b_uru_3 p15b_uru_4 p15b_uru_5 p15c_col p15c_col_1 p15c_col_2 p15c_per p15c_per_4 p15c_per_5 p15c_uru p15c_uru_3 p15c_uru_4 p15c_uru_5 p15d_per p15d_per_3 p15d_per_4 p15d_uru p15d_uru_1 p15d_uru_2 p15e_per p15e_per_1 p15e_per_2 p15_col p15_per p15_uru p16_col p16_col_10 p16_per p16_per_10 p16_uru p16_uru_10 p19 p24_col p24_col_4 p24_per p24_per_4 p24_uru p24_uru_4 p27c_col p27c_per p27c_uru p30_col p30_col_10 p30_per p30_per_10 p30_p0 p30_uru p30_uru_10 p31_c p32_col_3 p32_per_5 p32_uru_4 p33a_col p33a_col_4 p33a_col_5 p33a_per p33a_per_4 p33a_per_5 p33a_uru p33a_uru_4 p33a_uru_5 p33b_col p33b_col_4 p33b_col_5 p33b_per p33b_per_5 p33b_per_6 p33b_uru p33b_uru_4 p33b_uru_5 p33c_col p33c_col_1 p33c_col_2 p33c_per p33c_per_4 p33c_per_5 p33c_uru p33c_uru_4 p33c_uru_5 p33d_per p33d_per_3 p33d_per_4 p33d_uru p33d_uru_1 p33d_uru_2 p33e_per p33e_per_1 p33e_per_2 p34_col p34_col_4 p34_per p34_per_4 p34_uru p34_uru_4 p35_col p35_per p35_uru p36_col p36_uru p36_per p37_7 p38_k_col p38_k_per p38_k_uru p40a_col p40a_per p40a_uru p40b_col p40b_per p40b_uru p40c_col p40c_per p40c_uru p40d_col p40d_per p40d_uru p42_col p42_per p42_uru p43_col p43_per p43_uru p50_col p50_per p51_col p51_per p51_uru cell2_codes
 
 drop p2_2 p2_3 p4_col_2 p4_per_2 p4_uru_2 p4_2 p5_2 p7_total p7_total2 p8_2 p9_2 p10_2 _v1 _v2 p13_g p13_g2 p13_2 p15_2 p22_2 p23_2 p27a_2 p27a_3 p27b_2 p27c_2 p27d_2 p27f_2 p27g_2 p27h_2 p27h_3 p31_2 p31_3 _v3 p33_2 p36_2 p37_2 p38a_2 p38b_2 p38c_2 p38d_2 p38e_2 p38f_2 p38g_2 p38h_2 p38i_2 p38j_2 p38k_2 p39_2 p41_2 p_user p_consult_all p_expect p51_2 p2_pesos p4_col_pesos p4_per_pesos p4_uru_pesos p4_pesos p8_pesos categorias_pesos newpeso
 
@@ -43,7 +194,7 @@ drop p12_all p19_all2 dia1 mes1 anio1 tipo_base nombre_encuestador enc total wtv
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
-recode pais (1 = 2 "CO") (2 = 7 "Peru") (3 = 10 "Uruguay"), gen(country) 
+recode pais (1 = 2 "Colombia") (2 = 7 "Peru") (3 = 10 "Uruguay"), gen(country) 
 drop pais
 
 rename fecha1 date
@@ -59,8 +210,14 @@ rename p4_all q4
 recode p5_all (1 = 1 "City") (2 = 2 "Town") (3 = 3 "Rural area") (4 = 4 "No response"),gen(q5)
 drop p5_all 
 
-rename p6_1 q6_lac // add to data dictionary
-
+recode p6_1 (1 = 1 "None") (2 = 2 "None")(3 = 3 "Subsidized")(4 = 4 "SIS (Integral Health System – Peru)") ///
+            (5 = 5 "ASSE (State Health Services Administration – Uruguay)") (6 = 6 "Contributory") (7 = 7 "Contributory with complementary plan") ///
+			(8 = 8 "EsSalud (Social Health Insurance – Peru)") (9 = 9 "Mutual Insurance Providers") (10 = 10  "Prepaid Medical Plan") (11 = 11 "More than one prepaid medical plan") ///
+			(12 = 12 "Health Insurance Policy") (13 = 13 "More than one health insurance policy") (14 = 14 "Private") (15 = 15 "More than one private insurance") ///
+			(16 = 16 "Private") (17 = 17 "More than one private insurance") (18 = 18 "Special Regimes") (19 = 19 "Armed Forces and Police Coverage") ///
+			(20 = 20 "Other") (21 = 21 "Other") (22 = 22 "No response"),gen(q6_lac) // add to data dictionary
+drop p6_1
+			
 * confirm translations
 recode p7_all (1 = 1 "There isn't one that you use most frequently") (2 = 2 "There isn't one that you use most frequently") ///
 			  (3 = 3 "Subsidized") (4 = 4 "SIS") (5 = 5 "ASSE") (6 = 6 "Contributory") (7 = 7 "Contributory with a complementary plan") ///
@@ -81,11 +238,18 @@ rename p11 q11
 rename p12a q12_a
 rename p12b q12_b
 rename p13 q13
-rename p13a_all q13a_co_pe_uy // add to data dictionary
+
+recode p13a_all (1 = 1 "No") (2 = 2 "Yes, pharmacy") (3 = 3 "Yes, healer/traditional medicine") ///
+				(4 = 4 "Yes, alternative medicine") (5 = 5 "Yes, other") (6 = 6 "No response"),gen(q13a_co_pe_uy) // add to data dictionary
+drop p13a_all
 
 recode p14_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
 			   (6 = 6 "Armed Forces or Police") (7 = 7 "Other") (8 = .r "No response"),gen(q14_lac) label(q14_lac_label)
 drop p14_all
+
+rename p14_col q14_co
+rename p14_per q14_pe
+rename p14_uru q14_uy
 			   
 * confirm translations			   
 recode p15_all (1 = 101 "Health Center/Primary Care Center") (2 = 102 "Post/Health Center") (3 = 103 "Post/Health Center/UBAP") ///
@@ -181,6 +345,11 @@ rename p41c q41_c
 rename p42_all q42
 rename p43_all q43
 rename p44_all q44
+
+rename p44_col q44_co
+rename p44_per q44_pe
+rename p44_uru q44_uy
+
 rename p45 q45
 rename p46 q46
 rename p47 q47
@@ -493,12 +662,12 @@ recode q38_k ///
 drop q38_k
 	   
 	   
-recode q40_a q40_b q40_c q40_d ///
+recode q40_a q40_b q40_c q40_d q44_co q44_pe q44_uy  ///
 	   (1 = 4 "Excellent") (2 = 3 "Very Good") (3 = 2 "Good") (4 = 1 "Fair") /// 
 	   (5 = 0 "Poor") (6 = .r "Refused") ///
 	   (.a = .a "NA"), /// 
 	   pre(rec) label(exc_poor_judge)	   
-drop q40_a q40_b q40_c q40_d
+drop q40_a q40_b q40_c q40_d q44_co q44_pe q44_uy
 	   
 ********* All Very Confident to Not at all Confident scales *********
 recode q12_a q12_b q41_c  ///
@@ -516,6 +685,9 @@ recode q41_a q41_b ///
 drop q41_a q41_b
  		
 ********* Miscellaneous questions with unique answer options *********
+
+recode q14_uy (1 = 1 "Public") (2 = 5 "Mutual") (3 = 2 "Private") (5 = 995 "Other"), pre(rec)
+drop q14_uy
 
 * SS: confirm translations	
 recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting time") ///
@@ -600,15 +772,15 @@ label val q51 q51_label2
 
 label drop q4_label q5_label q33_label q51_label
 
-label copy labels25 p14_col
-label copy labels26 p14_per
-label copy labels27 p14_uru
+label copy labels25 q14_co
+label copy labels26 q14_pe
+label copy recq14_uy q14_uy
 
-label val p14_col p14_col
-label val p14_per p14_per
-label val p14_uru p14_uru
+label val q14_co q14_co
+label val q14_pe q14_pe
+label val q14_uy q14_uy
 
-label drop labels25 labels26 labels27
+label drop q14_co q14_pe q14_uy
 
 label copy labels69 p32_col
 label copy labels70 p32_per
@@ -625,69 +797,6 @@ label drop labels69 labels70 labels71
 *Reorder variables
 order q*, sequential
 order respondent_serial respondent_id mode country wave date int_length weight // language not in dataset
-
-*------------------------------------------------------------------------------*
-
-/* Other specify recode 
-* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
-* This command requires an input file that lists all the variables to be recoded and their new values
-* The command in data quality checks below extracts other, specify values 
-
-gen q7_other_original = q7_other
-label var q7_other_original "Q7_other. Other"
-
-gen q14_other_original = q14_other
-label var q14_other_original "Q14_other. Other"
-	
-gen q15_other_original = q15_other
-label var q15_other_original "Q15. Other"
-
-gen q16_other_original = q16_other
-label var q16_other_original "Q16. Other"
-
-gen q24_other_original = q24_other
-label var q24_other_original "Q24. Other"
-
-gen q30_other_original = q30_other
-label var q30_other_original "Q30. Other"
-
-gen q32_other_original = q32_other
-label var q32_other_original "Q32. Other"
-
-gen q33_other_original = q33_other
-label var q33_other_original "Q33. Other"
-	
-gen q34_other_original = q34_other
-label var q34_other_original "Q34. Other"	
-
-gen q50_other_original = q50_other
-label var q50_other_original "Q50. Other"	
-
-
-foreach i in 3 4 5 9 {
-
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
-	sheet(other_specify_recode)							///	
-	id(respondent_id)	
- 
-}	
-
-drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other ///
-	 q33_other q34_other q50_other
-	 
-ren q7_other_original q7_other
-ren q14_other_original q14_other
-ren q15_other_original q15_other
-ren q16_other_original q16_other
-ren q24_other_original q24_other
-ren q30_other_original q30_other
-ren q32_other_original q32_other
-ren q33_other_original q33_other
-ren q34_other_original q34_other
-ren q50_other_original q50_other
-*/
-order q*, sequential
-order respondent_serial respondent_id mode country date int_length weight // language not in dataset
 
 *-------------------------------------------------------------------------------*
 

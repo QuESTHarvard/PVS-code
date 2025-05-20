@@ -57,6 +57,9 @@ gen reccountry = 23
 lab def country 23 "Nepal"
 lab values reccountry country
 
+gen mode = 1
+lab def mode 1 "CATI",modify
+lab val mode mode
 
 ren wgt weight
 rename province q4 // confirm this is the correct var to use
@@ -89,8 +92,8 @@ rename q28_1 q28_a
 rename q28_2 q28_b
 
 rename q30_1 q30_other
-rename q31_1 q31_a
-rename q31_2 q31_b
+rename q31_1 q31a
+rename q31_2 q31b
 
 rename q32 q32_np
 rename q32_1 q32_other
@@ -449,8 +452,8 @@ label variable q28_a "Q28a. A medical mistake was made in your treatment or care
 label variable q28_b "Q28b. been treated unfairly or discriminated against by a doctor, nurse, or..."
 label variable q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
 label variable q30 "Q30. The last time this happened, what was the main reason?"
-label variable q31_a "Q31a. Have you ever needed to borrow money to pay for healthcare"
-label variable q31_b "Q31b. Sell items to pay for healthcare"
+label variable q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
+label variable q31b "Q31b. Sell items to pay for healthcare"
 label variable q32_np "Q32. Was the facility from where you utilized the services public, private, mission or faith based or NGO/INGO managed facility?"
 label variable q33 "Q33. What type of healthcare facility is this?"
 label variable q34 "Q34. What was the main reason you went?"
