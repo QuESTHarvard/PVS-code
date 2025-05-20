@@ -112,6 +112,14 @@ drop p36
 *------------------------------------------------------------------------------*
 * Generate recoded variables
 
+<<<<<<< Updated upstream
+=======
+* Generate variables
+
+*gen respondent_id = "EC" + string(respondent_serial)
+*drop respondent_serial
+
+>>>>>>> Stashed changes
 gen country = 1
 lab def country 1 "Ecuador"
 lab values country country
@@ -367,7 +375,7 @@ list q20 q21 if q20 ==1 & q21 > 0 & q21 < .
 * list if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months - Note: q28_a and q28_b in this dataset does not have this option
 egen visits_total = rowtotal(q18_q19 q22 q23) 
 list visits_total q17 if q17 == 5 & visits_total > 0 & visits_total < .
-recode q17 (5 = .r) if visits_total > 0 & visits_total < . // N=100 changes
+recode q17 (5 = .r) if visits_total > 0 & visits_total < . // N=45 changes
 
 drop visits_total
 
@@ -465,7 +473,7 @@ recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting tim
 (9 = 16 "EC: Ease of getting appointment") (10 = 9 "Other, specify") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
 pre(rec) label(q16_label)
 
-*fix q19
+*fix q19 //SS: no one with 0? (1 in codebook)
 recode q19 (1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") (.a = .a "NA") ///
 		   (.d = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q19_label)
 
