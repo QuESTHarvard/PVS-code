@@ -30,9 +30,6 @@ gen wave = 1
 *empty vars:
 drop q28 q40 q41 q27_001 q27_header q31 q38  
 
-*confirm with Todd we should drop these:
-drop q4_1 q4_1_1 religion other_religion
-
 drop q3 // confirm malefemale is what we want to use, it looks more cleaned up
 
 *dropping variables used for weight calc
@@ -64,6 +61,11 @@ lab val mode mode
 ren wgt weight
 rename province q4 // confirm this is the correct var to use
 rename region q5 // SS: Team created derived var, confirm this is q5
+rename q4_1 q50a_np
+rename q4_1_1 q50a_np_other
+rename religion q50b_np
+rename other_religion q50b_other_np
+
 
 rename malefemale q3
 rename SNo respondent_serial 
@@ -493,7 +495,7 @@ label variable q52a_np "Q52a. How aware are you of Basic Health package of servi
 label variable q52b_np "Q52b. Have you received any such Basic Health package of services availabl"
 
 *drop until confirmed with Todd if we want to look at this data:
-drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other q33_other q34_other language_other
+*drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other q33_other q34_other language_other
 
 *------------------------------------------------------------------------------*
 * Save data
