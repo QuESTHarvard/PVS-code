@@ -30,22 +30,19 @@ gen wave = 1
 *empty vars:
 drop q28 q40 q41 q27_001 q27_header q31 q38  
 
-*confirm with Todd we should drop these:
-drop q4_1 q4_1_1 religion other_religion
-
 drop q3 // confirm malefemale is what we want to use, it looks more cleaned up
 
 *dropping variables used for weight calc
 drop urbanrural_ed urbanrural_age malefemale_reg malefemale_ed urbanrural education 
 
 *dropping until we figure out if we want to keep these vars (multicheckbox)
-drop q052_1_1_1 q052_1_1_2 q052_1_1_17 q052_1_1_3 q052_1_1_4 q052_1_1_5 q052_1_1_6 q052_1_1_7 q052_1_1_8 q052_1_1_9 q052_1_1_10 q052_1_1_11 q052_1_1_12 q052_1_1_13 q052_1_1_14 q052_1_1_16 q052_1_1_999 q052_1_1_15 q052_1_1_1_1
+*drop q052_1_1_1 q052_1_1_2 q052_1_1_17 q052_1_1_3 q052_1_1_4 q052_1_1_5 q052_1_1_6 q052_1_1_7 q052_1_1_8 q052_1_1_9 q052_1_1_10 q052_1_1_11 q052_1_1_12 q052_1_1_13 q052_1_1_14 q052_1_1_16 q052_1_1_999 q052_1_1_15 q052_1_1_1_1
 
 *confirm if I should recode into a new var (multicheckbox)
-drop q51_1 q51_2 q51_3 q51_4 q51_5 q51_6 q51_7 q51_8 q51_9 q51_10 q51_999 q51_12
+*drop q51_1 q51_2 q51_3 q51_4 q51_5 q51_6 q51_7 q51_8 q51_9 q51_10 q51_999 q51_12
 
 *confirm ok dropping - we have a region var
-drop muni muntype ward district 
+*drop muni muntype ward district 
 
 *dropping their version of age/education categories (only 3 levels):
 drop age_cat edu_cat
@@ -64,6 +61,11 @@ lab val mode mode
 ren wgt weight
 rename province q4 // confirm this is the correct var to use
 rename region q5 // SS: Team created derived var, confirm this is q5
+rename q4_1 q50a_np
+rename q4_1_1 q50a_np_other
+rename religion q50b_np
+rename other_religion q50b_other_np
+
 
 rename malefemale q3
 rename SNo respondent_serial 
@@ -493,7 +495,7 @@ label variable q52a_np "Q52a. How aware are you of Basic Health package of servi
 label variable q52b_np "Q52b. Have you received any such Basic Health package of services availabl"
 
 *drop until confirmed with Todd if we want to look at this data:
-drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other q33_other q34_other language_other
+*drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other q33_other q34_other language_other
 
 *------------------------------------------------------------------------------*
 * Save data
