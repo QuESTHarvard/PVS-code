@@ -1,5 +1,5 @@
 * People's Voice Survey data cleaning for Ecuador - Wave 1
-* Date of last update: April 18, 2024
+* Date of last update: May 2025
 * Last updated by: S Islam
 
 /*
@@ -112,17 +112,22 @@ drop p36
 *------------------------------------------------------------------------------*
 * Generate recoded variables
 
-<<<<<<< Updated upstream
-=======
 * Generate variables
 
 *gen respondent_id = "EC" + string(respondent_serial)
 *drop respondent_serial
 
->>>>>>> Stashed changes
 gen country = 1
 lab def country 1 "Ecuador"
 lab values country country
+
+gen mode = 1
+lab def mode 1 "CATI"
+lab val mode mode
+
+gen language = 1001
+lab def lang 1001 "EC: Spanish"
+lab val language lang
 
 * Generate q6 from p61 p62 p63 p64 p65 p66 p67 p68
 * SI Note: response options for q6 were stored as separate variables so will recode these into q7 below
@@ -142,7 +147,7 @@ replace recq7 = 4 if p7 == . & p65 == 1
 replace recq7 = 5 if p7 == . & p66 == 1
 replace recq7 = 6 if p7 == . & p67 == 1
 replace recq7 = .r if p7 == . & p68 == 1
-replace recq7 = .a if p7 == . & p61 == 1 /// Note: missing q7 only if they indicated they do not have insurance 
+replace recq7 = .a if p7 == . & p61 == 1 // Note: missing q7 only if they indicated they do not have insurance 
 
 gen q7_other = p6_6
 drop p61 p62 p63 p64 p65 p66 p67 p68 p6_6 p7
@@ -260,7 +265,6 @@ ren rec* *
 
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 
-*gen reclanguage = country*1000 + language // SI: missing from dataset
 *gen recinterviewer_id = country*1000 + interviewer_id // SI: missing from dataset
 
 gen recq4 = country*1000 + q4
@@ -503,8 +507,8 @@ recode q30 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by i
 		   (5 = 5 "Staff don't show respect (e.g., staff is rude, impolite, dismissive)") ///
 		   (6 = 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
 		   (7 = 7 "Illness not serious enough") ///
-		   (8 = 19 "EC: Insurance problems (e.g., my insurance expired, I was not eligible for it)") ///
-		   (9 = 20 "EC: Difficulty getting an appointment (e.g., there was no appointment, appointments were scheduled far in advance)") ///
+		   (8 = 21 "EC: Insurance problems (e.g., my insurance expired, I was not eligible for it)") ///
+		   (9 = 22 "EC: Difficulty getting an appointment (e.g., there was no appointment, appointments were scheduled far in advance)") ///
 		   (8 = 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)") ///
 		   (9 = 9 "COVID-19 fear") ///
 		   (10 = 10 "Other") (.a = .a "NA") ///
@@ -583,6 +587,11 @@ drop q2 q3 q3a_co_pe_uy_ar q5 q8 q9 q10 q12_a q12_b q13a_ec q14_ec q16 q19 q24 q
 q28_a q28_b q30 q32_ec q34 q35 q36 q37 q41_a q41_b q41_c q45 q46 q50 q51 cell1 cell2 q11 q13 q20 q26 q29 q31a q31b q31c_ec q17 q25 ///
 q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q42 q43 q44_ec q47 q48 q49
 
+ren rec* *
+
+*******************************************************************************
+
+* all vars missing labels from values:
 label define gender .a "NA" .d "Don't know" .r "Refused",add
 label define gender2 .a "NA" .d "Don't know" .r "Refused",add	
 label define q4_label .a "NA" .d "Don't know" .r "Refused",add	
@@ -595,16 +604,27 @@ label define q13a_ec_label .a "NA" .d "Don't know" .r "Refused",add
 label define q15_label .a "NA" .d "Don't know" .r "Refused",add
 label define q33_label .a "NA" .d "Don't know" .r "Refused",add
 
+* for appending process:
+label copy q4_label q4_label2
+label copy q5_label q5_label2
+label copy q15_label q15_label2
+label copy q33_label q33_label2
+label copy q50_label q50_label2
+label copy q51_label q51_label2
 
+label val q4 q4_label2
+label val q5 q5_label2
+label val q15 q15_label2
+label val q33 q33_label2
+label val q50 q50_label2
+label val q51 q51_label2
+
+label drop q4_label q5_label q15_label q33_label q50_label q51_label
 *------------------------------------------------------------------------------*
-* Renaming variables 
-* Rename variables to match question numbers in current survey
-
-ren rec* *
 
 *Reorder variables
 order q*, sequential
-order respondent_serial country wave
+order respondent_serial mode country wave language
 
 *------------------------------------------------------------------------------*
 
@@ -676,7 +696,8 @@ order respondent_serial respondent_id mode country language date time int_length
 lab var country "Country"
 lab var respondent_serial "Respondent Serial #"
 lab var wave "Wave"
-*lab var language "Language" - SI: missing from dataset
+lab var language "Language"
+lab var mode "mode"
 lab var q1 "Q1. Respondent's еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent's gender"
