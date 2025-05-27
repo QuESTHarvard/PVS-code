@@ -289,6 +289,7 @@ recode q7 (nonmissing = .a) if q6 == 0
 
 *q14-17
 recode q14_np q15 q16 q17 (. = .a) if q13 !=1
+recode q17 (5 = .a)
 
 * NA's for q19-21 
 recode q19 (. = .a) if q18 != .
@@ -359,8 +360,13 @@ lab val q30 q30_label
 
 recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse") ///
 		   (.a = .a "NA") (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q45_label)
-drop q45	 
+drop q45
 
+recode q46 (1 = 1 "Our healthcare system has so much wrong with it that we need to completely rebuild it.") ///
+		  (2 = 2 "There axre some good things in our healthcare system, but major changes are needed to make it work better.") ///
+		  (3 = 3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better."), pre(rec)
+drop q46
+		  
 * Add value labels 
 label define q14 .a "NA" .d "Don't know" .r "Refused",add	
 label define q15_label .a "NA" .d "Don't know" .r "Refused",add	 
