@@ -35,14 +35,16 @@ drop q3 // confirm malefemale is what we want to use, it looks more cleaned up
 *dropping variables used for weight calc
 drop urbanrural_ed urbanrural_age malefemale_reg malefemale_ed urbanrural education 
 
-*dropping until we figure out if we want to keep these vars (multicheckbox)
-*drop q052_1_1_1 q052_1_1_2 q052_1_1_17 q052_1_1_3 q052_1_1_4 q052_1_1_5 q052_1_1_6 q052_1_1_7 q052_1_1_8 q052_1_1_9 q052_1_1_10 q052_1_1_11 q052_1_1_12 q052_1_1_13 q052_1_1_14 q052_1_1_16 q052_1_1_999 q052_1_1_15 q052_1_1_1_1
+*per Amit: "These are Nepal-specific indicators:
+	*Q51 was used to create a wealth index using Principal component analysis method
+	*Q52b_np was used to identify list of facilities used by people who were ware of their constitutional right to free health `basic' health care (answered yes to q52aa_np)"
+drop q052_1_1_1 q052_1_1_2 q052_1_1_17 q052_1_1_3 q052_1_1_4 q052_1_1_5 q052_1_1_6 q052_1_1_7 q052_1_1_8 q052_1_1_9 q052_1_1_10 q052_1_1_11 q052_1_1_12 q052_1_1_13 q052_1_1_14 q052_1_1_16 q052_1_1_999 q052_1_1_15 q052_1_1_1_1
 
 *confirm if I should recode into a new var (multicheckbox)
 *drop q51_1 q51_2 q51_3 q51_4 q51_5 q51_6 q51_7 q51_8 q51_9 q51_10 q51_999 q51_12
 
 *confirm ok dropping - we have a region var
-*drop muni muntype ward district 
+drop muni muntype ward district 
 
 *dropping their version of age/education categories (only 3 levels):
 drop age_cat edu_cat
