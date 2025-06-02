@@ -239,8 +239,8 @@ rename p12a q12_a
 rename p12b q12_b
 rename p13 q13
 
-recode p13a_all (1 = 1 "No") (2 = 2 "Yes, pharmacy") (3 = 3 "Yes, healer/traditional medicine") ///
-				(4 = 4 "Yes, alternative medicine") (5 = 5 "Yes, other") (6 = 6 "No response"),gen(q13a_co_pe_uy) // add to data dictionary
+recode p13a_all (1 = 0 "No") (2 = 1 "Yes, pharmacy") (3 = 2 "Yes, healer/traditional medicine") ///
+				(4 = 3 "Yes, alternative medicine") (5 = 4 "Yes, other") (6 = .r "No response"),gen(q13a_lac) label(q13a_lac_label) // add to data dictionary
 drop p13a_all
 
 recode p14_all (1 = 1 "Public") (2 = 2 "MINSA") (3 = 3 "EsSalud") (4 = 4 "Mutualist") (5 = 5 "Private") ///
@@ -823,7 +823,8 @@ lab var q10 "Q10. In general, would you say your mental health, including your m
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
-lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
+lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
+lab var q13a_lac "Q13a. LAC/EC only: Are there any other places, such as pharmacies, traditional healers, or alternative medicine, that you go to most frequently for care?" 
 lab var q15 "Q15. What type of healthcare facility is this?"
 label var q16 "Q16. Why did you choose this healthcare facility? Please tell us the main reason."
 label var q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"
@@ -851,6 +852,7 @@ label var q29 "Q29. Have you needed medical attention but you did not get it in 
 label var q30 "Q30. The last time this happened, what was the main reason you did not receive healthcare?"
 label var q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
 label var q31b "Q31b. Sell items to pay for healthcare"
+label var q31_lac "Q31. LAC/EC only: In the last 12 months, have you stopped paying any utility bills (cable, electricity, water, etc.) to pay for healthcare?"
 *label var q32_co_pe_uy "Q32. Was this a public, private, NGO or faith-based facility?" // change to LAC var
 label var q33 "Q33. What type of healthcare facility was this?"
 label var q34 "Q34. What was the main reason you went?"
