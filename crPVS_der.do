@@ -298,6 +298,8 @@ recode phc_women (. = 5) if q40a_so == 5 & country ==22
 recode phc_women(. = .r) if q40a_so == .r & country ==22
 
 gen phc_child = q40_b
+recode phc_child (. = .a) if country ==22
+
 gen phc_chronic = q40_c
 gen phc_mental = q40_d
 
