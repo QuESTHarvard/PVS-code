@@ -87,7 +87,7 @@ recode q51 (101 = 101  "< Ksh 1,000") ///
 		   (30 = 133 "30,001 - 40,000 INR") /// NOTE: this was >50,000 INR in wave 1
 		   (109 = 134 "40,001 - 50,000 INR") ///
 		   (110 = 135 "> 50,000 INR") ///
-		   (999 = .r "Refused") (998 = .d "Don't know"), gen(recq51)
+		   (999 = 999 "Refused") (998 = 998 "Don't know"), gen(recq51)
 		   
 	
 * Value 11 was 21 in wave 1 data and value 10 was 11 in wave 1 data, recoding here	(what is 10 and 22?)
@@ -165,8 +165,8 @@ gen recq50 = country*1000 + q50
 replace recq50 = .r if q50== 999
 
 gen recq51 = country*1000 + q51
-*replace recq51 = .r if q51== 999
-*replace recq51 = .d if q51== 998
+replace recq51 = .r if q51== 999
+replace recq51 = .d if q51== 998
 
 * Relabel some variables now so we can use the orignal label values
 label define country_short 2 "CO" 3 "ET" 4 "IN" 5 "KE" 7 "PE" 9 "ZA" 10 "UY" ///
