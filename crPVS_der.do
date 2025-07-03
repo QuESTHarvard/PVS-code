@@ -124,9 +124,9 @@ gen visits_home = q22
 gen visits_tele = q23
 
 * tele_qual
-gen tele_qual = q25
-lab val tele_qual exc_poor
-* Note - maybe move above lab val 
+recode q25 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(tele_qual_vge) label(exc_pr_2)
 
 * visits_total
 egen visits_total = rowtotal(q18_q19 q22 q23)
@@ -203,10 +203,10 @@ lab def system_outlook 0 "Getting worse" 1 "Staying the same" ///
 lab val system_outlook system_outlook
 
 * system_reform 
-gen system_reform = q46
-lab def sr 1 "Health system needs to be rebuilt" 2 "Health system needs major changes" /// 
-		3 "Health system only needs minor changes" .r "Refused", replace
-lab val system_reform sr
+recode q46 ///
+	(1 2 = 0 "Major changes/Rebuilt") (3 = 1 "Minor changes") ///
+	(.r = .r "Refused") , gen(system_reform_minor) label(system_reform2)
+
 
 **** Yes/No Questions ****
 
@@ -270,8 +270,11 @@ recode q10 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r
 	   (.a = .a "NA"), /// 
 	   gen(health_mental_vge) label(health_mental2)
 	   
-gen last_qual = q38_a 
-recode last_qual (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+recode q17 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (5 .a = .a "NA"), /// 
+	   gen(usual_quality_vge) label(exc_pr_2)	   
+	   
+recode q38_a (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_qual_vge) label(exc_pr_2)
 	   
@@ -282,71 +285,107 @@ recode q38_b (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = 
 recode q38_c (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_supplies_vge) label(exc_pr_2)
-
-gen last_respect = q38_d 
-gen last_explain = q38_f 
-gen last_decisions = q38_g
-gen last_visit_rate = q38_h 
-gen last_wait_rate = q38_i 
-gen last_sched_rate = q38_k 
-gen vignette_poor = q48
-gen vignette_good = q49
-lab val health health_mental last_qual last_skills last_supplies last_respect /// 
-last_explain last_decisions last_visit_rate last_wait_rate last_sched_rate vignette_poor /// 
-vignette_good exc_poor
+ 
+recode q38_d (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.r = .r "Refused"), /// 
+	   gen(last_respect_vge) label(exc_pr_2)
 	   
-gen usual_quality = q17
-recode usual_quality (5 = .a)
+recode q38_e (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(last_know_vge) label(exc_pr_2)	   
 
-gen last_know = q38_e
-gen last_courtesy = q38_j
-lab val usual_quality exc_pr_hlthcare
-lab val last_know exc_pr_visits
-lab val last_courtesy exc_poor_staff
+recode q38_f (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.r = .r "Refused"), /// 
+	   gen(last_explain_vge) label(exc_pr_2)
+	   
+recode q38_g (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.r = .r "Refused"), /// 
+	   gen(last_decisions_vge) label(exc_pr_2)	 
+	    
+recode q38_h (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.r = .r "Refused"), /// 
+	   gen(last_visit_rate_vge) label(exc_pr_2)	  
+	    
+recode q38_i (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.r = .r "Refused"), /// 
+	   gen(last_wait_rate_vge) label(exc_pr_2)	  
 
-gen phc_women = q40_a
-recode phc_women (. = 0) if q40a_so == 0 & country ==22
-recode phc_women (. = 1) if q40a_so == 1 & country ==22
-recode phc_women (. = 2) if q40a_so == 2 & country ==22
-recode phc_women (. = 3) if q40a_so == 3 & country ==22
-recode phc_women (. = 4) if q40a_so == 4 & country ==22
-recode phc_women (. = 5) if q40a_so == 5 & country ==22
-recode phc_women(. = .r) if q40a_so == .r & country ==22
+recode q38_j (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.r = .r "Refused"), /// 
+	   gen(last_courtesy_vge) label(exc_pr_2)
+	   
+recode q38_k (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.r = .r "Refused"), /// 
+	   gen(last_sched_rate_vge) label(exc_pr_2)	  
 
-gen phc_child = q40_b
-recode phc_child (. = .a) if country ==22
+recode q40_a (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
+	   gen(phc_women_vge) label(exc_pr_judge_2)
+	   
+recode phc_women_vge (. = 0) if q40a_so == 0 & country ==22
+recode phc_women_vge (. = 1) if q40a_so == 1 & country ==22
+recode phc_women_vge (. = 2) if q40a_so == 2 & country ==22
+recode phc_women_vge (. = 3) if q40a_so == 3 & country ==22
+recode phc_women_vge (. = 4) if q40a_so == 4 & country ==22
+recode phc_women_vge (. = 5) if q40a_so == 5 & country ==22
+recode phc_women_vge (. = .r) if q40a_so == .r & country ==22
 
-gen phc_chronic = q40_c
-gen phc_mental = q40_d
+recode q40_b (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
+	   gen(phc_child_vge) label(exc_pr_judge_2)	   
+	   
+recode phc_child_vge (. = .a) if country ==22
 
-*Recoding "Iam unable to judge = .d"
-recode phc_women phc_child phc_chronic phc_mental (5 = .d) if country == 21 | country == 22
+recode q40_c (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
+	   gen(phc_chronic_vge) label(exc_pr_judge_2)	
+	   
+recode q40_d (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
+	   gen(phc_mental_vge) label(exc_pr_judge_2)	
+
+*Recoding "I am unable to judge = .d"
+recode phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge (5 = .d) if country == 21 | country == 22
 
 *"6 = "I am unable to judge" response option in Nepal-only being recoded to missing
-recode phc_women phc_child phc_chronic phc_mental (6 = .d) if country ==23
+recode phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge (6 = .d) if country ==23
 
-gen qual_srh = q40_e_ng
-recode qual_srh (. = .a) if country !=20
+recode q40_e_ng (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
+	   gen(qual_srh_vge) label(exc_pr_judge_2)	 
+	   
+recode qual_srh_vge (. = .a) if country !=20
+ 
+recode q40b_so (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
+	   gen(care_infections_vge) label(exc_pr_judge_2)	
+	   
+recode care_infections_vge (. = .a) if country !=22
 
-gen care_infections = q40b_so 
-recode care_infections (. = .a) if country !=22
-
-*replace phc_mental = q40e_so if country ==22
-
-gen care_nonurgent = q40f_so 
-recode care_nonurgent (. = .a) if country !=22
-
-lab val phc_women phc_child phc_chronic phc_mental qual_srh care_infections ///
-		care_nonurgent exc_poor_judge
+recode q40f_so (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
+	   gen(care_nonurgent_vge) label(exc_pr_judge_2)	
+	   
+recode care_nonurgent_vge (. = .a) if country !=22
 	
-gen qual_public = q42
-gen qual_private = q43 
-gen covid_manage = q47
-lab val qual_public qual_private covid_manage exc_poor
+recode q42 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(qual_public_vge) label(exc_pr_2)
+
+recode q43 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(qual_private_vge) label(exc_pr_2)
+
+recode q47 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(covid_manage_vge) label(exc_pr_2)
+	   
+gen vignette_poor = q48
+gen vignette_good = q49	   	   
 
 **** All Very Confident to Not at all Confident scales ****
 
-* conf_sick conf_afford conf_opinion
+* conf_sick_scvc conf_afford_scvc conf_opinion
 
 recode q41_a q41_b ///
 	   (3 2 = 1 "Somewhat confident/Very confident") ///
@@ -354,16 +393,20 @@ recode q41_a q41_b ///
 	   (.r = .r Refused) (.a = .a na), /// 
 	   pre(der) label(vc_nc_der)
 
-gen conf_opinion = q41_c
-lab val conf_opinion vc_nc
+recode q41_c ///
+	   (3 2 = 1 "Somewhat confident/Very confident") ///
+	   (0 1 = 0 "Not too confident/Not at all confident") /// 
+	   (.r = .r Refused) (.a = .a na), /// 
+	   gen(conf_opinion_scvc) label(vc_nc_der)	
 
-ren (derq41_a derq41_b) (conf_sick conf_afford)
 
-gen conf_getafford = .
-replace conf_getafford=1 if conf_sick==1 & conf_afford==1
-replace conf_getafford=0 if conf_sick==0 | conf_afford==0
-replace conf_getafford=.r if conf_sick==.r | conf_afford==.r
-lab val conf_getafford vc_nc_der
+ren (derq41_a derq41_b) (conf_sick_scvc conf_afford_scvc)
+
+gen conf_getafford_scvc = .
+replace conf_getafford_scvc=1 if conf_sick_scvc==1 & conf_afford_scvc==1
+replace conf_getafford_scvc=0 if conf_sick_scvc==0 | conf_afford_scvc==0
+replace conf_getafford_scvc=.r if conf_sick_scvc==.r | conf_afford_scvc==.r
+lab val conf_getafford_scvc vc_nc_der
 
 *urban/rural
 recode q5 (1001 1002 9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 ///
@@ -407,7 +450,6 @@ recode q7 (1002 1003 2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004
 
 recode insur_type (.a = 0) if q6_za == 1 & q7 != 9008 | q7 != 9009 | q7 != 9995 | q7 != 9997
 recode insur_type (0 = .a) if q6_za == 0 | q6_za == .r
-
 recode insur_type (.r = 0) if q6_za == 1
 recode insur_type (.a = 1) if q7_kr == 1
 recode insur_type (.a = 0) if q7_kr == 0	  
@@ -841,16 +883,16 @@ order respondent_serial respondent_id country country_reg wave language date ///
 	  insured insur_type education health_vge health_mental_vge health_chronic ///
 	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
-	  usual_reason usual_quality visits visits_cat visits_covid_v1 ///
+	  usual_reason usual_quality_vge visits visits_cat visits_covid_v1 ///
 	  fac_number visits_home visits_tele tele_qual visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_srh care_mental /// 
 	  breast_exam color_ultrasound mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
 	  last_type last_reason last_wait_time last_visit_time_v1 last_sched_time ///
-	   last_qual_vge last_skills_vge last_supplies_vge last_respect last_know ///
-	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate ///
-	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh care_infections care_nonurgent conf_sick ///
-	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
-	  system_outlook system_reform covid_manage vignette_poor /// 
+	   last_qual_vge last_skills_vge last_supplies_vge last_respect_vge last_know ///
+	  last_explain_vge last_decisions_vge last_visit_rate_vge last_wait_rate_vge last_courtesy_vge last_sched_rate_vge ///
+	  last_promote phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge qual_srh_vge care_infections_vge care_nonurgent_vge conf_sick_scvc ///
+	  conf_afford_scvc conf_getafford_scvc conf_opinion qual_public_vge qual_private_vge ///
+	  system_outlook system_reform covid_manage_vge vignette_poor /// 
 	  vignette_good minority income   	   	  
 	
 ***************************** Labeling variables ***************************** 
@@ -876,7 +918,7 @@ lab var	usual_type_own "Facility ownership for usual source of care (Q14)"
 lab var	usual_type_lvl "Facility level for usual source of care (Q15)"
 lab var	usual_type "Facility ownership and level for usual source of care (Q14/Q15)"
 lab var	usual_reason "Main reason for choosing usual source of care facility (Q16)"
-lab var	usual_quality "Overall quality rating of usual source of care (Q17)"
+lab var	usual_quality_vge "Overall quality rating of usual source of care (Q17)"
 lab var	visits "Visits (continuous) made in-person to a facility in past 12 months (Q18/Q19)"
 lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (Q18/Q19)"
 lab var	visits_covid_v1 "Number of visits made for COVID in past 12 months (Q25A/Q25B)"
@@ -907,32 +949,32 @@ lab var last_type "Facility ownership and level for last visit to a healthcare p
 lab var	last_reason	"Reason for last healthcare visit (Q34)" 
 lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (Q37)"
 lab var	last_visit_time_v1 "Length of time spent with the provider during last healthcare visit (V1.0 - Q47)"
-lab var	last_qual "Last visit rating: overall quality (Q38A)"
+lab var	last_qual_vge "Last visit rating: overall quality (Q38A)"
 lab var	last_skills_vge "Last visit rating: knowledge and skills of provider (Care competence) (Q38_b)"
-lab var	last_supplies_vgee "Last visit rating: equipment and supplies provider had available (Q38_c)"
-lab var	last_respect "Last visit rating: provider respect (Q38_d)"
-lab var	last_know "Last visit rating: knowledge of prior tests and visits (Q38_e)"
-lab var	last_explain "Last visit rating: explained things in an understandable way (Q38_f)"
-lab var	last_decisions "Last visit rating: involved you in decisions about your care (Q38_g)"
-lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (Q38_h)"
-lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q38_i)"
-lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
+lab var	last_supplies_vge "Last visit rating: equipment and supplies provider had available (Q38_c)"
+lab var	last_respect_vge "Last visit rating: provider respect (Q38_d)"
+lab var	last_know_vge "Last visit rating: knowledge of prior tests and visits (Q38_e)"
+lab var	last_explain_vge "Last visit rating: explained things in an understandable way (Q38_f)"
+lab var	last_decisions_vge "Last visit rating: involved you in decisions about your care (Q38_g)"
+lab var	last_visit_rate_vge "Last visit rating: amount of time provider spent with you (Q38_h)"
+lab var	last_wait_rate_vge "Last visit rating: amount of time you waited before being seen (Q38_i)"
+lab var	last_courtesy_vge "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
 lab var	last_promote "Net promoter score for facility visited for last visit (Q39)"
-lab var	phc_women "Public primary care system rating for: pregnant women (Q40_a)"
-lab var	phc_child "Public primary care system rating for: children (Q40_b)"
-lab var	phc_chronic "Public primary care system rating for: chronic conditions (Q40_c)"
-lab var	phc_mental "Public primary care system rating for: mental health (Q40_d)"
-lab var qual_srh "Rating for quality of care provided for sexual or reproductive health?"
-lab var care_infections "Rating for care for infections such as Malaria, Tuberculosis etc?"
-lab var care_nonurgent "Rating for the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
-lab var	conf_sick "Confidence in receiving good quality healthcare if became very sick (Q41_a)"
-lab var	conf_afford	"Confidence in ability to afford care healthcare if became very sick (Q41_b)"
+lab var	phc_women_vge "Public primary care system rating for: pregnant women (Q40_a)"
+lab var	phc_child_vge "Public primary care system rating for: children (Q40_b)"
+lab var	phc_chronic_vge "Public primary care system rating for: chronic conditions (Q40_c)"
+lab var	phc_mental_vge "Public primary care system rating for: mental health (Q40_d)"
+lab var qual_srh_vge "Rating for quality of care provided for sexual or reproductive health?"
+lab var care_infections_vge "Rating for care for infections such as Malaria, Tuberculosis etc?"
+lab var care_nonurgent_vge "Rating for the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
+lab var	conf_sick_scvc "Confidence in receiving good quality healthcare if became very sick (Q41_a)"
+lab var	conf_afford_scvc	"Confidence in ability to afford care healthcare if became very sick (Q41_b)"
 lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q41_c)"
-lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (Q42)"
-lab var	qual_private "Overall quality rating of private healthcare system in country (Q43)" 
+lab var	qual_public_vge	"Overall quality rating of gov or public healthcare system in country (Q42)"
+lab var	qual_private_vge "Overall quality rating of private healthcare system in country (Q43)" 
 lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q45)"
 lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q46)" 
-lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q47)" 
+lab var	covid_manage_vge "Rating of the government's management of the COVID-19 pandemic (Q47)" 
 lab var	vignette_poor "Rating of vignette in q48 (poor care)"
 lab var	vignette_good "Rating of vignette in q49 (good care)"
 lab var	minority "Minority group (based on native language, ethnicity or race) (Q50)"
@@ -940,7 +982,7 @@ lab var	income "Income group (Q51)"
 lab var tele_qual "Overall quality of last telemedicine visit (Q25)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q36)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q38_k)"
-lab var conf_getafford "Confidence in receiving and affording healthcare if became very sick (Q41_a/Q41_b)"
+lab var conf_getafford_scvc "Confidence in receiving and affording healthcare if became very sick (Q41_a/Q41_b)"
 *lab var pol_align_v1 "Political alignment in respondent's region / district / state"
 
 **************************** Save data *****************************
