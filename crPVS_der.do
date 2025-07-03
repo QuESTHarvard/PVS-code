@@ -260,12 +260,29 @@ lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam ///
 lab val mistake discrim yes_no_na
 	
 **** Excellent to Poor scales *****	   
+*SS: Edit for Nepal Likert scale
 
-gen health = q9 
-gen health_mental = q10 
+recode q9 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(health_vge) label(health2)
+
+recode q10 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(health_mental_vge) label(health_mental2)
+	   
 gen last_qual = q38_a 
-gen last_skills = q38_b 
-gen last_supplies = q38_c 
+recode last_qual (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(last_qual_vge) label(exc_pr_2)
+	   
+recode q38_b (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(last_skills_vge) label(exc_pr_2)
+	    
+recode q38_c (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(last_supplies_vge) label(exc_pr_2)
+
 gen last_respect = q38_d 
 gen last_explain = q38_f 
 gen last_decisions = q38_g
@@ -821,7 +838,7 @@ recode covid_vax_v1 ///
 order q*, sequential	   
 order respondent_serial respondent_id country country_reg wave language date /// 
 	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
-	  insured insur_type education health health_mental health_chronic ///
+	  insured insur_type education health_vge health_mental_vge health_chronic ///
 	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
 	  usual_reason usual_quality visits visits_cat visits_covid_v1 ///
@@ -829,7 +846,7 @@ order respondent_serial respondent_id country country_reg wave language date ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_srh care_mental /// 
 	  breast_exam color_ultrasound mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
 	  last_type last_reason last_wait_time last_visit_time_v1 last_sched_time ///
-	   last_qual last_skills last_supplies last_respect last_know ///
+	   last_qual_vge last_skills_vge last_supplies_vge last_respect last_know ///
 	  last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate ///
 	  last_promote phc_women phc_child phc_chronic phc_mental qual_srh care_infections care_nonurgent conf_sick ///
 	  conf_afford conf_getafford conf_opinion qual_public qual_private ///
@@ -846,8 +863,8 @@ lab var region "Region where respondent lives (County, state, province, etc.) (Q
 lab var insured "Insurance status (Q6)"
 lab var insur_type "Type of insurance (for those who have insurance) (Q7)" 
 lab var education "Highest level of education completed (Q8)"
-lab var	health "Self-rated health (Q9)"
-lab var	health_mental "Self-rated mental health (Q10)"
+lab var health_vge "Self-rated health (Q9)"
+lab var health_mental_vge "Self-rated mental health (Q10)"
 lab var	health_chronic "Longstanding illness or health problem (chronic illness) (Q11)"
 lab var ever_covid_v1 "Ever had COVID-19 or coronavirus (V1.0 - Q12)"
 lab var	covid_confirmed_v1	"COVID-19 or coronavirus confirmed by a test (V1.0 - Q13)"
@@ -891,8 +908,8 @@ lab var	last_reason	"Reason for last healthcare visit (Q34)"
 lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (Q37)"
 lab var	last_visit_time_v1 "Length of time spent with the provider during last healthcare visit (V1.0 - Q47)"
 lab var	last_qual "Last visit rating: overall quality (Q38A)"
-lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence) (Q38_b)"
-lab var	last_supplies "Last visit rating: equipment and supplies provider had available (Q38_c)"
+lab var	last_skills_vge "Last visit rating: knowledge and skills of provider (Care competence) (Q38_b)"
+lab var	last_supplies_vgee "Last visit rating: equipment and supplies provider had available (Q38_c)"
 lab var	last_respect "Last visit rating: provider respect (Q38_d)"
 lab var	last_know "Last visit rating: knowledge of prior tests and visits (Q38_e)"
 lab var	last_explain "Last visit rating: explained things in an understandable way (Q38_f)"
