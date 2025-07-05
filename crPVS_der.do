@@ -127,6 +127,9 @@ gen visits_tele = q23
 recode q25 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(tele_qual_vge) label(exc_pr_2)
+	   
+replace	tele_qual_vge = 0 if q25 == 0 | q25 == 1 & country == 23
+replace	tele_qual_vge = 1 if q25 == 2 | q25 == 3 | q25 == 4 & country == 23
 
 * visits_total
 egen visits_total = rowtotal(q18_q19 q22 q23)
@@ -265,58 +268,100 @@ lab val mistake discrim yes_no_na
 recode q9 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(health_vge) label(health2)
+	   
+replace	health_vge = 0 if q9 == 0 | q9 == 1 & country == 23
+replace	health_vge = 1 if q9 == 2 | q9 == 3 | q9 == 4 & country == 23	   
 
 recode q10 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(health_mental_vge) label(health_mental2)
 	   
+replace	health_mental_vge = 0 if q10 == 0 | q10 == 1 & country == 23
+replace	health_mental_vge = 1 if q10 == 2 | q10 == 3 | q10 == 4 & country == 23	
+	   
 recode q17 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (5 .a = .a "NA"), /// 
 	   gen(usual_quality_vge) label(exc_pr_2)	   
+
+replace	usual_quality_vge = 0 if q17 == 0 | q17 == 1 & country == 23
+replace	usual_quality_vge = 1 if q17 == 2 | q17 == 3 | q17 == 4 & country == 23	
 	   
 recode q38_a (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_qual_vge) label(exc_pr_2)
-	   
+
+replace	last_qual_vge = 0 if q38_a == 0 | q38_a == 1 & country == 23
+replace	last_qual_vge = 1 if q38_a == 2 | q38_a == 3 | q38_a == 4 & country == 23		   
+
 recode q38_b (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_skills_vge) label(exc_pr_2)
-	    
+
+replace	last_skills_vge = 0 if q38_b == 0 | q38_b == 1 & country == 23
+replace	last_skills_vge = 1 if q38_b == 2 | q38_b == 3 | q38_b == 4 & country == 23	   
+	   
 recode q38_c (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_supplies_vge) label(exc_pr_2)
  
+replace	last_supplies_vge = 0 if q38_c == 0 | q38_c == 1 & country == 23
+replace	last_supplies_vge = 1 if q38_c == 2 | q38_c == 3 | q38_c == 4 & country == 23	   
+ 
 recode q38_d (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_respect_vge) label(exc_pr_2)
+
+replace	last_respect_vge = 0 if q38_d == 0 | q38_d == 1 & country == 23
+replace	last_respect_vge = 1 if q38_d == 2 | q38_d == 3 | q38_d == 4 & country == 23	   	   
 	   
 recode q38_e (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_know_vge) label(exc_pr_2)	   
 
+replace	last_know_vge = 0 if q38_e == 0 | q38_e == 1 & country == 23
+replace	last_know_vge = 1 if q38_e == 2 | q38_e == 3 | q38_e == 4 & country == 23	   	   	   
+	   
 recode q38_f (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_explain_vge) label(exc_pr_2)
+
+replace	last_explain_vge = 0 if q38_f == 0 | q38_f == 1 & country == 23
+replace	last_explain_vge = 1 if q38_f == 2 | q38_f == 3 | q38_f == 4 & country == 23		   
 	   
 recode q38_g (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_decisions_vge) label(exc_pr_2)	 
-	    
+
+replace	last_decisions_vge = 0 if q38_g == 0 | q38_g == 1 & country == 23
+replace	last_decisions_vge = 1 if q38_g == 2 | q38_g == 3 | q38_g == 4 & country == 23		   
+	   
 recode q38_h (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_visit_rate_vge) label(exc_pr_2)	  
-	    
+
+replace	last_visit_rate_vge = 0 if q38_h == 0 | q38_h == 1 & country == 23
+replace	last_visit_rate_vge = 1 if q38_h == 2 | q38_h == 3 | q38_h == 4 & country == 23		   
+	   
 recode q38_i (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_wait_rate_vge) label(exc_pr_2)	  
 
+replace	last_wait_rate_vge = 0 if q38_i == 0 | q38_i == 1 & country == 23
+replace	last_wait_rate_vge = 1 if q38_i == 2 | q38_i == 3 | q38_i == 4 & country == 23		   
+	   
 recode q38_j (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_courtesy_vge) label(exc_pr_2)
 	   
+replace	last_courtesy_vge = 0 if q38_j == 0 | q38_j == 1 & country == 23
+replace	last_courtesy_vge = 1 if q38_j == 2 | q38_j == 3 | q38_j == 4 & country == 23		   
+	   
 recode q38_k (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
-	   gen(last_sched_rate_vge) label(exc_pr_2)	  
+	   gen(last_sched_rate_vge) label(exc_pr_2)	 
+	   
+replace	last_sched_rate_vge = 0 if q38_k == 0 | q38_k == 1 & country == 23
+replace	last_sched_rate_vge = 1 if q38_k == 2 | q38_k == 3 | q38_k == 4 & country == 23		   
 
 recode q40_a (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
@@ -330,19 +375,31 @@ recode phc_women_vge (. = 4) if q40a_so == 4 & country ==22
 recode phc_women_vge (. = 5) if q40a_so == 5 & country ==22
 recode phc_women_vge (. = .r) if q40a_so == .r & country ==22
 
+replace	phc_women_vge = 0 if q40_a == 0 | q40_a == 1 & country == 23
+replace	phc_women_vge = 1 if q40_a == 2 | q40_a == 3 | q40_a == 4 & country == 23	
+
 recode q40_b (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_child_vge) label(exc_pr_judge_2)	   
 	   
 recode phc_child_vge (. = .a) if country ==22
 
+replace	phc_child_vge = 0 if q40_b == 0 | q40_b == 1 & country == 23
+replace	phc_child_vge = 1 if q40_b == 2 | q40_b == 3 | q40_b == 4 & country == 23		
+
 recode q40_c (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_chronic_vge) label(exc_pr_judge_2)	
+
+replace	phc_chronic_vge = 0 if q40_c == 0 | q40_c == 1 & country == 23
+replace	phc_chronic_vge = 1 if q40_c == 2 | q40_c == 3 | q40_c == 4 & country == 23		   
 	   
 recode q40_d (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_mental_vge) label(exc_pr_judge_2)	
+	   
+replace	phc_mental_vge = 0 if q40_d == 0 | q40_d == 1 & country == 23
+replace	phc_mental_vge = 1 if q40_d == 2 | q40_d == 3 | q40_d == 4 & country == 23		   
 
 *Recoding "I am unable to judge = .d"
 recode phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge (5 = .d) if country == 21 | country == 22
@@ -371,27 +428,36 @@ recode care_nonurgent_vge (. = .a) if country !=22
 recode q42 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(qual_public_vge) label(exc_pr_2)
+	   
+replace	qual_public_vge = 0 if q42 == 0 | q42 == 1 & country == 23
+replace	qual_public_vge = 1 if q42 == 2 | q42 == 3 | q42 == 4 & country == 23		   
 
 recode q43 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(qual_private_vge) label(exc_pr_2)
 
+replace	qual_private_vge = 0 if q43 == 0 | q43 == 1 & country == 23
+replace	qual_private_vge = 1 if q43 == 2 | q43 == 3 | q43 == 4 & country == 23		   
+	   
 recode q47 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(covid_manage_vge) label(exc_pr_2)
+
+replace	covid_manage_vge = 0 if q47 == 0 | q47 == 1 & country == 23
+replace	covid_manage_vge = 1 if q47 == 2 | q47 == 3 | q47 == 4 & country == 23		   
 	   
 gen vignette_poor = q48
 gen vignette_good = q49	   	   
 
 **** All Very Confident to Not at all Confident scales ****
 
-* conf_sick_scvc conf_afford_scvc conf_opinion
+* conf_sick_scvc conf_afford_scvc conf_opinion (double check for Nepal)
 
 recode q41_a q41_b ///
 	   (3 2 = 1 "Somewhat confident/Very confident") ///
 	   (0 1 = 0 "Not too confident/Not at all confident") /// 
 	   (.r = .r Refused) (.a = .a na), /// 
-	   pre(der) label(vc_nc_der)
+	   pre(der) label(vc_nc_der)   	   
 
 recode q41_c ///
 	   (3 2 = 1 "Somewhat confident/Very confident") ///
@@ -641,7 +707,7 @@ recode last_type_own (.a = 2) if country == 7 & q32_co_pe_v1 == 1 & inlist(q7,70
 	* Wave 2: 
 	recode last_type_own (.a = 0) if p32_per == 1 
 	recode last_type_own (.a = 1) if p32_per == 3
-	recode last_type_own (.a = 2) if p32_per == 2 | p32_per == 4 | p32_per == 5 // confirm (is EsSalud, Other?)
+	recode last_type_own (.a = 2) if p32_per == 2 | p32_per == 4 | p32_per == 5 
 
 *Uruguay recode 
 *Updated 8-22 SS
