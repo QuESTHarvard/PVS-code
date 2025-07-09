@@ -632,7 +632,7 @@ recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
 recode q7_ke (. = .a) if country !=5 | wave !=2
 
 * Ecuador: 
-recode q14_ec q31_lac q32_ec q44_ec (. = .a) if country != 1
+recode q14_ec q32_ec q44_ec (. = .a) if country != 1
 
 * All wave 2 countries plus Colombia, Ethiopia, India, Kenya, Peru, South Africa, Uruguay, Lao PDR, Argentina, Nigeria, China, Somaliland, Nepal 
 recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country == 5 | country == 7 ///
@@ -646,8 +646,11 @@ recode q37 (. = .a) if country != 21 | country != 22 | country != 23 | wave !=2
 recode q6_lac q14_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	
 recode q44_co q14_co (. = .a) if wave !=2 | country !=2 
 recode q44_pe q14_pe (. = .a) if wave !=2 | country !=7
-recode q44_uy (. = .a) if wave !=2 | country !=10	
-recode q13a_lac q31_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	| country !=1
+recode q44_uy (. = .a) if wave !=2 | country !=10
+
+*LAC/EC: 
+recode q13a_lac q31_lac (. = .a) if country != 1 | (wave !=2 & !inlist(country, 2, 7, 10))
+
 *-------------------------------------------------------------------------------*	
 	
 * Other value label modifcations
@@ -743,7 +746,9 @@ lab var q13b_co_pe_uy_ar_v1 "Q13B (V1.0). CO/PE/UY/AR only: Did you seek health 
 lab var q13b_la "Q13B. LA only: Is there one hospital, health center, or clinic you usually...?"
 lab var q13e_co_pe_uy_ar_v1 "Q13E (V1.0). CO/PE/UY/AR only: Why didn't you receive health care for COVID-19?"
 lab var q13e_other_co_pe_uy_ar_v1 "Q13E_Other (V1.0). CO/PE/UY only: Other"
-lab var q13a_lac "Q13a. LAC only: Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
+*lab var q13a_co_pe_uy "Q13a. LAC only: Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
+lab var q13a_lac "Q13a. LAC/EC only: Are there any other places, such as pharmacies, traditional healers, or alternative medicine, that you go to most frequently for care?"
+lab var q13a_lac_other "Q13a. LAC/EC only: Other"
 lab var q14_lac "Q14. LAC only: Usual type"
 lab var q14_ec "Q14. EC only: Is this facility...?"
 lab var q14_ec_other "Q14. EC only: Other"
@@ -813,7 +818,7 @@ lab var q30 "Q30. The last time this happened, what was the main reason?"
 lab var q30_other "Q30. Other"
 lab var q31a "Q31a. In the past 12 months, have you ever needed to borrow money from family, friends, or another source to pay for healthcare"
 lab var q31b "Q31b. In the past 12 months, have you ever needed to sell items such as furniture or jewelry to pay for healthcare"
-lab var q31_lac "Q31. LAC only: In the last 12 months, have you stopped paying any utility bills (cable, electricity, water, etc.) to pay for healthcare?"
+lab var q31_lac "Q31. LAC/EC only: In the last 12 months, have you stopped paying any utility bills (cable, electricity, water, etc.) to pay for healthcare?"
 lab var q32_ar "Q32. AR only: Is this facility Public, OSEP, or Private?"
 lab var q32_cn "Q32. CN only: Last visit facility type public/private/social security/NGO/faith-based?"
 lab var q32_co_pe_v1 "Q32 (V1.0). CO/PE only: Is this a public or private healthcare facility?"
