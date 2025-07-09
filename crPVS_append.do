@@ -643,14 +643,14 @@ recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country =
 recode q37 (. = .a) if country != 21 | country != 22 | country != 23 | wave !=2		
 
 *LAC wave 2:
-recode q6_lac q31_lac q14_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	
+recode q6_lac q14_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	
 recode q44_co q14_co (. = .a) if wave !=2 | country !=2 
 recode q44_pe q14_pe (. = .a) if wave !=2 | country !=7
 recode q44_uy (. = .a) if wave !=2 | country !=10
 
 *LAC/EC: 
 recode q13a_lac q31_lac (. = .a) if country != 1 | (wave !=2 & !inlist(country, 2, 7, 10))
-	
+
 *-------------------------------------------------------------------------------*	
 	
 * Other value label modifcations

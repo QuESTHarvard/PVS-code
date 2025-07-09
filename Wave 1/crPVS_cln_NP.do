@@ -35,14 +35,15 @@ drop q3 // confirm malefemale is what we want to use, it looks more cleaned up
 *dropping variables used for weight calc
 drop urbanrural_ed urbanrural_age malefemale_reg malefemale_ed urbanrural education 
 
-*dropping until we figure out if we want to keep these vars (multicheckbox)
-*drop q052_1_1_1 q052_1_1_2 q052_1_1_17 q052_1_1_3 q052_1_1_4 q052_1_1_5 q052_1_1_6 q052_1_1_7 q052_1_1_8 q052_1_1_9 q052_1_1_10 q052_1_1_11 q052_1_1_12 q052_1_1_13 q052_1_1_14 q052_1_1_16 q052_1_1_999 q052_1_1_15 q052_1_1_1_1
+*per Amit: "These are Nepal-specific indicators:
+	*Q51 was used to create a wealth index using Principal component analysis method
+	*Q52b_np was used to identify list of facilities used by people who were ware of their constitutional right to free health `basic' health care (answered yes to q52aa_np)"
+drop q052_1_1_1 q052_1_1_2 q052_1_1_17 q052_1_1_3 q052_1_1_4 q052_1_1_5 q052_1_1_6 q052_1_1_7 q052_1_1_8 q052_1_1_9 q052_1_1_10 q052_1_1_11 q052_1_1_12 q052_1_1_13 q052_1_1_14 q052_1_1_16 q052_1_1_999 q052_1_1_15 q052_1_1_1_1
 
 *confirm if I should recode into a new var (multicheckbox)
-*drop q51_1 q51_2 q51_3 q51_4 q51_5 q51_6 q51_7 q51_8 q51_9 q51_10 q51_999 q51_12
+drop q51_1 q51_2 q51_3 q51_4 q51_5 q51_6 q51_7 q51_8 q51_9 q51_10 q51_999 q51_12
 
-*confirm ok dropping - we have a region var
-*drop muni muntype ward district 
+drop muni region ward district 
 
 *dropping their version of age/education categories (only 3 levels):
 drop age_cat edu_cat
@@ -59,8 +60,8 @@ lab def mode 1 "CATI",modify
 lab val mode mode
 
 ren wgt weight
-rename province q4 // confirm this is the correct var to use
-rename region q5 // SS: Team created derived var, confirm this is q5
+rename province q4 
+rename muntype q5 // SS: Team created derived var, confirm this is q5
 rename q4_1 q50a_np
 rename q4_1_1 q50a_np_other
 rename religion q50b_np
@@ -129,27 +130,6 @@ rename q50 q51
 rename q052 q52a_np
 rename q052_1 q52b_np
 
-/*SS: multicheckbox field, confirm with Todd best way to deal with this:
-rename q052_1_1_1 q52_1_np // Federal Hospital
-rename q052_1_1_2 q52_2_np // Provincial Hospital 
-rename q052_1_1_17 q52_17_np // District Hospital
-rename q052_1_1_3 q52_3_np // Local Hospital
-rename q052_1_1_4 q52_4_np // Faith or Mission Hospital
-rename q052_1_1_5 q52_5_np // Private Hospital
-rename q052_1_1_6 q52_6_np // Health post
-rename q052_1_1_7 q52_7_np // PHCCs
-rename q052_1_1_8 q52_8_np // UHPC
-rename q052_1_1_9 q52_9_np // UHC
-rename q052_1_1_10 q52_10_np  // CHU
-rename q052_1_1_11 q52_11_np // Clinic
-rename q052_1_1_12 q52_12_np // Polyclinic
-rename q052_1_1_13 q52_13_np // Medical hall
-rename q052_1_1_14 q52_14_np // NGO/INGO based HFs
-rename q052_1_1_16 q52_16_np // Autonomous Hospitals (like BPKIHS, PAHS, NAMS)
-rename q052_1_1_999 q52_999_np // Refused
-rename q052_1_1_15 q52_15_np // Other
-rename q052_1_1_1_1 q52_np_other // Other, specify (string text) */
-
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
 
 gen reclanguage = reccountry*1000 + language  
@@ -185,7 +165,7 @@ lab def lang 23001 "NP: Nepali" 23002 "NP: Maithali" 23003 "NP: Newari" 23004 "N
 lab values reclanguage lang
 
 local q4l province
-local q5l region
+local q5l muntype
 local q7l q7
 local q8l q8
 local q15l q15
@@ -409,6 +389,77 @@ ren rec* *
 *Reorder variables
 order q*, sequential
 order respondent_id weight respondent_serial country // add mode back in
+
+*------------------------------------------------------------------------------*
+
+* Other specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+gen q7_other_original = q7_other
+label var q7_other_original "Q7_other. Other"
+
+gen q14_other_original = q14_other
+label var q14_other_original "Q14_other. Other"
+	
+gen q15_other_original = q15_other
+label var q15_other_original "Q15. Other"
+
+gen q16_other_original = q16_other
+label var q16_other_original "Q16. Other"
+
+gen q24_other_original = q24_other
+label var q24_other_original "Q24. Other"
+
+gen q30_other_original = q30_other
+label var q30_other_original "Q30. Other"
+
+gen q32_other_original = q32_other
+label var q32_other_original "Q32. Other"
+
+gen q33_other_original = q33_other
+label var q33_other_original "Q33. Other"
+	
+gen q34_other_original = q34_other
+label var q34_other_original "Q34. Other"	
+
+gen q50a_np_other_original = q50a_np_other 
+label var q50a_np_other_original "Q50a. Other"	
+
+gen q50b_other_np_original = q50b_other_np 
+label var q50b_other_np_original "Q50b. Other"	
+
+gen language_other_original = language_other 
+label var language_other_original "Other language"	
+
+
+foreach i in 23 {
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+ 
+}	
+
+drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other ///
+	 q33_other q34_other q50a_np_other q50b_other_np language_other
+	 
+ren q7_other_original q7_other
+ren q14_other_original q14_other
+ren q15_other_original q15_other
+ren q16_other_original q16_other
+ren q24_other_original q24_other
+ren q30_other_original q30_other
+ren q32_other_original q32_other
+ren q33_other_original q33_other
+ren q34_other_original q34_other
+ren q50a_np_other_original q50a_np_other
+ren q50b_other_np_original q50b_other_np
+ren language_other_original language_other
+
+order q*, sequential
+order respondent_serial respondent_id mode country language weight
 
 *------------------------------------------------------------------------------*
 * Label variables					
