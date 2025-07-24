@@ -943,7 +943,44 @@ recode covid_vax_v1 ///
 	   covid_vax_intent_v1 visits_covid_v1 last_visit_time_v1 ever_covid_v1 covid_confirmed_v1 ///
 	   (. = .a) if country == 21 | country == 22 | country == 23
 
+*Generate country dummy variables
 
+local map 1 EC 2 CO 3 ET 4 IN 5 KE 7 PE 9 ZA 10 UY 11 LA 12 US 13 MX ///
+           14 IT 15 KR 16 AR 17 GB 18 GR 19 RO 20 NG 21 CN 22 SO 23 NP
+
+forvalues i = 1/23 {
+    gen cc_`i' = (country == `i')
+
+    local iso ""
+    if `i' == 1  local iso "EC"
+    if `i' == 2  local iso "CO"
+    if `i' == 3  local iso "ET"
+    if `i' == 4  local iso "IN"
+    if `i' == 5  local iso "KE"
+    if `i' == 7  local iso "PE"
+    if `i' == 9  local iso "ZA"
+    if `i' == 10 local iso "UY"
+    if `i' == 11 local iso "LA"
+    if `i' == 12 local iso "US"
+    if `i' == 13 local iso "MX"
+    if `i' == 14 local iso "IT"
+    if `i' == 15 local iso "KR"
+    if `i' == 16 local iso "AR"
+    if `i' == 17 local iso "GB"
+    if `i' == 18 local iso "GR"
+    if `i' == 19 local iso "RO"
+    if `i' == 20 local iso "NG"
+    if `i' == 21 local iso "CN"
+    if `i' == 22 local iso "SO"
+    if `i' == 23 local iso "NP"
+
+    capture confirm variable cc_`i'
+    if "`iso'" != "" & !_rc {
+        rename cc_`i' `iso'
+    }
+}
+
+drop cc_6 cc_8
 *****************************
 
 **** Order Variables ****
