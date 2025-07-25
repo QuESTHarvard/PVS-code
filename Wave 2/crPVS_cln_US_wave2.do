@@ -50,7 +50,7 @@ gen reccountry = 12
 lab def country 12 "United States"
 lab values reccountry country
 
-rename respid respondent_id
+rename respid respondent_serial
 rename xchannel mode
 
 rename q5a q50a_us
@@ -236,9 +236,7 @@ ren rec* *
 *------------------------------------------------------------------------------*
 * Fix interview length variable and other time variables 
 
-* Converting interview length to minutes so it can be summarized - NA variable not present
-*gen int_length = (hh(intlength)*60 + mm(intlength) + ss(intlength)/60)
-*drop intlength
+gen respondent_id = "US" + string(respondent_serial) 
 
 *SS: Re-format date var? currently in %tcYY/NN/DD fmt 
 *format date %tdD_M_CY
