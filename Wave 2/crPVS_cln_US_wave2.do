@@ -397,6 +397,15 @@ recode q33 (12001 = 12001 "US: Doctor's office, such as a private practice or gr
 		   (12007 = 12996 "US: Other"), gen(recq33)
 drop q33
 
+label def q33 12001 "US: Doctor's office, such as a private practice or group practice" ///
+					12002 "US: Urgent care clinic" ///
+					12003 "US: Community health center or low-cost clinic, such as a public health clinic or Planned Parenthood" ///
+					12006 "US: Hospital emergency room" ///
+					12007 "US: Other hospital department(not the emergency room)" ///
+					12008 "US: Veteran's Affairs, military, or Indian Health Service facility" ///
+					12996 "US: Other" 
+label var recq33 q33 
+
 recode q38_j (6 = .a)
 
 recode q40_a q40_b q40_c q40_d  (5 = .d)
@@ -404,11 +413,91 @@ recode q40_a q40_b q40_c q40_d  (5 = .d)
 recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse"), gen(recq45)
 drop q45
 
+* Add value labels 
+label define q7_label .a "NA" .d "Don't know" .r "Refused",add	
+label define labels14 .a "NA" .d "Don't know" .r "Refused",add	
+label define labels15 .a "NA" .d "Don't know" .r "Refused",add
+label define labels16 .a "NA" .d "Don't know" .r "Refused",add
+label define labels17 .a "NA" .d "Don't know" .r "Refused",add
+label define q15_label .a "NA" .d "Don't know" .r "Refused",add
+label define labels19 .a "NA" .d "Don't know" .r "Refused",add
+label define labels20 .a "NA" .d "Don't know" .r "Refused",add
+label define recq19 .a "NA" .d "Don't know" .r "Refused",add
+label define labels23 .a "NA" .d "Don't know" .r "Refused",add
+label define labels24 .a "NA" .d "Don't know" .r "Refused",add
+label define labels21 .a "NA" .d "Don't know" .r "Refused",add
+label define labels25 .a "NA" .d "Don't know" .r "Refused",add
+label define labels26 .a "NA" .d "Don't know" .r "Refused",add
+label define labels27 .a "NA" .d "Don't know" .r "Refused",add
+label define labels28 .a "NA" .d "Don't know" .r "Refused",add
+label define labels29 .a "NA" .d "Don't know" .r "Refused",add
+label define labels30 .a "NA" .d "Don't know" .r "Refused",add
+label define recq30 .a "NA" .d "Don't know" .r "Refused",add
+label define recq33 .a "NA" .d "Don't know" .r "Refused",add
+label define labels34 .a "NA" .d "Don't know" .r "Refused",add
+label define labels35 .a "NA" .d "Don't know" .r "Refused",add
+label define labels36 .a "NA" .d "Don't know" .r "Refused",add
+label define labels37 .a "NA" .d "Don't know" .r "Refused",add
+label define labels38 .a "NA" .d "Don't know" .r "Refused",add
+label define labels39 .a "NA" .d "Don't know" .r "Refused",add
+label define labels40 .a "NA" .d "Don't know" .r "Refused",add
+label define labels41 .a "NA" .d "Don't know" .r "Refused",add
+label define labels42 .a "NA" .d "Don't know" .r "Refused",add
+label define labels43 .a "NA" .d "Don't know" .r "Refused",add
+label define labels44 .a "NA" .d "Don't know" .r "Refused",add
+label define labels45 .a "NA" .d "Don't know" .r "Refused",add
+label define labels46 .a "NA" .d "Don't know" .r "Refused",add
+label define labels47 .a "NA" .d "Don't know" .r "Refused",add
+label define labels49 .a "NA" .d "Don't know" .r "Refused",add
+label define labels50 .a "NA" .d "Don't know" .r "Refused",add
+label define labels51 .a "NA" .d "Don't know" .r "Refused",add
+label define labels52 .a "NA" .d "Don't know" .r "Refused",add
+label define labels53 .a "NA" .d "Don't know" .r "Refused",add
+label define labels55 .a "NA" .d "Don't know" .r "Refused",add
+label define labels56 .a "NA" .d "Don't know" .r "Refused",add
+label define labels57 .a "NA" .d "Don't know" .r "Refused",add
+label define labels58 .a "NA" .d "Don't know" .r "Refused",add
+label define recq45 .a "NA" .d "Don't know" .r "Refused",add
+label define labels60 .a "NA" .d "Don't know" .r "Refused",add
+label define labels61 .a "NA" .d "Don't know" .r "Refused",add
+label define q51_label .a "NA" .d "Don't know" .r "Refused",add
+label define labels66 .a "NA" .d "Don't know" .r "Refused",add
+label define labels67 .a "NA" .d "Don't know" .r "Refused",add
+label define labels76 .a "NA" .d "Don't know" .r "Refused",add
+label define labels78 .a "NA" .d "Don't know" .r "Refused",add
+label define labels79 .a "NA" .d "Don't know" .r "Refused",add
+label define labels80 .a "NA" .d "Don't know" .r "Refused",add
+label define labels81 .a "NA" .d "Don't know" .r "Refused",add
+label define labels82 .a "NA" .d "Don't know" .r "Refused",add
+label define labels83 .a "NA" .d "Don't know" .r "Refused",add
+label define labels84 .a "NA" .d "Don't know" .r "Refused",add
+label define labels86 .a "NA" .d "Don't know" .r "Refused",add
+label define labels89 .a "NA" .d "Don't know" .r "Refused",add
+label define labels90 .a "NA" .d "Don't know" .r "Refused",add
+label define labels91 .a "NA" .d "Don't know" .r "Refused",add
+label define labels92 .a "NA" .d "Don't know" .r "Refused",add
+
+
 *------------------------------------------------------------------------------*
 * Renaming variables 
 
 drop m2_998 m2_999 m6_998 m6_999
 ren rec* *
+
+*for appending process:
+label copy q4_label q4_label2
+label copy q5_label q5_label2
+label copy q15_label q15_label2
+label copy q33 q33_label2
+label copy q51_label q51_label2
+
+label val q4 q4_label2
+label val q5 q5_label2
+label val q15 q15_label2
+label val q33 q33_label2
+label val q51 q51_label2
+
+label drop q4_label q5_label q15_label q33 q51_label
 
 /*------------------------------------------------------------------------------*
 
@@ -486,7 +575,7 @@ ren m6_j_other_original m6_j_other
 		  m2_e m2_f m2_g m2_h m2_i m2_i_other m3 m4 m5 m6_a m6_b m6_c m6_d m6_e m6_f m6_g m6_h ///
 		  m6_i m6_j m6_j_other m7 m8 m9 m10 m11 m12 
 	order q*, sequential
-	order respondent_id wave country language date mode  // weight
+	order respondent_id respondent_serial wave country language date mode  // weight
 
 *------------------------------------------------------------------------------*
 

@@ -547,6 +547,14 @@ append using "$data_mc/02 recoded data/input data files/pvs_ec.dta"
 
 qui do `label15'
 
+tempfile label16
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label16'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2
+
+append using "$data_mc/02 recoded data/input data files/pvs_us_wave2.dta"
+
+qui do `label16'
+
 ********************************************************************************
 * Country - add new countries here
 lab def labels0 1 "Ecuador" 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
@@ -590,6 +598,8 @@ recode q50a_us q50b_us q52a_us q52b_us (. = .a) if country != 12
 * USA/Mexico/Italy
 recode q25 q35 q36 q37b_refused_v1 q38_k (. = .a) if country != 12 | country != 13 | country != 14	
 recode q52 (. = .a) if country != 13 | country != 14 | country != 15
+
+recode q27i_us q41_us (. = .a) if country !=12 & wave !=2
 
 * Korea:
 recode q6_kr q7_kr q14_kr q32_kr (. = .a) if country != 15
@@ -702,7 +712,7 @@ drop respondent_num interviewer_gender interviewer_id time q1_codes intervieweri
 					
 * Reorder variables
 order q*, sequential
-order respondent_serial respondent_id mode country country_reg wave language date ///
+order respondent_serial respondent_id mode country country_reg wave language language_other date ///
 	  int_length psu_id_for_svy_cmds weight 		  
 
 * Label variables
@@ -811,6 +821,7 @@ lab var q27i_gr_in_ro "Q27. GR/IN/RO only: Have you received any of the followin
 lab var q27i_ng "Q27. NG only: Had sexual or reproductive health care such as family planning in the past 12 months"
 lab var q27i_za "Q27. ZA only: Had a test for HIV in the past 12 months"
 lab var q27j_cn "Q27j. CN only: Received a mammogram (a special X-ray of the breast)"
+lab var q27i_us "Q27i. US only: Have you received care for depression, anxiety, or another mental health condition (which may include feeling sad or worried a lot of the time)" 
 lab var q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q28_b "Q28b. You were treated unfairly or discriminated against in the past 12 months"
 lab var q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
@@ -879,6 +890,7 @@ lab var q40f_so "Q40f. SO only: Care for other non-urgent common illnesses such 
 lab var q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
 lab var q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
 lab var q41_c "Q41c. How confident are you that the government considers the public's opinion?"
+lab var q41_us "Q41. US only: In general, how much do you trust the healthcare system as a whole?"
 lab var q42 "Q42. How would you rate the quality of public healthcare system in your country?"
 lab var q43 "Q43. How would you rate the quality of private healthcare?"
 *lab var q44 "Q44. What type of healthcare facility is this?"
