@@ -9,7 +9,7 @@
 
 */
 
-********************************* PVS V1 *********************************
+/********************************* PVS V1 *********************************
 
 u "$data_mc/02 recoded data/input data files/pvs_co_pe_uy.dta", clear
 
@@ -491,7 +491,7 @@ gen wave = 1
 *Save recoded data
 save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
 
-********************************* PVS V2 ***************************************
+********************************* PVS V2 ***************************************/
 * Starting with PVS China, the PVS question items were re-ordered, this part of the do file will:
 	* Append V2 countries
 
@@ -524,8 +524,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_np.dta"
 qui do `label12'
 
 tempfile label13
-label save q4_label2 q5_label2 q7_label q8_label q15_label2 q50_label2 q51_label2 Language using `label13'
-label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q50_label2 q51_label2 Language
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language using `label13'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language
 
 append using "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dta"
 

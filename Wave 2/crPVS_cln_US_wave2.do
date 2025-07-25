@@ -488,16 +488,18 @@ ren rec* *
 label copy q4_label q4_label2
 label copy q5_label q5_label2
 label copy q15_label q15_label2
-label copy q33 q33_label2
+label copy recq33 q33_label2
+label copy q50_label q50_label2
 label copy q51_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
 label val q15 q15_label2
 label val q33 q33_label2
+label val q50 q50_label2
 label val q51 q51_label2
 
-label drop q4_label q5_label q15_label q33 q51_label
+label drop q4_label q5_label q15_label recq33 q50_label q51_label
 
 /*------------------------------------------------------------------------------*
 
