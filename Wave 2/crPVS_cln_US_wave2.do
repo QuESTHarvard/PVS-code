@@ -31,16 +31,17 @@ gen wave = 2
 drop status hid_loi q5b_1 q5b_2 q5b_3 q5b_4 q5b_5 q5b_6 q5b_999 ///
 	 hrandom_q16 hrandom_q27loop hrandom_q28loop hrandom_q30 ///
 	 hrandom_q31loop hrandom_q38loop q39dk hrandom_q40loop ///
-	 hrandom_q52 hrandom_q52a
+	 hrandom_q52 hrandom_q52a pregvote pincome pincome4way pownhome ///
+	 pintfreq ptotper padults pparent pregion pdivision pstate pmetro pdma /// confirmed with Todd I can drop these for now
+	 ownhome totper adults talkneigh volunteer regvote religion religion_997_other ///
+	 intfreq page1 pagefinal pgender peduc peducation prace peth pemploy pmstatus3 ///
+	 ppolparty ppollean ppolview m1count m1_2count m2count 
 	 
 *drop variables for weights:
 drop weight_main_2 weight_total_sample_2 weight_rural_2 weight_under30_2 weight_mo_5
 
 *confirm with Todd if we should keep these/what to do with these:
-drop sampletype rural q53_1 q53_2 q53_3 q53_4 q53_5 q53_5_other q53_999
-
-* drop for now until Todd confirms waht to do
-drop ownhome totper adults talkneigh volunteer regvote religion religion_997_other intfreq m1_a m1_b m1count m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g m1_2count crisismessage m2_a m2_b m2_c m2_d m2_e m2_f m2_g m2_h m2_i m2_i_other m2_998 m2_999 m2count m3 m4 m5 m6_a m6_b m6_c m6_d m6_e m6_f m6_g m6_h m6_i m6_j m6_j_other m6_998 m6_999 m7 m8 m9 m10 m11 m12 page1 pagefinal pgender peduc peducation prace peth pemploy pmstatus3 ppolparty ppollean ppolview pregvote pincome pincome4way pownhome pintfreq ptotper padults pparent pregion pdivision pstate pmetro pdma
+drop sampletype rural q53_1 q53_2 q53_3 q53_4 q53_5 q53_5_other q53_999 crisismessage
 
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
@@ -49,7 +50,7 @@ gen reccountry = 12
 lab def country 12 "United States"
 lab values reccountry country
 
-rename respid respondentid
+rename respid respondent_id
 rename xchannel mode
 
 rename q5a q50a_us
@@ -266,16 +267,21 @@ recode q18_q19 (998 = 2.5) if q19 == 2
 recode q18_q19 (998 = 7) if q19 == 3
 recode q18_q19 (998 = 10) if q19 == 4
 
+gen q14 = .a
+gen q32 = .a
+
 *------------------------------------------------------------------------------*
 * Recode all Refused and Don't know responses
 
-* In raw data, 997 = "don't know" 
-recode q18 q19 q22 q23 q18_q19 (998 = .d)
-	   
-*NOTE: currently in data q37_za "don't know" is category 3  
+* In raw data, 998 = "don't know" 
+recode q18 q19 q18_q19 q22 q23 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_us (998 = .d) 
 
-* In raw data, 996 = "refused" 
-recode q18 q19 q22 q23 q18_q19 (999 = .r)	
+* In raw data, 999 = "refused" 
+recode q9 q10 q11 q12_a q12_b q13 q16 q17 q18 q19 q18_q19 q22 q23 q24 q26 q28_a ///
+	   q28_b q29 q34 q35 q36 q38_a q38_b q38_c q38_d q41_c q41_us q42 q43 q45 q38_e ///
+	   q38_f q38_g q38_h q38_i q38_j q38_k q40_b q40_c q41_a q41_b q41_c q41_us q42 ///
+	   q43 q45 q46 q47 q52a_us q52b_us m1_a m2_a m2_b m2_c m2_d m2_e m2_f m2_g m2_h m2_i ///
+	   m3 m4 m5 m6_c m6_g m6_h (999 = .r)	
 	   
 *------------------------------------------------------------------------------*
 * Check for implausible values 
@@ -352,9 +358,141 @@ replace q38_j = .a if q38_j == 5  // I have not had prior visits or tests or The
 
 recode q36 q38_k (. = .a) if q35 !=1	
 
-* q40a-d
-recode q40_a q40_b q40_c q40_d (6 = .d)	
-								 
+* mental health module:
+recode m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g  (. = .a) if (m1_a + m1_b) <=2
+recode m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g  (. = .a) if m1_a == .r | m1_b == .r
+
+recode m3 (. = .a) if (m2_a + m2_b + m2_c + m2_d + m2_e + m2_f + m2_g + m2_h + m2_i) <=1
+
+replace m3 = .a if (m2_a == .r | m2_a == 0) & (m2_b == .r | m2_b == 0) & ///
+                (m2_c == .r | m2_c == 0) & (m2_d == .r | m2_d == 0) & ///
+                (m2_e == .r | m2_e == 0) & (m2_f == .r | m2_f == 0) & ///
+                (m2_g == .r | m2_g == 0) & (m2_h == .r | m2_h == 0) & ///
+                (m2_i == .r | m2_i == 0)
+
+recode m4 m5 (. = .a) if m3 !=. | m3 !=.a | m3 !=.d | m3 !=.r			
+				
 *------------------------------------------------------------------------------*
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:
+
+recode q17 (5 = .a)
+
+recode q19 (0 = 0) (1 = 1 "1-4") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more"), gen(recq19) // originally 1 was seperated out
+drop q19
+
+recode q30 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") ///
+		   (2 = 2 "Far distance (e.g., too far to walk or drive, transport not readily available)") ///
+		   (3 = 3 "Long waiting time (e.g., long line to access facility, long wait for the provider)") ///
+		   (4 = 4 "Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)") ///
+		   (5 = 5 "Staff don't show respect (e.g., staff is rude, impolite, dismissive)") ///
+		   (6 = 6 "Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)") ///
+		   (7 = 7 "Illness not serious enough") (8 = 10 "Other"), gen(recq30)
+drop q30
+
+recode q33 (12001 = 12001 "US: Doctor's office, such as a private practice or group practice") /// confirm if you want this language or wave 1 language
+		   (12002 = 12002 "US: Urgent care clinic") ///
+		   (12003 = 12003 "US: Community health center or low-cost clinic, such as a public health clinic or Planned Parenthood") /// confirm language 
+		   (12004 = 12008 "US: Veteran's Affairs, military, or Indian Health Service facility") /// it looks like they merged 4 and 5 from wave 1, confirm with Todd ///
+		   (12005 = 12006 "US: Hospital emergency room") ///
+		   (12006 = 12007 "US: Other hospital department(not the emergency room)") /// confirm language
+		   (12007 = 12996 "US: Other"), gen(recq33)
+drop q33
+
+recode q38_j (6 = .a)
+
+recode q40_a q40_b q40_c q40_d  (5 = .d)
+
+recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse"), gen(recq45)
+drop q45
+
+*------------------------------------------------------------------------------*
+* Renaming variables 
+
+drop m2_998 m2_999 m6_998 m6_999
+ren rec* *
+
+/*------------------------------------------------------------------------------*
+
+* Other specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+
+gen q7_other_original = q7_other
+label var q7_other_original "Q7_other. Other"
+	
+gen q15_other_original = q15_other
+label var q15_other_original "Q15. Other"
+
+gen q16_other_original = q16_other
+label var q16_other_original "Q16. Other"
+
+gen q24_other_original = q24_other
+label var q24_other_original "Q24. Other"
+
+gen q30_other_original = q30_other
+label var q30_other_original "Q30. Other"
+
+gen q33_other_original = q33_other
+label var q33_other_original "Q33. Other"
+	
+gen q34_other_original = q34_other
+label var q34_other_original "Q34. Other"	
+
+gen q50_other_original = q50_other 
+label var q50_other_original "Q50. Other"	
+
+gen q50a_us_other_original = q50a_us_other 
+label var q50a_us_other_original "Q50a. Other"	
+
+gen q52a_us_other_original = q52a_us_other 
+label var q52a_us_other_original "Q52a. Other"	
+
+gen m2_i_other_original = m2_i_other 
+label var m2_i_other_original "M2_i. Other"	
+
+gen m6_j_other_original = m6_j_other 
+label var m6_j_other_original "M6_j. Other"	
+
+
+foreach i in 12 {
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+ 
+}	
+
+drop q7_other q15_other q16_other q24_other q30_other q33_other q34_other q37_other ///
+	 q50_other q50a_us_other q52a_us_other m2_i_other m6_j_other
+	 
+ren q7_other_original q7_other
+ren q15_other_original q15_other
+ren q16_other_original q16_other
+ren q24_other_original q24_other
+ren q30_other_original q30_other
+ren q33_other_original q33_other
+ren q34_other_original q34_other
+ren q50_other_original q50_other
+ren q50a_us_other_original q50a_us_other
+ren q52a_us_other_original q52a_us_other
+ren m2_i_other_original m2_i_other
+ren m6_j_other_original m6_j_other
+
+*------------------------------------------------------------------------------*/
+
+* Reorder variables
+	order m1_a m1_b  m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g m2_a m2_b m2_c m2_d ///
+		  m2_e m2_f m2_g m2_h m2_i m2_i_other m3 m4 m5 m6_a m6_b m6_c m6_d m6_e m6_f m6_g m6_h ///
+		  m6_i m6_j m6_j_other m7 m8 m9 m10 m11 m12 
+	order q*, sequential
+	order respondent_id wave country language date mode  // weight
+
+*------------------------------------------------------------------------------*
+
+* Save data
+save "$data_mc/02 recoded data/input data files/pvs_us_wave2.dta", replace
+
+*------------------------------------------------------------------------------*
