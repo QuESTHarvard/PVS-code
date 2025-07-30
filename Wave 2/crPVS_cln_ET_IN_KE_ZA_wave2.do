@@ -509,14 +509,16 @@ label define q51_label .a "NA" .d "Don't know" .r "Refused",add
 label copy q4_label q4_label2
 label copy q5_label q5_label2
 label copy q33_label q33_label2
+label copy q50_label q50_label2
 label copy q51_label q51_label2
 
-label val q4 q4_label2
-label val q5 q5_label2
+lab val q4 q4_label2
+lab val q5 q5_label2
 lab val q33 q33_label2
+lab val q50 q50_label2
 lab val q51 q51_label2
 
-label drop q4_label q5_label q33_label q51_label
+label drop q4_label q5_label q33_label q50_label q51_label
 
 *------------------------------------------------------------------------------*
 * Renaming variables 
