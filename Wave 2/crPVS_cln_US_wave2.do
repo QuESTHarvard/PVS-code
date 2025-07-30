@@ -19,7 +19,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 clear all
 set more off 
 
-*********************** ETHIOPIA, KENYA, SOUTH AFRICA, & INDIA ***********************
+*********************** UNITED STATES (WAVE 2) ***********************
 
 * Import raw data 
 import spss using "$data/United States wave 2/01 raw data/WashU PVS Final Dataset 07102025_FINAL WEIGHTS_confidential.sav", case(lower)
@@ -501,7 +501,7 @@ label val q51 q51_label2
 
 label drop q4_label q5_label q15_label recq33 q50_label q51_label
 
-/*------------------------------------------------------------------------------*
+*------------------------------------------------------------------------------*
 
 * Other specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
