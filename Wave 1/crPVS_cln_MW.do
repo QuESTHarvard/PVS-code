@@ -34,13 +34,15 @@ drop interviewer_name Phone_Number_of_client q1 q1a cell1 cell1_1 cell2 cell3 ce
 
 *incorrectly coded:
 drop ageband
-* start end = use this to generate int_length and then drop
+
+*confirm with Todd if ok to drop, we wouldn't use this:
+drop q37_specify_hours q23a
 
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
-gen reccountry = 23
-lab def country 23 "Nepal"
+gen reccountry = 6
+lab def country 6 "Malawi"
 lab values reccountry country
 
 gen recmode = .
@@ -280,36 +282,438 @@ lab def q30_label 1	"High cost (e.g., high out of pocket payment, not covered by
 				  7	"Illness not serious enough" 8 "COVID-19 restrictions (e.g., lockdowns, travel restrictions, curfews)" 10 "Other"
 lab val recq30 q30_label
 
+encode q31a, gen(recq31a) 
+drop q31a
+recode recq31a (1 = 0) (2 = .r) (3 = 1)
+lab def q31a_label 0 "No" 1 "Yes" .r "Refused"
+lab val recq31a q31a_label
+
+encode q31b, gen(recq31b) 
+drop q31b
+recode recq31b (1 = 0) (2 = .r) (3 = 1)
+lab def q31b_label 0 "No" 1 "Yes" .r "Refused"
+lab val recq31b q31b_label
+
+encode q32, gen(recq32_multi) 
+drop q32
+recode recq32_multi (1 = 3) (2 = 2) (3 = 1) (4 = .r)
+lab def q32_label 1	"Public" 2 "Private (for-profit)" 3	"NGO/Faith-based" .r "Refused"
+lab val recq32_multi q32_label
 
 
+encode q33, gen(recq33) 
+drop q33
+recode recq33 (9 = .r) (6 = 10)
+lab def recq33 .r "Refused" 10 "Other (Specify)",modify
 
 
+encode q34, gen(recq34) 
+drop q34 
+recode recq34 (4 = 3) (3 = 4) (5 = .r)
+lab def q34_label 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" ///
+				  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
+				  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" ///
+				  4 "Other, specify" ///
+				  .r "Refused"
+lab val recq34 q34_label		  
 
+encode q35, gen(recq35) 
+drop q35
+recode recq35 (2 = 0) (3 = .r)
+lab def q35_label 0 "No, I did not have an appointment" 1 "Yes, the visit was scheduled, and I had an appointment" .r "Refused"
+lab val recq35 q35_label	
 
+encode q36, gen(recq36) 
+drop q36
+recode recq36 (9 = 1) (3 = 2) (2 = 3) (5 = 4) (1 = 5) (4 = 6) (6 = 7) (7 = 8) (8 = .r)
+lab def q36_label 1	"Same or next day" 2 "2 days to less than one week" 3 "1 week to less than 2 weeks" ///
+				  4	"2 weeks to less than 1 month" 5 "1 month to less than 2 months" 6 "2 months to less than 3 months" ///
+				  7	"3 months to less than 6 months" 8	"6 months or more" .r "Refused"
+lab val recq36 q36_label
 
+encode q37, gen(recq37) 
+drop q37
+recode recq37 (6 = 1) (2 = 1) (5 = 3) (1 = 4) (3 = 5) (4 = 6) (7 = 7) (8 = .r)
+lab def q37_label 1	"Less than 15 minutes" 2 "15 minutes to less than 30 minutes" 3	"30 minutes to less than 1 hour" ///
+				  4	"1 hour to less than 2 hours" 5	"2 hours to less than 3 hours" 6 "3 hours to less than 4 hours" ///
+				  7	"More than 4 hours (specify))"
 
+encode q38a, gen(recq38_a)
+drop q38a 
+recode recq38_a (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab def q38_label 4 "Excellent" 3 "Very good" 2 "Good" 1 "Fair"  0 "Poor"
+lab val recq38_a q38_label      
 
+encode q38b, gen(recq38_b)
+drop q38b 
+recode recq38_b (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab val recq38_b q38_label
+ 
+encode q38c, gen(recq38_c)
+drop q38c 
+recode recq38_c (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab val recq38_c q38_label
+ 
+encode q38d, gen(recq38_d)
+drop q38d 
+recode recq38_d (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab val recq38_d q38_label
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+encode q38e, gen(recq38_e)
+drop q38e 
+recode recq38_e (1 = 4) (2 = 1) (3 = 2) (4 = .a) (5 = 0) (6 = .r) (7 = 3)
+lab def q38_label2 4 "Excellent" 3 "Very good" 2 "Good" 1 "Fair" 0 "Poor" ///
+				   .a "NA or I have not had prior visits or tests" ///
+				   .r "Refused"
+lab val recq38_e q38_label2
+ 
+encode q38f, gen(recq38_f)
+drop q38f 
+recode recq38_f (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab val recq38_f q38_label
+ 
+encode q38g, gen(recq38_g)
+drop q38g 
+recode recq38_g (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab val recq38_g q38_label
+ 
+encode q38h, gen(recq38_h)
+drop q38h 
+recode recq38_h (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab val recq38_h q38_label
  
  
+encode q38i, gen(recq38_i)
+drop q38i 
+recode recq38_i (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab val recq38_i q38_label
  
+encode q38j, gen(recq38_j)
+drop q38j 
+recode recq38_j (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = .a) (7 = 3)
+lab def q38_label3 4 "Excellent" 3 "Very good" 2 "Good" 1 "Fair" 0 "Poor" ///
+				   .a "NA or The clinic had no other staff" ///
+				   .r "Refused"
+lab val recq38_j q38_label3
  
+encode q38k, gen(recq38_k)
+drop q38k 
+recode recq38_k (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = 3)
+lab val recq38_k q38_label
  
- 
+encode q40a, gen(recq40_a)
+drop q40a
+recode recq40_a (1 = 4) (2 = 1) (3 = 2) (4 = .d) (5 = 0) (6 = .r) (7 = 3)
+lab def q40_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" ///
+				  .d	"I am unable to judge" .r "Refused"
+lab val recq40_a q40_label
 
+encode q40b, gen(recq40_b)
+drop q40b
+recode recq40_b (1 = 4) (2 = 1) (3 = 2) (4 = .d) (5 = 0) (6 = .r) (7 = 3)
+lab val recq40_b q40_label
+
+encode q40c, gen(recq40_c)
+drop q40c
+recode recq40_c (1 = 4) (2 = 1) (3 = 2) (4 = .d) (5 = 0) (6 = .r) (7 = 3)
+lab val recq40_c q40_label
+
+encode q40d, gen(recq40_d)
+drop q40d
+recode recq40_d (1 = 4) (2 = 1) (3 = 2) (4 = .d) (5 = 0) (6 = .r) (7 = 3)
+lab val recq40_d q40_label
+
+encode q41a, gen(recq41_a)
+drop q41a
+recode recq41_a (1 = 0) (2 = 1) (3 = .r) (4 = 2) (5 = 3)
+lab def q41_label 3	"Very confident" 2	"Somewhat confident" 1 "Not too confident" ///
+				  0	"Not at all confident" .r "Refused"
+lab val recq41_a q41_label
+
+encode q41b, gen(recq41_b)
+drop q41b
+recode recq41_b (1 = 0) (2 = 1) (3 = .r) (4 = 2) (5 = 3)
+lab val recq41_b q41_label
+
+encode q41c, gen(recq41_c)
+drop q41c
+recode recq41_c (1 = 0) (2 = 1) (3 = .r) (4 = 2) (5 = 3)
+lab val recq41_c q41_label
+
+encode q42, gen(recq42)
+drop q42
+recode recq42 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab def q42_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
+lab val recq42 q42_label
+
+encode q43, gen(recq43)
+drop q43
+recode recq43 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab def q43_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
+lab val recq43 q43_label
+
+encode q44, gen(recq44_multi)
+drop q44
+recode recq44_multi (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab def q44_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
+lab val recq44_multi q44_label
+
+encode q45, gen(recq45)
+drop q45
+recode recq45 (1 = 2) (2 = 0) (3 = .r) (4 = 1)
+lab def q45_label 2	"Getting better" 1 "Staying the same" 0	"Getting worse" .r "Refused"
+lab val recq45 q45_label
+
+encode q46, gen(recq46)
+drop q46
+recode recq46 (4 = .r)
+lab def recq46 .r "Refused", modify
+
+encode q47, gen(recq47)
+drop q47
+recode recq47 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab def q47_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
+lab val recq47 q47_label
+
+encode q48, gen(recq48)
+drop q48
+recode recq48 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab def q48_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
+lab val recq48 q48_label
+
+encode q49, gen(recq49)
+drop q49
+recode recq49 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab def q49_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
+lab val recq49 q49_label
+
+ren rec* *
+
+* gen rec variable for variables that have overlap values to be country code * 1000 + variable 
+
+gen reclanguage = country*1000 + language  
+
+gen recq4 = country*1000 + q4
+*replace recq4 = .r if q4 == 999
+
+gen recq5 = country*1000 + q5  
+*replace recq5 = .r if q5 == 999
+
+gen recq7 = country*1000 + q7
+replace recq7 = .r if q7== 999
+
+gen recq8 = country*1000 + q8
+*replace recq8 = .r if q8== 999
+
+gen recq15 = country*1000 + q15
+*replace recq15 = .r if q15== 999
+*replace recq15 = .d if q15== 998
+
+gen recq33 = country*1000 + q33
+replace recq33 = .r if q33== 999 
+*replace recq33 = .d if q33== 998
+
+gen recq50 = country*1000 + q50 
+*replace recq50 = .r if q50== 999
+
+gen recq51 = country*1000 + q51
+replace recq51 = .r if q51== 999
+*replace recq51 = .d if q51== 998
+
+* Relabel some variables now so we can use the orignal label values
+label define country_short 6 "MW" 
+qui elabel list country_short
+local countryn = r(k)
+local countryval = r(values)
+local countrylab = r(labels)
+
+local q4l q4
+local q5l recq5
+local q7l recq7
+local q8l recq8
+local q15l recq15
+local q33l recq33
+local q50l q50
+local q51l q51
+
+foreach q in q4 q5 q7 q8 q15 q33 q50 q51 {
+	qui elabel list ``q'l'
+	local `q'n = r(k)
+	local `q'val = r(values)
+	local `q'lab = r(labels)
+	local g 0
+	foreach i in ``q'lab'{
+		local ++g
+		local gr`g' `i'
+	}
+
+	qui levelsof rec`q', local(`q'level)
+
+	forvalues i = 1/``q'n' {
+		local recvalue`q' = 6000+`: word `i' of ``q'val''
+		foreach lev in ``q'level'{
+			if strmatch("`lev'", "`recvalue`q''") == 1{
+				elabel define `q'_label (= 6000+`: word `i' of ``q'val'') ///
+									    (`"MW: `gr`i''"'), modify			
+			}	
+		}                 
+	}
+
+	
+	label val rec`q' `q'_label
+}
+
+
+
+
+*****************************
+
+drop q4 q5 q7 q8 q15 q33 q50 q51 language
+ren rec* *
+
+*------------------------------------------------------------------------------*
+* Fix interview length variable and other time variables 
+
+* Interview length:
+	* Remove the timezone 
+	gen str23 start_clean = substr(start, 1, 23)
+	gen str23 end_clean   = substr(end, 1, 23)
+
+	* Replace "T" with a space to match Stata format 
+	replace start_clean = subinstr(start_clean, "T", " ", 1)
+	replace end_clean   = subinstr(end_clean, "T", " ", 1)
+
+	* Convert string to %tc
+	gen double start_dt = clock(start_clean, "YMDhms#")
+	gen double end_dt   = clock(end_clean, "YMDhms#")
+
+	* Format
+	format start_dt %tc
+	format end_dt %tc
+
+	* Calculate duration (in milliseconds)
+	gen double interview_duration_ms = end_dt - start_dt
+
+	* Convert to minutes
+	gen double int_length = interview_duration_ms / 60000
+
+	drop start end start_clean end_clean start_dt end_dt interview_duration_ms 
+
+* q18/q19 mid-point var 
+gen q18_q19 = q18 
+
+recode q18_q19 (998 = 0) if q19 == 0
+recode q18_q19 (998 = 1) if q19 == 1
+recode q18_q19 (998 = 2.5) if q19 == 2
+recode q18_q19 (998 = 7) if q19 == 3
+recode q18_q19 (998 = 10) if q19 == 4
+
+*------------------------------------------------------------------------------*
+* Recode all Refused and Don't know responses
+
+* In raw data, 998 = "don't know" 
+recode q18 q19 q18_q19 q22 q23 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_us (998 = .d) 
+
+* In raw data, 999 = "refused" 
+recode q9 q10 q11 q12_a q12_b q13 q16 q17 q18 q19 q18_q19 q22 q23 q24 q26 q28_a ///
+	   q28_b q29 q34 q35 q36 q38_a q38_b q38_c q38_d q41_c q41_us q42 q43 q45 q38_e ///
+	   q38_f q38_g q38_h q38_i q38_j q38_k q40_b q40_c q41_a q41_b q41_c q41_us q42 ///
+	   q43 q45 q46 q47 q52a_us q52b_us m1_a m2_a m2_b m2_c m2_d m2_e m2_f m2_g m2_h m2_i ///
+	   m3 m4 m5 m6_c m6_g m6_h (999 = .r)	
+	   
+*------------------------------------------------------------------------------*
+* Check for implausible values 
+
+* Q17. Overall respondent's rating of the quality received in this facility
+* Q18/Q19. Total number of visits made in past 12 months (q23, q24 mid-point)
+* Q20. Were all of the visits you made to the same healthcare facility? 
+* Q21. How many different healthcare facilities did you go to? 
+* Q22. How many visits did you have with a healthcare provider at your home?
+* Q23. How many virtual or telemedicine visits did you have?
+
+* Q20, Q21
+list q18_q19 q21 if q21 > q18_q19 & q21 < . 
+
+replace q21 = q18_q19 if q21 > q18_q19 & q21 < . // N=64 changes, double check with Todd we want this to apply to people who said ".d"
+
+list q20 q21 if q21 == 0 | q21 == 1
+* None
+
+* List if yes to q20: "all visits in the same facility" but q21: "how many different healthcare facilities did you go to" is more than 0
+list q20 q21 if q20 ==1 & q21 > 0 & q21 < . 
+* None
+
+* Q28a, Q28b 
+* list if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months - Note: q28_a and q28_b in this dataset does not have this option
+egen visits_total = rowtotal(q18_q19 q22 q23) 
+list visits_total q17 if q17 == 5 & visits_total > 0 & visits_total < . | q17 == 5 & visits_total > 0 & visits_total < .
+
+recode q17 (5 = .r) if visits_total > 0 & visits_total < . // N=34 changes
+
+drop visits_total
+
+*------------------------------------------------------------------------------*
+* Recode missing values to NA for intentionally skipped questions (q14, q32 missing in this dataset)
+
+*q1/q2 - no missing data
+
+* q7 
+recode q7 (. = .a) if q6 !=1
+recode q7 (nonmissing = .a) if q6 == 0
+
+
+*q14-17
+recode q15 q16 q17 (. = .a) if q13 !=1
+
+* NA's for q19-21 
+recode q19 (. = .a) if q18 != .d | q18 !=.r
+
+recode q20 (. = .a) if q18 <1 | q18 == .d | q18 == .r | q19 != 2 | q19 != 3 | q19 != 4
+
+recode q21 (. = .a) if q20 !=0 
+
+*q24-q25 
+recode q24 q25 (. = .a) if q23 == 0  | q23 == .d | q23 == .r
+
+* q27_b q27_c
+recode q27_b q27_c (. = .a) if q3 !=1 
+
+*q28
+recode q28_a q28_b (. = .a) if q18 == 0 | q18 == .d | q18 == .r | q19 == 1 | q19 == .d | ///
+							   q19 == .r | q22 == 0 | q22 == .d | q22 == .r | ///
+							   q23 == 0 | q23 == .d | q23 == .r
+
+* q30
+recode q30 (. = .a) if q29 !=1
+
+* q33-38
+recode q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
+	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q18 == .d | q18 == .r | ///
+													 q19 == 1 | q19 == .d | q19 == .r
+													 
+replace q38_e = .a if q38_e == 5  // I have not had prior visits or tests or The clinic had no other staff
+replace q38_j = .a if q38_j == 5  // I have not had prior visits or tests or The clinic had no other staff													 
+
+recode q36 q38_k (. = .a) if q35 !=1	
+
+* mental health module:
+recode m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g  (. = .a) if (m1_a + m1_b) <=2
+recode m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g  (. = .a) if m1_a == .r | m1_b == .r
+
+recode m3 (. = .a) if (m2_a + m2_b + m2_c + m2_d + m2_e + m2_f + m2_g + m2_h + m2_i) <=1
+
+replace m3 = .a if (m2_a == .r | m2_a == 0) & (m2_b == .r | m2_b == 0) & ///
+                (m2_c == .r | m2_c == 0) & (m2_d == .r | m2_d == 0) & ///
+                (m2_e == .r | m2_e == 0) & (m2_f == .r | m2_f == 0) & ///
+                (m2_g == .r | m2_g == 0) & (m2_h == .r | m2_h == 0) & ///
+                (m2_i == .r | m2_i == 0)
+
+recode m4 m5 (. = .a) if m3 !=. | m3 !=.a | m3 !=.d | m3 !=.r			
+				
+
+*------------------------------------------------------------------------------*
+* Recode values and value labels:
+* Recode values and value labels so that their values and direction make sense:
+
+lab def language
 
