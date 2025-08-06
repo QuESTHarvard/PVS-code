@@ -784,7 +784,7 @@ ren q50_other_original q50_other
 *------------------------------------------------------------------------------*
 
 * Save data
-*save "$data_mc/02 recoded data/input data files/pvs_mw.dta", replace
+ save "$data_mc/02 recoded data/input data files/pvs_mw.dta", replace
 
 *------------------------------------------------------------------------------*
 
