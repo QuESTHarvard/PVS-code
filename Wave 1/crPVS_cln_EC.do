@@ -793,6 +793,177 @@ label var cell1 "CELL 1: Do you have another mobile phone number besides the one
 label var cell2 "CELL2. How many other mobile phone numbers do you have?"
 
 *------------------------------------------------------------------------------*
+* Create sampling weights
+
+*********************************************************Dataset Sample Size:
+tab country // N=1,304 completed surveys
+
+*********************************************************Create demographic variables that align with the censor variables:
+** Gender
+gen gender = 1 if q3==0
+replace gender = 2 if q3==1
+label define gender_lbl 1 "Male" 2 "Female"
+label values gender gender_lbl
+tab gender, m // 0 missing
+
+
+
+** Age (5 levels)
+* Based on Censor Ecuador 2022:
+* 18 - 29 = 18 to 29 (1)
+* 30 - 39 = 30 - 39 (2)
+* 40 - 49 = 40 - 49 (3)
+* 50 - 59 = 50 - 59 (4)
+* 60 or more = 60 - 69 (5), 70-79 (6), 80 or older (7)
+gen age = 1 if q2==1 
+replace age = 2 if q2==2
+replace age = 3 if q2==3
+replace age = 4 if q2==4
+replace age = 5 if q2==5 | q2==6 | q2==7
+label define age 1 "18 - 29" 2 "30 - 39" 3 "40 - 49" 4 "50 - 59" 5 "60+"
+label values age age
+tab age, m // 0 missing
+
+
+
+** Age2 (3 levels)
+* Based on Censor Ecuador 2022:
+* 18 - 29 = 18 to 29 (1)
+* 30 - 49 = 30 - 39 (2), 40 - 49 (3)
+* 50 + = 50 - 59 (4), 60 - 69 (5), 70-79 (6), 80 or older (7)
+gen age2 = 1 if q2==1 
+replace age2 = 2 if q2==2 | q2==3
+replace age2 = 3 if q2==4 | q2==5 | q2==6 | q2==7
+label define age2 1 "18 - 29" 2 "30 - 49" 3 "50+"
+label values age2 age2
+tab age2, m // 0 missing
+
+
+
+** Region
+* Based on Censor Ecuador 2022:
+* Costa = Guayas (1010), Manabí (1014), Esmeraldas (1008), El Oro (1007), Los Ríos (1013), Santa Elena (1020), Santo Domingo de los Tsáchilas (1021)
+* Sierra = Azuay (1001), Bolívar (1002), Cañar (1003), Carchi (1004), Chimborazo (1005), Cotopaxi (1006), Imbabura (1011), Loja (1012), Pichincha (1019), Tungurahua (1023)
+* Amazonía = Morona Santiago (1015), Napo (1016), Orellana (1017), Pastaza (1018), Sucumbíos (1022), Zamora Chinchipe (1024)
+* Galápagos = Galápagos (1009)
+gen Region = 1 if q4==1010 | q4==1014 | q4==1008 | q4==1007 | q4==1013 | q4==1020 | q4==1021 
+replace Region = 2 if q4==1001 | q4==1002 | q4==1003 | q4==1004 | q4==1005 | q4==1006 | q4==1011 | q4==1012 | q4==1019 | q4==1023
+replace Region = 3 if q4==1015 | q4==1016 | q4==1017 | q4==1018 | q4==1022 | q4==1024
+replace Region = 4 if q4==1009
+label define Region 1 "Costa" 2 "Sierra" 3 "Amazonía" 4 "Galápagos"
+label values Region Region
+tab Region, m // 1 Refused
+
+
+
+** Urban/ Rural
+* Based on Censor Ecuador 2022:
+* Urban = City (1001)
+* Urban = Town (1002)
+* Rural = Rural area (1003)
+gen urbanrural = 1 if q5==1001 | q5==1002 // count 'town' as 'urban'
+replace urbanrural = 2 if q5==1003 
+label define urbanrural 1 "Urban" 2 "Rural"
+label values urbanrural urbanrural
+tab urbanrural, m // 0 missing
+
+
+
+** Education
+* Based on Censor Ecuador 2022:
+* Ninguno = None (1001)
+* EBJA = Initial/preschool (1002)
+* EGB = Primary (1003)
+* Bachillerato = Baccalaureate (1004)
+* Ciclo Postbachillerato = ?
+* Superior = University (1006), Non-university higher education (1005)
+* Postgrado = Postgradutate (1007)
+gen education = .
+replace education = 1 if q8==1002 | q8==1003 | q8==1001 // This include None, Initial/preschool, Primary
+replace education = 2 if q8==1004 // This include Baccalaureate (high school)
+replace education = 3 if q8==1006 | q8==1005 | q8==1007 // This includes Non-university higher education, University and Postgraduate
+label define education 1 "Primary or less" 2 "Secondary" 3 "Post-secondary or tertiary"
+label values education education 
+tab education, m // 0 missing
+
+
+
+*********************************************************Create joint distribution:
+** Check discrepancy of factors among urbanrural to see if we need joint distribution or not
+tab gender urbanrural, row col // Seems like a lot difference
+tab gender Region, row col // Seems like a lot difference
+tab age urbanrural, row col // Seems like a lot difference
+tab age Region, row col // Seems like a lot difference
+tab education urbanrural, row col // Seems like there is a difference between urban/ rural
+tab education Region, row col // Seems like there is a difference between urban/ rural
+
+
+
+** urbanrural_gender
+gen urbanrural_gender = 1 if urbanrural==1 & gender==1
+replace urbanrural_gender = 2 if urbanrural==1 & gender==2
+replace urbanrural_gender = 3 if urbanrural==2 & gender==1
+replace urbanrural_gender = 4 if urbanrural==2 & gender==2
+label define urbanrural_gender 1 "Urban, Male" 2 "Urban, Female" 3 "Urban, Male" 4 "Rural, Female"
+label values urbanrural_gender urbanrural_gender
+tab urbanrural_gender, m // 0 missing
+
+
+
+** urbanrural_age
+gen urbanrural_age = 1 if urbanrural==1 & age==1
+replace urbanrural_age = 2 if urbanrural==1 & age==2
+replace urbanrural_age = 3 if urbanrural==1 & age==3
+replace urbanrural_age = 4 if urbanrural==1 & age==4
+replace urbanrural_age = 5 if urbanrural==1 & age==5
+replace urbanrural_age = 6 if urbanrural==2 & age==1
+replace urbanrural_age = 7 if urbanrural==2 & age==2
+replace urbanrural_age = 8 if urbanrural==2 & age==3
+replace urbanrural_age = 9 if urbanrural==2 & age==4
+replace urbanrural_age = 10 if urbanrural==2 & age==5
+label define urbanrural_age 1 "Urban, 18 - 29" 2 "Urban, 30 - 39" 3 "Urban, 40 - 49" 4 "Urban, 50 - 59" 5 "Urban, 60+" 6 "Rural, 18 - 29" 7 "Rural, 30 - 39" 8 "Rural, 40 - 49" 9 "Rural, 50 - 59" 10 "Rural, 60+"
+label values urbanrural_age urbanrural_age
+tab urbanrural_age, m // 0 missing
+
+
+
+** urbanrural_age2
+gen urbanrural_age2 = 1 if urbanrural==1 & age==1
+replace urbanrural_age2 = 2 if urbanrural==1 & age==2
+replace urbanrural_age2 = 3 if urbanrural==1 & age==3
+replace urbanrural_age2 = 4 if urbanrural==2 & age==1
+replace urbanrural_age2 = 5 if urbanrural==2 & age==2
+replace urbanrural_age2 = 6 if urbanrural==2 & age==3
+label define urbanrural_age2 1 "Urban, 18 - 29" 2 "Urban, 30 - 49" 3 "Urban, 50+" 4 "Rural, 18 - 29" 5 "Rural, 30 - 49" 6 "Rural, 60+"
+label values urbanrural_age2 urbanrural_age2
+tab urbanrural_age2, m // 0 missing
+
+
+
+** urbanrural_edu
+gen urbanrural_edu = 1 if urbanrural==1 & education==1
+replace urbanrural_edu = 2 if urbanrural==1 & education==2
+replace urbanrural_edu = 3 if urbanrural==1 & education==3
+replace urbanrural_edu = 4 if urbanrural==2 & education==1
+replace urbanrural_edu = 5 if urbanrural==2 & education==2
+replace urbanrural_edu = 6 if urbanrural==2 & education==3
+label define urbanrural_edu 1 "Urban, primary or less" 2 "Urban, secondary" 3 "Urban, post-secondary" 4 "Rural, primary or less" 5 "Rural, secondary" 6 "Rural, post-secondary"
+label values urbanrural_edu urbanrural_edu
+tab urbanrural_edu, m // 0 missing
+
+**------------------------------------------------------------------------------*
+* Weights Creation
+* After testing, we choose age (5 levels),gender,urbanrural,education:
+ipfweight age gender urbanrural education, gen(wgt) ///
+			val(29.4 20.7 17.7 13.8 18.4 /// age (5 levels)
+			 47.7 52.3 /// gender
+			 64.2 35.8 /// urbanrural
+			 35.6 33.4 31.0 ) /// education
+			maxit(50) // max deviation =  percentage points
+
+** Just try to keep data set clean, drop all the variables created above, except wgt
+drop gender age age2 Region urbanrural education urbanrural_gender urbanrural_age urbanrural_age2 urbanrural_edu
+*------------------------------------------------------------------------------*
 * Save data
 
 save "$data_mc/02 recoded data/input data files/pvs_ec", replace
