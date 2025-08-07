@@ -963,6 +963,11 @@ ipfweight age gender urbanrural education, gen(wgt) ///
 
 ** Just try to keep data set clean, drop all the variables created above, except wgt
 drop gender age age2 Region urbanrural education urbanrural_gender urbanrural_age urbanrural_age2 urbanrural_edu
+rename wgt weight
+
+*Reorder variables
+order q*, sequential
+order respondent_serial country wave language mode weight
 *------------------------------------------------------------------------------*
 * Save data
 
