@@ -41,6 +41,8 @@ drop q37_specify_hours q23a
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
+gen str respondent_id = "MW" + string(_n, "%03.0f")
+
 gen reccountry = 6
 lab def country 6 "Malawi"
 lab values reccountry country
@@ -599,7 +601,9 @@ ren rec* *
 	* Convert to minutes
 	gen double int_length = interview_duration_ms / 60000
 
-	drop start end start_clean end_clean start_dt end_dt interview_duration_ms 
+	drop start end start_clean start_dt end_dt interview_duration_ms 
+	
+	rename end_clean date
 
 * q18/q19 mid-point var 
 	gen q18_q19 = q18 // con firm with Todd how we should create the rest
@@ -754,7 +758,7 @@ gen q50_other_original = q50_other
 label var q50_other_original "Q50. Other"	
 
 
-foreach i in 8 {
+foreach i in 6 {
 
 ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
 	sheet(other_specify_recode)							///	
@@ -779,7 +783,7 @@ ren q50_other_original q50_other
 * Reorder variables
 
 	order q*, sequential
-	order wave country language mode int_length // weight
+	order respondent_id wave country language mode date int_length // weight
 
 *------------------------------------------------------------------------------*
 
@@ -787,8 +791,4 @@ ren q50_other_original q50_other
  save "$data_mc/02 recoded data/input data files/pvs_mw.dta", replace
 
 *------------------------------------------------------------------------------*
-
-
-
-
 
