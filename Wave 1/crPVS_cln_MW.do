@@ -601,9 +601,10 @@ ren rec* *
 	* Convert to minutes
 	gen double int_length = interview_duration_ms / 60000
 
-	drop start end start_clean start_dt end_dt interview_duration_ms 
+	drop start end start_clean end_clean start_dt interview_duration_ms 
 	
-	rename end_clean date
+	gen double date = dofc(end_dt) //confirm with Todd we want to use this var
+	format date %tdDDmonCCYY 
 
 * q18/q19 mid-point var 
 	gen q18_q19 = q18 // con firm with Todd how we should create the rest
@@ -664,6 +665,8 @@ recode q21 (. = .a) if q20 !=0
 
 *q24-q25 
 recode q24 q25 (. = .a) if q23 == 0  | q23 == .d | q23 == .r
+replace q24_other = .a if q24 !=4
+tostring q24_other,replace
 
 * q27_b q27_c
 recode q27_b q27_c (. = .a) if q3 !=1 
@@ -675,6 +678,10 @@ recode q28_a q28_b (. = .a) if q18 == 0 | q18 == .d | q18 == .r | q19 == 1 | q19
 
 * q30
 recode q30 (. = .a) if q29 !=1
+
+* q32
+replace q32_other = .a if q32_multi !=4
+tostring q32_other,replace
 
 * q33-38
 recode q32_multi q33 q34 q35 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
@@ -723,7 +730,7 @@ label val q51 q51_label2
 
 label drop q4_label q5_label q15_label q33_label q50_label q51_label
 
-/*------------------------------------------------------------------------------*
+*------------------------------------------------------------------------------*
 
 * Other specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
@@ -756,7 +763,6 @@ label var q34_other_original "Q34. Other"
 
 gen q50_other_original = q50_other 
 label var q50_other_original "Q50. Other"	
-
 
 foreach i in 6 {
 
