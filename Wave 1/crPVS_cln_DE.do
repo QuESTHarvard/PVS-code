@@ -72,17 +72,18 @@ rename Q39 q39
 rename (R1_Q40 R2_Q40 R3_Q40 R4_Q40 R5_Q40 R6_Q40 R7_Q40 R8_Q40 R9_Q40 R10_Q40) (q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de)
 rename (R1_Q41 R2_Q41 R3_Q41 R4_Q41) (q41_a q41_b q41_c q41d_de)
 rename (Q42 Q43 Q44 Q45 Q46 Q47 Q48 Q50) (q42 q43 q45 q46 q47 q48 q49 q51)
+rename Q49_9_TEXT q50_other
 
 
-*SI NOTE: responses for q3b (citizenship) were extracted from Q3B_1 - Q3B_196. If respondent is a citizen for multiple countries, these are appended as a response and we can discuss how to handle
+*SI NOTE: responses for q3b_de (citizenship) were extracted from Q3B_1 - Q3B_196. If respondent is a citizen for multiple countries, these are appended as a response and we can discuss how to handle
 
 ds Q3B_*
 local countries `r(varlist)'
 egen citizenship = rowtotal(`countries') /// Count number of citizenships (Ja == 1)
 
-gen q3b = ""
+gen q3b_de = ""
 
-* Loop through each Q3B_* variable and collapse into q3b
+* Loop through each Q3B_* variable and collapse into q3b_de
 foreach var of local countries {
     local full_label : variable label `var'
     local dash_pos = strpos("`full_label'", " -")
@@ -90,13 +91,27 @@ foreach var of local countries {
     local cname = strtrim("`cname'")
 	
     * If multiple citizenships, append with semicolon
-    replace q3b = cond(citizenship > 1 & `var' == 1, ///
-        q3b + cond(q3b != "", "; ", "") + "`cname'", ///
-        q3b)
+    replace q3b_de = cond(citizenship > 1 & `var' == 1, ///
+        q3b_de + cond(q3b_de != "", "; ", "") + "`cname'", ///
+        q3b_de)
 
     * If only 1 citizenship, assign directly from Q3_B* variable
-    replace q3b = cond(citizenship == 1 & `var' == 1 & q3b == "", "`cname'", q3b)
+    replace q3b_de = cond(citizenship == 1 & `var' == 1 & q3b_de == "", "`cname'", q3b_de)
 }
+
+* New variable: q3a - does respondent have German citizenship? (if yes to Q3B_1)
+gen q3a = .
+replace q3a = 1 if Q3B_1 == 1
+replace q3a = 0 if Q3B_1 == 0
+lab def q3a_label 0 "No" 1 "Yes"
+lab val q3a q3a_label
+
+* New variable: q3b - Single or multiple citizenship? (based on Q3B_1 - Q3B_196)
+gen q3b = .
+replace q3b = 1 if citizenship == 1
+replace q3b = 2 if citizenship > 1
+lab def q3b_label 1 "Single citizenship" 2 "Multiple citizenship"
+lab val q3b q3b_label
 
 drop TRP1 TRP2_1 TRP2_2 TRP2_3 TRP2_4 R1_Q12 R2_Q12 citizenship Q3B_* NUMBEROFVISITS Q20MAXVALUE Q3B Q2
 
@@ -238,6 +253,29 @@ foreach q in q4 q5 q7 q8 q51 {
 drop q4 q5 q7 q8 q51
 ren rec* *
 
+*Recode q50 - Mother's Tongue
+egen languages_count = rowtotal(Q49_1 Q49_2 Q49_3 Q49_4 Q49_5 Q49_6 Q49_7 Q49_8 Q49_9) /// How many languages selected
+
+gen q50 = .
+replace q50 = 10 if languages_count > 1
+replace q50 = 1 if languages_count == 1 & Q49_1 == 1
+replace q50 = 2 if languages_count == 1 & Q49_2 == 1
+replace q50 = 3 if languages_count == 1 & Q49_3 == 1
+replace q50 = 4 if languages_count == 1 & Q49_4 == 1
+replace q50 = 5 if languages_count == 1 & Q49_5 == 1
+replace q50 = 6 if languages_count == 1 & Q49_6 == 1
+replace q50 = 7 if languages_count == 1 & Q49_7 == 1
+replace q50 = 8 if languages_count == 1 & Q49_8 == 1
+replace q50 = 9 if languages_count == 1 & Q49_9 == 1
+
+* SI Note: keeping the original variables in the dataset for now but renaming
+local langs "German Turkish Polish Arabic Italian French Ukrainian Russian Other"
+
+forvalues i = 1/9 {
+    local nm : word `i' of `langs'
+    rename Q49_`i' language_`nm'
+}
+drop languages_count
 *------------------------------------------------------------------------------*
 * Generate variables 
 
@@ -511,6 +549,11 @@ recode q46 ///
 	(2 = 2 "There are some good things in our healthcare system, but major changes are needed to make it work better.") ///
 	(3 = 3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better.") ///
 	(.r = .r "Refused") , pre(rec) label(q46_label)
+	
+replace q50 = country*1000 + q50
+lab def q50_label 24001 "DE: German" 24002 "DE: Turkish" 24003 "DE: Polish" 24004 "DE: Arabic" 24005 "DE: Italian" 24006 "DE: French" ///
+24007 "DE: Ukranian" 24008 "DE: Russian" 24009 "DE: Other (specify)" 24010 "DE: More than one language" .a "NA" .r "Refused" .d "Don't know"
+lab val q50 q50_label
 
 replace q51 = .r if q51 == 24000
 recode q51 ///
@@ -518,6 +561,11 @@ recode q51 ///
 	(24004 = 24004 "DE: €2,000 to less than €4,000") (24005 = 24005 "DE: €4,000 to less than €6,000") (24006 = 24006 "DE: €6,000 to less than €8,000") ///
 	(24007 = 24007 "DE: €8,000 to less than €10,000") (24008 = 24008 "DE: €10,000 to less than €18,000") (24009 = 24009 "DE: More than €18,000") ///
 	(.d = .d "Don't know") (.a = .a "NA") (.r = .r "Refused"), pre(rec) label(q51_label)
+	
+* Original language variables
+recode language_German language_Turkish language_Polish language_Arabic language_Italian language_French language_Ukrainian language_Russian language_Other (0 = 0 "No") (1 = 1 "Yes") ///
+(.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
+pre(rec) label(languages_label)
 
 * Recoding all yes/no qs together
 recode q3c_de q6 q11 q11_de q20 q26 q29 q31a q31b (2 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
@@ -534,7 +582,7 @@ recode q17 q25 q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q
 	
 drop q2 q3 q3c_de q3d_de q4 q5 q6 q7 q8 q9 q10 q12_a q12_b q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_de q27j_de q27k_de ///
 q28_a q28_b q28c_de q28d_de q30 q34 q35 q36 q37 q39 q41_a q41_b q41_c q41d_de q45 q46 q51 q11 q11_de q13 q20 q26 q29 q31a q31b q17 q17b_de q17c_de q17d_de q25 ///
-q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49
+q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49 language_German language_Turkish language_Polish language_Arabic language_Italian language_French language_Ukrainian language_Russian language_Other
 
 ren rec* *
 
@@ -542,16 +590,11 @@ ren rec* *
 
 * all vars missing labels from values:
 label define gender .a "NA" .d "Don't know" .r "Refused",add
-label define gender2 .a "NA" .d "Don't know" .r "Refused",add	
-label define q4_label .a "NA" .d "Don't know" .r "Refused",add	
+label define gender2 .a "NA" .d "Don't know" .r "Refused",add		
 label define q6_label .a "NA" .d "Don't know" .r "Refused",add	
-label define q7_label .a "NA" .d "Don't know" .r "Refused",add	
 label define q8_label .a "NA" .d "Don't know" .r "Refused",add	
-label define q9q10_label  .a "NA" .d "Don't know" .r "Refused",add	
 label define q12_label .a "NA" .d "Don't know" .r "Refused",add
 label define q13a_ec_label .a "NA" .d "Don't know" .r "Refused",add
-label define q15_label .a "NA" .d "Don't know" .r "Refused",add
-label define q33_label .a "NA" .d "Don't know" .r "Refused",add
 
 * for appending process:
 label copy q4_label q4_label2
@@ -573,7 +616,7 @@ label drop q4_label q5_label q15_label q33_label q50_label q51_label
 
 *Reorder variables
 order q*, sequential
-order respondent_serial mode country wave language
+order id start_datetime end_datetime spent_time mode country wave language
 
 *------------------------------------------------------------------------------*
 
@@ -643,30 +686,44 @@ order respondent_serial respondent_id mode country language date time int_length
 *------------------------------------------------------------------------------*
 * Label variables - double check matches the instrument					
 lab var country "Country"
-lab var respondent_serial "Respondent Serial #"
+lab var id "Respondent Serial #"
 lab var wave "Wave"
 lab var language "Language"
 lab var mode "mode"
 lab var q1 "Q1. Respondent's еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q3 "Q3. Respondent's gender"
+lab var q3a "Q3a. Does respondent have German citizenship?"
+lab var q3b "Q3b. Does respondent have single or multiple citizenship?"
+lab var q3b_de "Q3b_de. DE only: Country of citizenship"
+lab var q3c_de "Q3c_de. DE only: Were you born in Germany?"
+lab var q3d_de "Q3d_de. DE only: How long have you lived in Germany in total?"
 lab var q4 "Q4. What region do you live in?"
 lab var q5 "Q5. Which of these options best describes the place where you live?"
 lab var q6 "Q6. Do you have health insurance?"
 lab var q7 "Q7. What type of health insurance do you most frequently use?"
-lab var q7_other "Q7. Other"
 lab var q8 "Q8. What is the highest level of education that you have completed?"
+lab var q8_other "Q8. Other"
+lab var q8a_de "Q8a_de. DE only: What is the title of your highest degree?"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health, including your mood and your ability to think clearly, is:"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
+lab var q11_de "Q11_de. DE only: Are you currently pregnant or have you given birth in the past 12 months?"
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
-lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
+lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
+lab var q14_de "Q14. DE only: When receiving health services from this doctor's office or other health care facility, which of the following do you typically use to cover the costs?"
+lab var q14_other "Q14. Other"
 lab var q15 "Q15. What type of healthcare facility is this?"
 lab var q15_other "Q15. Other"
+lab var q15a_de "Q15a. DE only: In addition to the health care facility you mentioned, do you use one of the following for care?"
+lab var q15a_de_other "Q15a. Other"
 label var q16 "Q16. Why did you choose this healthcare facility? Please tell us the main reason."
 lab var q16_other "Q16. Other"
 label var q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"
+label var q17b_de "Q17b. DE only: In the past 12 months, have you ever spoken with a medical doctor or any other health care provider in private without your parents?"
+label var q17c_de "Q17c. DE only: Is there any doctor, nurse, or other health professional with whom you are comfortable talking about your sexual health or contraception?"
+label var q17d_de "Q17d. DE only: Is there any doctor, nurse, or other health professional with whom you are comfortable speaking about your mental health?"
 label var q18 "Q18. How many healthcare visits in total have you made in the past 12 months?"
 label var q19 "Q19. Total number of healthcare visits in the past 12 months choice(range)"
 lab var q18_q19 "Q18/Q19. Total mumber of visits made in past 12 months (q18, q19 mid-point)"
@@ -686,13 +743,20 @@ label var q27_e "Q27e. Had your teeth checked in the past 12 months"
 label var q27_f "Q27f. Had a blood sugar test in the past 12 months"
 label var q27_g "Q27g. Had a blood cholesterol test in the past 12 months"
 label var q27_h "Q27h. Received care for depression, anxiety, or another mental health condition"
+label var q27i_de "Q27i. DE only: Had a colorectal cancer screening to detect bowel cancer"
+label var q27j_de "Q27j. DE only: Had a J2 checkup (an additional preventive check-up for adolescents)"
+label var q27k_de "Q27k. DE only: Received any counseling on contraception/birth control"
 label var q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
 label var q28_b "Q28b. been treated unfairly or discriminated against by a doctor, nurse, or..."
+label var q28c_de "Q28c. DE only: Had the impression that your privacy was not adequately protected during treatment or consultation"
+label var q28d_de "Q28d. DE only: Received treatment without feeling sufficiently informed about it"
 label var q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
 label var q30 "Q30. The last time this happened, what was the main reason you did not receive healthcare?"
 label var q30_other "Q30. Other"
 label var q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
 label var q31b "Q31b. Sell items to pay for healthcare"
+label var q32_de "Q32. DE only: In your most recent visit, which of the following did you use to cover the costs of the treatment or consultation?"
+label var q32_other "Q32. Other"
 label var q33 "Q33. What type of healthcare facility is this?"
 label var q33_other "Q33. Other"
 label var q34 "Q34. What was the main reason you went?"
@@ -717,9 +781,16 @@ label var q40_a "Q40a. How would you rate the quality of care during pregnancy a
 label var q40_b "Q40b. How would you rate the quality of childcare such as care of healthy children and treatment of sick children"
 label var q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
 label var q40_d "Q40d. How would you rate the quality of care provided for the mental health?"
+label var q40e_de "Q40e. DE only: How would you rate the quality of care in the area of sexual health or contraception?"
+label var q40f_de "Q40f. DE only: How would you rate the quality of care provided for dental care?"
+label var q40g_de "Q40g. DE only: How would you rate the quality of care provided for preventive cancer care?"
+label var q40h_de "Q40h. DE only: How would you rate the quality of care provided for rehabilitative care?"
+label var q40i_de "Q40i. DE only: How would you rate the quality of care provided for nursing care such as home nursing care or care for the elderly?"
+label var q40j_de "Q40j. DE only: How would you rate the quality of care provided for preventive care, for example, vaccinations?"
 label var q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
 label var q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
 label var q41_c "Q41c. How confident are you that the government considers the public's opinion?"
+label var q41d_de "Q41d. DE only: How confident are you that the health care system addresses the needs of your age group, e.g., by clarifying contraceptive methods available to women of reproductive age?"
 label var q42 "Q42. How would you rate the quality of government or public healthcare system in your country?"
 label var q43 "Q43. How would you rate the quality of the private for-profit healthcare system in your country?"
 label var q45 "Q45. Is your country's health system is getting better, staying the same or getting worse?"
@@ -728,12 +799,13 @@ label var q47 "Q47. How would you rate the government's management of the COVID-
 label var q48 "Q48. How would you rate the quality of care provided? (Vignette, option 1)"
 label var q49 "Q49. How would you rate the quality of care provided? (Vignette, option 2)"
 label var q50 "Q50. What is your native language or mother tongue?"
+label var q50_other "Q50. Other"
 label var q51 "Q51. Total monthly household income"
 
 *------------------------------------------------------------------------------*
 * Save data
 
-save "$data_mc/02 recoded data/input data files/pvs_ec", replace
+save "$data_mc/02 recoded data/input data files/pvs_de", replace
 
 *------------------------------------------------------------------------------*
 
