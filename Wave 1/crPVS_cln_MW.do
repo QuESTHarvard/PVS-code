@@ -118,6 +118,9 @@ rename Q8a_other q50_other //confirm these recodings
 
 encode q8b, gen(q51)
 drop q8b
+recode q51 (1 = 1) (5 = 2) (3 = 3) (4 = 4) (2 = 5) (6 = .r)
+lab def q51 1 "Less than MK52,000" 2 "MK52,000 to <MK100,000" 3 "MK100,000 to <MK500,000" ///
+		4 "MK500,000 to <MK1,000,000" 5 "MK1,000,000 or more" .r "Refused",modify		
 
 encode q9, gen(recq9)
 recode recq9 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
@@ -538,7 +541,7 @@ local q8l recq8
 local q15l recq15
 local q33l recq33
 local q50l q50
-local q51l q51
+local q51 q51
 
 foreach q in q4 q5 q7 q8 q15 q33 q50 q51 {
 	qui elabel list ``q'l'
