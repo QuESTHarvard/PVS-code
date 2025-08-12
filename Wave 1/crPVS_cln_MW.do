@@ -118,9 +118,9 @@ rename Q8a_other q50_other //confirm these recodings
 
 encode q8b, gen(q51)
 drop q8b
-recode q51 (1 = 1) (5 = 2) (3 = 3) (4 = 4) (2 = 5) (6 = .r)
-lab def q51 1 "Less than MK52,000" 2 "MK52,000 to <MK100,000" 3 "MK100,000 to <MK500,000" ///
-		4 "MK500,000 to <MK1,000,000" 5 "MK1,000,000 or more" .r "Refused",modify		
+recode q51 (1 = 6001) (5 = 6002) (3 = 6003) (4 = 6004) (2 = 6005) (6 = .r)
+lab def q51 6001 "Less than MK52,000" 6002 "MK52,000 to <MK100,000" 6003 "MK100,000 to <MK500,000" ///
+			6004 "MK500,000 to <MK1,000,000" 6005 "MK1,000,000 or more" .r "Refused",modify		
 
 encode q9, gen(recq9)
 recode recq9 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
@@ -524,9 +524,6 @@ replace recq33 = .r if q33== 999
 gen recq50 = country*1000 + q50 
 *replace recq50 = .r if q50== 999
 
-gen recq51 = country*1000 + q51
-replace recq51 = .r if q51== 6
-
 * Relabel some variables now so we can use the orignal label values
 label define country_short 6 "MW" 
 qui elabel list country_short
@@ -541,9 +538,8 @@ local q8l recq8
 local q15l recq15
 local q33l recq33
 local q50l q50
-local q51 q51
 
-foreach q in q4 q5 q7 q8 q15 q33 q50 q51 {
+foreach q in q4 q5 q7 q8 q15 q33 q50 {
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -575,7 +571,7 @@ foreach q in q4 q5 q7 q8 q15 q33 q50 q51 {
 
 *****************************
 
-drop q4 q5 q7 q8 q15 q33 q50 q51 language
+drop q4 q5 q7 q8 q15 q33 q50 language
 ren rec* *
 
 *------------------------------------------------------------------------------*
@@ -711,8 +707,6 @@ lab val q21 q21_label
 lab def q39_label .a "NA"
 lab val q39 q39_label
 
-lab def q51_label .r "Refused", modify
-
 *------------------------------------------------------------------------------*
 * Renaming variables 
 
@@ -722,7 +716,7 @@ label copy q5_label q5_label2
 label copy q15_label q15_label2
 label copy q33_label q33_label2
 label copy q50_label q50_label2
-label copy q51_label q51_label2
+label copy q51 q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
@@ -731,7 +725,7 @@ label val q33 q33_label2
 label val q50 q50_label2
 label val q51 q51_label2
 
-label drop q4_label q5_label q15_label q33_label q50_label q51_label
+label drop q4_label q5_label q15_label q33_label q50_label q51
 
 *------------------------------------------------------------------------------*
 
