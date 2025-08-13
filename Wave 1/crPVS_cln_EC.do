@@ -44,7 +44,7 @@ rename (p8 p9 p10 p11) (q8 q9 q10 q11)
 
 rename (p12a p12b) (q12_a q12_b)
 
-rename (p13 p13_a p13_a_4) (q13 q13a_ec q13a_ec_other)
+rename (p13 p13_a p13_a_4) (q13 q13a_lac q13a_lac_other)
 
 rename (p14 p14_7) (q14_ec q14_ec_other)
 
@@ -60,7 +60,7 @@ rename (p27a p27b p27c p27d p27e p27f p27g p27h p28a p28b) (q27_a q27_b q27_c q2
 
 rename (p30 p30_10) (q30 q30_other)
 
-rename (p31a p31b p31c) (q31a q31b q31c_ec)
+rename (p31a p31b p31c) (q31a q31b q31_lac)
 
 rename (p32 p32_7) (q32_ec q32_ec_other)
 
@@ -155,34 +155,14 @@ drop p61 p62 p63 p64 p65 p66 p67 p68 p6_6 p7
 *Condensing q15 and q33 into one variable - need to check if this looks right?
 * Recode q15
 gen q15 = .
-replace q15 = 1 if p15_1 == 1
-replace q15 = 2 if p15_1 == 2
-replace q15 = 3 if p15_1 == 3
-replace q15 = 4 if p15_1 == 4
-replace q15 = 5 if p15_2 == 1
-replace q15 = 6 if p15_2 == 2
-replace q15 = 7 if p15_2 == 3
-replace q15 = 8 if p15_2 == 4
-replace q15 = 9 if p15_2 == 5
-replace q15 = 10 if p15_2 == 6
-replace q15 = 11 if p15_3 == 1
-replace q15 = 12 if p15_3 == 2
-replace q15 = 13 if p15_3 == 3
-replace q15 = 14 if p15_3 == 4
-replace q15 = 15 if p15_4 == 1
-replace q15 = 16 if p15_4 == 2
-replace q15 = 17 if p15_4 == 3
-replace q15 = 18 if p15_4 == 4
-replace q15 = 19 if p15_5 == 1
-replace q15 = 20 if p15_5 == 2
-replace q15 = 21 if p15_5 == 3
-replace q15 = 22 if p15_5 == 4
-replace q15 = 23 if p15_6 == 1
-replace q15 = 24 if p15_6 == 2
-replace q15 = 25 if p15_6 == 3
-replace q15 = 26 if p15_6 == 4
-replace q15 = 27 if p15_7 == 7
-replace q15 = 28 if p15_7 == 8
+replace q15 = 1 if p15_1 == 1 
+replace q15 = 2 if p15_2 == 1 | p15_4 == 1 | p15_5 == 1 | p15_6 == 1
+replace q15 = 3 if p15_3 == 1
+replace q15 = 4 if p15_1 == 2 | p15_2 == 4 | p15_3 == 2 | p15_4 == 2 | p15_5 == 2 | p15_6 == 2
+replace q15 = 5 if p15_2 == 2
+replace q15 = 6 if p15_2 == 3
+replace q15 = 7 if p15_1 == 3 | p15_2 == 5 | p15_3 == 3 | p15_4 == 3 | p15_5 == 3 | p15_6 == 3 | p15_7 == 7
+replace q15 = 8 if p15_1 == 4 | p15_2 == 6 | p15_3 == 4 | p15_4 == 4 | p15_5 == 4 | p15_6 == 4 | p15_7 == 8
 replace q15 = .r if p15_1 == 999 | p15_2 == 999 | p15_3 == 999 | p15_4 == 999 | p15_5 == 999 | p15_6 == 999 | p15_7 == 999
 
 gen q15_other = ""
@@ -204,41 +184,12 @@ replace q15_other = p15_7_8 if p15_7 == 8
 * Recode q33
 gen q33 = .
 replace q33 = 1 if p33_1 == 1
-replace q33 = 2 if p33_1 == 2
-replace q33 = 3 if p33_1 == 3
-replace q33 = 4 if p33_1 == 4
-replace q33 = 5 if p33_2 == 1
-replace q33 = 6 if p33_2 == 2
-replace q33 = 7 if p33_2 == 3
-replace q33 = 8 if p33_2 == 4
-replace q33 = 9 if p33_2 == 5
-replace q33 = 10 if p33_2 == 6
-replace q33 = 11 if p33_3 == 1
-replace q33 = 12 if p33_3 == 2
-replace q33 = 13 if p33_3 == 3
-replace q33 = 14 if p33_3 == 4
-replace q33 = 15 if p33_3 == 5
-replace q33 = 16 if p33_3 == 6
-replace q33 = 17 if p33_4 == 1
-replace q33 = 18 if p33_4 == 2
-replace q33 = 19 if p33_4 == 3
-replace q33 = 20 if p33_4 == 4
-replace q33 = 21 if p33_4 == 5
-replace q33 = 22 if p33_4 == 6
-replace q33 = 23 if p33_5 == 1
-replace q33 = 24 if p33_5 == 2
-replace q33 = 25 if p33_5 == 3
-replace q33 = 26 if p33_5 == 4
-replace q33 = 27 if p33_5 == 5
-replace q33 = 28 if p33_5 == 6
-replace q33 = 29 if p33_6 == 1
-replace q33 = 30 if p33_6 == 2
-replace q33 = 31 if p33_6 == 3
-replace q33 = 32 if p33_6 == 4
-replace q33 = 33 if p33_6 == 5
-replace q33 = 34 if p33_6 == 6
-replace q33 = 35 if p33_7 == 1
-replace q33 = 36 if p33_7 == 2
+replace q33 = 2 if p33_2 == 1 | p33_3 == 1 | p33_4 == 1 | p33_5 == 1 | p33_6 == 1
+replace q33 = 4 if p33_1 == 2 | p33_2 == 4 | p33_3 == 4 | p33_4 == 4 | p33_5 == 4 | p33_6 == 4
+replace q33 = 5 if p33_2 == 2 | p33_3 == 2 | p33_4 == 2 | p33_5 == 2 | p33_6 == 2
+replace q33 = 6 if p33_2 == 3 | p33_3 == 3 | p33_4 == 3 | p33_5 == 3 | p33_6 == 3 
+replace q33 = 7 if p33_1 == 3 | p33_2 == 5 | p33_3 == 5 | p33_4 == 5 | p33_5 == 5 | p33_6 == 5 | p33_7 == 1
+replace q33 = 8 if p33_1 == 4 | p33_2 == 6 | p33_3 == 6 | p33_4 == 6 | p33_5 == 6 | p33_6 == 6 | p33_7 == 2
 replace q33 = .r if p33_1 == 999 | p33_2 == 999 | p33_3 == 999 | p33_4 == 999 | p33_5 == 999 | p33_6 == 999 | p33_7 == 999
 
 gen q33_other = ""
@@ -347,9 +298,9 @@ recode q18 q21 q22 q23 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h ///
 	   q32_ec cell1 cell2 (998 = .d)
 
 * In raw data, 999 = "refused" "no responde"
-recode q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q8 q9 q10 q11 q12_a q12_b q13 q13a_ec q14_ec q16 q17 q18 q19 q20 q21 ///
+recode q1 q2 q3 q3a_co_pe_uy_ar q4 q5 q8 q9 q10 q11 q12_a q12_b q13 q13a_lac q14_ec q16 q17 q18 q19 q20 q21 ///
 	   q22 q23 q25 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q28_a ///
-	   q28_b q29 q30 q31a q31b q31c_ec q32_ec q34 q35 q36 q37 q38_a q38_b q38_c ///
+	   q28_b q29 q30 q31a q31b q31_lac q32_ec q34 q35 q36 q37 q38_a q38_b q38_c ///
 	   q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q39 q40_a q40_b q40_c ///
 	   q40_d q41_a q41_b q41_c q42 q43 q44 q45 q46 q47 q48 q49 cell1 ///
 	   cell2 (999 = .r)
@@ -390,8 +341,8 @@ drop visits_total
 
 * q7 missing recoded in code above
 
-*q13a_ec
-recode q13a_ec (. = .a) if q13 !=0
+*q13a_lac
+recode q13a_lac (. = .a) if q13 !=0
 
 *q14_ec-17
 recode q14_ec q15 q16 q17 (. = .a) if q13 !=1 | q17 == 5
@@ -460,8 +411,8 @@ recode q9 q10 (0 = 0 "Poor") (1 = 1 "Fair") (2 = 2 "Good") (3 = 3 "Very good") (
 
 recode q12_a q12_b (0 = 0 "Not at all confident") (1 = 1 "Not too confident") (2 = 2 "Somewhat confident") (3 = 3 "Very confident"), pre(rec) label(q12_label)
 
-recode q13a_ec (0 = 0 "No") (1 = 1 "Yes, a pharmacy") (2 = 2 "Yes, a healer or other traditional medicine practitioner, such as sobadoras, midwives, yachacs, taitas, and shamans") ///
-(3 = 3 "Yes, alternative medicine, such as acupuncture, traditional chinese medicine, and reiki") (4 = 4 "Yes, other"), pre(rec) label(q13a_ec_label)
+recode q13a_lac (0 = 0 "No") (1 = 1 "Yes, a pharmacy") (2 = 2 "Yes, a healer or other traditional medicine practitioner, such as sobadoras, midwives, yachacs, taitas, and shamans") ///
+(3 = 3 "Yes, alternative medicine, such as acupuncture, traditional chinese medicine, and reiki") (4 = 4 "Yes, other"), pre(rec) label(q13a_lac_label)
 
 recode q14_ec (1 = 1 "Ministry of Public Health") (2 = 2 "Private or individual") (3 = 3 "IESS: Social Security") ///
 (4 = 4 "ISSFA: Health Insurance of the Armed Forces") (5 = 5 "ISSPOL: Health Insurance of the National Police") ///
@@ -469,7 +420,8 @@ recode q14_ec (1 = 1 "Ministry of Public Health") (2 = 2 "Private or individual"
 pre(rec) label(q14_ec_label)
 
 replace q15 = country*1000 + q15 if q15 != .a
-lab def q15_label 1001 "EC: Subcenter/Health Center" 1002 "EC: Hospital" 1003 "EC: Other primary care facility, specify" 1004 "EC: Another secondary care facility, specify" 1005 "EC: Health Center" 1006 "EC: Private Office" 1007 "EC: Clinic" 1008 "EC: Hospital" 1009 "EC: Other primary care facility, specify" 1010 "EC: Another secondary care facility, specify" 1011 "EC: Health Center/Dispensary" 1012 "Hospital" 1013 "EC: Other primary care facility, specify" 1014 "EC: Another secondary care facility, specify" 1015 "EC: Health Center" 1016 "EC: Hospital" 1017 "EC: Other primary care facility, specify" 1018 "EC: Another secondary care facility, specify" 1019 "EC: Health Center" 1020 "EC: Hospital" 1021 "EC: Other primary care facility, specify" 1022 "EC: Another secondary care facility, specify" 1023 "EC: Health Center" 1024 "EC: Hospital" 1025 "EC: Other primary care facility, specify" 1026 "EC: Another secondary care facility, specify" 1027 "EC: Other primary care facility, specify" 1028 "EC: Another secondary care facility, specify"
+lab def q15_label 1001 "EC: Subcenter/Health Center" 1002 "EC: Health Center" 1003 "EC: Health Center/Dispensary" 1004 "EC: Hospital" ///
+1005 "EC: Private Office" 1006 "EC: Clinic" 1007 "EC: Other primary care facility, specify" 1008 "EC: Another secondary care facility, specify"
 lab val q15 q15_label
 
 recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting time") (4 = 4 "Good healthcare provider skills") ///
@@ -522,7 +474,8 @@ pre(rec) label(q32_ec_label)
 replace q33 = country*1000 + q33 if q33 != .a
 /// Note: .r got dropped as . when computing country-specific response values
 replace q33 = .r if q33 == .
-lab def q33_label 1001 "EC: Subcenter/Health Center" 1002 "EC: Hospital" 1003 "EC: Other primary care facility, specify" 1004 "EC: Another secondary care facility, specify" 1005 "EC: Health Center" 1006 "EC: Private Office" 1007 "EC: Clinic" 1008 "EC: Hospital" 1009 "EC: Other primary care facility, specify" 1010 "EC: Another secondary care facility, specify" 1011 "EC: Health Center" 1012 "EC: Private Office" 1013 "EC: Clinic" 1014 "EC: Hospital" 1015 "EC: Other primary care facility, specify" 1016 "EC: Another secondary care facility, specify" 1017 "EC: Health Center" 1018 "EC: Private Office" 1019 "EC: Clinic" 1020 "EC: Hospital" 1021 "EC: Other primary care facility, specify" 1022 "EC: Another secondary care facility, specify" 1023 "EC: Health Center" 1024 "EC: Private Office" 1025 "EC: Clinic" 1026 "EC: Hospital" 1027 "EC: Other primary care facility, specify" 1028 "EC: Another secondary care facility, specify" 1029 "EC: Health Center" 1030 "EC: Private Office" 1031 "EC: Clinic" 1032 "EC: Hospital" 1033 "EC: Other primary care facility, specify" 1034 "EC: Another secondary care facility, specify" 1035 "EC: Other primary care facility, specify" 1036 "EC: Another secondary care facility, specify" 
+lab def q33_label 1001 "EC: Subcenter/Health Center" 1002 "EC: Health Center" 1004 "EC: Hospital" 1005 "EC: Private Office" ///
+1006 "EC: Clinic" 1007 "EC: Other primary care facility, specify" 1008 "EC: Another secondary care facility, specify"
 lab val q33 q33_label
 
 recode q34 (1 = 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)") ///
@@ -575,7 +528,7 @@ recode cell1 (0 = 0 "No, no other numbers") (1 = 1 "Yes") (.r = .r "Refused") (.
 recode cell2 (.r = .r "Refused") (.a = .a "NA"), pre(rec) label(cell2_label)
 
 * Recoding all yes/no qs together
-recode q11 q13 q20 q29 q31a q31b q31c_ec (0 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
+recode q11 q13 q20 q29 q31a q31b q31_lac (0 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
 pre(rec) label(yesno)
 
 * Recoding all poor-excellent rating qs together
@@ -583,8 +536,8 @@ recode q17 q25 q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k
 (0 = 0 "Poor") (1 = 1 "Fair") (2 = 2 "Good") (3 = 3 "Very good") (4 = 4 "Excellent") ///
 (.d = .d "Don't know") (.a = .a "NA") (.r = .r "Refused"), pre(rec) label(rating)
 	
-drop q2 q3 q3a_co_pe_uy_ar q5 q8 q9 q10 q12_a q12_b q13a_ec q14_ec q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h ///
-q28_a q28_b q30 q32_ec q34 q35 q36 q37 q41_a q41_b q41_c q45 q46 q50 q51 cell1 cell2 q11 q13 q20 q26 q29 q31a q31b q31c_ec q17 q25 ///
+drop q2 q3 q3a_co_pe_uy_ar q5 q8 q9 q10 q12_a q12_b q13a_lac q14_ec q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h ///
+q28_a q28_b q30 q32_ec q34 q35 q36 q37 q41_a q41_b q41_c q45 q46 q50 q51 cell1 cell2 q11 q13 q20 q26 q29 q31a q31b q31_lac q17 q25 ///
 q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q42 q43 q44_ec q47 q48 q49
 
 ren rec* *
@@ -600,7 +553,7 @@ label define q7_label .a "NA" .d "Don't know" .r "Refused",add
 label define q8_label .a "NA" .d "Don't know" .r "Refused",add	
 label define q9q10_label  .a "NA" .d "Don't know" .r "Refused",add	
 label define q12_label .a "NA" .d "Don't know" .r "Refused",add
-label define q13a_ec_label .a "NA" .d "Don't know" .r "Refused",add
+label define q13a_lac_label .a "NA" .d "Don't know" .r "Refused",add
 label define q15_label .a "NA" .d "Don't know" .r "Refused",add
 label define q33_label .a "NA" .d "Don't know" .r "Refused",add
 
@@ -714,8 +667,8 @@ lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
 lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
-lab var q13a_ec "Q13a. EC only: Are there any other places, such as pharmacies, traditional healers, or alternative medicine, that you go to most frequently for care?"
-lab var q13a_ec_other "Q13a. EC only: Other"
+lab var q13a_lac "Q13a. LAC/EC only: Are there any other places, such as pharmacies, traditional healers, or alternative medicine, that you go to most frequently for care?"
+lab var q13a_lac_other "Q13a. LAC/EC only: Other"
 lab var q14_ec "Q14. EC only: Is this facility...?"
 lab var q14_ec_other "Q14. EC only: Other"
 lab var q15 "Q15. What type of healthcare facility is this?"
@@ -749,7 +702,7 @@ label var q30 "Q30. The last time this happened, what was the main reason you di
 label var q30_other "Q30. Other"
 label var q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
 label var q31b "Q31b. Sell items to pay for healthcare"
-label var q31c_ec "Q31c. EC only: Stopped paying any utilities (cable, electricity, water, etc.) to pay for healthcare"
+label var q31_lac "Q31. LAC/EC only: In the last 12 months, have you stopped paying any utility bills (cable, electricity, water, etc.) to pay for healthcare?"
 label var q32_ec "Q32. EC only: The facility of your last face-to-face visit is ... ?"
 label var q32_ec_other "Q32. EC only: Other"
 label var q33 "Q33. What type of healthcare facility is this?"

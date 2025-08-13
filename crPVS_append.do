@@ -9,7 +9,7 @@
 
 */
 
-********************************* PVS V1 *********************************
+/********************************* PVS V1 *********************************
 
 u "$data_mc/02 recoded data/input data files/pvs_co_pe_uy.dta", clear
 
@@ -491,7 +491,7 @@ gen wave = 1
 *Save recoded data
 save "$data_mc/02 recoded data/input data files/pvs_appended_v1.dta", replace
 
-********************************* PVS V2 ***************************************
+********************************* PVS V2 ***************************************/
 * Starting with PVS China, the PVS question items were re-ordered, this part of the do file will:
 	* Append V2 countries
 
@@ -524,8 +524,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_np.dta"
 qui do `label12'
 
 tempfile label13
-label save q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 Language using `label13'
-label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q51_label2 Language
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language using `label13'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language
 
 append using "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dta"
 
@@ -533,7 +533,7 @@ qui do `label13'
 
 tempfile label14
 label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label14'
-label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2
 
 append using "$data_mc/02 recoded data/input data files/pvs_co_pe_uy_wave2.dta"
 
@@ -547,9 +547,25 @@ append using "$data_mc/02 recoded data/input data files/pvs_ec.dta"
 
 qui do `label15'
 
+tempfile label16
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label16'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2
+
+append using "$data_mc/02 recoded data/input data files/pvs_us_wave2.dta"
+
+qui do `label16'
+
+tempfile label17
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label17'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2
+
+append using "$data_mc/02 recoded data/input data files/pvs_mw.dta"
+
+qui do `label17'
+
 ********************************************************************************
 * Country - add new countries here
-lab def labels0 1 "Ecuador" 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
+lab def labels0 1 "Ecuador" 6 "Malawi" 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
 				21 "China" 22 "Somaliland" 23 "Nepal", modify				
@@ -563,7 +579,8 @@ recode q6 (. = .a) if inlist(country,9,11,14,15,17)
 
 * Ethiopia, India, Kenya, Greece, Nigeria, Romania, South Africa, Nepal
 recode q14_multi q44_multi q32_multi (. = .a) if country != 3 | country != 4 | country != 5 | ///
-									   country != 18 | country != 20 | country != 19 | country != 9 | country !=23
+									   country != 18 | country != 20 | country != 19 | country != 9 ///
+									   | country !=23 | country !=6
 
 * Peru:
 recode q44_pe (. = .a) if country != 7
@@ -590,6 +607,8 @@ recode q50a_us q50b_us q52a_us q52b_us (. = .a) if country != 12
 * USA/Mexico/Italy
 recode q25 q35 q36 q37b_refused_v1 q38_k (. = .a) if country != 12 | country != 13 | country != 14	
 recode q52 (. = .a) if country != 13 | country != 14 | country != 15
+
+recode q27i_us q41_us (. = .a) if country !=12 & wave !=2
 
 * Korea:
 recode q6_kr q7_kr q14_kr q32_kr (. = .a) if country != 15
@@ -632,7 +651,7 @@ recode q14_np q32_np q52a_np q52b_np (. = .a) if country !=23
 recode q7_ke (. = .a) if country !=5 | wave !=2
 
 * Ecuador: 
-recode q14_ec q31_lac q32_ec q44_ec (. = .a) if country != 1
+recode q14_ec q32_ec q44_ec (. = .a) if country != 1
 
 * All wave 2 countries plus Colombia, Ethiopia, India, Kenya, Peru, South Africa, Uruguay, Lao PDR, Argentina, Nigeria, China, Somaliland, Nepal 
 recode q36_v1 (. = .a) if country == 2 | country == 3 | country == 4 | country == 5 | country == 7 ///
@@ -646,8 +665,14 @@ recode q37 (. = .a) if country != 21 | country != 22 | country != 23 | wave !=2
 recode q6_lac q14_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	
 recode q44_co q14_co (. = .a) if wave !=2 | country !=2 
 recode q44_pe q14_pe (. = .a) if wave !=2 | country !=7
-recode q44_uy (. = .a) if wave !=2 | country !=10	
-recode q13a_lac q31_lac (. = .a) if wave !=2 | country !=2 | country !=7 | country !=10	| country !=1
+recode q44_uy (. = .a) if wave !=2 | country !=10
+
+*LAC/EC: 
+recode q13a_lac q31_lac (. = .a) if country != 1 | (wave !=2 & !inlist(country, 2, 7, 10))
+
+* Malawi 
+recode q4_mw q47_mw (. = .a) if country !=6
+
 *-------------------------------------------------------------------------------*	
 	
 * Other value label modifcations
@@ -699,7 +724,7 @@ drop respondent_num interviewer_gender interviewer_id time q1_codes intervieweri
 					
 * Reorder variables
 order q*, sequential
-order respondent_serial respondent_id mode country country_reg wave language date ///
+order respondent_serial respondent_id mode country country_reg wave language language_other date ///
 	  int_length psu_id_for_svy_cmds weight 		  
 
 * Label variables
@@ -743,7 +768,9 @@ lab var q13b_co_pe_uy_ar_v1 "Q13B (V1.0). CO/PE/UY/AR only: Did you seek health 
 lab var q13b_la "Q13B. LA only: Is there one hospital, health center, or clinic you usually...?"
 lab var q13e_co_pe_uy_ar_v1 "Q13E (V1.0). CO/PE/UY/AR only: Why didn't you receive health care for COVID-19?"
 lab var q13e_other_co_pe_uy_ar_v1 "Q13E_Other (V1.0). CO/PE/UY only: Other"
-lab var q13a_lac "Q13a. LAC only: Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
+*lab var q13a_co_pe_uy "Q13a. LAC only: Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
+lab var q13a_lac "Q13a. LAC/EC only: Are there any other places, such as pharmacies, traditional healers, or alternative medicine, that you go to most frequently for care?"
+lab var q13a_lac_other "Q13a. LAC/EC only: Other"
 lab var q14_lac "Q14. LAC only: Usual type"
 lab var q14_ec "Q14. EC only: Is this facility...?"
 lab var q14_ec_other "Q14. EC only: Other"
@@ -806,6 +833,7 @@ lab var q27i_gr_in_ro "Q27. GR/IN/RO only: Have you received any of the followin
 lab var q27i_ng "Q27. NG only: Had sexual or reproductive health care such as family planning in the past 12 months"
 lab var q27i_za "Q27. ZA only: Had a test for HIV in the past 12 months"
 lab var q27j_cn "Q27j. CN only: Received a mammogram (a special X-ray of the breast)"
+lab var q27i_us "Q27i. US only: Have you received care for depression, anxiety, or another mental health condition (which may include feeling sad or worried a lot of the time)" 
 lab var q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q28_b "Q28b. You were treated unfairly or discriminated against in the past 12 months"
 lab var q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
@@ -813,7 +841,7 @@ lab var q30 "Q30. The last time this happened, what was the main reason?"
 lab var q30_other "Q30. Other"
 lab var q31a "Q31a. In the past 12 months, have you ever needed to borrow money from family, friends, or another source to pay for healthcare"
 lab var q31b "Q31b. In the past 12 months, have you ever needed to sell items such as furniture or jewelry to pay for healthcare"
-lab var q31_lac "Q31. LAC only: In the last 12 months, have you stopped paying any utility bills (cable, electricity, water, etc.) to pay for healthcare?"
+lab var q31_lac "Q31. LAC/EC only: In the last 12 months, have you stopped paying any utility bills (cable, electricity, water, etc.) to pay for healthcare?"
 lab var q32_ar "Q32. AR only: Is this facility Public, OSEP, or Private?"
 lab var q32_cn "Q32. CN only: Last visit facility type public/private/social security/NGO/faith-based?"
 lab var q32_co_pe_v1 "Q32 (V1.0). CO/PE only: Is this a public or private healthcare facility?"
@@ -874,6 +902,7 @@ lab var q40f_so "Q40f. SO only: Care for other non-urgent common illnesses such 
 lab var q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
 lab var q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
 lab var q41_c "Q41c. How confident are you that the government considers the public's opinion?"
+lab var q41_us "Q41. US only: In general, how much do you trust the healthcare system as a whole?"
 lab var q42 "Q42. How would you rate the quality of public healthcare system in your country?"
 lab var q43 "Q43. How would you rate the quality of private healthcare?"
 *lab var q44 "Q44. What type of healthcare facility is this?"
