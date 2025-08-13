@@ -555,9 +555,17 @@ append using "$data_mc/02 recoded data/input data files/pvs_us_wave2.dta"
 
 qui do `label16'
 
+tempfile label17
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label17'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2
+
+append using "$data_mc/02 recoded data/input data files/pvs_mw.dta"
+
+qui do `label17'
+
 ********************************************************************************
 * Country - add new countries here
-lab def labels0 1 "Ecuador" 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
+lab def labels0 1 "Ecuador" 6 "Malawi" 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
 				15 "Republic of Korea" 16 "Argentina (Mendoza)" ///
 				17 "United Kingdom" 18 "Greece" 19 "Romania" 20 "Nigeria" ///
 				21 "China" 22 "Somaliland" 23 "Nepal", modify				
@@ -571,7 +579,8 @@ recode q6 (. = .a) if inlist(country,9,11,14,15,17)
 
 * Ethiopia, India, Kenya, Greece, Nigeria, Romania, South Africa, Nepal
 recode q14_multi q44_multi q32_multi (. = .a) if country != 3 | country != 4 | country != 5 | ///
-									   country != 18 | country != 20 | country != 19 | country != 9 | country !=23
+									   country != 18 | country != 20 | country != 19 | country != 9 ///
+									   | country !=23 | country !=6
 
 * Peru:
 recode q44_pe (. = .a) if country != 7
@@ -660,6 +669,9 @@ recode q44_uy (. = .a) if wave !=2 | country !=10
 
 *LAC/EC: 
 recode q13a_lac q31_lac (. = .a) if country != 1 | (wave !=2 & !inlist(country, 2, 7, 10))
+
+* Malawi 
+recode q4_mw q47_mw (. = .a) if country !=6
 
 *-------------------------------------------------------------------------------*	
 	
