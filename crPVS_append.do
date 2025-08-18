@@ -685,15 +685,15 @@ lab def q15_label2 5016 "Mobile clinic", modify
 
 
 *** New country var based on region ***
-recode country (22 = 1 "Somaliland") (3 = 2 "Ethiopia") (5 = 3 "Kenya") ///
-			   (20 = 4 "Nigeria") (9 = 5 "South Africa") ///
-			   (7 = 6 "Peru") (2 = 7 "Colombia") ///
-			   (13 = 8 "Mexico") (10 = 9 "Uruguay") ///
-			   (16 = 10 "Argentina") (1 = 11 "Ecuador") (11 = 12 "Lao PDR") (23 = 13 "Nepal") ///
-			   (4 = 14 "India") (21 = 15 "China") (15 = 16 "Rep. of Korea") ///
-			   (19 = 17 "Romania") (18 = 18 "Greece") ///
-			   (14 = 19 "Italy") (17 = 20 "United Kingdom") ///
-			   (12 = 21 "United States"), gen(country_reg)
+recode country (6 = 1 "Malawi") (22 = 2 "Somaliland") (3 = 3 "Ethiopia") (5 = 4 "Kenya") ///
+			   (20 = 5 "Nigeria") (9 = 6 "South Africa") ///
+			   (7 = 7 "Peru") (2 = 8 "Colombia") ///
+			   (13 = 9 "Mexico") (10 = 10 "Uruguay") ///
+			   (16 = 11 "Argentina") (1 = 12 "Ecuador") (11 = 13 "Lao PDR") (23 = 14 "Nepal") ///
+			   (4 = 15 "India") (21 = 16 "China") (15 = 17 "Rep. of Korea") ///
+			   (19 = 18 "Romania") (18 = 19 "Greece") ///
+			   (14 = 20 "Italy") (17 = 21 "United Kingdom") ///
+			   (12 = 22 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
 *-------------------------------------------------------------------------------*	

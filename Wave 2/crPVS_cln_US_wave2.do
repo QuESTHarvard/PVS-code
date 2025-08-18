@@ -38,7 +38,7 @@ drop status hid_loi q5b_1 q5b_2 q5b_3 q5b_4 q5b_5 q5b_6 q5b_999 ///
 	 ppolparty ppollean ppolview m1count m1_2count m2count 
 	 
 *drop variables for weights:
-drop weight_main_2 weight_total_sample_2 weight_rural_2 weight_under30_2 weight_mo_5
+drop weight_main_2 weight_rural_2 weight_under30_2 weight_mo_5
 
 *confirm with Todd if we should keep these/what to do with these:
 drop sampletype rural q53_1 q53_2 q53_3 q53_4 q53_5 q53_5_other q53_999 crisismessage
@@ -50,6 +50,7 @@ gen reccountry = 12
 lab def country 12 "United States"
 lab values reccountry country
 
+rename weight_total_sample_2 weight // confirm with Todd which weight var
 rename respid respondent_serial
 rename xchannel mode
 
