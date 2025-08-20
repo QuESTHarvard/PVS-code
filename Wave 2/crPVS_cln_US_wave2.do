@@ -38,7 +38,7 @@ drop status hid_loi q5b_1 q5b_2 q5b_3 q5b_4 q5b_5 q5b_6 q5b_999 ///
 	 ppolparty ppollean ppolview m1count m1_2count m2count 
 	 
 *drop variables for weights:
-drop weight_main_2 weight_total_sample_2 weight_rural_2 weight_under30_2 weight_mo_5
+drop weight_main_2 weight_rural_2 weight_under30_2 weight_mo_5
 
 *confirm with Todd if we should keep these/what to do with these:
 drop sampletype rural q53_1 q53_2 q53_3 q53_4 q53_5 q53_5_other q53_999 crisismessage
@@ -50,6 +50,7 @@ gen reccountry = 12
 lab def country 12 "United States"
 lab values reccountry country
 
+rename weight_total_sample_2 weight // confirm with Todd which weight var
 rename respid respondent_serial
 rename xchannel mode
 
@@ -369,6 +370,31 @@ replace m3 = .a if (m2_a == .r | m2_a == 0) & (m2_b == .r | m2_b == 0) & ///
                 (m2_i == .r | m2_i == 0)
 
 recode m4 m5 (. = .a) if m3 !=. | m3 !=.a | m3 !=.d | m3 !=.r			
+
+*create phq2 and phq9 score
+
+egen phq2 = rowtotal(m1_a m1_b)
+
+gen phq2_cat = .
+replace phq2_cat = 0 if phq2 <3
+replace phq2_cat = 1 if phq2 >=3
+
+lab def phq2_cat_label 0 "Screen negative" 1 "Screen positive"
+lab val phq2_cat phq2_cat_label
+
+egen phq9 = rowtotal(m1_a m1_b m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g)
+
+gen phq9_cat = .
+replace phq9_cat = 1 if phq9 >0 & phq9<=4
+replace phq9_cat = 2 if phq9 >=5 & phq9 <=9
+replace phq9_cat = 3 if phq9 >=10 & phq9 <=14
+replace phq9_cat = 4 if phq9 >=15 & phq9 <=19
+replace phq9_cat = 5 if phq9 >=20 & phq9 <=27
+
+lab def phq9_cat_label 1 "None-minimal"	2 "Mild" 3 "Moderate" 4 "Moderately Severe" 5 "Severe"
+lab val phq9_cat phq9_cat_label
+
+recode phq9_cat (. = .a) if phq2<3
 				
 *------------------------------------------------------------------------------*
 * Recode values and value labels:
@@ -500,6 +526,72 @@ label val q50 q50_label2
 label val q51 q51_label2
 
 label drop q4_label q5_label q15_label recq33 q50_label q51_label
+
+* fix labels for mental health module:
+label copy labels76 m1_a_label
+label copy labels77 m1_b_label
+label copy labels78 m1_2_a_label
+label copy labels79 m1_2_b_label
+label copy labels80 m1_2_c_label
+label copy labels81 m1_2_d_label
+label copy labels82 m1_2_e_label
+label copy labels83 m1_2_f_label
+label copy labels84 m1_2_g_label
+label copy labels86 m2_label
+label copy labels89 m3_label
+label copy labels90 m4_label
+label copy labels91 m5_label
+label copy labels92 m6_label
+label copy labels95 m7_label
+label copy labels96 m8_label
+label copy labels97 m9_label
+label copy labels98 m10_label
+label copy labels99 m11_label
+label copy labels100 m12_label
+
+lab val m1_a m1_a_label
+lab val m1_b m1_b_label
+lab val m1_2_a m1_2_a_label
+lab val m1_2_b m1_2_b_label
+lab val m1_2_c m1_2_c_label
+lab val m1_2_d m1_2_d_label
+lab val m1_2_e m1_2_e_label
+lab val m1_2_f m1_2_f_label
+lab val m1_2_g m1_2_g_label
+
+lab val m2_a m2_label 
+lab val m2_b m2_label 
+lab val m2_c m2_label 
+lab val m2_d m2_label 
+lab val m2_e m2_label 
+lab val m2_f m2_label 
+lab val m2_g m2_label
+lab val m2_h m2_label 
+lab val m2_i m2_label
+
+lab val m3 m3_label
+lab val m4 m4_label
+lab val m5 m5_label
+ 
+lab val m6_a m6_label
+lab val m6_b m6_label
+lab val m6_c m6_label
+lab val m6_d m6_label
+lab val m6_e m6_label
+lab val m6_f m6_label
+lab val m6_g m6_label
+lab val m6_h m6_label
+lab val m6_i m6_label
+lab val m6_j m6_label
+
+lab val m7 m7_label
+lab val m8 m8_label
+lab val m9 m9_label
+lab val m10 m10_label
+lab val m11 m11_label
+lab val m12 m12_label
+
+label drop labels76 labels77 labels78 labels79 labels80 labels81 labels82 labels83 labels84 labels86 labels89 labels90 labels91 labels92 labels95 labels96 labels97 labels98 labels99 labels100 
 
 *------------------------------------------------------------------------------*
 

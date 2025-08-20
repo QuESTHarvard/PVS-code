@@ -945,7 +945,7 @@ recode covid_vax_v1 ///
 
 *Generate country dummy variables
 
-local map 1 EC 2 CO 3 ET 4 IN 5 KE 7 PE 9 ZA 10 UY 11 LA 12 US 13 MX ///
+local map 1 EC 2 CO 3 ET 4 IN 5 KE 6 MW 7 PE 9 ZA 10 UY 11 LA 12 US 13 MX ///
            14 IT 15 KR 16 AR 17 GB 18 GR 19 RO 20 NG 21 CN 22 SO 23 NP
 
 forvalues i = 1/23 {
@@ -957,6 +957,7 @@ forvalues i = 1/23 {
     if `i' == 3  local iso "ET"
     if `i' == 4  local iso "IN"
     if `i' == 5  local iso "KE"
+	if `i' == 6  local iso "MW"
     if `i' == 7  local iso "PE"
     if `i' == 9  local iso "ZA"
     if `i' == 10 local iso "UY"
@@ -980,7 +981,7 @@ forvalues i = 1/23 {
     }
 }
 
-drop cc_6 cc_8
+drop cc_8
 *****************************
 
 **** Order Variables ****
