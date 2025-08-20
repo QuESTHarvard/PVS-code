@@ -673,6 +673,11 @@ recode q13a_lac q31_lac (. = .a) if country != 1 | (wave !=2 & !inlist(country, 
 * Malawi 
 recode q4_mw q47_mw (. = .a) if country !=6
 
+* Mental health module:
+recode m1_a m1_b m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g m2_a m2_b m2_c /// 
+	  m2_d m2_e m2_f m2_g m2_h m2_i m3 m4 m5 m6_a m6_b m6_c m6_d m6_e m6_f m6_g ///
+	  m6_h m6_i m6_j m7 m8 m9 m10 m11 m12 phq2 phq2_cat phq9 phq9_cat (. = .a) if country !=12 | wave !=2
+
 *-------------------------------------------------------------------------------*	
 	
 * Other value label modifcations
