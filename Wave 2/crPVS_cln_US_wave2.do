@@ -384,6 +384,8 @@ lab val phq2_cat phq2_cat_label
 
 egen phq9 = rowtotal(m1_a m1_b m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g)
 
+replace phq9 = .a if phq2_cat ==0 
+
 gen phq9_cat = .
 replace phq9_cat = 1 if phq9 >0 & phq9<=4
 replace phq9_cat = 2 if phq9 >=5 & phq9 <=9
