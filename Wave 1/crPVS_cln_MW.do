@@ -483,7 +483,7 @@ encode q50, gen(recq49)
 drop q50
 recode recq49 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
 lab def q49_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
-lab val recq48 q49_label
+lab val recq49 q49_label
 
 encode q8a, gen(recq50)
 drop q8a	
@@ -491,6 +491,7 @@ drop q8a
 rename Q8a_other q50_other
 
 encode q8b, gen(recq51)
+recode recq51 (6 = .r)
 drop q8b
 
 
@@ -536,9 +537,8 @@ local q7l recq7
 local q8l recq8
 local q15l recq15
 local q33l recq33
-local q50l recq50
 
-foreach q in q4 q5 q7 q8 q15 q33 q50 {
+foreach q in q4 q5 q7 q8 q15 q33 {
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -566,6 +566,8 @@ foreach q in q4 q5 q7 q8 q15 q33 q50 {
 }
 
 
+lab def q50_label 6001 "MW: Chichewa" 6002 "MW: Other" 6003 "MW: Tumbuka" 6004 "MW: Yao" 6005 "MW: Chilomwe" 6006 "MW: Chisena"
+lab val recq50 q50_label
 
 *****************************
 
@@ -603,6 +605,8 @@ ren rec* *
 	gen double date = dofc(end_dt) //confirm with Todd we want to use this var
 	format date %tdDDmonCCYY 
 
+	drop end_dt
+	
 * q18/q19 mid-point var 
 	gen q18_q19 = q18 // con firm with Todd how we should create the rest
 	/*recode q18_q19 (. = 0) if q19 == 0
@@ -713,7 +717,7 @@ label copy q4_label q4_label2
 label copy q5_label q5_label2
 label copy q15_label q15_label2
 label copy q33_label q33_label2
-label copy recq50 q50_label2
+label copy q50_label q50_label2
 label copy recq51 q51_label2
 
 label val q4 q4_label2
