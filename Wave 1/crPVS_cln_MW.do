@@ -38,6 +38,7 @@ drop ageband q15_other_001 //incorrectly has a response for 'other' even though 
 *confirm with Todd if ok to drop, we wouldn't use this:
 drop q37_specify_hours q23a
 
+
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
@@ -104,23 +105,6 @@ drop q7
 
 encode q8, gen(recq8)
 drop q8
-
-encode q50, gen(q47_mw)
-drop q50
-recode q47_mw (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
-lab def q47_mw_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused" .a "NA"
-lab val q47_mw q47_mw_label
-
-encode q8a, gen(q50)
-drop q8a
-
-rename Q8a_other q50_other //confirm these recodings
-
-encode q8b, gen(q51)
-drop q8b
-recode q51 (1 = 6001) (5 = 6002) (3 = 6003) (4 = 6004) (2 = 6005) (6 = .r)
-lab def q51 6001 "Less than MK52,000" 6002 "MK52,000 to <MK100,000" 6003 "MK100,000 to <MK500,000" ///
-			6004 "MK500,000 to <MK1,000,000" 6005 "MK1,000,000 or more" .r "Refused",modify		
 
 encode q9, gen(recq9)
 recode recq9 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
@@ -483,17 +467,33 @@ recode recq47 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
 lab def q47_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
 lab val recq47 q47_label
 
-encode q48, gen(recq48)
+encode q48, gen(recq47_mw)
 drop q48
+recode recq47_mw (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
+lab def q47mw_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
+lab val recq47_mw q47mw_label
+
+encode q49, gen(recq48)
+drop q49
 recode recq48 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
 lab def q48_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
 lab val recq48 q48_label
 
-encode q49, gen(recq49)
-drop q49
+encode q50, gen(recq49)
+drop q50
 recode recq49 (1 = 4) (2 = 1) (3 = 2) (4 = 0) (5 = .r) (6 = 3)
 lab def q49_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .r	"Refused"
 lab val recq49 q49_label
+
+encode q8a, gen(recq50)
+drop q8a	
+
+rename Q8a_other q50_other
+
+encode q8b, gen(recq51)
+recode recq51 (6 = .r)
+drop q8b
+
 
 ren rec* *
 
@@ -537,9 +537,8 @@ local q7l recq7
 local q8l recq8
 local q15l recq15
 local q33l recq33
-local q50l q50
 
-foreach q in q4 q5 q7 q8 q15 q33 q50 {
+foreach q in q4 q5 q7 q8 q15 q33 {
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -567,7 +566,8 @@ foreach q in q4 q5 q7 q8 q15 q33 q50 {
 }
 
 
-
+lab def q50_label 6001 "MW: Chichewa" 6002 "MW: Other" 6003 "MW: Tumbuka" 6004 "MW: Yao" 6005 "MW: Chilomwe" 6006 "MW: Chisena"
+lab val recq50 q50_label
 
 *****************************
 
@@ -605,6 +605,8 @@ ren rec* *
 	gen double date = dofc(end_dt) //confirm with Todd we want to use this var
 	format date %tdDDmonCCYY 
 
+	drop end_dt
+	
 * q18/q19 mid-point var 
 	gen q18_q19 = q18 // con firm with Todd how we should create the rest
 	/*recode q18_q19 (. = 0) if q19 == 0
@@ -716,7 +718,7 @@ label copy q5_label q5_label2
 label copy q15_label q15_label2
 label copy q33_label q33_label2
 label copy q50_label q50_label2
-label copy q51 q51_label2
+label copy recq51 q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
@@ -725,7 +727,7 @@ label val q33 q33_label2
 label val q50 q50_label2
 label val q51 q51_label2
 
-label drop q4_label q5_label q15_label q33_label q50_label q51
+label drop q4_label q5_label q15_label q33_label recq50 recq51
 
 *------------------------------------------------------------------------------*
 
