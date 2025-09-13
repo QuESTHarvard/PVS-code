@@ -235,6 +235,7 @@ drop q4 q5 q7 q8 q15 q33 q50 q51 language
 ren rec* *
 
 *------------------------------------------------------------------------------*
+* Generate vairables
 * Fix interview length variable and other time variables 
 
 gen respondent_id = "US" + string(respondent_serial) 
@@ -268,6 +269,10 @@ recode q18_q19 (998 = 10) if q19 == 4
 
 gen q14 = .a
 gen q32 = .a
+
+* visits_mental
+egen visits_mental = rowtotal(m2_a m2_b m2_c m2_d m2_e m2_f m2_g m2_h m2_i) 
+lab var visits_mental "PVS US only: Number of mental health providers people are seeing"
 
 *------------------------------------------------------------------------------*
 * Recode all Refused and Don't know responses
