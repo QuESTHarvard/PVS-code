@@ -36,9 +36,6 @@ drop status hid_loi q5b_1 q5b_2 q5b_3 q5b_4 q5b_5 q5b_6 q5b_999 ///
 	 ownhome totper adults talkneigh volunteer regvote religion religion_997_other ///
 	 intfreq page1 pagefinal pgender peduc peducation prace peth pemploy pmstatus3 ///
 	 ppolparty ppollean ppolview m1count m1_2count m2count 
-	 
-*drop variables for weights:
-drop weight_main_2 weight_rural_2 weight_under30_2 weight_mo_5
 
 *confirm with Todd if we should keep these/what to do with these:
 drop sampletype rural q53_1 q53_2 q53_3 q53_4 q53_5 q53_5_other q53_999 crisismessage
@@ -273,6 +270,18 @@ gen q32 = .a
 * visits_mental
 egen visits_mental = rowtotal(m2_a m2_b m2_c m2_d m2_e m2_f m2_g m2_h m2_i) 
 lab var visits_mental "PVS US only: Number of mental health providers people are seeing"
+
+*Create a new variable for: How many people used anything (mental health module) to help?-add m6 vars
+egen m6_total = rowtotal(m6_a m6_b m6_c m6_d m6_e m6_f m6_g m6_h m6_i m6_j) 
+lab var m6_total "PVS US only: Number of resources or practices for problems people are using"
+
+*renaming US based weights variables:
+rename weight_main_2 usw_main2
+rename weight_rural_2 usw_rural2
+rename weight_under30_2 usw_under302
+rename weight_mo_5 usw_mo5
+
+lab var usw_main2 "PVS US only: Main weight for N=2500 sample"
 
 *------------------------------------------------------------------------------*
 * Recode all Refused and Don't know responses
@@ -510,6 +519,11 @@ label define labels90 .a "NA" .d "Don't know" .r "Refused",add
 label define labels91 .a "NA" .d "Don't know" .r "Refused",add
 label define labels92 .a "NA" .d "Don't know" .r "Refused",add
 
+
+*recoding mental health:
+recode m4 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
+	   (.a = .a "NA"), /// 
+	   gen(m4_vge) label(m4_label_vge)
 
 *------------------------------------------------------------------------------*
 * Renaming variables 
