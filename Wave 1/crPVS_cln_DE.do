@@ -1,5 +1,5 @@
 * People's Voice Survey data cleaning for Germany - Wave 1
-* Date of last update: July 2025
+* Date of last update: September 2025
 * Last updated by: S Islam
 
 /*
@@ -20,7 +20,7 @@ Missingness codes: .a = NA (skipped), .r = refused, .d = don't know, . = true mi
 
 * Import raw data and append together English and German data
 
-use "$data/Germany/01 raw data/German.dta", clear
+use "$data/Germany/01 raw data/German_8.25.2025.dta", clear
 tempfile ger_labels
 label save using `ger_labels'
 label drop _all
@@ -28,7 +28,7 @@ label drop _all
 tempfile german
 save `german'
 
-use "$data/Germany/01 raw data/English.dta"
+use "$data/Germany/01 raw data/English_8.25.2025.dta"
 tempfile eng_labels
 label save using `eng_labels'
 label drop _all
@@ -50,6 +50,7 @@ gen wave = 1
 *------------------------------------------------------------------------------*
 * Rename variables  
 
+rename id respondent_serial
 rename (Q1 Q3) (q1 q3)
 rename (Q3C Q3D) (q3c_de q3d_de) 
 rename (Q4 Q5 Q6 Q7 Q8) (q4 q5 q6 q7 q8)
@@ -113,15 +114,14 @@ replace q3b = 2 if citizenship > 1
 lab def q3b_label 1 "Single citizenship" 2 "Multiple citizenship"
 lab val q3b q3b_label
 
-drop TRP1 TRP2_1 TRP2_2 TRP2_3 TRP2_4 R1_Q12 R2_Q12 citizenship Q3B_* NUMBEROFVISITS Q20MAXVALUE Q3B Q2
+drop TRP1 TRP2_1 TRP2_2 TRP2_3 TRP2_4 R1_Q12 R2_Q12 citizenship Q3B_* NUMBEROFVISITS Q20MAXVALUE Q3B
 
 *------------------------------------------------------------------------------*
 * Generate recoded variables
 
 * Generate variables
 
-*gen respondent_id = "DE" + string(respondent_serial)
-*drop respondent_serial
+gen respondent_id = "DE" + string(respondent_serial)
 
 gen country = 24
 lab def country 24 "Germany"
@@ -131,8 +131,8 @@ gen mode = 1
 lab def mode 1 "CATI"
 lab val mode mode
 
-lab def lang 24001 "DE: German" 24002 "DE: English"
-lab val language lang
+lab def Language 24001 "DE: German" 24002 "DE: English"
+lab val language Language
 
 gen q2 = .
 replace q2 = 0 if q1 < 18
@@ -277,6 +277,19 @@ forvalues i = 1/9 {
 }
 drop languages_count
 *------------------------------------------------------------------------------*
+* Fix interview length variable and other time variables 
+
+* Converting interview length to minutes
+gen int_length = spent_time/60
+
+*date/time pull from start_datetime
+gen double datetime = clock(start_datetime, "YMDhms")
+format datetime %tc
+gen date = dofc(datetime)
+format date %tdDDmonCCYY
+
+drop datetime start_datetime end_datetime spent_time
+*------------------------------------------------------------------------------*
 * Generate variables 
 
 * q18/q19 mid-point var 
@@ -298,6 +311,9 @@ recode q14_de (6 = .d)
 
 *q15 8 = "I don't know"
 recode q15 (8 = .d)
+
+*q18 -1 = "I don't know"
+recode q18 (-1 = .d)
 
 *q32_de 6 = "I don't know"
 recode q32_de (6 = .d)
@@ -366,6 +382,7 @@ recode q3d_de (-1 = .a) if q3c_de != 2
 
 *q7
 recode q7 (23999 = .a) if q6 != 1
+recode q7 (24004 = .a) if q6 == 1
 
 *q8a
 recode q8a_de (-1 = .a) if q8 != 1
@@ -378,11 +395,12 @@ recode q17 (6 = .a)
 recode q15a_de (-1 = .a) if q15 !=3
 
 *q17b-d
-recode q17b_de (-1 = .a) if q13 !=2 & q1 > 19
-recode q17c_de q17d_de (-1 = .a) if q1 >19
+recode q17b_de q17c_de q17d_de (-1 = .a) if q13 !=2 | q1 > 19
 
 * NA's for q19-21 
 recode q19 (-1 = .a) if q18 != .d | q18 !=.r
+recode q19 (-1 = .r) if q18 == .d | q18 == .r
+recode q18_q19 (-1 = .r)
 
 recode q20 (-1 = .a) if q18 <1 | q18 == .d | q18 == .r | q19 != 2 | q19 != 3 | q19 != 4
 
@@ -392,7 +410,8 @@ recode q21 (-1 = .a) if q20 !=2
 recode q24 q25 (-1 = .a) if q23 == 0  | q23 == .d | q23 == .r
 
 * q27_b q27_c q27j_de
-recode q27_b q27_c (-1 = .a) if q3 !=2 
+recode q27_b q27_c (-1 = .a) if q3 !=2
+recode q27_b q27_c (-1 = .r) if q3 == 2
 recode q27j_de (-1 = .a) if q1 < 16 | q1 > 17
 
 *q28
@@ -407,6 +426,10 @@ recode q30 (-1 = .a) if q29 !=1
 recode q32_de q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (-1 = .a) if q18 == 0 | q18 == .d | q18 == .r | ///
 													 q19 == 1 | q19 == .d | q19 == .r
+recode q36 (-1 = .a) if q35 !=1 
+													 
+recode q38_e (6 = .a)
+recode q38_j (7 = .a)
 
 recode q36 q38_k (. = .a) if q35 !=1	
 
@@ -421,6 +444,12 @@ recode q51 (23999 = .a) if q1 < 19
 
 recode q2 (0 = 0 "Under 18") (1 = 1 "18 to 29") (2 = 2 "30-39") (3 = 3 "40-49") (4 = 4 "50-59") (5 = 5 "60-69") (6 = 6 "70-79") (7 = 7 "80 or older") ///
 (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q2_label)
+
+rename SAMPLE q2_de
+clonevar q2_de_raw = q2_de
+recode q2_de (1=2) (2=1) if language == 24001
+label define q2_de_label 1 "Main" 2 "Boost", replace
+label values q2_de q2_de_label
 
 recode q3 (1 = 0 "Male") (2 = 1 "Female") (3 = 2 "Another gender"), pre(rec) label(gender)
 
@@ -443,7 +472,10 @@ recode q7 (24001 = 24001 "DE: Statutory health insurance – (Gesetzliche Kranke
 recode q8 (24001 = 24001 "DE: University or university of applied sciences degree") (24002 = 24002 "DE: Mastercraftsman (meister), technician or equivalent technical college qualification") (24003 = 24003 "DE: Graduation from a school for educators") ///
 (24004 = 24004 "DE: Training at a school/academy for health and social professions") (24005 = 24005 "DE: Preparatory service for the intermediate civil service in public administration") (24006 = 24006 "DE: Apprenticeship or vocational training in the dual system completed") ///
 (24007 = 24007 "DE: Apprenticeship/vocational internship, vocational preparation year") (24008 = 24008 "DE: A-levels (abitur)") ///
-(24009 = 24009 "DE: Advanced technical college entrance qualification (fachhochschulreife)") (24010 = 24010 "DE: Secondary school leaving completed (mittlerer schulabschluss)") (24011 = 24011 "DE: Secondary school leaving completed (hauptschulabschluss)") (24012 = 24012 "DE: None of the mentioned school certificates, I am still a pupil)") (24013 = 24013 "DE: Never attended school or only kindergarten)") (24014 = 24014 "DE: Other (please specify)"), pre(rec) label(q8_label)
+(24009 = 24009 "DE: Advanced technical college entrance qualification (fachhochschulreife)") (24010 = 24010 "DE: Secondary school leaving completed (mittlerer schulabschluss)") (24011 = 24011 "DE: Secondary school leaving completed (hauptschulabschluss)") (24012 = 24012 "DE: None of the mentioned school certificates, I am still a pupil") (24013 = 24013 "DE: Never attended school or only kindergarten") (24014 = 24014 "DE: Other (please specify)"), pre(rec) label(q8_label)
+
+recode q8a_de (1 = 1 "Bachelor's degree") (2 = 2 "Master's degree") (3 = 3 "Diplom, Magister, state examination or teacher training examination") ///
+(4 = 4 "Doctorate") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q8a_de_label)
 
 recode q9 q10 (5 = 0 "Poor") (4 = 1 "Fair") (3 = 2 "Good") (2 = 3 "Very good") (1 = 4 "Excellent") ///
 (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
@@ -469,7 +501,7 @@ lab val q15a_de q15a_de_label
 
 recode q16 (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting time") (4 = 4 "Good healthcare provider skills") ///
 (5 = 5 "Staff shows respect") (6 = 6 "Medicines and equipment are available") (7 = 7 "Only facility available") (8 = 8 "Covered by insurance") ///
-(9 = 17 "DE: My parents chosse this doctor's office or health care facility for me") (10 = 18 "DE: This doctor's office or health care facility is child-friendly/youth-friendly") (11 = 9 "Other, specify") ///
+(9 = 17 "DE: My parents chose this doctor's office or health care facility for me") (10 = 18 "DE: This doctor's office or health care facility is child-friendly/youth-friendly") (11 = 9 "Other, specify") ///
 (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
 pre(rec) label(q16_label)
 
@@ -531,7 +563,6 @@ recode q37 (1 = 1 "Less than 15 minutes") (2 = 2 "15 minutes to less than 30 min
 (7 = 7 "More than 4 hours (specify)") (.d = .d "Don't know") (.r = .r "Refused") (.a = .a "NA"), pre(rec) label(q37_label)
 
 recode q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k (5 = 0 "Poor") (4 = 1 "Fair") (3 = 2 "Good") (2 = 3 "Very good") (1 = 4 "Excellent") ///
-(6 = 6 "DE: I have not had prior visits or tests at this doctor's office or healthcare facility") (7 = 7 "DE: The clinic had no other staff") ///
 (.d = .d "Don't know") (.a = .a "NA") (.r = .r "Refused"), pre(rec) label(q38_label)
 
 recode q39 (1 = 0 "0") (2 = 1 "1") (3 = 2 "2") (4 = 3 "3") (5 = 4 "4") (6 = 5 "5") (7 = 6 "6") (8 = 7 "7") (9 = 8 "8") (10 = 9 "9") (11 = 10 "10") ///
@@ -580,7 +611,7 @@ recode q17 q25 q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q
 (5 = 0 "Poor") (4 = 1 "Fair") (3 = 2 "Good") (2 = 3 "Very good") (1 = 4 "Excellent") ///
 (.d = .d "Don't know") (.a = .a "NA") (.r = .r "Refused"), pre(rec) label(rating)
 	
-drop q2 q3 q3c_de q3d_de q4 q5 q6 q7 q8 q9 q10 q12_a q12_b q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_de q27j_de q27k_de ///
+drop q2 q2_de_raw q3 q3c_de q3d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q12_a q12_b q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_de q27j_de q27k_de ///
 q28_a q28_b q28c_de q28d_de q30 q34 q35 q36 q37 q39 q41_a q41_b q41_c q41d_de q45 q46 q51 q11 q11_de q13 q20 q26 q29 q31a q31b q17 q17b_de q17c_de q17d_de q25 ///
 q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49 language_German language_Turkish language_Polish language_Arabic language_Italian language_French language_Ukrainian language_Russian language_Other
 
@@ -589,12 +620,10 @@ ren rec* *
 *******************************************************************************
 
 * all vars missing labels from values:
-label define gender .a "NA" .d "Don't know" .r "Refused",add
-label define gender2 .a "NA" .d "Don't know" .r "Refused",add		
+label define gender .a "NA" .d "Don't know" .r "Refused",add		
 label define q6_label .a "NA" .d "Don't know" .r "Refused",add	
 label define q8_label .a "NA" .d "Don't know" .r "Refused",add	
 label define q12_label .a "NA" .d "Don't know" .r "Refused",add
-label define q13a_ec_label .a "NA" .d "Don't know" .r "Refused",add
 
 * for appending process:
 label copy q4_label q4_label2
@@ -613,10 +642,113 @@ label val q51 q51_label2
 
 label drop q4_label q5_label q15_label q33_label q50_label q51_label
 *------------------------------------------------------------------------------*
+* Create Sampling Weights
 
+*********************************************************Dataset Sample Size:
+tab country // N=2698 completed surveys
+
+*********************************************************Create demographic variables that align with the census variables:
+** Gender
+gen gender = 1 if q3==0
+replace gender = 2 if q3==1
+label define gender_lbl 1 "Male" 2 "Female"
+label values gender gender_lbl
+tab gender, m // 0 missing
+
+
+** Age (4 levels)
+* Based on 2022 Germany Census:
+* Under 18 years = under 18 (0)
+* 18 - 29 = 18 to 29 (1)
+* 30 - 49 = 30 - 39 (2), 40 - 49 (3)
+* 50 or more = 50 - 59 (4), 60 - 69 (5), 70-79 (6), 80 or older (7)
+gen age = 1 if q2==0
+replace age = 2 if q2==1
+replace age = 3 if q2==2|q2==3
+replace age = 4 if q2==4| q2==5 | q2==6 | q2==7
+label define age 1 "Under 18" 2 "18-29" 3 "30 - 49" 4 "50+"
+label values age age
+tab age, m // 0 missing
+
+/*
+** Age (8 levels)
+* Based on 2022 Germany Census:
+* Under 18 years = under 18 (0)
+* 18 - 29 = 18 to 29 (1)
+* 30 - 39 = 30 - 39 (2)
+* 40 - 49 = 40 - 49 (3)
+* 50 - 59 = 50 - 59 (4)
+* 60 - 69 = 60 - 69 (5)
+* 70 - 79 = 70 - 79 (6)
+* 80+ = 80 or older (7)
+gen age = 1 if q2==0
+replace age = 2 if q2==1
+replace age = 3 if q2==2
+replace age = 4 if q2==3
+replace age = 5 if q2==4
+replace age = 6 if q2==5
+replace age = 7 if q2==6
+replace age = 8 if q2==7
+label define age 1 "Under 18" 2 "18-29" 3 "30 - 39" 4 "40-49" 5 "50-59" 6 "60-69" 7 "70-79" 8 "80+"
+label values age age
+tab age, m // 0 missing
+*/
+
+** Region (16 levels)
+* Based on 2022 Germany Census:
+gen Region = 1 if q4==24015
+replace Region = 2 if q4==24006
+replace Region = 3 if q4==24008
+replace Region = 4 if q4==24005
+replace Region = 5 if q4==24010
+replace Region = 6 if q4==24007
+replace Region = 7 if q4==24011
+replace Region = 8 if q4==24001
+replace Region = 9 if q4==24002
+replace Region = 10 if q4==24012
+replace Region = 11 if q4==24003
+replace Region = 12 if q4==24004
+replace Region = 13 if q4==24009
+replace Region = 14 if q4==24013
+replace Region = 15 if q4==24014
+replace Region = 16 if q4==24016
+label define Region 1 "Schleswig-Holstein" 2 "Hamburg" 3 "Niedersachsen" 4 "Bremen" 5 "Nordrhein-Westfalen" 6 "Hessen" 7 "Rheinland-Pfalz" 8 "Baden-Württemberg" 9 "Bayern" 10 "Saarland" 11 "Berlin" 12 "Brandenburg" 13 "Mecklenburg-Vorpommern" 14 "Sachsen" 15 "Sachsen-Anhalt" 16 "Thüringen"
+label values Region Region
+tab Region, m // 1 Refused
+
+
+** Education (3 levels)
+* Based on 2022 Germany Census:
+* ISCED 1 (24012, 24013)
+* ISCED 2 + 3 (24008, 24009, 24010, 24011)
+* ISCED 4 + (24001, 24002, 24003, 24004, 24005, 24006, 24007)
+
+gen education = .
+replace education = 1 if q8==24012 | q8==24013
+replace education = 2 if q8==24008| q8==24009 | q8==24010 | q8==24011
+replace education = 3 if q8==24001| q8==24002| q8==24003| q8==24004 |q8==24005| q8==24006| q8==24007
+label define education 1 "Primary or less" 2 "Secondary" 3 "Tertiary"
+label values education education 
+tab education, m // 0 missing
+
+
+*********************************************************After testing, we choose age (4 levels),gender,region,education (3 levels):
+ipfweight age gender Region education, gen(wgt) ///
+			val(16.7 12.9 25.2 45.1 /// age (4 levels)
+			 49.2 50.8 /// gender
+			 3.5 2.2 9.6 0.8 21.6 7.5 4.9 13.4 15.8 1.2 4.3 3.1 1.9 4.9 2.6 2.6 /// region
+			 6.8 47.9 45.5) /// education
+			maxit(50) // max deviation =  percentage points
+		
+
+
+** Just try to keep data set clean, drop all the variables created above, except wgt
+drop gender age Region education
+rename wgt weight
+*------------------------------------------------------------------------------*
 *Reorder variables
 order q*, sequential
-order id start_datetime end_datetime spent_time mode country wave language
+order respondent_serial respondent_id date int_length mode country wave language weight
 
 *------------------------------------------------------------------------------*
 
@@ -686,12 +818,16 @@ order respondent_serial respondent_id mode country language date time int_length
 *------------------------------------------------------------------------------*
 * Label variables - double check matches the instrument					
 lab var country "Country"
-lab var id "Respondent Serial #"
+lab var respondent_serial "Respondent Serial #"
+lab var respondent_id "Respondent ID"
 lab var wave "Wave"
 lab var language "Language"
+lab var date "Date of the interview"
+lab var int_length "Interview Length (minutes)"
 lab var mode "mode"
 lab var q1 "Q1. Respondent's еxact age"
 lab var q2 "Q2. Respondent's age group"
+lab var q2_de "Q2. DE only: Sample"
 lab var q3 "Q3. Respondent's gender"
 lab var q3a "Q3a. Does respondent have German citizenship?"
 lab var q3b "Q3b. Does respondent have single or multiple citizenship?"
