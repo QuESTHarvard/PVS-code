@@ -699,7 +699,8 @@ lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
-lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities" 16 "EC: Ease of getting appointment", modify
+lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities" 16 "EC: Ease of getting appointment" 17 "DE: My parents chose this doctor's office or health care facility for me" 18 "DE: This doctor's office or health care facility is child-friendly/youth-friendly", modify
+lab def labels37 23 "DE: Difficulties with the language spoken by the healthcare provider", modify
 lab def q15_label2 5016 "Mobile clinic", modify
 
 

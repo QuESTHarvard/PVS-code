@@ -128,7 +128,7 @@ lab def country 24 "Germany"
 lab values country country
 
 gen mode = 1
-lab def mode 1 "CATI"
+lab def mode 1 "CAWI"
 lab val mode mode
 
 lab def Language 24001 "DE: German" 24002 "DE: English"
