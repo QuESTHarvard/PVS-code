@@ -698,9 +698,6 @@ recode q36 q38_k (. = .a) if q35 !=1
 * Recode values and value labels:
 * Recode values and value labels so that their values and direction make sense:
 
-lab def lang 6001 "Chichewa" 6002 "English" 6003 "Tumbuka"
-lab val language lang
-
 lab def q7_label .a "NA", modify
 
 lab def q21_label .a "NA"
@@ -708,6 +705,10 @@ lab val q21 q21_label
 
 lab def q39_label .a "NA"
 lab val q39 q39_label
+
+label drop language
+lab def language 6001 "Chichewa" 6002 "English" 6003 "Tumbuka"
+lab val language language 
 
 *------------------------------------------------------------------------------*
 * Renaming variables 

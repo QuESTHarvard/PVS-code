@@ -556,8 +556,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_us_wave2.dta"
 qui do `label16'
 
 tempfile label17
-label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label17'
-label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language using `label17'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language
 
 append using "$data_mc/02 recoded data/input data files/pvs_mw.dta"
 
@@ -716,6 +716,12 @@ recode country (6 = 1 "Malawi") (22 = 2 "Somaliland") (3 = 3 "Ethiopia") (5 = 4 
 			   (12 = 23 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
+lab def labels26 19 "US: Patient loyalty" 20 "US: Referral/Specialty care",modify
+lab def q24_label 5 "Prescription filling/reviewing results" 6 "Routine follow-up care",modify
+lab def main_reason 12 "US: Routine follow-up care" 13 "US: Prescription filling/reviewing results", modify
+lab def labels12 3 "Multiracial/indegenous",modify
+lab def labels72 .d "Don't know",modify
+
 *-------------------------------------------------------------------------------*	
 *** Code for survey set: For accurate SEs when using mixed CATI/CAWI and F2F surveys ***
 
@@ -735,6 +741,12 @@ label variable psu_id_for_svy_cmds "PSU ID for every respondent (100 prefix for 
 	* svyset psu_id_for_svy_cmds [pw=weight], strata(mode)
 	* or equivalently
 	* svyset psu_id_for_svy_cmds , strata(mode) weight(weight)
+*-------------------------------------------------------------------------------*	
+
+* Trim extreme values for for country=12 (in wave 2)
+replace q18 = . if q18 > 150 & q18 < . & country == 12
+replace q23 = . if q23 > 80 & q23 < . & country == 12
+
 *-------------------------------------------------------------------------------*	
 
 * Keep variables relevant for data sharing and analysis  
