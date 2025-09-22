@@ -455,6 +455,16 @@ recode q40_a q40_b q40_c q40_d  (5 = .d)
 recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse"), gen(recq45)
 drop q45
 
+recode q51 (12001 = 12101 "US: Less than \$15,000") ///
+		   (12002 = 12102 "US: \$15,000 to less than \$25,000") ///
+		   (12003 = 12103 "US: \$25,000 to less than \$40,000") ///
+		   (12004 = 12104 "US: \$40,000 to less than \$65,000") ///
+		   (12005 = 12105 "US: \$65,000 to less than \$100,000") ///
+		   (12006 = 12106 "US: \$100,000 to less than \$150,000") ///
+		   (12007 = 12107 "US: More than \$150,000"), gen(recq51)
+drop q51
+rename recq51 q51
+ 
 * Add value labels 
 label define q7_label .a "NA" .d "Don't know" .r "Refused",add	
 label define labels14 .a "NA" .d "Don't know" .r "Refused",add	
@@ -502,7 +512,7 @@ label define labels58 .a "NA" .d "Don't know" .r "Refused",add
 label define recq45 .a "NA" .d "Don't know" .r "Refused",add
 label define labels60 .a "NA" .d "Don't know" .r "Refused",add
 label define labels61 .a "NA" .d "Don't know" .r "Refused",add
-label define q51_label .a "NA" .d "Don't know" .r "Refused",add
+label define recq51 .a "NA" .d "Don't know" .r "Refused",add
 label define labels66 .a "NA" .d "Don't know" .r "Refused",add
 label define labels67 .a "NA" .d "Don't know" .r "Refused",add
 label define labels76 .a "NA" .d "Don't know" .r "Refused",add
@@ -537,7 +547,7 @@ label copy q5_label q5_label2
 label copy q15_label q15_label2
 label copy recq33 q33_label2
 label copy q50_label q50_label2
-label copy q51_label q51_label2
+label copy recq51 q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2

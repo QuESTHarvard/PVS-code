@@ -868,23 +868,32 @@ replace minority = 0 if q50a_np ==2 | q50a_np == 4 | q50a_np == 5 | q50a_np == 6
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
 
 recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 5001 5101 5102 7031 7032 ///
-		   9015 9016 9017 9118 9119 9120 10049 10050 10051 11001 11002 12001 ///
-		   12002 13001 14001 14002 15001 15002 15003 15004 16001 16002 16003 17001 ///
+		   9015 9016 9017 9118 9119 9120 10049 10050 10051 11001 11002 ///
+		   13001 14001 14002 15001 15002 15003 15004 16001 16002 16003 17001 ///
 		   17002 18062 19068 20075 20076 20077 21001 21002 22001 2001 2002 7006 10011 10012 ///
 		   23001 6001 24001 24002 24003 = 0 "Lowest income") /// 
 		   (1003 2042 2043 2044 3010 3113 3114 4027 4130 4131 4132 5103 5104 5105 7033 9018 9019 9121 9122 ////
-		   10052 10053 10054 11003 11004 12003 13002 14003 15005 15006 ///
+		   10052 10053 10054 11003 11004 13002 14003 15005 15006 ///
 		   16004 16005 17003 17004 4026 18063 18064 18065 18066 18067 18082 18083 ///
 		   18084 19069 19070 19071 19072 19073 20078 20079 21003 21004 22002 2003 ///
 		   7007 10013 10014 23002 24004 = 1 "Middle income") /// 
 		   (1004 1005 2045 2048 3011 3012 3013 3014 3115 3116 3117 4028 4029 4030 4133 ///
 		   4134 4135 5002 5003 5004 5005 5006 5007 5106 5107 5108 5109 5110 7034 7035 7036 7037 7038 9020 9021 ///
-		   9022 9023 9123 9124 9125 9126 10055 10061 11005 11006 11007 12004 ///
-		   12005 13003 13004 13005 14004 14005 14006 14007 15007 15008 16005 16006 ///
+		   9022 9023 9123 9124 9125 9126 10055 10061 11005 11006 11007 ///
+		   13003 13004 13005 14004 14005 14006 14007 15007 15008 16005 16006 ///
 		   16007 17005 17006 18085 19074 20080 20081 21005 21006 ///
 		   22003 22004 22005 22006 22007 2004 2005 7008 7009 7010 10015 23003 23004 23005 23006 6003 6004 6005 24005 24006 24007 24008 24009 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
-		  
+	
+* United States income recoding:
+replace income = 0 if q51 == 12001 | 12002 & country ==12  & wave ==1
+replace income = 1 if q51 == 12003 & country ==12 & wave ==1
+replace income = 2 if q51 == 12004 | q51 == 12005 & country ==12 & wave ==1
+replace income = 0 if q51 == 12101 | q51 == 12102 | q51 == 12103 & country == 12 & wave ==2
+replace income = 1 if q51 == 12104 & country ==12 & wave ==2
+replace income = 2 if q51 == 12105 | q51 == 12106 | q51 == 12107 & country ==12 & wave ==2
+	
+	
 * Colombia q23 values seem implausible
 recode visits_tele (80 = .) if country == 2 
 * Ethiopia: 92 visits for q28 
@@ -992,6 +1001,84 @@ forvalues i = 1/24 {
 }
 
 drop cc_8
+
+
+*********************************9-20 SS: adding back variables for PVS dashboard:
+gen health = q9 
+gen health_mental = q10 
+gen last_qual = q38_a 
+gen last_skills = q38_b 
+gen last_supplies = q38_c 
+gen last_respect = q38_d 
+gen last_explain = q38_f 
+gen last_decisions = q38_g
+gen last_visit_rate = q38_h 
+gen last_wait_rate = q38_i 
+*courtesy
+gen last_sched_rate = q38_k 
+
+lab val health health_mental last_qual last_skills last_supplies last_respect /// 
+last_explain last_decisions last_visit_rate last_wait_rate last_sched_rate vignette_poor /// 
+vignette_good exc_poor
+	   
+gen usual_quality = q17
+recode usual_quality (5 = .a)
+gen last_know = q38_e
+gen last_courtesy = q38_j
+lab val usual_quality exc_pr_hlthcare
+lab val last_know exc_pr_visits
+lab val last_courtesy exc_poor_staff
+
+*phc women, child, chronic, mental, qual_srh, care_infection, care_nonurgent, conf_sick, conf_afford, conf_getafford,qual_public, qual_private, covid_manage
+gen phc_women = q40_a
+recode phc_women (. = 0) if q40a_so == 0 & country ==22
+recode phc_women (. = 1) if q40a_so == 1 & country ==22
+recode phc_women (. = 2) if q40a_so == 2 & country ==22
+recode phc_women (. = 3) if q40a_so == 3 & country ==22
+recode phc_women (. = 4) if q40a_so == 4 & country ==22
+recode phc_women (. = 5) if q40a_so == 5 & country ==22
+recode phc_women(. = .r) if q40a_so == .r & country ==22
+
+gen phc_child = q40_b
+gen phc_chronic = q40_c
+gen phc_mental = q40_d
+
+*Recoding "Iam unable to judge = .d"
+recode phc_women phc_child phc_chronic phc_mental (5 = .d) if country == 21 | country == 22
+*"6 = "I am unable to judge" response option in Nepal-only being recoded to missing
+recode phc_women phc_child phc_chronic phc_mental (6 = .d) if country ==23
+gen qual_srh = q40_e_ng
+recode qual_srh (. = .a) if country !=20
+gen care_infections = q40b_so 
+recode care_infections (. = .a) if country !=22
+*replace phc_mental = q40e_so if country ==22
+gen care_nonurgent = q40f_so 
+recode care_nonurgent (. = .a) if country !=22
+lab val phc_women phc_child phc_chronic phc_mental qual_srh care_infections ///
+		care_nonurgent exc_poor_judge
+	
+gen qual_public = q42
+gen qual_private = q43 
+gen covid_manage = q47
+lab val qual_public qual_private covid_manage exc_poor
+
+**** All Very Confident to Not at all Confident scales ****
+* conf_sick conf_afford conf_opinion
+recode q41_a q41_b ///
+	   (3 2 = 1 "Somewhat confident/Very confident") ///
+	   (0 1 = 0 "Not too confident/Not at all confident") /// 
+	   (.r = .r Refused) (.a = .a na), /// 
+	   pre(der) label(vc_nc_der)
+gen conf_opinion = q41_c
+lab val conf_opinion vc_nc
+ren (derq41_a derq41_b) (conf_sick conf_afford)
+gen conf_getafford = .
+replace conf_getafford=1 if conf_sick==1 & conf_afford==1
+replace conf_getafford=0 if conf_sick==0 | conf_afford==0
+replace conf_getafford=.r if conf_sick==.r | conf_afford==.r
+lab val conf_getafford vc_nc_der
+
+
 *****************************
 
 **** Order Variables ****
@@ -1165,8 +1252,14 @@ save "$data/Laos/02 recoded data/pvs_laos_recoded", replace
 restore
 
 preserve
-keep if country == 12
-save "$data/United States/02 recoded data/pvs_us_recoded", replace
+keep if country == 12 & wave ==1
+save "$data/United States/02 recoded data/pvs_us_wave1_recoded", replace
+restore
+
+*wave 2 specifically 
+preserve
+keep if country == 12 & wave ==2
+save "$data/United States wave 2/02 recoded data/pvs_us_wave2_recoded", replace
 restore
 
 *Mexico
@@ -1228,6 +1321,7 @@ preserve
 keep if country == 22
 save "$data/Somaliland/02 recoded data/pvs_so_recoded", replace
 restore
+
 
 
 drop if country == 19 // remove once we are able to use Romania data
