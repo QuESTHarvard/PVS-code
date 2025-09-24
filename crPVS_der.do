@@ -79,14 +79,16 @@ lab def pa 0 "Not activated" ///
 			.r "Refused", replace
 lab val activation pa
 
-* usual_reason - confirm placements of 11-16
+* usual_reason 
 recode q16 (2 16 = 1 "Convenience (short distance)") /// 
 			(1 8 = 2 "Cost (low cost, covered by insurance)") ///
 			(4 = 3 "Technical quality (provider skills)") ///
 			(3 5 10  = 4 "Interpersonal quality (short waiting time, respect)") ///
 			(6 = 5 "Service readiness (medicines and equipment available)") ///
 			(7 = 6 "Only facility available") ///
-			(.r 9 11 12 13 14 15 17 18 19 20 997 = .r "Other or Refused") ///
+			(11 13 17 = 7 "Recommended by family or friends") ///
+			(12 20 = 8 "Referral from a provider") ///
+			(.r 9 14 15 18 19 997 = .r "Other or Refused") ///
 			(.a = .a "NA") , gen(usual_reason)
 
 * visits
