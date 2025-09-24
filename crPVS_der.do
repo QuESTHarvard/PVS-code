@@ -269,114 +269,106 @@ recode q9 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r 
 	   (.a = .a "NA"), /// 
 	   gen(health_vge) label(health2)
 	   
-replace	health_vge = 0 if q9 == 0 | q9 == 1 & country == 23
-replace	health_vge = 1 if q9 == 2 | q9 == 3 | q9 == 4 & country == 23	   
+replace	health_vge = 0 if q9 == 0 | q9 == 1 | q9 == 2 & country == 23
+replace	health_vge = 1 if q9 == 3 | q9 == 4 & country == 23	   
 
 recode q10 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(health_mental_vge) label(health_mental2)
 	   
-replace	health_mental_vge = 0 if q10 == 0 | q10 == 1 & country == 23
-replace	health_mental_vge = 1 if q10 == 2 | q10 == 3 | q10 == 4 & country == 23	
+replace	health_mental_vge = 0 if q10 == 0 | q10 == 1 | q10 == 2 & country == 23
+replace	health_mental_vge = 1 if q10 == 3 | q10 == 4 & country == 23	
 	   
 recode q17 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (5 .a = .a "NA"), /// 
 	   gen(usual_quality_vge) label(exc_pr_2)	   
 
-replace	usual_quality_vge = 0 if q17 == 0 | q17 == 1 & country == 23
-replace	usual_quality_vge = 1 if q17 == 2 | q17 == 3 | q17 == 4 & country == 23	
+replace	usual_quality_vge = 0 if q17 == 0 | q17 == 1 | q17 == 2 & country == 23
+replace	usual_quality_vge = 1 if q17 == 3 | q17 == 4 & country == 23	
 	   
 recode q38_a (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_qual_vge) label(exc_pr_2)
 
-replace	last_qual_vge = 0 if q38_a == 0 | q38_a == 1 & country == 23
-replace	last_qual_vge = 1 if q38_a == 2 | q38_a == 3 | q38_a == 4 & country == 23		   
+replace	last_qual_vge = 0 if q38_a == 0 | q38_a == 1 | q38_a == 2 & country == 23
+replace	last_qual_vge = 1 if q38_a == 3 | q38_a == 4 & country == 23		   
 
 recode q38_b (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_skills_vge) label(exc_pr_2)
 
-replace	last_skills_vge = 0 if q38_b == 0 | q38_b == 1 & country == 23
-replace	last_skills_vge = 1 if q38_b == 2 | q38_b == 3 | q38_b == 4 & country == 23	   
+replace	last_skills_vge = 0 if q38_b == 0 | q38_b == 1 | q38_b == 2 & country == 23
+replace	last_skills_vge = 1 if q38_b == 3 | q38_b == 4 & country == 23	   
 	   
 recode q38_c (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_supplies_vge) label(exc_pr_2)
  
-replace	last_supplies_vge = 0 if q38_c == 0 | q38_c == 1 & country == 23
-replace	last_supplies_vge = 1 if q38_c == 2 | q38_c == 3 | q38_c == 4 & country == 23	   
+replace	last_supplies_vge = 0 if q38_c == 0 | q38_c == 1 | q38_c == 2 & country == 23
+replace	last_supplies_vge = 1 if q38_c == 3 | q38_c == 4 & country == 23	   
  
 recode q38_d (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_respect_vge) label(exc_pr_2)
 
-replace	last_respect_vge = 0 if q38_d == 0 | q38_d == 1 & country == 23
-replace	last_respect_vge = 1 if q38_d == 2 | q38_d == 3 | q38_d == 4 & country == 23	   	   
+replace	last_respect_vge = 0 if q38_d == 0 | q38_d == 1 | q38_d == 2 & country == 23
+replace	last_respect_vge = 1 if q38_d == 3 | q38_d == 4 & country == 23	   	   
 	   
 recode q38_e (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(last_know_vge) label(exc_pr_2)	   
 
-replace	last_know_vge = 0 if q38_e == 0 | q38_e == 1 & country == 23
-replace	last_know_vge = 1 if q38_e == 2 | q38_e == 3 | q38_e == 4 & country == 23	   	   	   
+replace	last_know_vge = 0 if q38_e == 0 | q38_e == 1 | q38_e == 2 & country == 23
+replace	last_know_vge = 1 if q38_e == 3 | q38_e == 4 & country == 23	   	   	   
 	   
 recode q38_f (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_explain_vge) label(exc_pr_2)
 
-replace	last_explain_vge = 0 if q38_f == 0 | q38_f == 1 & country == 23
-replace	last_explain_vge = 1 if q38_f == 2 | q38_f == 3 | q38_f == 4 & country == 23		   
+replace	last_explain_vge = 0 if q38_f == 0 | q38_f == 1 | q38_f == 2 & country == 23
+replace	last_explain_vge = 1 if q38_f == 3 | q38_f == 4 & country == 23		   
 	   
 recode q38_g (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_decisions_vge) label(exc_pr_2)	 
 
-replace	last_decisions_vge = 0 if q38_g == 0 | q38_g == 1 & country == 23
-replace	last_decisions_vge = 1 if q38_g == 2 | q38_g == 3 | q38_g == 4 & country == 23		   
+replace	last_decisions_vge = 0 if q38_g == 0 | q38_g == 1 | q38_g == 2 & country == 23
+replace	last_decisions_vge = 1 if q38_g == 3 | q38_g == 4 & country == 23		   
 	   
 recode q38_h (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_visit_rate_vge) label(exc_pr_2)	  
 
-replace	last_visit_rate_vge = 0 if q38_h == 0 | q38_h == 1 & country == 23
-replace	last_visit_rate_vge = 1 if q38_h == 2 | q38_h == 3 | q38_h == 4 & country == 23		   
+replace	last_visit_rate_vge = 0 if q38_h == 0 | q38_h == 1 | q38_h == 2 & country == 23
+replace	last_visit_rate_vge = 1 if q38_h == 3 | q38_h == 4 & country == 23		   
 	   
 recode q38_i (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_wait_rate_vge) label(exc_pr_2)	  
 
-replace	last_wait_rate_vge = 0 if q38_i == 0 | q38_i == 1 & country == 23
-replace	last_wait_rate_vge = 1 if q38_i == 2 | q38_i == 3 | q38_i == 4 & country == 23		   
+replace	last_wait_rate_vge = 0 if q38_i == 0 | q38_i == 1 | q38_i == 2 & country == 23
+replace	last_wait_rate_vge = 1 if q38_i == 3 | q38_i == 4 & country == 23		   
 	   
 recode q38_j (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_courtesy_vge) label(exc_pr_2)
 	   
-replace	last_courtesy_vge = 0 if q38_j == 0 | q38_j == 1 & country == 23
-replace	last_courtesy_vge = 1 if q38_j == 2 | q38_j == 3 | q38_j == 4 & country == 23		   
+replace	last_courtesy_vge = 0 if q38_j == 0 | q38_j == 1 | q38_j == 2 & country == 23
+replace	last_courtesy_vge = 1 if q38_j == 3 | q38_j == 4 & country == 23		   
 	   
 recode q38_k (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
 	   gen(last_sched_rate_vge) label(exc_pr_2)	 
 	   
-replace	last_sched_rate_vge = 0 if q38_k == 0 | q38_k == 1 & country == 23
-replace	last_sched_rate_vge = 1 if q38_k == 2 | q38_k == 3 | q38_k == 4 & country == 23		   
+replace	last_sched_rate_vge = 0 if q38_k == 0 | q38_k == 1 | q38_k == 2 & country == 23
+replace	last_sched_rate_vge = 1 if q38_k == 3 | q38_k == 4 & country == 23		   
 
 recode q40_a (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_women_vge) label(exc_pr_judge_2)
 	   
-recode phc_women_vge (. = 0) if q40a_so == 0 & country ==22
-recode phc_women_vge (. = 1) if q40a_so == 1 & country ==22
-recode phc_women_vge (. = 2) if q40a_so == 2 & country ==22
-recode phc_women_vge (. = 3) if q40a_so == 3 & country ==22
-recode phc_women_vge (. = 4) if q40a_so == 4 & country ==22
-recode phc_women_vge (. = 5) if q40a_so == 5 & country ==22
-recode phc_women_vge (. = .r) if q40a_so == .r & country ==22
-
-replace	phc_women_vge = 0 if q40_a == 0 | q40_a == 1 & country == 23
-replace	phc_women_vge = 1 if q40_a == 2 | q40_a == 3 | q40_a == 4 & country == 23	
+replace	phc_women_vge = 0 if q40_a == 0 | q40_a == 1 | q40_a == 2  & country == 23
+replace	phc_women_vge = 1 if q40_a == 3 | q40_a == 4 & country == 23	
 
 recode q40_b (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
@@ -384,22 +376,22 @@ recode q40_b (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = 
 	   
 recode phc_child_vge (. = .a) if country ==22
 
-replace	phc_child_vge = 0 if q40_b == 0 | q40_b == 1 & country == 23
-replace	phc_child_vge = 1 if q40_b == 2 | q40_b == 3 | q40_b == 4 & country == 23		
+replace	phc_child_vge = 0 if q40_b == 0 | q40_b == 1 | q40_b == 2 & country == 23
+replace	phc_child_vge = 1 if q40_b == 3 | q40_b == 4 & country == 23		
 
 recode q40_c (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_chronic_vge) label(exc_pr_judge_2)	
 
-replace	phc_chronic_vge = 0 if q40_c == 0 | q40_c == 1 & country == 23
-replace	phc_chronic_vge = 1 if q40_c == 2 | q40_c == 3 | q40_c == 4 & country == 23		   
+replace	phc_chronic_vge = 0 if q40_c == 0 | q40_c == 1 | q40_c == 2 & country == 23
+replace	phc_chronic_vge = 1 if q40_c == 3 | q40_c == 4 & country == 23		   
 	   
 recode q40_d (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.d = .d "I am unable to judge") (.r = .r "Refused"), /// 
 	   gen(phc_mental_vge) label(exc_pr_judge_2)	
 	   
-replace	phc_mental_vge = 0 if q40_d == 0 | q40_d == 1 & country == 23
-replace	phc_mental_vge = 1 if q40_d == 2 | q40_d == 3 | q40_d == 4 & country == 23		   
+replace	phc_mental_vge = 0 if q40_d == 0 | q40_d == 1 | q40_d == 2 & country == 23
+replace	phc_mental_vge = 1 if q40_d == 3 | q40_d == 4 & country == 23		   
 
 *Recoding "I am unable to judge = .d"
 recode phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge (5 = .d) if country == 21 | country == 22
@@ -443,8 +435,8 @@ recode q47 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r
 	   (.a = .a "NA"), /// 
 	   gen(covid_manage_vge) label(exc_pr_2)
 
-replace	covid_manage_vge = 0 if q47 == 0 | q47 == 1 & country == 23
-replace	covid_manage_vge = 1 if q47 == 2 | q47 == 3 | q47 == 4 & country == 23		   
+replace	covid_manage_vge = 0 if q47 == 0 | q47 == 1 | q47 == 2 & country == 23
+replace	covid_manage_vge = 1 if q47 == 3 | q47 == 4 & country == 23		   
 	   
 gen vignette_poor = q48
 gen vignette_good = q49	   	   
@@ -504,7 +496,7 @@ lab val insured yes_no
 * insur_type 
 
 recode q7 (1002 1003 2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 11002 12002 12003 ///
-		   12005 14002 16001 4023 4024 4025 4026 17002 2030 ///
+		   12005 12006 14002 16001 4023 4024 4025 4026 17002 2030 ///
 		   18029 19031 20034 20037 21001 21002 21003 21005 22002 10005 10019 2001 23002 23003 23004 = 0 "Public") ///
 		  (1004 1005 2028 2010 2011 3002 5004 5005 5006 3007 2028 7013 7015 10021 11001 12001 ///
 		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 ///
@@ -602,7 +594,7 @@ recode usual_type_own (.a = 1) if q14_cn == 2 | q14_so == 2
 recode usual_type_own (.a = 0) if (q14_q15a_la == 1 | q14_q15a_la == 2 |  ///
 								  q14_q15b_la == 1 | q14_q15b_la == 2 | ///
 								  q14_it == 1 | inlist(q14_mx,3,4) | ///
-								  inlist(q15,12003,12004) | q14_kr == 1 | ///
+								  q14_kr == 1 | ///
 								  q14_ar == 1 | q14a_gb == 1 | q14b_gb == 1 | ///
 								  q14_gr == 1) | inlist(q14_np,1,6)
 								  
@@ -610,20 +602,19 @@ recode usual_type_own (.a = 0) if (q14_q15a_la == 1 | q14_q15a_la == 2 |  ///
 recode usual_type_own (.a = 1) if inlist(q14_q15a_la,3,4,6) | ///
 								  inlist(q14_q15b_la,3,4,6) | ///
 								  q14_it == 2 | q14_it == 3 | q14_mx == 6 | ///
-								  inlist(q15,12001,12002,12005,12006) ///
-								  | q14_kr == 3 | q14_ar == 3 ///
+								  q14_kr == 3 | q14_ar == 3 ///
 								  | q14a_gb == 2 | q14b_gb == 2 | q14_gr == 2 | ///
 								  inlist(q14_np,2,3,4)
 								  
 						  
 recode usual_type_own (.a = 2) if q14_q15a_la == 9 | q14_q15b_la == 7 | ///
 								  q14_it == 4 | inlist(q14_mx,1,2,5,7) | ///
-								  q15 == 12995 | q14_kr == 4 | inlist(q14_ar,2,4,6,7) ///
+								   q14_kr == 4 | inlist(q14_ar,2,4,6,7) ///
 								  | q14a_gb == 3 | q14_gr == 3 | q14_np == 5
 								  
 recode usual_type_own (.a = .r) if q14_q15a_la == .r | q14_q15b_la == .r | ///
 								   q14_it == .r | q14_mx == .r | ///
-								   (q15 == .r & country == 12) | q14_kr == .r | ///
+								    q14_kr == .r | ///
 								   q14_ar == .r | q14a_gb == .r | q14b_gb == .r | ///
 								   q14_cn == .r
 
@@ -639,6 +630,18 @@ recode usual_type_own (.a = 0) if q14_ec == 1 | q14_ec == 4 | q14_ec == 5
 recode usual_type_own (.a = 1) if q14_ec == 2 | q14_ec == 6
 recode usual_type_own (.a = 2) if q14_ec == 3 | q14_ec == 7
 recode usual_type_own (.a = .a) if q14_ec == .a
+
+*United States recode
+*Wave 1:
+recode usual_type_own (.a = 0) if country == 12 & wave ==1 & inlist(q15,12003,12004)
+recode usual_type_own (.a = 1) if country == 12 & wave ==1 & inlist(q15,12001,12002,12005,12006)
+recode usual_type_own (.a = 2) if country == 12 & wave ==1 & q15 == 12995
+recode usual_type_own (.a = .r) if country == 12 & wave ==1 & q15 == .r 
+*Wave 2:
+recode usual_type_own (.a = 0) if country == 12 & wave ==2  & insur_type ==0
+recode usual_type_own (.a = 1) if country == 12 & wave ==2 & insur_type ==1
+recode usual_type_own (.a = 2) if country == 12 & wave ==2 & insur_type ==3
+recode usual_type_own (.a = .r) if country == 12 & wave ==2 & insur_type ==.r | insur_type ==.d
 	
 * usual type level			  
 recode q15 (1001 1003 1005 1006 1007 1009 1011 1013 1015 1017 1019 1023 1025 1027 3001 3002 3003 3006 3007 3008 /// 
@@ -745,23 +748,37 @@ recode last_type_own (.a = 1) if q32_ec == 2 | q32_ec == 6
 recode last_type_own (.a = 2) if q32_ec == 7
 recode last_type_own (.a = .r) if q32_ec == .r
 
+*United States
+*Wave 1:
+recode last_type_own (.a = 0) if country ==12 & wave ==1 & inlist(q33,12003,12004,12005)
+recode last_type_own (.a = 1) if country ==12 & wave ==1 & inlist(q33,12001,12002,12006,12007) 
+recode last_type_own (.a = 2) if country ==12 & wave ==1 & q33 == 12995 
+recode last_type_own (.a = .r) if country ==12 & wave ==1 & (q33 == .r & country == 12) 
+
+*Wave 2: 
+recode last_type_own (.a = 0) if country ==12 & wave ==1 & insur_type ==0
+recode last_type_own (.a = 1) if country ==12 & wave ==1 & insur_type ==1
+recode last_type_own (.a = 2) if country ==12 & wave ==1 & insur_type ==3
+recode last_type_own (.a = .r) if country ==12 & wave ==1 & insur_type ==.r | insur_type ==.d
+
+
 * Other countries:
 recode last_type_own (.a = 0) if q32_uy == 1 | q32_it == 1 | inlist(q32_mx,3,4) | ///
-								 inlist(q33,12003,12004,12005) | q32_kr == 1 | ///
+								 q32_kr == 1 | ///
 								 q32_ar == 1 | q32a_gb == 1 | q32b_gb == 1 | q32a_gr == 1 ///
 								 | inlist(q32_np,1,6)
 								 
 recode last_type_own (.a = 1) if q32_uy == 2 | q32_it == 2 | q32_it == 3 | q32_mx == 6 | ///
-								 inlist(q33,12001,12002,12006,12007) | q32_kr == 3 | ///
+								 q32_kr == 3 | ///
 								 q32_ar == 3 | q32a_gb == 2 | q32b_gb == 2 | q32a_gr == 2 | ///
 								 q32a_gr == 3 | inlist(q32_np,2,3,4)
  
 recode last_type_own (.a = 2) if inlist(q32_uy,5,995) | q32_it == 4 | inlist(q32_mx,1,2,5,7) | ///
-								 q33 == 12995 | q32_kr == 4 | inlist(q32_ar,2,4,6,7) ///
+								 q32_kr == 4 | inlist(q32_ar,2,4,6,7) ///
 								 | q32a_gb == 3 | q32a_gr == 5 | q32_np == 5
 								 
 recode last_type_own (.a = .r) if q32_uy == .r | q32_it == .r | q32_mx == .r | ///
-								  (q33 == .r & country == 12) | q32_kr == .r | ///
+								  q32_kr == .r | ///
 								  q32_ar == .r | q32a_gb == .r | q32b_gb == .r | ///
 								  q32a_gr == .r 
 								  
