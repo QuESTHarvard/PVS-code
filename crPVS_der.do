@@ -86,7 +86,7 @@ recode q16 (2 16 = 1 "Convenience (short distance)") ///
 			(3 5 10  = 4 "Interpersonal quality (short waiting time, respect)") ///
 			(6 = 5 "Service readiness (medicines and equipment available)") ///
 			(7 = 6 "Only facility available") ///
-			(.r 9 11 12 13 14 15 997 = .r "Other or Refused") ///
+			(.r 9 11 12 13 14 15 17 18 19 20 997 = .r "Other or Refused") ///
 			(.a = .a "NA") , gen(usual_reason)
 
 * visits
@@ -148,9 +148,8 @@ recode q30 (1 21 = 1 "Cost (High cost)") ///
 			(.a 7 = .a "NA or Illness not serious") ///
 			(.r = .r "Refused"), gen(unmet_reason)
 
-* last_reason - 4-4 SS: updated "other" category because SO has additional categories
 recode q34 (1 = 1 "Urgent or new problem") (2 = 2 "Follow-up for chronic disease") ///
-		   (3 = 3 "Preventative or health check") (4 5 6 7 8 9 10 11 = 4 "Other") (.a = .a "NA") ///
+		   (3 = 3 "Preventative or health check") (4 5 6 7 8 9 10 11 12 13 = 4 "Other") (.a = .a "NA") ///
 		   (.r = .r "Refused"), gen(last_reason)
 
 *last_wait_time
@@ -831,17 +830,18 @@ lab val last_type fac_own_lvl
 * minority
 
 *Notes: No data for AR, For India: No actual data for Bodo" or "Dogri" but it is in the country-specific sheet.
-recode q50 (11002 11003 11001 = .a) // First recode all to .a for Laos since we will be using q50a_la
+recode q50 (11002 11003 11001 12001 12002 12003 = .a) // First recode all to .a for Laos since we will be using q50a_la
 
 recode q50 (1015 1013 1014 1017 5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
 		   3026 3027 3028 3029 3030 3031 3032 7044 7045 7049 2081  ///
 		   15002 9035 9036 9037 9038 9041 9044 2995 3995 5995 11995 3995 9995 ///
 		   4055 4062 4063 4064 4066 4068 4070 4071 4072 4073 4995 11002 11003 11005 18995 19092 19093 19995 ///
 		   20097 20099 20103 20104 20105 20107 20108 20109 20995 21002 2002 2003 2004 2011 2012 2014 7005 7006 ///
-		   7007 7008 7009 7010 7013 3997 4058 4997 5997 9997 6002 6003 6004 6005 6006 = 1 "Minority group") /// 
+		   7007 7008 7009 7010 7013 3997 4058 4997 5997 9997 6002 6003 6004 6005 6006 24002 24003 24004 24005 ///
+		   24006 24007 24008 24009 = 1 "Minority group") /// SS: add more than one language once split
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 15001 9033 ///
 		   9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 11001 18090 19091 ///
-		   20094 20095 20096 20098 20100 20101 20102 20106 21001 2001 7001 6001 = 0 "Majority group") /// 
+		   20094 20095 20096 20098 20100 20101 20102 20106 21001 2001 7001 6001 24001 = 0 "Majority group") /// SS: Sayeda add German + second lang once split from "more than one language"
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 		   
 *US & MX:
@@ -897,11 +897,11 @@ recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 500
 	
 * United States income recoding:
 replace income = 0 if q51 == 12001 | 12002 & country ==12  & wave ==1
-replace income = 1 if q51 == 12003 & country ==12 & wave ==1
-replace income = 2 if q51 == 12004 | q51 == 12005 & country ==12 & wave ==1
+replace income = 1 if q51 == 12003 | q51 == 12004 & country ==12 & wave ==1
+replace income = 2 if q51 == 12005 & country ==12 & wave ==1
 replace income = 0 if q51 == 12101 | q51 == 12102 | q51 == 12103 & country == 12 & wave ==2
-replace income = 1 if q51 == 12104 & country ==12 & wave ==2
-replace income = 2 if q51 == 12105 | q51 == 12106 | q51 == 12107 & country ==12 & wave ==2
+replace income = 1 if q51 == 12104 | q51 == 12105 & country ==12 & wave ==2
+replace income = 2 if q51 == 12106 | q51 == 12107 & country ==12 & wave ==2
 	
 	
 * Colombia q23 values seem implausible
