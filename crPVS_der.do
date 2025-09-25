@@ -840,17 +840,11 @@ recode q50 (1013 1014 1017 5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 302
 		   4055 4062 4063 4064 4066 4068 4070 4071 4072 4073 4995 11002 11003 11005 18995 19092 19093 19995 ///
 		   20097 20099 20103 20104 20105 20107 20108 20109 20995 21002 2002 2003 2004 2011 2012 2014 7005 7006 ///
 		   7007 7008 7009 7010 7013 3997 4058 4997 5997 9997 6002 6003 6004 6005 6006 24002 24003 24004 24005 ///
-		   24006 24007 24008 24009 = 1 "Minority group") /// SS: add more than one language once split
+		   24006 24007 24008 24009 24011 = 1 "Minority group") ///
 		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 15001 9033 ///
 		   9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 11001 18090 19091 ///
-		   20094 20095 20096 20098 20100 20101 20102 20106 21001 2001 7001 6001 24001 = 0 "Majority group") /// SS: Sayeda add German + second lang once split from "more than one language"
+		   20094 20095 20096 20098 20100 20101 20102 20106 21001 2001 7001 6001 24001 24010 = 0 "Majority group") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
-
-*Germany:
-recode minority (24010 = 0) if q50 == 24010 & language_German == 1
-recode minority (24010 = 1) if q50 == 24010 & language_German != 1
-*drop Germany language vars for minority
-drop language_Arabic language_French language_German language_Italian language_Other language_Polish language_Russian language_Turkish language_Ukrainian
 		   
 *US & MX:
 recode minority (.a = 1) if q50_mx == 1		   
