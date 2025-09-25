@@ -257,7 +257,6 @@ ren rec* *
 egen languages_count = rowtotal(Q49_1 Q49_2 Q49_3 Q49_4 Q49_5 Q49_6 Q49_7 Q49_8 Q49_9) /// How many languages selected
 
 gen q50 = .
-replace q50 = 10 if languages_count > 1
 replace q50 = 1 if languages_count == 1 & Q49_1 == 1
 replace q50 = 2 if languages_count == 1 & Q49_2 == 1
 replace q50 = 3 if languages_count == 1 & Q49_3 == 1
@@ -267,15 +266,10 @@ replace q50 = 6 if languages_count == 1 & Q49_6 == 1
 replace q50 = 7 if languages_count == 1 & Q49_7 == 1
 replace q50 = 8 if languages_count == 1 & Q49_8 == 1
 replace q50 = 9 if languages_count == 1 & Q49_9 == 1
+replace q50 = 10 if languages_count > 1 & Q49_1 == 1
+replace q50 = 11 if languages_count > 1 & Q49_1 != 1
 
-* SI Note: keeping the original variables in the dataset for now but renaming
-local langs "German Turkish Polish Arabic Italian French Ukrainian Russian Other"
-
-forvalues i = 1/9 {
-    local nm : word `i' of `langs'
-    rename Q49_`i' language_`nm'
-}
-drop languages_count
+drop Q49_1 Q49_2 Q49_3 Q49_4 Q49_5 Q49_6 Q49_7 Q49_8 Q49_9 languages_count
 *------------------------------------------------------------------------------*
 * Fix interview length variable and other time variables 
 
@@ -583,7 +577,7 @@ recode q46 ///
 	
 replace q50 = country*1000 + q50
 lab def q50_label 24001 "DE: German" 24002 "DE: Turkish" 24003 "DE: Polish" 24004 "DE: Arabic" 24005 "DE: Italian" 24006 "DE: French" ///
-24007 "DE: Ukranian" 24008 "DE: Russian" 24009 "DE: Other (specify)" 24010 "DE: More than one language" .a "NA" .r "Refused" .d "Don't know"
+24007 "DE: Ukrainian" 24008 "DE: Russian" 24009 "DE: Other (specify)" 24010 "DE: German + Another Language" 24011 "DE: Multiple Languages (Not Including German)" .a "NA" .r "Refused" .d "Don't know"
 lab val q50 q50_label
 
 replace q51 = .r if q51 == 24000
@@ -592,11 +586,6 @@ recode q51 ///
 	(24004 = 24004 "DE: €2,000 to less than €4,000") (24005 = 24005 "DE: €4,000 to less than €6,000") (24006 = 24006 "DE: €6,000 to less than €8,000") ///
 	(24007 = 24007 "DE: €8,000 to less than €10,000") (24008 = 24008 "DE: €10,000 to less than €18,000") (24009 = 24009 "DE: More than €18,000") ///
 	(.d = .d "Don't know") (.a = .a "NA") (.r = .r "Refused"), pre(rec) label(q51_label)
-	
-* Original language variables
-recode language_German language_Turkish language_Polish language_Arabic language_Italian language_French language_Ukrainian language_Russian language_Other (0 = 0 "No") (1 = 1 "Yes") ///
-(.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
-pre(rec) label(languages_label)
 
 * Recoding all yes/no qs together
 recode q3c_de q6 q11 q11_de q20 q26 q29 q31a q31b (2 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
@@ -613,7 +602,7 @@ recode q17 q25 q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q
 	
 drop q2 q2_de_raw q3 q3c_de q3d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q12_a q12_b q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_de q27j_de q27k_de ///
 q28_a q28_b q28c_de q28d_de q30 q34 q35 q36 q37 q39 q41_a q41_b q41_c q41d_de q45 q46 q51 q11 q11_de q13 q20 q26 q29 q31a q31b q17 q17b_de q17c_de q17d_de q25 ///
-q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49 language_German language_Turkish language_Polish language_Arabic language_Italian language_French language_Ukrainian language_Russian language_Other
+q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49
 
 ren rec* *
 
