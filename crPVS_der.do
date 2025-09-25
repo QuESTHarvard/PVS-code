@@ -505,8 +505,7 @@ recode q7 (1002 1003 2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004
 		  (1001 2015 2016 2006 2007 16002 16003 16004 13001 13002 13004 7011 7012 7008 7019 10022 ///
 		  = 2 "Social security/military") ///
 		  (1006 2995 2020 12995 12007 13995 4995 18995 19995 20995 21006 7021 10009 10020 5997 23005 6002 24005 = 3 "Other") ///
-		  (.r = .r "Refused") (2030 7014 13014 16007 13003 7002 10001 24004 = .a "NA"), gen(insur_type)
-
+		  (.r = .r "Refused") (2030 7014 13014 16007 13003 7002 10001 1000 24004 = .a "NA"), gen(insur_type) //SS: confirm placement of 1000
 
 recode insur_type (.a = 0) if q6_za == 1 & q7 != 9008 | q7 != 9009 | q7 != 9995 | q7 != 9997
 recode insur_type (0 = .a) if q6_za == 0 | q6_za == .r
@@ -758,10 +757,10 @@ recode last_type_own (.a = 2) if country ==12 & wave ==1 & q33 == 12995
 recode last_type_own (.a = .r) if country ==12 & wave ==1 & (q33 == .r & country == 12) 
 
 *Wave 2: 
-recode last_type_own (.a = 0) if country ==12 & wave ==1 & insur_type ==0
-recode last_type_own (.a = 1) if country ==12 & wave ==1 & insur_type ==1
-recode last_type_own (.a = 2) if country ==12 & wave ==1 & insur_type ==3
-recode last_type_own (.a = .r) if country ==12 & wave ==1 & insur_type ==.r | insur_type ==.d
+recode last_type_own (.a = 0) if country ==12 & wave ==2 & insur_type ==0
+recode last_type_own (.a = 1) if country ==12 & wave ==2 & insur_type ==1
+recode last_type_own (.a = 2) if country ==12 & wave ==2 & insur_type ==3
+recode last_type_own (.a = .r) if country ==12 & wave ==2 & insur_type ==.r | insur_type ==.d
 
 
 * Other countries:
