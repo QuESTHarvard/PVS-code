@@ -706,6 +706,8 @@ lab def q24_label 5 "Prescription filling/reviewing results" 6 "Routine follow-u
 lab def main_reason 12 "US: Routine follow-up care" 13 "US: Prescription filling/reviewing results", modify
 lab def labels12 3 "Multiracial/indegenous",modify
 lab def labels72 .d "Don't know",modify
+lab def main_reason 5 "SO: Allergies" 6	"SO: Blood transfusion" 7 "SO: Dental issue" 8 "SO: Eye problem" 9 "SO: Gastric/stomach ache" ///
+		10 "SO: Nerve pain" 11 "SO: Visited a hospitalised member of the family", modify
 
 *-------------------------------------------------------------------------------*	
 *** Code for survey set: For accurate SEs when using mixed CATI/CAWI and F2F surveys ***
