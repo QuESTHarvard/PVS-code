@@ -724,7 +724,6 @@ lab def main_reason 5 "SO: Allergies" 6	"SO: Blood transfusion" 7 "SO: Dental is
 lab def labels12 3 "Multiracial/indegenous",modify
 lab def labels72 .d "Don't know",modify
 
-
 *-------------------------------------------------------------------------------*	
 *** Code for survey set: For accurate SEs when using mixed CATI/CAWI and F2F surveys ***
 
