@@ -489,7 +489,7 @@ lab val insured yes_no
 	* LAC:
 	recode insured (.a = 0) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == 1 | q6_lac == 2
 	recode insured (.a = .a) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == .a
-	recode insured (.a = .t) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == .r
+	recode insured (.a = .r) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == .r
 	recode insured (.a = 1) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac != 1 | q6_lac != 2 | q6_lac !=.a | q6_lac !=.r
 
 
