@@ -28,7 +28,7 @@ import spss using "$data/United States wave 2/01 raw data/WashU PVS Final Datase
 gen wave = 2
 
 *Deleting unneccessary vars:
-drop status hid_loi q5b_1 q5b_2 q5b_3 q5b_4 q5b_5 q5b_6 q5b_999 ///
+drop status hid_loi ///
 	 hrandom_q16 hrandom_q27loop hrandom_q28loop hrandom_q30 ///
 	 hrandom_q31loop hrandom_q38loop q39dk hrandom_q40loop ///
 	 hrandom_q52 hrandom_q52a pregvote pincome pincome4way pownhome ///
@@ -52,7 +52,6 @@ rename respid respondent_serial
 rename xchannel mode
 
 rename q5a q50a_us
-rename q5b_6_other q50a_us_other
 
 rename q7_7_other q7_other
 rename q15_7_other q15_other
@@ -282,6 +281,35 @@ rename weight_under30_2 usw_under302
 rename weight_mo_5 usw_mo5
 
 lab var usw_main2 "PVS US only: Main weight for N=2500 sample"
+
+*q50b_us (copied from wave 1 do file)
+gen q50b_us = .
+egen q50b_choice = rowtotal(q5b_1 q5b_2 q5b_3 q5b_4 q5b_5 q5b_6 q5b_999)
+recode q50b_us (. = 1) if q5b_1 == 1 & q50b_choice == 1
+recode q50b_us (. = 2) if q5b_2 == 1 & q50b_choice == 1
+recode q50b_us (. = 3) if q5b_3 == 1 & q50b_choice == 1
+recode q50b_us (. = 4) if q5b_4 == 1 & q50b_choice == 1
+recode q50b_us (. = 5) if q5b_5 == 1 & q50b_choice == 1
+recode q50b_us (. = 995) if q5b_6 == 1 & q50b_choice == 1
+recode q50b_us (. = 6) if q50b_choice > 0 & q50b_choice < . // this is from wave 1 code so keeping it, but confirm with Todd why 'other' isn't 6 and mixed race = '7' just to match the instrument?
+recode q50b_us (. = .r) if q5b_999 == 1
+drop q50b_choice
+
+recode q50b_us (995 = .) if q5b_6_other == "<blank>" | q5b_6_other ==  "Na" | q5b_6_other == "No se" | q5b_6_other == "Not specified"
+recode q50b_us (995 = 2) if q5b_6_other == "Asiatic" | q5b_6_other == "Chinese and Japanese"
+recode q50b_us (995 = 5) if q5b_6_other == "Ashkenazi Jewish" | q5b_6_other ==  "Eastern European Jew" | q5b_6_other ==  "I am white but race is bullshit we all came from the same god" | q5b_6_other ==  "Jewish"
+recode q50b_us (995 = 6) if q5b_6_other == "Black and white" | q5b_6_other == "Caribbean/mixed" | q5b_6_other ==  "Mixed" | ///
+						q5b_6_other ==  "Mixed (two or more races)" | q5b_6_other ==  "Mixed Hispanic" | q5b_6_other == "Mixed race" | ///
+						q5b_6_other ==  "Mixto" | q5b_6_other ==  "Mixture" | q5b_6_other ==  "Multi-racial" | q5b_6_other == "Two or more" | ///
+						q5b_6_other ==  "mixed" // change if mixed race is recoded to '7'
+ 
+lab def race 1 "Black or African American" 2 "Asian" 3 "Native Hawaiian or Other Pacific Islander" ///
+			 4 "American Indian or Alaska Native" 5 "White" 6 "Mixed race" ///
+			 995 "Other" .r "Refused" .a "NA"
+lab val q50b_us race
+ren q5b_6_other q50b_other_us
+
+drop q5b_1 q5b_2 q5b_3 q5b_4 q5b_5 q5b_6 q5b_999
 
 *------------------------------------------------------------------------------*
 * Recode all Refused and Don't know responses
@@ -655,10 +683,7 @@ label var q34_other_original "Q34. Other"
 
 gen q50_other_original = q50_other 
 label var q50_other_original "Q50. Other"	
-
-gen q50a_us_other_original = q50a_us_other 
-label var q50a_us_other_original "Q50a. Other"	
-
+	
 gen q52a_us_other_original = q52a_us_other 
 label var q52a_us_other_original "Q52a. Other"	
 
@@ -678,7 +703,7 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
 }	
 
 drop q7_other q15_other q16_other q24_other q30_other q33_other q34_other q37_other ///
-	 q50_other q50a_us_other q52a_us_other m2_i_other m6_j_other
+	 q50_other q52a_us_other m2_i_other m6_j_other
 	 
 ren q7_other_original q7_other
 ren q15_other_original q15_other
@@ -688,7 +713,6 @@ ren q30_other_original q30_other
 ren q33_other_original q33_other
 ren q34_other_original q34_other
 ren q50_other_original q50_other
-ren q50a_us_other_original q50a_us_other
 ren q52a_us_other_original q52a_us_other
 ren m2_i_other_original m2_i_other
 ren m6_j_other_original m6_j_other

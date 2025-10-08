@@ -206,11 +206,18 @@ lab def system_outlook 0 "Getting worse" 1 "Staying the same" ///
 		2 "Getting better" .r "Refused", replace
 lab val system_outlook system_outlook
 
-* system_reform 
+
+* system_reform (SS: added back 10/8 for PVS dashabord)
+gen system_reform = q46
+lab def sr 1 "Health system needs to be rebuilt" 2 "Health system needs major changes" /// 
+		3 "Health system only needs minor changes" .r "Refused", replace
+lab val system_reform sr
+
+
+* system_reform_minor 
 recode q46 ///
 	(1 2 = 0 "Major changes/Rebuilt") (3 = 1 "Minor changes") ///
 	(.r = .r "Refused") , gen(system_reform_minor) label(system_reform2)
-
 
 **** Yes/No Questions ****
 
@@ -841,7 +848,7 @@ recode q50 (1013 1014 1017 5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 302
 		   20097 20099 20103 20104 20105 20107 20108 20109 20995 21002 2002 2003 2004 2011 2012 2014 7005 7006 ///
 		   7007 7008 7009 7010 7013 3997 4058 4997 5997 9997 6002 6003 6004 6005 6006 24002 24003 24004 24005 ///
 		   24006 24007 24008 24009 24011 = 1 "Minority group") ///
-		   (5002 5003 5004 5006 5007 3021 3022 7053 2087 15001 9033 ///
+		   (1015 5002 5003 5004 5006 5007 3021 3022 7053 2087 15001 9033 ///
 		   9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 11001 18090 19091 ///
 		   20094 20095 20096 20098 20100 20101 20102 20106 21001 2001 7001 6001 24001 24010 = 0 "Majority group") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
@@ -1110,7 +1117,7 @@ order respondent_serial respondent_id country country_reg wave language date ///
 	  last_explain_vge last_decisions_vge last_visit_rate_vge last_wait_rate_vge last_courtesy_vge last_sched_rate_vge ///
 	  last_promote phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge qual_srh_vge care_infections_vge care_nonurgent_vge conf_sick_scvc ///
 	  conf_afford_scvc conf_getafford_scvc conf_opinion qual_public_vge qual_private_vge ///
-	  system_outlook system_reform covid_manage_vge vignette_poor /// 
+	  system_outlook system_reform system_reform_minor covid_manage_vge vignette_poor /// 
 	  vignette_good minority income   	   	  
 	
 ***************************** Labeling variables ***************************** 
