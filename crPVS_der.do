@@ -206,11 +206,18 @@ lab def system_outlook 0 "Getting worse" 1 "Staying the same" ///
 		2 "Getting better" .r "Refused", replace
 lab val system_outlook system_outlook
 
-* system_reform 
+
+* system_reform (SS: added back 10/8 for PVS dashabord)
+gen system_reform = q46
+lab def sr 1 "Health system needs to be rebuilt" 2 "Health system needs major changes" /// 
+		3 "Health system only needs minor changes" .r "Refused", replace
+lab val system_reform sr
+
+
+* system_reform_minor 
 recode q46 ///
 	(1 2 = 0 "Major changes/Rebuilt") (3 = 1 "Minor changes") ///
 	(.r = .r "Refused") , gen(system_reform_minor) label(system_reform2)
-
 
 **** Yes/No Questions ****
 
@@ -1110,7 +1117,7 @@ order respondent_serial respondent_id country country_reg wave language date ///
 	  last_explain_vge last_decisions_vge last_visit_rate_vge last_wait_rate_vge last_courtesy_vge last_sched_rate_vge ///
 	  last_promote phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge qual_srh_vge care_infections_vge care_nonurgent_vge conf_sick_scvc ///
 	  conf_afford_scvc conf_getafford_scvc conf_opinion qual_public_vge qual_private_vge ///
-	  system_outlook system_reform covid_manage_vge vignette_poor /// 
+	  system_outlook system_reform system_reform_minor covid_manage_vge vignette_poor /// 
 	  vignette_good minority income   	   	  
 	
 ***************************** Labeling variables ***************************** 
