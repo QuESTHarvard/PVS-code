@@ -509,7 +509,7 @@ recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 110
 		  (.r = .r "Refused") (2030 7014 13014 16007 13003 7002 10001 1000 24004 = .a "NA"), gen(insur_type) //SS: confirm placement of 1000
 
 recode insur_type (.a = 0) if q6_za == 1 & q7 != 9008 | q7 != 9009 | q7 != 9995 | q7 != 9997
-recode insur_type (0 = .a) if q6_za == 0 | q6_za == .r
+recode insur_type (0 = .a) if q6_za == 0 | q6_za == .r | q6_za == .a
 recode insur_type (.r = 0) if q6_za == 1
 
 replace insur_type = .a if country == 9
