@@ -496,14 +496,14 @@ lab val insured yes_no
 	* LAC:
 	recode insured (.a = 0) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == 1 | q6_lac == 2
 	recode insured (.a = .a) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == .a
-	recode insured (.a = .t) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == .r
+	recode insured (.a = .r) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac == .r
 	recode insured (.a = 1) if (country == 2 | country == 7 | country == 10) & wave == 2 & q6_lac != 1 | q6_lac != 2 | q6_lac !=.a | q6_lac !=.r
 
 
 * For Colombia, moved "no insurance" to "yes" in insured and "public" in "insur_type"
 * insur_type 
 
-recode q7 (1002 1003 2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 11002 12002 12003 ///
+recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 11002 12002 12003 ///
 		   12005 12006 14002 16001 4023 4024 4025 4026 17002 2030 ///
 		   18029 19031 20034 20037 21001 21002 21003 21005 22002 10005 10019 2001 23002 23003 23004 24001 = 0 "Public") ///
 		  (1004 1005 2028 2010 2011 3002 5004 5005 5006 3007 2028 7013 7015 10021 11001 12001 ///
@@ -512,6 +512,7 @@ recode q7 (1002 1003 2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004
 		  (1001 2015 2016 2006 2007 16002 16003 16004 13001 13002 13004 7011 7012 7008 7019 10022 ///
 		  = 2 "Social security/military") ///
 		  (1006 2995 2020 12995 12007 13995 4995 18995 19995 20995 21006 7021 10009 10020 5997 23005 6002 24005 = 3 "Other") ///
+		  (1002 1003 = 4 "Military") /// SI: splitting out EC social security/military for country brief
 		  (.r = .r "Refused") (2030 7014 13014 16007 13003 7002 10001 1000 24004 = .a "NA"), gen(insur_type) //SS: confirm placement of 1000
 
 recode insur_type (.a = 0) if q6_za == 1 & q7 != 9008 | q7 != 9009 | q7 != 9995 | q7 != 9997
