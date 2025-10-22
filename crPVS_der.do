@@ -130,8 +130,8 @@ recode q25 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r
 	   (.a = .a "NA"), /// 
 	   gen(tele_qual_vge) label(exc_pr_2)
 	   
-replace	tele_qual_vge = 0 if q25 == 0 | q25 == 1 & country == 23
-replace	tele_qual_vge = 1 if q25 == 2 | q25 == 3 | q25 == 4 & country == 23
+replace	tele_qual_vge = 0 if (q25 == 0 | q25 == 1) & country == 23
+replace	tele_qual_vge = 1 if (q25 == 2 | q25 == 3 | q25 == 4) & country == 23
 
 * visits_total
 egen visits_total = rowtotal(q18_q19 q22 q23)
