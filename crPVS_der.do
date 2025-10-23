@@ -429,15 +429,15 @@ recode q42 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r
 	   (.a = .a "NA"), /// 
 	   gen(qual_public_vge) label(exc_pr_2)
 	   
-replace	qual_public_vge = 0 if q42 == 0 | q42 == 1 & country == 23
-replace	qual_public_vge = 1 if q42 == 2 | q42 == 3 | q42 == 4 & country == 23		   
+replace	qual_public_vge = 0 if (q42 == 0 | q42 == 1) & country == 23
+replace	qual_public_vge = 1 if (q42 == 2 | q42 == 3 | q42 == 4) & country == 23		   
 
 recode q43 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(qual_private_vge) label(exc_pr_2)
 
-replace	qual_private_vge = 0 if q43 == 0 | q43 == 1 & country == 23
-replace	qual_private_vge = 1 if q43 == 2 | q43 == 3 | q43 == 4 & country == 23		   
+replace	qual_private_vge = 0 if (q43 == 0 | q43 == 1) & country == 23
+replace	qual_private_vge = 1 if (q43 == 2 | q43 == 3 | q43 == 4) & country == 23		   
 	   
 recode q47 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
