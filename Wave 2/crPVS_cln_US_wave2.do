@@ -50,10 +50,9 @@ lab values reccountry country
 rename weight_total_sample_2 weight // confirm with Todd which weight var
 rename respid respondent_serial
 
-gen xchannel_num = .
-replace xchannel_num = 1 if xchannel == "CATI"
-replace xchannel_num = 3 if xchannel == "CAWI"
-label define xchannel_lbl 1 "CATI" 3 "CAWI"
+clonevar xchannel_num = xchannel
+recode xchannel_num (2 = 1) (1 = 3)
+label define xchannel_lbl 1 "CATI" 3 "CAWI", replace
 label values xchannel_num xchannel_lbl
 rename xchannel_num mode
 	
