@@ -63,7 +63,12 @@ rename q7_7_other q7_other
 rename q15_7_other q15_other
 rename q16_9_other q16_other
 rename q24_4_other q24_other // check to see if this can be recoded back into the parent variable
-rename q27_i q27i_us
+rename q27_d q27i_us // STI check
+rename q27_e q27_d // eye check
+rename q27_f q27_e // teeth check
+rename q27_g q27_f // blood sugar
+rename q27_h q27_g // cholesterol
+rename q27_i q27_h // mental health
 rename q30_8_other q30_other
 rename q33_7_other q33_other
 rename q34_4_other q34_other

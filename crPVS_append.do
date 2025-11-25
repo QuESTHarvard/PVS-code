@@ -882,7 +882,7 @@ lab var q27i_gr_in_ro "Q27. GR/IN/RO only: Have you received any of the followin
 lab var q27i_ng "Q27. NG only: Had sexual or reproductive health care such as family planning in the past 12 months"
 lab var q27i_za "Q27. ZA only: Had a test for HIV in the past 12 months"
 lab var q27j_cn "Q27j. CN only: Received a mammogram (a special X-ray of the breast)"
-lab var q27i_us "Q27i. US only: Have you received care for depression, anxiety, or another mental health condition (which may include feeling sad or worried a lot of the time)" 
+lab var q27i_us "Q27i. US only: STI test conducted in past 12 months"
 label var q27i_de "Q27i. DE only: Had a colorectal cancer screening to detect bowel cancer"
 label var q27j_de "Q27j. DE only: Had a J2 checkup (an additional preventive check-up for adolescents)"
 label var q27k_de "Q27k. DE only: Received any counseling on contraception/birth control"

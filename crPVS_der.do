@@ -261,6 +261,9 @@ recode hiv_test (. = .a) if country !=21
 gen color_ultrasound = q27j_cn 
 recode hiv_test (. = .a) if country !=21
 
+gen sti_test = q27i_us //wave 2 US only
+recode sti_test (. = .a) if country !=12 
+
 *SS: confirm with Todd what this should be
 *gen = q27i_gr_in_ro
 
@@ -1163,6 +1166,8 @@ lab var	hiv_test "ZA only: HIV test conducted by healthcare provider in past 12 
 lab var	care_mental	"Received care for depression, anxiety, or another mental health condition (Q27_h)"
 lab var breast_exam "CN only: Breast examination conducted by healtchare provider in past 12 months (Q27i_cn)"
 lab var color_ultrasound "CN: Color Ultrasound Mammography conducted by healtchare provider in past 12 months (Q27j_cn)"
+lab var	sti_test "US only: STI test conducted in past 12 months (Q27i_us)"
+
 
 lab var	mistake	"A medical mistake was made in treatment or care in the past 12 months (Q28_a)"	
 lab var	discrim	"You were treated unfairly or discriminated against in the past 12 months (Q28_b)"	
