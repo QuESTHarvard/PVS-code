@@ -22,7 +22,7 @@ set more off
 *********************** UNITED STATES (WAVE 2) ***********************
 
 * Import raw data 
-import spss using "$data/United States wave 2/01 raw data/WashU PVS Final Dataset 07102025_FINAL WEIGHTS_confidential.sav", case(lower)
+import spss using "$data/United States wave 2/01 raw data/WashU PVS Final Dataset 11252025_FINAL WEIGHTS_confidential.sav", case(lower)
 
 *Label as wave 2 data:
 gen wave = 2
@@ -70,6 +70,10 @@ rename q27_g q27_f // blood sugar
 rename q27_h q27_g // cholesterol
 rename q27_i q27_h // mental health
 rename q30_8_other q30_other
+
+rename q31_a q31a
+rename q31_b q31b
+
 rename q33_7_other q33_other
 rename q34_4_other q34_other
 rename q37_7_other q37_other
