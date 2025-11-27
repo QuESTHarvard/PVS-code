@@ -25,7 +25,7 @@ set more off
 use "$data/Malawi/01 raw/Malawi_PVS_data_2025-06-20.dta",clear
 
 *Label as wave 2 data:
-gen wave = 2
+gen wave = 1
 
 * data cleaning:
 drop interviewer_name Phone_Number_of_client q1 q1a cell1 cell1_1 cell2 cell3 cell3_1 ///
