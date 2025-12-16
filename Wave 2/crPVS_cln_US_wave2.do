@@ -708,7 +708,7 @@ label var m2_i_other_original "M2_i. Other"
 gen m6_j_other_original = m6_j_other 
 label var m6_j_other_original "M6_j. Other"	
 
-
+/*
 foreach i in 12 {
 
 ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
@@ -716,6 +716,8 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
 	id(respondent_id)	
  
 }	
+
+*/
 
 drop q7_other q15_other q16_other q24_other q30_other q33_other q34_other q37_other ///
 	 q50_other q52a_us_other m2_i_other m6_j_other
@@ -731,6 +733,253 @@ ren q50_other_original q50_other
 ren q52a_us_other_original q52a_us_other
 ren m2_i_other_original m2_i_other
 ren m6_j_other_original m6_j_other
+
+**************************************************
+* Recode m2 "other" specific text 
+
+*m2_c - 3 changed
+replace m2_c = 1 if m2_i_other == "Doctor" ///
+                  | m2_i_other == "P.A. physicians assistant" ///
+				  | m2_i_other == "Primary care"
+				  
+replace m2_i = 0 if m2_i_other == "Doctor" ///
+                  | m2_i_other == "P.A. physicians assistant" ///
+				  | m2_i_other == "Primary care"
+
+*m2_e - 17 changed
+replace m2_e = 1 if m2_i_other == "Drug court therapist" ///
+                  | m2_i_other == "Ineffective third party my healthcare provider has contracted with." ///
+				  | m2_i_other == "LCRW" ///
+				  | m2_i_other == "Methadone clinic" ///
+				  | m2_i_other == "Private Therapist" ///
+				  | m2_i_other == "Therapist" ///
+				  | m2_i_other == "therapist"
+				  
+replace m2_i = 0 if m2_i_other == "Drug court therapist" ///
+                  | m2_i_other == "Ineffective third party my healthcare provider has contracted with." ///
+				  | m2_i_other == "LCRW" ///
+				  | m2_i_other == "Methadone clinic" ///
+				  | m2_i_other == "Private Therapist" ///
+				  | m2_i_other == "Therapist" ///
+				  | m2_i_other == "therapist"
+
+*m2_h - 2 changed
+replace m2_h = 1 if m2_i_other == "Functional Nutritionist for natural anxiety remedies" ///
+                  | m2_i_other == "Naturopathic or holistic medicine"
+				  
+replace m2_i = 0 if m2_i_other == "Functional Nutritionist for natural anxiety remedies" ///
+                  | m2_i_other == "Naturopathic or holistic medicine"
+				  
+*m2_i - 0 changed because they are just stay the same
+replace m2_i = 1 if m2_i_other == "Neurologist" ///
+                  | m2_i_other == "OB/GYN" ///
+				  | m2_i_other == "Pulmonologist" ///
+				  | m2_i_other == "neurosurgeon, pain management"
+
+* drop variables - 9 changed on m2_i
+label define m2_label 998 "None of them above", add
+label values m2_i m2_label
+
+replace m2_i = 998 if m2_i_other == "AA" ///
+                  | m2_i_other == "Artificial Intelligence" ///
+				  | m2_i_other == "Co worker" ///
+				  | m2_i_other == "Diet vs disease program" ///
+				  | m2_i_other == "Friend" ///
+				  | m2_i_other == "Talking to my personal trainer during workouts is good" ///
+				  | m2_i_other == "When i was young in my teens yes" ///
+				  | m2_i_other == "Where I live there isn't a Psychiatrist, maybe One that's it. In my opinion mental health is overlooked" ///
+				  | m2_i_other == "Wound Care"
+				  
+				  
+* Recode m6 "other" specific text 
+
+*m6_a - 1 changed on m6_a, 3 changed on m6_j
+replace m6_a = 1 if m6_j_other == "Teletherapy in a group" ///
+                  | m6_j_other == "Virtual coaching/support group for mental health." ///
+				  | m6_j_other == "Virtual community spaces"
+				  
+replace m6_j = 0 if m6_j_other == "Teletherapy in a group" ///
+                  | m6_j_other == "Virtual coaching/support group for mental health." ///
+				  | m6_j_other == "Virtual community spaces"
+				  
+*m6_b - 10 changed on m6_b, 11 changed on m6_j
+replace m6_b = 1 if m6_j_other == "AI chatpot" ///
+                  | m6_j_other == "Artificial Intelligence" ///
+				  | m6_j_other == "Chat GPT" ///
+				  | m6_j_other == "ChatGPT" ///
+				  | m6_j_other == "Chatgpt and copilot" ///
+				  | m6_j_other == "HALLOW APP" ///
+				  | m6_j_other == "Health insurance app" ///
+				  | m6_j_other == "YouTube" ///
+				  | m6_j_other == "audiobook for adhd" ///
+				  | m6_j_other == "calming music" 
+				  
+replace m6_j = 0 if m6_j_other == "AI chatpot" ///
+                  | m6_j_other == "Artificial Intelligence" ///
+				  | m6_j_other == "Chat GPT" ///
+				  | m6_j_other == "ChatGPT" ///
+				  | m6_j_other == "Chatgpt and copilot" ///
+				  | m6_j_other == "HALLOW APP" ///
+				  | m6_j_other == "Health insurance app" ///
+				  | m6_j_other == "YouTube" ///
+				  | m6_j_other == "audiobook for adhd" ///
+				  | m6_j_other == "calming music" 
+				  
+
+*m6_d - 4 changed
+replace m6_d = 1 if m6_j_other == "Holy bible" ///
+                  | m6_j_other == "My Bible, the word of God." ///
+				  | m6_j_other == "The Bible" ///
+				  | m6_j_other == "read"
+				  
+replace m6_j = 0 if m6_j_other == "Holy bible" ///
+                  | m6_j_other == "My Bible, the word of God." ///
+				  | m6_j_other == "The Bible" ///
+				  | m6_j_other == "read"				  
+
+*m6_e - 15 changed on m6_e, 18 changed on m6_j
+replace m6_e = 1 if m6_j_other == "Church" ///
+                  | m6_j_other == "Close friends" ///
+				  | m6_j_other == "Conversing with Friends" ///
+				  | m6_j_other == "Friends" ///
+				  | m6_j_other == "Friends and family" ///
+				  | m6_j_other == "Grief Support meeting" ///
+				  | m6_j_other == "Mom" ///
+				  | m6_j_other == "Priest" ///
+				  | m6_j_other == "Sometimes talking to family members" ///
+				  | m6_j_other == "Spiritual advisor" ///
+				  | m6_j_other == "Talk to friends" ///
+				  | m6_j_other == "Talking to friends" ///
+				  | m6_j_other == "Talking with Family and Friends, Focusing on goals to distract from depression like getting in shape, passing my welding courses, etc" ///
+				  | m6_j_other == "Venting to friends" ///
+				  | m6_j_other == "Video games with friends" ///
+				  | m6_j_other == "family"
+				  
+replace m6_j = 0 if m6_j_other == "Church" ///
+                  | m6_j_other == "Close friends" ///
+				  | m6_j_other == "Conversing with Friends" ///
+				  | m6_j_other == "Friends" ///
+				  | m6_j_other == "Friends and family" ///
+				  | m6_j_other == "Grief Support meeting" ///
+				  | m6_j_other == "Mom" ///
+				  | m6_j_other == "Priest" ///
+				  | m6_j_other == "Sometimes talking to family members" ///
+				  | m6_j_other == "Spiritual advisor" ///
+				  | m6_j_other == "Talk to friends" ///
+				  | m6_j_other == "Talking to friends" ///
+				  | m6_j_other == "Talking with Family and Friends, Focusing on goals to distract from depression like getting in shape, passing my welding courses, etc" ///
+				  | m6_j_other == "Venting to friends" ///
+				  | m6_j_other == "Video games with friends" ///
+				  | m6_j_other == "family"
+
+*m6_g - 23 changed on m6_g, 33 changed on m6_j
+replace m6_g = 1 if m6_j_other == "Bible" ///
+                  | m6_j_other == "Binaural music, for relaxation" ///
+				  | m6_j_other == "I control my diet, limit certain foods that trigger depression" ///
+				  | m6_j_other == "I count my blesings" ///
+				  | m6_j_other == "I usually try to take some alone time to think and meditate for a bit" ///
+				  | m6_j_other == "Jesus" ///
+				  | m6_j_other == "Meditation and use of sound machine/ audio stimulant." ///
+				  | m6_j_other == "Music" ///
+				  | m6_j_other == "Pray" ///
+				  | m6_j_other == "Prayer" ///
+				  | m6_j_other == "Prayer & Thanksgiving to Heavenly Father" ///
+				  | m6_j_other == "Prayer and Bible study" ///
+				  | m6_j_other == "Prayer and bible study" ///
+				  | m6_j_other == "Prayer and the Bible" ///
+				  | m6_j_other == "Prayer, religious practices" ///
+				  | m6_j_other == "Reading HOLY Scripture. Thank you JESUS" ///
+				  | m6_j_other == "Relaxation and affirmation videos/audio" ///
+				  | m6_j_other == "Word of God, Holy Bible" ///
+				  | m6_j_other == "deep breathing exercizes" ///
+				  | m6_j_other == "prayer"
+				  
+replace m6_j = 0 if m6_j_other == "Bible" ///
+                  | m6_j_other == "Binaural music, for relaxation" ///
+				  | m6_j_other == "I control my diet, limit certain foods that trigger depression" ///
+				  | m6_j_other == "I count my blesings" ///
+				  | m6_j_other == "I usually try to take some alone time to think and meditate for a bit" ///
+				  | m6_j_other == "Jesus" ///
+				  | m6_j_other == "Meditation and use of sound machine/ audio stimulant." ///
+				  | m6_j_other == "Music" ///
+				  | m6_j_other == "Pray" ///
+				  | m6_j_other == "Prayer" ///
+				  | m6_j_other == "Prayer & Thanksgiving to Heavenly Father" ///
+				  | m6_j_other == "Prayer and Bible study" ///
+				  | m6_j_other == "Prayer and bible study" ///
+				  | m6_j_other == "Prayer and the Bible" ///
+				  | m6_j_other == "Prayer, religious practices" ///
+				  | m6_j_other == "Reading HOLY Scripture. Thank you JESUS" ///
+				  | m6_j_other == "Relaxation and affirmation videos/audio" ///
+				  | m6_j_other == "Word of God, Holy Bible" ///
+				  | m6_j_other == "deep breathing exercizes" ///
+				  | m6_j_other == "prayer"
+
+*m6_h - 0 changed on m6_h, 1 changed on m6_j
+replace m6_h = 1 if m6_j_other == "yogA"
+				  
+replace m6_j = 0 if m6_j_other == "yogA"
+
+*m6_i - 2 changed
+replace m6_i = 1 if m6_j_other == "Acupuncture" ///
+                  | m6_j_other == "Listening to healing frequencies"
+				  
+replace m6_j = 0 if m6_j_other == "Acupuncture" ///
+                  | m6_j_other == "Listening to healing frequencies"
+				  
+*m6_j - 0 changed because they are just stay the same
+replace m6_j = 1 if m6_j_other == "Drug abuse" ///
+                     | m6_j_other == "Drugs and alcohol" ///
+					 | m6_j_other == "EAP" ///
+					 | m6_j_other == "Eat well sleep well" ///
+					 | m6_j_other == "Functional Nutritionist" ///
+					 | m6_j_other == "Marijuana" ///
+					 | m6_j_other == "Pot" ///
+					 | m6_j_other == "Proper diet and sleep" ///
+					 | m6_j_other == "Recreational narcotics" ///
+					 | m6_j_other == "Writing and listening to music" ///
+					 | m6_j_other == "alcohol and THC" ///
+					 | m6_j_other == "gardening" ///
+					 | m6_j_other == "i get out of the house weather its to a friends house or shopping" ///
+					 | m6_j_other == "marijuana" ///
+					 | m6_j_other == "sana"
+					 
+replace m6_j = 0 if m6_j_other == "<blank>"
+					 
+
+*drop - 31 changed
+label define m6_label 998 "None of them above", add
+label values m6_i m6_label
+
+replace m6_j = 998 if m6_j_other == "Antidepressant meds" ///
+					 | m6_j_other == "By weekly appointments" ///
+					 | m6_j_other == "Dialectic therapy" ///
+					 | m6_j_other == "Doctor prescribed Sertraline 100mg" ///
+					 | m6_j_other == "In person Doctor visits and/or some televisits." ///
+					 | m6_j_other == "Medication" ///
+					 | m6_j_other == "Only with my psychology Dr" ///
+					 | m6_j_other == "Prescribed Anti-anxiety medication" ///
+					 | m6_j_other == "Prescribed Medication" ///
+					 | m6_j_other == "Prescribed meds" ///
+					 | m6_j_other == "Prescription drugs" ///
+					 | m6_j_other == "Prescription medication" ///
+					 | m6_j_other == "SSRI" ///
+					 | m6_j_other == "Take anti anxiety meds" ///
+					 | m6_j_other == "Talk to a psycologist located at another country, here was too expensive" ///
+					 | m6_j_other == "Telamed visits" ///
+					 | m6_j_other == "Therapy" ///
+					 | m6_j_other == "Therapy, medication" ///
+					 | m6_j_other == "Transcranial Direct Current Stimulation" ///
+					 | m6_j_other == "Treatment center" ///
+					 | m6_j_other == "VA mental health services" ///
+					 | m6_j_other == "Visit with a Psychologist" ///
+					 | m6_j_other == "antidepressants" ///
+					 | m6_j_other == "medication for anxiety to sleep" ///
+					 | m6_j_other == "talk therapy with a licensed therapist via telehealth and phone calls" ///
+					 | m6_j_other == "therapist" ///
+					 | m6_j_other == "various sources including seeking SSDI SSI" 
+					  
+
 
 *------------------------------------------------------------------------------*/
 
