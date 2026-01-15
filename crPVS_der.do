@@ -125,7 +125,7 @@ lab val fac_number fn
 gen visits_home = q22
 gen visits_tele = q23
 
-* tele_qual_vge
+* tele_qual
 recode q25 (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA"), /// 
 	   gen(tele_qual_vge) label(exc_pr_2)
@@ -1100,14 +1100,6 @@ replace conf_getafford=0 if conf_sick==0 | conf_afford==0
 replace conf_getafford=.r if conf_sick==.r | conf_afford==.r
 lab val conf_getafford vc_nc_der
 
-*********************************01-12-2026 LW: adding back some derived variables after PVS dashboard:
-* tele_qual
-recode q25 (0 = 0 "Poor") (1 = 1 "Fair") (2 = 2 "Good") (3 = 3 "Very Good") (4 = 4 "Excellent") ///
-			(.r = .r "Refused") (.a = .a "NA") , gen(tele_qual)
-			
-*last_sched
-recode q35 (0 = 0 "No") (1 = 1 "Yes") ///
-		   (.a = .a "NA") (.r = .r "Refused"), gen(last_sched)
 
 *****************************
 
@@ -1116,21 +1108,19 @@ recode q35 (0 = 0 "No") (1 = 1 "Yes") ///
 order q*, sequential	   
 order respondent_serial respondent_id country country_reg wave language date /// 
 	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
-	  insured insur_type education health health_vge health_mental health_mental_vge health_chronic ///
+	  insured insur_type education health_vge health_mental_vge health_chronic ///
 	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
-	  usual_reason usual_quality usual_quality_vge visits visits_cat visits_covid_v1 ///
+	  usual_reason usual_quality_vge visits visits_cat visits_covid_v1 ///
 	  fac_number visits_home visits_tele tele_qual visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_srh care_mental /// 
 	  breast_exam color_ultrasound mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
-	  last_type last_reason last_sched last_wait_time last_visit_time_v1 last_sched_time ///
-	  last_qual last_qual_vge last_skills last_skills_vge last_supplies last_supplies_vge last_respect last_respect_vge last_know ///
-	  last_explain last_explain_vge last_decisions last_decisions_vge last_visit_rate last_visit_rate_vge last_wait_rate last_wait_rate_vge ///
-	  last_courtesy last_courtesy_vge last_sched_rate last_sched_rate_vge ///
-	  last_promote phc_women phc_women_vge phc_child phc_child_vge phc_chronic phc_chronic_vge phc_mental phc_mental_vge ///
-	  qual_srh qual_srh_vge care_infections care_infections_vge care_nonurgent care_nonurgent_vge ///
-	  conf_sick conf_sick_scvc conf_afford conf_afford_scvc conf_getafford conf_getafford_scvc conf_opinion qual_public qual_public_vge qual_private qual_private_vge ///
-	  system_outlook system_reform system_reform_minor covid_manage covid_manage_vge vignette_poor /// 
+	  last_type last_reason last_wait_time last_visit_time_v1 last_sched_time ///
+	   last_qual_vge last_skills_vge last_supplies_vge last_respect_vge last_know ///
+	  last_explain_vge last_decisions_vge last_visit_rate_vge last_wait_rate_vge last_courtesy_vge last_sched_rate_vge ///
+	  last_promote phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge qual_srh_vge care_infections_vge care_nonurgent_vge conf_sick_scvc ///
+	  conf_afford_scvc conf_getafford_scvc conf_opinion qual_public_vge qual_private_vge ///
+	  system_outlook system_reform system_reform_minor covid_manage_vge vignette_poor /// 
 	  vignette_good minority income   	   	  
 	
 ***************************** Labeling variables ***************************** 
@@ -1143,9 +1133,7 @@ lab var region "Region where respondent lives (County, state, province, etc.) (Q
 lab var insured "Insurance status (Q6)"
 lab var insur_type "Type of insurance (for those who have insurance) (Q7)" 
 lab var education "Highest level of education completed (Q8)"
-lab var health "Self-rated health (Q9)"
 lab var health_vge "Self-rated health (Q9)"
-lab var health_mental "Self-rated mental health (Q10)"
 lab var health_mental_vge "Self-rated mental health (Q10)"
 lab var	health_chronic "Longstanding illness or health problem (chronic illness) (Q11)"
 lab var ever_covid_v1 "Ever had COVID-19 or coronavirus (V1.0 - Q12)"
@@ -1158,7 +1146,6 @@ lab var	usual_type_own "Facility ownership for usual source of care (Q14)"
 lab var	usual_type_lvl "Facility level for usual source of care (Q15)"
 lab var	usual_type "Facility ownership and level for usual source of care (Q14/Q15)"
 lab var	usual_reason "Main reason for choosing usual source of care facility (Q16)"
-lab var	usual_quality "Overall quality rating of usual source of care (Q17)"
 lab var	usual_quality_vge "Overall quality rating of usual source of care (Q17)"
 lab var	visits "Visits (continuous) made in-person to a facility in past 12 months (Q18/Q19)"
 lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (Q18/Q19)"
@@ -1175,7 +1162,6 @@ lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (Q27_d)
 lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (Q27_e)"
 lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (Q27_f)"
 lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (Q27_g)"		
-lab var care_srh "NG only: Received care for sexual and reproductive health condition (Q27i_ng)"
 lab var	hiv_test "ZA only: HIV test conducted by healthcare provider in past 12 months (Q27_za)"
 lab var	care_mental	"Received care for depression, anxiety, or another mental health condition (Q27_h)"
 lab var breast_exam "CN only: Breast examination conducted by healtchare provider in past 12 months (Q27i_cn)"
@@ -1193,52 +1179,31 @@ lab var last_type "Facility ownership and level for last visit to a healthcare p
 lab var	last_reason	"Reason for last healthcare visit (Q34)" 
 lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (Q37)"
 lab var	last_visit_time_v1 "Length of time spent with the provider during last healthcare visit (V1.0 - Q47)"
-lab var	last_qual "Last visit rating: overall quality (Q38A)"
 lab var	last_qual_vge "Last visit rating: overall quality (Q38A)"
-lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence) (Q38_b)"
 lab var	last_skills_vge "Last visit rating: knowledge and skills of provider (Care competence) (Q38_b)"
-lab var	last_supplies "Last visit rating: equipment and supplies provider had available (Q38_c)"
 lab var	last_supplies_vge "Last visit rating: equipment and supplies provider had available (Q38_c)"
-lab var	last_respect "Last visit rating: provider respect (Q38_d)"
 lab var	last_respect_vge "Last visit rating: provider respect (Q38_d)"
-lab var	last_know "Last visit rating: knowledge of prior tests and visits (Q38_e)"
 lab var	last_know_vge "Last visit rating: knowledge of prior tests and visits (Q38_e)"
-lab var	last_explain "Last visit rating: explained things in an understandable way (Q38_f)"
 lab var	last_explain_vge "Last visit rating: explained things in an understandable way (Q38_f)"
-lab var	last_decisions "Last visit rating: involved you in decisions about your care (Q38_g)"
 lab var	last_decisions_vge "Last visit rating: involved you in decisions about your care (Q38_g)"
-lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (Q38_h)"
 lab var	last_visit_rate_vge "Last visit rating: amount of time provider spent with you (Q38_h)"
-lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q38_i)
 lab var	last_wait_rate_vge "Last visit rating: amount of time you waited before being seen (Q38_i)"
-lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
 lab var	last_courtesy_vge "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
 lab var	last_promote "Net promoter score for facility visited for last visit (Q39)"
-lab var	phc_women "Public primary care system rating for: pregnant women (Q40_a)"
 lab var	phc_women_vge "Public primary care system rating for: pregnant women (Q40_a)"
-lab var	phc_child "Public primary care system rating for: children (Q40_b)"
 lab var	phc_child_vge "Public primary care system rating for: children (Q40_b)"
-lab var	phc_chronic "Public primary care system rating for: chronic conditions (Q40_c)"
 lab var	phc_chronic_vge "Public primary care system rating for: chronic conditions (Q40_c)"
-lab var	phc_mental "Public primary care system rating for: mental health (Q40_d)"
 lab var	phc_mental_vge "Public primary care system rating for: mental health (Q40_d)"
-lab var qual_srh "Rating for quality of care provided for sexual or reproductive health?"
 lab var qual_srh_vge "Rating for quality of care provided for sexual or reproductive health?"
-lab var care_infections "Rating for care for infections such as Malaria, Tuberculosis etc?"
 lab var care_infections_vge "Rating for care for infections such as Malaria, Tuberculosis etc?"
-lab var care_nonurgent "Rating for the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
 lab var care_nonurgent_vge "Rating for the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
 lab var	conf_sick_scvc "Confidence in receiving good quality healthcare if became very sick (Q41_a)"
-lab var conf_getafford "Confidence in Receiving and affording healthcare if became very sick (Q41a/Q41b)"
 lab var	conf_afford_scvc	"Confidence in ability to afford care healthcare if became very sick (Q41_b)"
 lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q41_c)"
-lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (Q42)"
 lab var	qual_public_vge	"Overall quality rating of gov or public healthcare system in country (Q42)"
-lab var	qual_private "Overall quality rating of private healthcare system in country (Q43)"
 lab var	qual_private_vge "Overall quality rating of private healthcare system in country (Q43)" 
 lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q45)"
 lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q46)" 
-lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q47)" 
 lab var	covid_manage_vge "Rating of the government's management of the COVID-19 pandemic (Q47)" 
 lab var	vignette_poor "Rating of vignette in q48 (poor care)"
 lab var	vignette_good "Rating of vignette in q49 (good care)"
