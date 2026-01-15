@@ -1209,7 +1209,7 @@ lab var	last_decisions "Last visit rating: involved you in decisions about your 
 lab var	last_decisions_vge "Last visit rating: involved you in decisions about your care (Q38_g)"
 lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (Q38_h)"
 lab var	last_visit_rate_vge "Last visit rating: amount of time provider spent with you (Q38_h)"
-lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q38_i)"
+lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q38_i)
 lab var	last_wait_rate_vge "Last visit rating: amount of time you waited before being seen (Q38_i)"
 lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
 lab var	last_courtesy_vge "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
