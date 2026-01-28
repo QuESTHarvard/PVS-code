@@ -56,6 +56,11 @@ drop mode
 lab def mode 1 "CATI" 2 "F2F"
 lab var recmode mode
 
+*Creating PSU_ID (missing for Malawi)
+egen psu_id = group(q4_1) if recmode == 2
+tostring psu_id, replace format(%5.0f) //make string to match KE and ET
+replace psu_id = "MW" + psu_id if recmode == 2
+
 encode form_language, gen(language) 
 drop form_language
 
