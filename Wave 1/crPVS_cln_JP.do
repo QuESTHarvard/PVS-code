@@ -1,6 +1,6 @@
 * People's Voice Survey data cleaning for Japan - Wave 1
-* Date of last update: December 2025
-* Last updated by: S Islam
+* Date of last update: Jan 2026
+* Last updated by: S Islam, L Xiang
 
 /*
 
@@ -22,245 +22,622 @@ set more off
 *********************** JAPAN ***********************
 
 * Import raw data
-import excel "$data/Japan/01 raw data/25-055861-01 Kyushu Univ Data.xlsx", sheet("S25050491") firstrow  
-
-*Label as wave 1 data:
-gen wave = 1
+import excel "$data/Japan/01 raw data/25-055861-01 Kyushu Univ Data_revised.xlsx", firstrow clear case(lower)
 
 * data cleaning:
-* check with Todd if the following can be dropped?
-drop Q0 TRP1 TRP214 TRP224 TRP234 TRP244 Q13*scale Q437confirm
+drop q0 q4 q5 q5codes q13*scale /// we removed the extra questions in JP questionnaires: q4,5,13,24,25,26,27,58
+		q24 q25 q25other1 q2616 q2626 q2636 q2646 q2656 q2666 q26other1 q27 q437confirm ///
+		trp1 trp214 trp224 trp234 trp244
 
 *------------------------------------------------------------------------------*
 * Generate variables
 
-gen respondent_id = "JP" + string(RespondentSerial)
+*respondent id
+gen respondent_id = "JP" + string(respondentserial)
 
+* country
 gen country = 8
 lab def country 8 "Japan"
 lab values country country
 
-* SI Note: check that this is the correct mode
-gen mode = 1
-lab def mode 1 "CAWI"
-lab val mode mode
+/*
+* country_reg
+gen country_reg = 25 // which number???
+lab def country_reg 25 "Japan"
+lab values country_reg country_reg
+*/
 
+*Label as wave 1 data:
+gen wave = 1
+
+* language
 gen language = 8001
 lab def Language 8001 "JP: Japanese"
 lab val language Language
 
+* date
+* gen date = . // we don't have it
+
+* int_length
+* gen int_length = . // we don't have it
+
+* mode
+gen mode = 3 
+lab def mode 3 "CAWI" // check with Todd to see 
+lab val mode mode
+
+* weight, psu_id_for_svy_cmds
+
 *------------------------------------------------------------------------------*
 * Rename variables  
 
-rename RespondentSerial respondent_serial
-rename (Q1 Q2 Q3) (q1 q2 q3)
-rename (Q4 Q5) (q3a_jp q3b_jp)
-rename (Q6 Q7 Q8 Q9) (q4 q5 q7 q8)
-rename (Q10 Q11) (q9 q10)
-rename (Q141scale Q142scale Q143scale Q144scale Q145scale) (q12_a q12_b q12c_jp q12d_jp q12e_jp)
-rename (Q15 Q16 Q16other1) (q13 q14_jp q14_other)
-rename (Q17 Q17other1 Q18 Q18other1) (q15 q15_other q16 q16_other)
-rename (Q19 Q20 Q21 Q22 Q23) (q17 q18 q19 q20 q21)
-* rename (Q24 Q25 Q25other1) (q21a_jp q21b_jp q21b_jp_other) // SI: check naming with Todd
-rename (Q28 Q29 Q30 Q30other1) (q22 q23 q24 q24_other)
-rename (Q31 Q32) (q25 q26)
-rename (Q331scale Q332scale Q333scale Q334scale Q335scale Q336scale Q337scale Q338scale Q339scale Q3310scale Q3311scale Q3312scale) (q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_jp q27j_jp q27k_jp q27l_jp)
-rename (Q341scale Q342scale Q343scale Q344scale) (q28_a q28_b q28c_jp q28d_jp)
-rename (Q35 Q36 Q36other1) (q29 q30 q30_other)
-rename (Q371scale Q372scale Q373scale Q374scale) (q31a q31b q31c_jp q31d_jp)
-rename (Q38 Q38other1 Q39 Q39other1 Q40 Q40other1) (q32_jp q32_other q33 q33_other q34 q34_other)
-rename (Q41 Q42 Q43 Q43other1) (q35 q36 q37 q37_other)
-rename (Q441scale Q442scale Q443scale Q444scale Q445scale Q446scale Q447scale Q448scale Q449scale Q4410scale Q4411scale) (q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k)
-rename Q45 q39
-rename (Q461scale Q462scale Q463scale Q464scale Q465scale Q466scale) (q40_a q40_b q40_c q40_d q40e_jp q40f_jp)
-rename (Q471scale Q472scale Q473scale Q474scale Q475scale Q476scale) (q41_a q41_b q41_c q41d_jp q41e_jp q41f_jp)
-rename (Q48 Q49 Q50 Q51 Q52 Q53) (q42 q43 q45 q46 q47 q48 q49)
-rename (Q55 Q55other1) (q50 q50_other)
-rename (Q56 Q57 Q58 Q58other1) (q51 q52a_jp q52b_jp q52b_jp_other)
+rename respondentserial respondent_serial
+rename (q6 q7 q8) (q4 q5 q7) // here we will add q6 later
+rename (q9 q10 q11) (q8 q9 q10)
+rename (q121scale q122scale q123scale q124scale q125scale q126scale q127scale q128scale q129scale q1210scale q1211scale q1212scale q1213scale q1214scale q1215scale q1216scale q121) ///
+		(q11a_jp q11b_jp q11c_jp q11d_jp q11e_jp q11f_jp q11g_jp q11h_jp q11i_jp q11j_jp q11k_jp q11l_jp q11m_jp q11n_jp q11o_jp q11p_jp q11_other)
+rename (q141scale q142scale q143scale q144scale q145scale) (q12_a q12_b q12c_jp q12d_jp q12e_jp)
+rename (q15 q16 q16other1) (q13 q14_jp q14_other)
+rename (q17 q17other1 q18 q18other1) (q15 q15_other q16 q16_other)
+rename (q19 q20 q20codes q21 q22 q23 q23codes) (q17 q18 q18codes q19 q20 q21 q21codes)
+rename (q28 q28codes q29 q29codes q30 q30other1 q31 q32) (q22 q22codes q23 q23codes q24 q24_other q25 q26)
+rename (q331scale q332scale q333scale q334scale q335scale q336scale q337scale q338scale q339scale q3310scale q3311scale q3312scale) (q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_jp q27j_jp q27k_jp q27l_jp)
+rename (q341scale q342scale q343scale q344scale) (q28_a q28_b q28c_jp q28d_jp)
+rename (q35 q36 q36other1) (q29 q30 q30_other)
+rename (q371scale q372scale q373scale q374scale) (q31a q31b q31c_jp q31d_jp)
+rename (q38 q38other1 q39 q39other1 q40 q40other1) (q32_jp q32_other q33 q33_other q34 q34_other)
+rename (q41 q42 q43 q43other1) (q35 q36 q37 q37_other)
+rename (q441scale q442scale q443scale q444scale q445scale q446scale q447scale q448scale q449scale q4410scale q4411scale) (q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k)
+rename (q45 q45codes) (q39 q39codes)
+rename (q461scale q462scale q463scale q464scale q465scale q466scale) (q40_a q40_b q40_c q40_d q40e_jp q40f_jp)
+rename (q471scale q472scale q473scale q474scale q475scale q476scale) (q41_a q41_b q41_c q41d_jp q41e_jp q41f_jp)
+rename (q48 q49) (q42 q43)
+rename (q50 q51 q52 q53 q54) (q45 q46 q47 q48 q49)
+rename (q55 q55other1) (q50 q50_other)
+rename (q56 q57 q58 q58other1) (q51 q52a_jp q53a_jp q53a_jp_other)
+
+
 
 *------------------------------------------------------------------------------*
 * Generate recoded variables
-* SI Note: left off cleaning JP data here 12/2025
 
-gen q2 = .
-replace q2 = 0 if q1 < 18
-replace q2 = 1 if q1 >= 18 & q1 <= 29
-replace q2 = 2 if q1 >= 30 & q1 <= 39
-replace q2 = 3 if q1 >= 40 & q1 <= 49
-replace q2 = 4 if q1 >= 50 & q1 <= 59
-replace q2 = 5 if q1 >= 60 & q1 <= 69
-replace q2 = 6 if q1 >= 70 & q1 <= 79
-replace q2 = 7 if q1 >= 80
+*combined 998 into the vatriables because they are sepreate 
+replace q18 = q18codes if !missing(q18codes)
+replace q21 = q21codes if !missing(q21codes)
+replace q22 = q22codes if !missing(q22codes)
+replace q23 = q23codes if !missing(q23codes)
+replace q39 = q39codes if !missing(q39codes)
+drop q18codes q21codes q22codes q23codes q39codes
 
-gen q14_de = .
-replace q14_de = 1 if Q14_1 == 1
-replace q14_de = 2 if Q14_2 == 1
-replace q14_de = 3 if Q14_3 == 1
-replace q14_de = 4 if Q14_4 == 1
-replace q14_de = 5 if Q14_5 == 1
-replace q14_de = 6 if Q14_6 == 1
-replace q14_de = .a if Q14_1 == -1 | Q14_2 == -1 | Q14_3 == -1 | Q14_4 == -1 | Q14_6 == -1
+* q2(age group)
+lab def q2_label 1 "18 to 29" 2 "30-39" 3 "40-49" 4 "50-59" 5 "60-69" 6 "70-79" 7 "80 or older"
+lab val q2 q2_label
 
-rename Q14_5_TEXT q14_other
-drop Q14_1 Q14_2 Q14_3 Q14_4 Q14_5 Q14_6
+* q3 (gender)
+lab def q3_label 0 "Man" 1 "Woman" 2 "Another gender"
+lab val q3 q3_label
 
-gen q15a_de = .
-replace q15a_de = 1 if Q15A_1 == 1
-replace q15a_de = 2 if Q15A_2 == 1
-replace q15a_de = 3 if Q15A_3 == 1
-replace q15a_de = 4 if Q15A_4 == 1
-replace q15a_de = 5 if Q15A_5 == 1
-replace q15a_de = 6 if Q15A_6 == 1
-replace q15a_de = 7 if Q15A_7 == 1
+* q4 (region)
+lab def q4_label 1 "Hokkaido" 2 "Aomori" 3 "Iwate" 4 "Miyagi" 5 "Akita" ///
+              6 "Yamagata" 7 "Fukushima" 8 "Ibaraki" 9 "Tochigi" ///
+              10 "Gunma" 11 "Saitama" 12 "Chiba" 13 "Tokyo" 14 "Kanagawa" ///
+              15 "Niigata" 16 "Toyama" 17 "Ishikawa" 18 "Fukui" 19 "Yamanashi" ///
+              20 "Nagano" 21 "Gifu" 22 "Shizuoka" 23 "Aichi" 24 "Mie" ///
+              25 "Shiga" 26 "Kyoto" 27 "Osaka" 28 "Hyogo" 29 "Nara" ///
+              30 "Wakayama" 31 "Tottori" 32 "Shimane" 33 "Okayama" 34 "Hiroshima" ///
+              35 "Yamaguchi" 36 "Tokushima" 37 "Kagawa" 38 "Ehime" 39 "Kochi" ///
+              40 "Fukuoka" 41 "Saga" 42 "Nagasaki" 43 "Kumamoto" 44 "Oita" ///
+              45 "Miyazaki" 46 "Kagoshima" 47 "Okinawa"
+lab val q4 q4_label
 
-rename Q15A_6_TEXT q15a_de_other
-drop Q15A_1 Q15A_2 Q15A_3 Q15A_4 Q15A_5 Q15A_6 Q15A_7
+* q5 (urban/rural)
+lab def q5_label 1 "City" 2 "Suburb of city" 3 "Small town" 4 "Rural area" 
+lab val q5 q5_label
 
-replace q18 = 998 if Q18_EXCLUSIVE == 1
-drop Q18_EXCLUSIVE
+* q6_jp (insured)
+recode q7 (1 = 1) (2 = 0), gen(q6_jp) // Confirm with Todd how to code 999: BLANK
+recode q6_jp (999 = .a)
+lab def q6_label 0 " No, do not have private insurance" 1 "Yes, have private insurance" .a "NA" 
+lab val q6_jp q6_label
+ 
+* q7 (insured_type)
+recode q7 (999 = .a) // Confirm with Todd how to code 999: BLANK
+lab def q7_label 1 "Additional private insurance" 2 "Only public insurance" .a "NA"
+lab val q7 q7_label
 
-replace q21 = 998 if Q21_EXCLUSIVE == 1
-drop Q21_EXCLUSIVE
+* q8 (education)
+* recode q8 (1 = 1) (2 = 2) (3 = 2) (4 = 3) (5 = 3) // Confirm with Todd how to code this since we don;t have primary and none
+lab def q8_label 1 "Junior high school" 2 "High school" 3 "Vocational school, junior college, technical college" 4 "Four-year university" 5 "Postgraduate school or higher"
+lab val q8 q8_label
 
-replace q22 = 998 if Q22_EXCLUSIVE == 1
-drop Q22_EXCLUSIVE
+* q9 (general health)
+recode q9 (999 = .a) // Confirm with Todd how to code 999: BLANK
+lab def q9_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA"
+lab val q9 q9_label
 
-replace q23 = 998 if Q23_EXCLUSIVE == 1
-drop Q23_EXCLUSIVE
+* q10 (mental health)
+recode q10 (999 = .a) // Confirm with Todd how to code 999: BLANK
+lab def q10_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA"
+lab val q10 q10_label
 
-gen q32_de = .
-replace q32_de = 1 if Q32_1 == 1
-replace q32_de = 2 if Q32_2 == 1
-replace q32_de = 3 if Q32_3 == 1
-replace q32_de = 4 if Q32_4 == 1
-replace q32_de = 5 if Q32_5 == 1
-replace q32_de = 6 if Q32_6 == 1
-replace q32_de = .a if Q32_1 == -1 | Q32_2 == -1 | Q32_3 == -1 | Q32_4 == -1 | Q32_6 == -1
+* q11 (chronic health)
+foreach v of varlist q11a_jp q11b_jp q11c_jp q11d_jp q11e_jp q11f_jp q11g_jp q11h_jp q11i_jp q11j_jp q11k_jp q11l_jp q11m_jp q11n_jp q11o_jp q11p_jp {
+    replace `v' = .a if `v' == 999
+}
 
-rename Q32_5_TEXT q32_other
-drop Q32_1 Q32_2 Q32_3 Q32_4 Q32_5 Q32_6
+egen total_q11 = rowtotal(q11a_jp q11b_jp q11c_jp q11d_jp q11e_jp q11f_jp q11g_jp q11h_jp q11i_jp q11j_jp q11k_jp q11l_jp q11m_jp q11n_jp q11o_jp q11p_jp)
+gen q11 = total_q11 > 0
+label define q11_label 0 "No" 1 "Yes"
+label values q11 q11_label
 
-* gen rec variable for variables that have overlap values to be country code * 1000 + variable 
+drop q11a_jp q11b_jp q11c_jp q11d_jp q11e_jp q11f_jp q11g_jp q11h_jp q11i_jp q11j_jp q11k_jp q11l_jp q11m_jp q11n_jp q11o_jp q11p_jp total_q11
 
-gen reclanguage = country*1000 + language  
+* q12_a (confendent managing health)
+recode q12_a (999 = .a)
+lab def q12_label 0 "Not at all confident" 1 "Not too confident" 2 "Somewhat confident" 3 "Very confident" .a "NA"
+lab val q12_a q12_a_label
 
-gen recq4 = country*1000 + q4
-*replace recq4 = .r if q4 == 999
+* q12_b (tell provider concerns) 
+recode q12_b (999 = .a)
+lab val q12_b q12_label
 
-gen recq5 = country*1000 + q5  
-*replace recq5 = .r if q5 == 999
+* q12c_jp (best treatment)
+recode q12c_jp (999 = .a) // extra questions, ask Todd if we drop them
+lab val q12c_jp q12_label
 
-gen recq7 = country*1000 + q7
-replace recq7 = .r if q7== 999
+* q12d_jp (understand)
+recode q12d_jp (999 = .a) // extra questions, ask Todd if we drop them
+lab val q12d_jp q12_label
 
-gen recq8 = country*1000 + q8
-*replace recq8 = .r if q8== 999
+* q12e_jp (find information)
+recode q12e_jp (999 = .a) // extra questions, ask Todd if we drop them
+lab val q12e_jp q12_label
 
-gen recq15 = country*1000 + q15
-*replace recq15 = .r if q15== 999
-*replace recq15 = .d if q15== 998
+* q13 (sepcific facility visit)
+recode q13 (999 = .a) // extra questions, ask Todd if we drop them
+lab def q13_label 0 "No" 1 "Yes" .a "NA"
+lab val q13 q13_label
 
-gen recq33 = country*1000 + q33
-replace recq33 = .r if q33== 999 
-*replace recq33 = .d if q33== 998
+* q14_jp (pub/pri facility)
+replace q14_jp = .a if q14_jp == . // code as .a since they are skipped for having no facility going
+lab def q14_jp_label 1 "Public" 2 "Private" 3 "Other(specify)" .a "NA"
+lab val q14_jp q14_jp_label
 
-gen recq50 = country*1000 + q50 
-*replace recq50 = .r if q50== 999
+* q15 (type of facility)
+replace q15 = .a if q15 == . // code as .a since they are skipped for the facility is public
+lab def q15_label 1 "Doctor's office or clinic" 2 "Hospital where referrals are not required" 3 "Hospital where referrals are required" 4 "Other(specify)" .a "NA"
+lab val q15 q15_label
+
+* q16 (why this facility)
+recode q16 (8 = 21) // Ask Todd to check if i should code this to 21
+replace q16 = .a if q16 == .
+lab def q16_label 1	"Low cost" 2 "Short distance" 3	"Short waiting time" 4 "Good healthcare provider skills" ///
+				  5	"Staff shows respect" 6	"Medicines and equipment are available" 7 "Only facility available" ///
+				  8	"Covered by insurance" 9 "Other(specify)" 21 "JP: Positive online or social media reviews".a "NA"
+lab val q16 q16_label
+
+* q17 (overall rating of received healthcare)
+replace q17 = .a if q17 == .
+recode q17 (5 = .a) (999 = .) // Confirm with Todd how to code 999: BLANK
+lab def q17_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA"
+lab val q17 q17_label
+
+* q18 (# of visits)
+recode q18 (998 = .d) (999 = .a)
+lab def q18_label .d "Don't know" .a "NA"
+lab val q18 q18_label
+
+* q19 (categorized of # of visits)
+replace q19 = .a if q19 == .
+recode q19 (999 = .) (1 = 0) (2 = 1) (3 = 2) (4 = 3)
+lab def q19_label 0 "0" 1 "1-4" 2 "5-9" 3 "10 or more" .a "NA"
+lab val q19 q19_label
+
+* q20 (same or different facility)
+replace q20 = .a if q20 == .
+recode q20 (999 = .)
+lab def q20_label 0 "No" 1 "Yes" .a "NA"
+lab val q20 q20_label
+
+* q21 (# of different facilities)
+replace q21 = .a if q21 == .
+recode q21 (999 = .a) (998 = .d)
+lab def q21_label .d "Don't know" .a "NA"
+lab val q21 q21_label
+
+* q22 (# of home visits)
+recode q22 (999 = .a) (998 = .d)
+lab def q22_label .d "Don't know" .a "NA"
+lab val q22 q22_label
+
+* q23 (# of virtual visits)
+recode q23 (999 = .a) (998 = .d)
+lab def q23_label .d "Don't know" .a "NA"
+lab val q23 q23_label
+
+* q24 (reason of virtual)
+replace q24 = .a if q24 == .
+lab def q24_label 1 "Care for an urgent or new health problem such as an accident or injury or a new" ///
+					2 "Follow-up care for a longstanding illness or chronic disease such as hypertension or diabetes. This may include mental health conditions." ///
+					3 "Preventive care or a visit to check on your health, such as an annual check-up, antenatal care, or vaccination." 4 "Other (specify)" .a "NA"
+lab val q24 q24_label
+
+* q25 (overall rating of virtual)
+replace q25 = .a if q25 == .
+lab def q25_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA"
+lab val q25 q25_label
+
+* q26 (stay overnight)
+lab def q26_label 0 "No" 1 "Yes"
+lab val q26 q26_label
+
+* q27_a (bp check)
+recode q27_a (999 = .a) (998 = .d)
+lab def q27_label 0 "No" 1 "Yes" .a "NA" .d "Don't know"
+lab val q27_a q27_label
+
+* q27_b (mammo)
+replace q27_b = .a if q27_b == .
+recode q27_b (999 = .a) (998 = .d)
+lab val q27_b q27_label
+
+* q27_c (cervical)
+replace q27_c = .a if q27_c == .
+recode q27_c (999 = .a) (998 = .d)
+lab val q27_c q27_label
+
+* q27_d (vision)
+recode q27_d (999 = .a) (998 = .d)
+lab val q27_d q27_label
+
+* q27_e (teeth)
+recode q27_e (999 = .a) (998 = .d)
+lab val q27_e q27_label
+
+* q27_f (bs)
+recode q27_f (999 = .a) (998 = .d)
+lab val q27_f q27_label
+
+* q27_g (cholesterol)
+recode q27_g (999 = .a) (998 = .d)
+lab val q27_g q27_label
+
+* q27_h (deoression)
+recode q27_h (999 = .a) (998 = .d)
+lab val q27_h q27_label
+
+* q27i_jp (endoscope)
+recode q27i_jp (999 = .a) (998 = .d)
+lab val q27i_jp q27_label
+
+* q27j_jp (barium swalllow)
+recode q27j_jp (999 = .a) (998 = .d)
+lab val q27j_jp q27_label
+
+* q27k_jp (fecal occult bloot test)
+recode q27k_jp (999 = .a) (998 = .d)
+lab val q27k_jp q27_label
+
+* q27l_jp (electrocardiogram)
+recode q27l_jp (999 = .a) (998 = .d)
+lab val q27l_jp q27_label
+
+* q28_a (medical mistake)
+replace q28_a = .a if q28_a == .
+recode q28_a (999 = .)
+lab def q28_label 0 "No" 1 "Yes" .a "I did not get healthcare in past 12 months"
+lab val q28_a q28_label
+
+* q28_b (treat unfairly)
+replace q28_b = .a if q28_b == .
+recode q28_b (999 = .)
+lab val q28_b q28_label
+
+* q28c_jp (not enough explaination)
+replace q28c_jp = .a if q28c_jp == .
+recode q28c_jp (999 = .)
+lab val q28c_jp q28_label
+
+* q28d_jp (wait long time)
+replace q28d_jp = .a if q28d_jp == .
+recode q28d_jp (999 = .)
+lab val q28d_jp q28_label
+
+* q29 (not get healthcare)
+recode q29 (999 = .a) 
+lab def q29_label 0 "No" 1 "Yes" .a "NA"
+lab val q29 q29_label
+
+* q30 (reason)
+recode q30 (7 = 24) (9 = 25) (10 = 26) (11 = 27) (8 = 7) (12 = 10)
+lab def q30_label 1	"High cost (e.g., high out of pocket payment, not covered by insurance)" ///
+				  2	"Far distance (e.g., too far to walk or drive, transport not readily available)" ///
+				  3	"Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
+				  4	"Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
+				  5	"Staff don't show respect (e.g., staff is rude, impolite, dismissive)" ///
+				  6	"Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
+				  7	"Illness not serious enough" 10 "Other (specify)"  24 "JP: Equipment like X-ray machines are broken or unavailable" /// 
+				  25 "JP: Do not want health care providers to know of the disease or to show the symptomatic part of the body" ///
+				  26 "JP: Busyness" 27 "JP: Did not want to hear about unfavorable diagnoses" .a "NA"
+lab val q30 q30_label
+
+* q31a (borrow)
+lab def q31_label 0 "No" 1 "Yes" .a "NA"
+lab val q31a q31_label
+
+* q31b (sell)
+recode q31b (999 = .a) 
+lab val q31b q31_label
+
+* q31c_jp (government)
+recode q31c_jp (999 = .a) 
+lab val q31c_jp q31_label
+
+* q31d_jp (worried)
+recode q31d_jp (999 = .a) 
+lab val q31d_jp q31_label
+
+* q32_jp (pub/pri facility)
+recode q32_jp (999 = .a) 
+lab def q32_jp_label 1 "Public" 2 "Private" 3 "Other (specify)" .a "NA" 
+lab val q32_jp q32_jp_label
+
+* q33 (type of facility)
+recode q33 (999 = .a) 
+lab def q33_label 1 "Doctor's office or clinic" 2 "Hospital where referrals are not required" 3 "Hospital where referrals are required" 4 "Other (specify)" .a "NA" 
+lab val q33 q33_label
+
+* q34 (main reason)
+replace q34 = .a if q34 == .
+lab def q34_label 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" ///
+				  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
+				  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" ///
+				  4 "Other (specify)" .a "NA"
+lab val q34 q34_label
+
+* q35 (schedule or walk in)
+replace q35 = .a if q35 == .
+recode q35 (999 = .)
+lab def q35_label 0 "No, I did not have an appointment" 1 "Yes, the visit was scheduled, and I had an appointment" .a "NA"
+lab val q35 q35_label	
+
+* q36 (wait)
+replace q36 = .a if q36 == .
+lab def q36_label 1	"Same or next day" 2 "2 days to less than one week" 3 "1 week to less than 2 weeks" ///
+				  4	"2 weeks to less than 1 month" 5 "1 month to less than 2 months" 6 "2 months to less than 3 months" ///
+				  7	"3 months to less than 6 months" 8	"6 months or more" .a "NA"
+lab val q36 q36_label
+
+* q37 (wait min)
+replace q37 = .a if q37 == .
+recode q37 (999 = .)
+lab def q37_label 1	"Less than 15 minutes" 2 "15 minutes to less than 30 minutes" 3	"30 minutes to less than 1 hour" ///
+				  4	"1 hour to less than 2 hours" 5	"2 hours to less than 3 hours" 6 "3 hours to less than 4 hours" ///
+				  7	"More than 4 hours (specify)" .a "NA" .r "Refused"
+lab val q37 q37_label
+
+* q37_other
+tostring q37_other, replace
+
+* q38_a (overall quality)
+replace q38_a = .a if q38_a == .
+recode q38_a (999 = .)
+lab def q38_label 4 "Excellent" 3 "Very good" 2 "Good" 1 "Fair"  0 "Poor" .a "NA" 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" // ask Todd how to deal with this extra answer
+lab val q38_a q38_label  
+
+* q38_b (knowledge and skill)
+replace q38_b = .a if q38_b == .
+recode q38_b (999 = .)
+lab val q38_b q38_label 
+
+* q38_c (equip and clinical)
+replace q38_c = .a if q38_c == .
+recode q38_c (999 = .)
+lab val q38_c q38_label 
+
+* q38_d (respect)
+replace q38_d = .a if q38_d == .
+recode q38_d (999 = .)
+lab val q38_d q38_label 
+
+* q38_e (prior)
+replace q38_e = .a if q38_e == .
+recode q38_e (999 = .)
+lab val q38_e q38_label 
+
+* q38_f (explain)
+replace q38_f = .a if q38_f == .
+recode q38_f (999 = .)
+lab val q38_f q38_label 
+
+* q38_g (your opnion)
+replace q38_g = .a if q38_g == .
+recode q38_g (999 = .)
+lab val q38_g q38_label 
+
+* q38_h (time spent)
+replace q38_h = .a if q38_h == .
+recode q38_h (999 = .)
+lab val q38_h q38_label 
+
+* q38_i (wait time)
+replace q38_i = .a if q38_i == .
+recode q38_i (999 = .)
+lab val q38_i q38_label 
+
+* q38_j (courtesy and helpfulness)
+replace q38_j = .a if q38_j == .
+recode q38_j (999 = .)
+lab val q38_j q38_label 
+
+* q38_k (time to get appointment)
+replace q38_k = .a if q38_k == .
+recode q38_k (999 = .)
+lab val q38_k q38_label 
+
+* q39 (recommment)
+replace q39 = .a if q39 == .
+recode q39 (999 = .)
+lab def q39_label .a "NA"
+lab val q39 q39_label
+
+* q40_a (women)
+recode q40_a (999 = .a) (5 = .d)
+lab def q40_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" ///
+				  .d "I am unable to judge" .a "NA"
+lab val q40_a q40_label
+
+* q40_b (children)
+recode q40_b (999 = .a) (5 = .d)
+lab val q40_b q40_label
+
+* q40_c (chronic condition)
+recode q40_c (999 = .a) (5 = .d)
+lab val q40_c q40_label
+
+* q40_d (mental health)
+recode q40_d (999 = .a) (5 = .d)
+lab val q40_d q40_label
+
+* q40e_jp (health checkup)
+recode q40e_jp (999 = .a) (5 = .d)
+lab val q40e_jp q40_label
+
+* q40f_jp (infertility treatment)
+recode q40f_jp (999 = .a) (5 = .d)
+lab val q40f_jp q40_label
+
+* q41_a (get)
+recode q41_a (999 = .a)
+lab def q41_label 3 "Very confident" 2"Somewhat confident" 1 "Not too confident" 0 "Not at all confident" .a "NA"
+lab val q41_a q41_label
+
+* q41_b (afford)
+recode q41_b (999 = .a)
+lab val q41_b q41_label
+
+* q41_c (government opnion)
+recode q41_c (999 = .a)
+lab val q41_c q41_label
+
+* q41d_jp (afford when old)
+recode q41d_jp (999 = .a)
+lab val q41d_jp q41_label
+
+* q41e_jp (get in disaster)
+recode q41e_jp (999 = .a)
+lab val q41e_jp q41_label
+
+* q41f_jp (get in area not city)
+recode q41f_jp (999 = .a)
+lab val q41f_jp q41_label
+
+* q42 (pub system)
+recode q42 (999 = .)
+lab def q42_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor"
+lab val q42 q42_label
+
+* q43 (pri system)
+recode q43 (999 = .)
+lab val q43 q42_label
+
+* q45 (better, same, worse)
+recode q45 (999 = .) (1 = 2) (2 = 1) (3 = 0)
+lab def q45_label 2	"Getting better" 1 "Staying the same" 0	"Getting worse"
+lab val q45 q45_label
+
+* q46 (rebuild, major, minor)
+recode q46 (999 = .) 
+lab def q46_label 1	"Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
+					2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
+					3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better."
+lab val q46 q46_label
+
+* q47 (covid mamangement)
+recode q47 (999 = .) 
+lab def q47_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" 
+lab val q47 q47_label
+
+* q48 (vignette 1)
+recode q48 (999 = .) 
+lab def q48_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" 
+lab val q48 q48_label
+
+* q49 (vignette 2)
+recode q49 (999 = .) 
+lab def q49_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" 
+lab val q49 q49_label
+
+* q50 (mother tongue)
+recode q50 (999 = .) 
+lab def q50_label 1	"Japanese" 2 "Chinese" 3 "Korean" 4 "Vietnamese" 5 "Tagalog" 6 "Spanish" 7 "English" 8 "Other (specify)"
+lab val q50 q50_label
+
+* q51 (income)
+recode q51 (999 = .) 
+lab def q51_label 1	"Less than 3 million yen" 2 "3 million-less than 4.8 million yen" 3 "4.8 million-less than 6.5 million yen" ///
+					4 "6.5 million-less than 8.5 million yen" 5 "8.5 million yen or over" 
+lab val q51 q51_label
+
+* q52a_jp (political party)
+recode q52a_jp (998 = .d)
+lab def q52_label 1	"Liberal Democratic Party" 2 "Constitutional Democratic Party" 3 "Komeito" ///
+					4 "Japan Innovation Party" 5 "Japanese Communist Party" 6 "Reiwa Shinsengumi" 7 "Social Democratic Party" 8 "Democratic Party for the People" ///
+					9 "Sanseito" 10 "Other" 11 "Did not vote" .d "Don't know"
+lab val q52a_jp q52_label
+
+* q53a_jp (priority of election)
+recode q53a_jp (999 = .a) (998 = .d)
+lab def q53_label 1	"Healthcare system" 2 "Economic policy" 3 "Education" ///
+					4 "Welfare" 5 "Foreign affairs" 6 "Defense" 7 "Environmental and energy policy" 8 "Employment and labor policy" ///
+					9 "Taxation and fiscal policy" 10 "Transportation and infrastructure policy" 11 "Other (specify)" .d "Don't know" .a "NA"
+lab val q53a_jp q53_label
 
 * Relabel some variables now so we can use the orignal label values
-label define country_short 6 "MW" 
-qui elabel list country_short
-local countryn = r(k)
-local countryval = r(values)
-local countrylab = r(labels)
+local q4l  q4_label
+local q5l  q5_label
+local q7l  q7_label
+local q8l  q8_label
+local q15l q15_label
+local q33l q33_label
+local q50l q50_label
+local q51l q51_label
 
-local q4l q4
-local q5l recq5
-local q7l recq7
-local q8l recq8
-local q15l recq15
-local q33l recq33
+foreach q in q4 q5 q7 q8 q15 q33 q50 q51 {
 
-foreach q in q4 q5 q7 q8 q15 q33 {
-	qui elabel list ``q'l'
-	local `q'n = r(k)
-	local `q'val = r(values)
-	local `q'lab = r(labels)
-	local g 0
-	foreach i in ``q'lab'{
-		local ++g
-		local gr`g' `i'
-	}
+    * 1) SHIFT the values to 8000+ (do not touch missing values)
+    replace `q' = 8000 + `q' if `q' < .
 
-	qui levelsof rec`q', local(`q'level)
+    * 2) Read original label set
+    quietly elabel list ``q'l'
+    local n   = r(k)
+    local val = r(values)
+    local lab = r(labels)
 
-	forvalues i = 1/``q'n' {
-		local recvalue`q' = 6000+`: word `i' of ``q'val''
-		foreach lev in ``q'level'{
-			if strmatch("`lev'", "`recvalue`q''") == 1{
-				elabel define `q'_label (= 6000+`: word `i' of ``q'val'') ///
-									    (`"MW: `gr`i''"'), modify			
-			}	
-		}                 
-	}
+    * 3) Build new label set, skipping missing-coded values
+    forvalues i = 1/`n' {
+        local v : word `i' of `val'
+        local l : word `i' of `lab'
 
-	
-	label val rec`q' `q'_label
+        * skip if v is missing (., .a-.z)
+        if (`v' < .) {
+            local newcode = 8000 + `v'
+            elabel define `q'_label `newcode' `"JP: `l'"', modify
+        }
+    }
+
+    * 4) Apply the new labels
+    label values `q' `q'_label
 }
 
 
-lab def q50_label 6001 "MW: Chichewa" 6002 "MW: Other" 6003 "MW: Tumbuka" 6004 "MW: Yao" 6005 "MW: Chilomwe" 6006 "MW: Chisena"
-lab val recq50 q50_label
-
-*****************************
-
-drop q4 q5 q7 q8 q15 q33 q50 language
-ren rec* *
-
 *------------------------------------------------------------------------------*
-* Fix interview length variable and other time variables (Ask todd if i should create a date var using start and end)
+* Fix interview length variable and other time variables (Don't have it yet)
 
-* Interview length:
-	* Remove the timezone 
-	gen str23 start_clean = substr(start, 1, 23)
-	gen str23 end_clean   = substr(end, 1, 23)
 
-	* Replace "T" with a space to match Stata format 
-	replace start_clean = subinstr(start_clean, "T", " ", 1)
-	replace end_clean   = subinstr(end_clean, "T", " ", 1)
 
-	* Convert string to %tc
-	gen double start_dt = clock(start_clean, "YMDhms#")
-	gen double end_dt   = clock(end_clean, "YMDhms#")
-
-	* Format
-	format start_dt %tc
-	format end_dt %tc
-
-	* Calculate duration (in milliseconds)
-	gen double interview_duration_ms = end_dt - start_dt
-
-	* Convert to minutes
-	gen double int_length = interview_duration_ms / 60000
-
-	drop start end start_clean end_clean start_dt interview_duration_ms 
-	
-	gen double date = dofc(end_dt) //confirm with Todd we want to use this var
-	format date %tdDDmonCCYY 
-
-	drop end_dt
-	
-* q18/q19 mid-point var 
-	gen q18_q19 = q18 // con firm with Todd how we should create the rest
-	/*recode q18_q19 (. = 0) if q19 == 0
-	recode q18_q19 (. = 1) if q19 == 1
-	recode q18_q19 (. = 2.5) if q19 == 2
-	recode q18_q19 (. = 7) if q19 == 3
-	recode q18_q19 (. = 10) if q19 == 4 */
-	   
 *------------------------------------------------------------------------------*
 * Check for implausible values 
-
 * Q17. Overall respondent's rating of the quality received in this facility
 * Q18/Q19. Total number of visits made in past 12 months (q23, q24 mid-point)
 * Q20. Were all of the visits you made to the same healthcare facility? 
@@ -269,6 +646,12 @@ ren rec* *
 * Q23. How many virtual or telemedicine visits did you have?
 
 * Q20, Q21
+gen q18_q19 = q18 // confirm with Todd how we should create the rest, N=7
+recode q18_q19 (. = 0) if q19 == 1
+recode q18_q19 (. = 2.5) if q19 == 2
+recode q18_q19 (. = 7.5) if q19 == 3
+recode q18_q19 (. = 10) if q19 == 4 
+	
 list q18_q19 q19 q21 if q21 > q18_q19 & q21 < . 
 *replace q21 = q18_q19 if q21 > q18_q19 & q21 < . // Ask todd what to do about discrepant info between q18 and q19
 
@@ -276,82 +659,17 @@ list q20 q21 if q21 == 0 | q21 == 1
 * None
 
 * List if yes to q20: "all visits in the same facility" but q21: "how many different healthcare facilities did you go to" is more than 0
-list q20 q21 if q20 ==1 & q21 > 0 & q21 < . // N=6
-replace q21 = . if q20 ==1 // * confirm how to recode 
+list q20 q21 if q20 ==1 & q21 > 0 & q21 < . 
+* None
 
 * Q28a, Q28b 
 * list if they say "I did not get healthcare in past 12 months" but they have visit values in past 12 months - Note: q28_a and q28_b in this dataset does not have this option
 egen visits_total = rowtotal(q18_q19 q22 q23) 
-list visits_total q17 if q17 == 5 & visits_total > 0 & visits_total < . | q17 == 5 & visits_total > 0 & visits_total < .
+list visits_total q17 if q17 == 5 & visits_total > 0 & visits_total < . 
+* None
 
-recode q17 (5 = .r) if visits_total > 0 & visits_total < . // N=0 changes
 
 drop visits_total
-
-*------------------------------------------------------------------------------*
-* Recode missing values to NA for intentionally skipped questions (q14, q32 missing in this dataset)
-
-*q1/q2 - no missing data
-
-* q7 
-recode q7 (. = .a) if q6 !=1
-recode q7 (nonmissing = .a) if q6 == 0
-
-*q14-17
-recode q14_multi q15 q16 q17 (. = .a) if q13 !=1
-
-* NA's for q19-21 
-*recode q19 (. = .a) if q18 != .d | q18 !=.r
-
-recode q20 (. = .a) if q18 <1 | q18 == .d | q18 == .r | q19 != 2 | q19 != 3 | q19 != 4
-
-recode q21 (. = .a) if q20 !=0 
-
-*q24-q25 
-recode q24 q25 (. = .a) if q23 == 0  | q23 == .d | q23 == .r
-replace q24_other = .a if q24 !=4
-tostring q24_other,replace
-
-* q27_b q27_c
-recode q27_b q27_c (. = .a) if q3 !=1 
-
-*q28
-recode q28_a q28_b (. = .a) if q18 == 0 | q18 == .d | q18 == .r | q19 == 1 | q19 == .d | ///
-							   q19 == .r | q22 == 0 | q22 == .d | q22 == .r | ///
-							   q23 == 0 | q23 == .d | q23 == .r
-
-* q30
-recode q30 (. = .a) if q29 !=1
-
-* q32
-replace q32_other = .a if q32_multi !=4
-tostring q32_other,replace
-
-* q33-38
-recode q32_multi q33 q34 q35 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
-	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q18 == .d | q18 == .r | ///
-													 q19 != 2 | q19 != 3 | q19 != 4
-													 
-replace q38_e = .a if q38_e == 5  // I have not had prior visits or tests or The clinic had no other staff
-replace q38_j = .a if q38_j == 5  // I have not had prior visits or tests or The clinic had no other staff													 
-
-recode q36 q38_k (. = .a) if q35 !=1	
-			
-*------------------------------------------------------------------------------*
-* Recode values and value labels:
-* Recode values and value labels so that their values and direction make sense:
-
-lab def q7_label .a "NA", modify
-
-lab def q21_label .a "NA"
-lab val q21 q21_label
-
-lab def q39_label .a "NA"
-lab val q39 q39_label
-
-label drop language
-lab def language 6001 "Chichewa" 6002 "English" 6003 "Tumbuka"
-lab val language language 
 
 *------------------------------------------------------------------------------*
 * Renaming variables 
@@ -362,7 +680,7 @@ label copy q5_label q5_label2
 label copy q15_label q15_label2
 label copy q33_label q33_label2
 label copy q50_label q50_label2
-label copy recq51 q51_label2
+label copy q51_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
@@ -371,17 +689,17 @@ label val q33 q33_label2
 label val q50 q50_label2
 label val q51 q51_label2
 
-label drop q4_label q5_label q15_label q33_label recq50 recq51
+label drop q4_label q5_label q15_label q33_label q50_label q51_label
 
-*------------------------------------------------------------------------------*
 
+*------------------------------------------------------------------------------* No idea waht this is
 * Other specify recode 
 * This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
 * This command requires an input file that lists all the variables to be recoded and their new values
 * The command in data quality checks below extracts other, specify values 
 
-gen q7_other_original = q7_other
-label var q7_other_original "Q7_other. Other"
+gen q11_other_original = q11_other
+label var q11_other_original "Q11_other. Other"
 
 gen q14_other_original = q14_other
 label var q14_other_original "Q14. Other"	
@@ -400,14 +718,23 @@ label var q30_other_original "Q30. Other"
 
 gen q32_other_original = q32_other
 label var q32_other_original "Q32. Other"
+
+gen q33_other_original = q33_other
+label var q33_other_original "Q33. Other"
 	
 gen q34_other_original = q34_other
-label var q34_other_original "Q34. Other"	
+label var q34_other_original "Q34. Other"
+
+gen q37_other_original = q37_other
+label var q37_other_original "Q37. Other"	
 
 gen q50_other_original = q50_other 
-label var q50_other_original "Q50. Other"	
+label var q50_other_original "Q50. Other"
 
-foreach i in 6 {
+gen q53a_jp_other_original = q53a_jp_other
+label var q53a_jp_other_original "Q53a. Other"	
+
+foreach i in 8 {
 
 ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
 	sheet(other_specify_recode)							///	
@@ -415,24 +742,147 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
  
 }	
 
-drop q7_other q14_other q15_other q16_other q24_other q30_other q32_other q34_other q50_other
+drop q11_other q14_other q15_other q16_other q24_other q30_other q32_other q33_other q34_other q37_other q50_other q53a_jp_other
 	 
-ren q7_other_original q7_other
+ren q11_other_original q11_other
 ren q14_other_original q14_other
 ren q15_other_original q15_other
 ren q16_other_original q16_other
 ren q24_other_original q24_other
 ren q30_other_original q30_other
 ren q32_other_original q32_other
+ren q33_other_original q33_other
 ren q34_other_original q34_other
+ren q37_other_original q37_other
 ren q50_other_original q50_other
+ren q53a_jp_other_original q53a_jp_other
+*/
 
-*------------------------------------------------------------------------------*/
 
+
+*------------------------------------------------------------------------------*
+* Label variables - double check matches the instrument					
+lab var country "Country"
+lab var respondent_serial "Respondent Serial #"
+lab var wave "Wave"
+lab var language "Language"
+lab var mode "mode"
+lab var q1 "Q1. Respondent's еxact age"
+lab var q2 "Q2. Respondent's age group"
+lab var q3 "Q3. Respondent's gender"
+lab var q4 "Q4. What region do you live in?"
+lab var q5 "Q5. Which of these options best describes the place where you live?"
+lab var q6_jp "Q6. JP only: In addition to the Statutory Health Insurance System (SHIS), are you currently covered by private health insurance?"
+lab var q7 "Q7. What type of health insurance do you most frequently use?"
+lab var q8 "Q8. What is the highest level of education that you have completed?"
+lab var q9 "Q9. In general, would you say your health is:"
+lab var q10 "Q10. In general, would you say your mental health, including your mood and your ability to think clearly, is:"
+lab var q11 "Q11. Do you have any longstanding illness or health problem?"
+lab var q11_other "Q11. Other"
+lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
+lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
+lab var q12c_jp "Q12c_jp. JP only: How confident are you that you can figure out the best treatment options for yourself?"
+lab var q12d_jp "Q12d_jp. JP only: How confident are you that you can understand what healthcare providers tell you?"
+lab var q12e_jp "Q12e_jp. JP only: How confident are you that you can find the right information to help you manage health problems?"
+lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?" 
+lab var q14_jp "Q14. JP only: Is this a public, private, social security, NGO, or faith-based facility?"
+lab var q14_other "Q14. JP only: Other"
+lab var q15 "Q15. What type of healthcare facility is this?"
+lab var q15_other "Q15. Other"
+label var q16 "Q16. Why did you choose this healthcare facility? Please tell us the main reason."
+lab var q16_other "Q16. Other"
+label var q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"
+label var q18 "Q18. How many healthcare visits in total have you made in the past 12 months?"
+label var q19 "Q19. Total number of healthcare visits in the past 12 months choice(range)"
+lab var q18_q19 "Q18/Q19. Total mumber of visits made in past 12 months (q18, q19 mid-point)"
+label var q20 "Q20. Were all of the visits you made to the same healthcare facility?"
+label var q21 "Q21. How many different healthcare facilities did you go to in total?"
+label var q22 "Q22. How many visits did you have with a healthcare provider at your home?"
+label var q23 "Q23. How many virtual or telemedicine visits did you have in the past 12 months?"
+label var q24 "Q24. What was the main reason for the virtual or telemedicine visit?"
+label var q24_other "Q24. Other"
+label var q25 "Q25. How would you rate the overall quality of your last telemedicine visit?"
+label var q26 "Q26. Stayed overnight at a facility in past 12 months (inpatient care)"
+label var q27_a "Q27a. Blood pressure tested in the past 12 months"
+label var q27_b "Q27b. Breast examination"
+label var q27_c "Q27c. Received cervical cancer screening, like a pap test or visual inspection"
+label var q27_d "Q27d. Had your eyes or vision checked in the past 12 months"
+label var q27_e "Q27e. Had your teeth checked in the past 12 months"
+label var q27_f "Q27f. Had a blood sugar test in the past 12 months"
+label var q27_g "Q27g. Had a blood cholesterol test in the past 12 months"
+label var q27_h "Q27h. Received care for depression, anxiety, or another mental health condition"
+label var q27i_jp "Q27i_jp. JP only: Received an endoscope"
+label var q27j_jp "Q27j_jp. JP only: Received a barium swallow test"
+label var q27k_jp "Q27k_jp. JP only: Received a fecal occult blood test"
+label var q27l_jp "Q27l_jp. JP only: Received an electrocardiogram"
+label var q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
+label var q28_b "Q28b. been treated unfairly or discriminated against by a doctor, nurse, or..."
+label var q28c_jp "Q28c_jp. JP only: did not get enough explanation on the disease"
+label var q28d_jp "Q28d_jp. JP only: had to wait a long time"
+label var q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
+label var q30 "Q30. The last time this happened, what was the main reason you did not receive healthcare?"
+label var q30_other "Q30. Other"
+label var q31a "Q31a. Have you ever needed to borrow money to pay for healthcare"
+label var q31b "Q31b. Sell items to pay for healthcare"
+label var q31c_jp "Q31c_jp. JP only: Difficulty paying medical expenses; consulted with the government office"
+label var q31d_jp "Q31d_jp. JP only: was worried about whether I can pay medical or treatment fees"
+label var q32_jp "Q32_jp. JP only: Was the facility public or private?"
+label var q32_other "Q32_jp. JP only: Other"
+label var q33 "Q33. What type of healthcare facility is this?"
+label var q33_other "Q33. Other"
+label var q34 "Q34. What was the main reason you went?"
+label var q34_other "Q34. Other"
+label var q35 "Q35. Was this a scheduled visit or did you go to the facility without an appt?"
+label var q36 "Q36. How long did you wait between making the appointment and seeing the health care provider?"
+label var q37 "Q37. Approximately how long did you wait before seeing the provider?"
+label var q37_other "Q37. Specify"
+label var q38_a "Q38a. How would you rate the overall quality of care you received?"
+label var q38_b "Q38b. How would you rate the knowledge and skills of your provider?"
+label var q38_c "Q38c. How would you rate the equipment and supplies that the provider had?"
+label var q38_d "Q38d. How would you rate the level of respect your provider showed you?"
+label var q38_e "Q38e. How would you rate your provider knowledge about your prior visits and test results?"
+label var q38_f "Q38f. How would you rate whether your provider explained things clearly?"
+label var q38_g "Q38g. How would you rate whether you were involved in your care decisions?"
+label var q38_h "Q38h. How would you rate the amount of time your provider spent with you?"
+label var q38_i "Q38i. How would you rate the amount of time you waited before being seen?"
+label var q38_j "Q38j. How would you rate the courtesy and helpfulness at the facility?"
+label var q38_k "Q38k. How would you rate how long it took for you to get this appointment?"
+label var q39 "Q39. How likely would recommend this facility to a friend or family member?"
+label var q40_a "Q40a. How would you rate the quality of care during pregnancy and childbirth like antenatal care, postnatal care"
+label var q40_b "Q40b. How would you rate the quality of childcare such as care of healthy children and treatment of sick children"
+label var q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
+label var q40_d "Q40d. How would you rate the quality of care provided for the mental health?"
+label var q40e_jp "Q40e_jp. How would you rate the quality of health checkup?"
+label var q40f_jp "Q40f_jp. How would you rate the quality of infertility treatment (e.g. artificial insemination)?"
+label var q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
+label var q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
+label var q41_c "Q41c. How confident are you that the government considers the public's opinion?"
+label var q41d_jp "Q41d_jp. How confident are you that you would be able to afford the healthcare you needed when you are older?"
+label var q41e_jp "Q41e_jp. How confident are you that you would be able to get the healthcare you need in case of a natural disaster or emergency?"
+label var q41f_jp "Q41f_jp. How confident are you that you would receive good quality healthcare even if you do not live in a city?"
+label var q42 "Q42. How would you rate the quality of government or public healthcare system in your country?"
+label var q43 "Q43. How would you rate the quality of the private for-profit healthcare system in your country?"
+label var q45 "Q45. Is your country's health system is getting better, staying the same or getting worse?"
+label var q46 "Q46. Which of these statements do you agree with the most?"
+label var q47 "Q47. How would you rate the government's management of the COVID-19 pandemic overall?"
+label var q48 "Q48. How would you rate the quality of care provided? (Vignette, option 1)"
+label var q49 "Q49. How would you rate the quality of care provided? (Vignette, option 2)"
+label var q50 "Q50. What is your native language or mother tongue?"
+label var q50_other "Q50. Other"
+label var q51 "Q51. Total monthly household income"
+label var q52a_jp "Q52a_jp. JP only: Which political party did you vote for in the last election?"
+label var q53a_jp "Q53a_jp. JP only: What would be your top priority if you were to vote in the next national election?"
+label var q53a_jp_other "Q53a_jp_other. Other"
+
+*------------------------------------------------------------------------------*
+* Create weights
+
+*------------------------------------------------------------------------------*
 * Reorder variables
 
 	order q*, sequential
-	order respondent_id wave country language mode date int_length // weight
+	* order respondent_id country country_reg wave language date int_length mode weight // we have missing varables so far add later
+	order respondent_id country wave language mode 
 
 *------------------------------------------------------------------------------*
 
@@ -440,4 +890,3 @@ ren q50_other_original q50_other
  save "$data_mc/02 recoded data/input data files/pvs_jp.dta", replace
 
 *------------------------------------------------------------------------------*
-
