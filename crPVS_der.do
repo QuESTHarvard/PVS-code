@@ -1046,6 +1046,16 @@ forvalues i = 1/24 {
 }
 
 
+*Strata var for countries with cluster sampling for household interviews
+decode country_reg, generate(strata)
+replace strata_var = "Ethiopia_CATI" if country==3 & mode==1
+replace strata_var = "Ethiopia_F2F" if country==3 & mode==2
+replace strata_var = "Kenya_CATI" if country==5 & mode==1
+replace strata_var = "Kenya_F2F" if country==5 & mode==2
+replace strata_var = "Somaliland_CATI" if country==6 & mode==1
+replace strata_var = "Somaliland_F2F" if country==6 & mode==2
+replace strata_var = "Malawi_CATI" if country==22 & mode==1
+replace strata_var = "Malawi_F2F" if country==22 & mode==2
 
 *********************************9-20 SS: adding back variables for PVS dashboard:
 gen health = q9 
