@@ -1182,7 +1182,8 @@ order respondent_serial respondent_id country country_reg wave language date ///
 	  vignette_good minority income   	   	  
 	
 ***************************** Labeling variables ***************************** 
- 
+
+lab var wave "Survey wave"
 lab var age "Exact respondent age or midpoint of age range (Q1/Q2)"
 lab var age_cat "Age (categorical) (Q1/Q2)"
 lab var gender "Gender (Q3)" 
