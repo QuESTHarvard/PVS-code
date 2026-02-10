@@ -25,9 +25,9 @@ set more off
 import excel "$data/Japan/01 raw data/25-055861-01 Kyushu Univ Data_revised.xlsx", firstrow clear case(lower)
 
 * data cleaning:
-drop q0 q4 q5 q5codes q13*scale /// we removed the extra questions in JP questionnaires: q4,5,13,24,25,26,27,58
+drop q0 q4 q5 q5codes q12*scale q121 /// we removed the extra questions in JP questionnaires: q4,5,13,24,25,26,27,58
 		q24 q25 q25other1 q2616 q2626 q2636 q2646 q2656 q2666 q26other1 q27 q437confirm ///
-		trp1 trp214 trp224 trp234 trp244
+		trp1 trp214 trp224 trp234 trp244 q16other1 q17other1 q18other1 q30other1 q36other1 q38other1 q39other1 q40other1 q55other1
 
 *------------------------------------------------------------------------------*
 * Generate variables
@@ -40,13 +40,6 @@ gen country = 8
 lab def country 8 "Japan"
 lab values country country
 
-/*
-* country_reg
-gen country_reg = 25 // which number???
-lab def country_reg 25 "Japan"
-lab values country_reg country_reg
-*/
-
 *Label as wave 1 data:
 gen wave = 1
 
@@ -56,10 +49,14 @@ lab def Language 8001 "JP: Japanese"
 lab val language Language
 
 * date
-* gen date = . // we don't have it
+gen date = dofc(datacollectionfinishtime)
+format date %tdDD_Month_CCYY
 
 * int_length
-* gen int_length = . // we don't have it
+gen int_length = (datacollectionfinishtime - datacollectionstarttime) / 60000
+label var int_length "time difference (minutes)"
+drop datacollectionfinishtime datacollectionstarttime
+
 
 * mode
 gen mode = 3 
@@ -74,18 +71,18 @@ lab val mode mode
 rename respondentserial respondent_serial
 rename (q6 q7 q8) (q4 q5 q7) // here we will add q6 later
 rename (q9 q10 q11) (q8 q9 q10)
-rename (q121scale q122scale q123scale q124scale q125scale q126scale q127scale q128scale q129scale q1210scale q1211scale q1212scale q1213scale q1214scale q1215scale q1216scale q121) ///
-		(q11a_jp q11b_jp q11c_jp q11d_jp q11e_jp q11f_jp q11g_jp q11h_jp q11i_jp q11j_jp q11k_jp q11l_jp q11m_jp q11n_jp q11o_jp q11p_jp q11_other)
+rename (q131scale q132scale q133scale q134scale q135scale q136scale q137scale q138scale q139scale q1310scale q1311scale q1312scale q1313scale q1314scale q1315scale q1316scale q1317scale) ///
+		(q99a_jp q99b_jp q99c_jp q99d_jp q99e_jp q99f_jp q99g_jp q99h_jp q99i_jp q99j_jp q99k_jp q99l_jp q99m_jp q99n_jp q99o_jp q99p_jp q99q_jp) // We will drop this later so code it as q99
 rename (q141scale q142scale q143scale q144scale q145scale) (q12_a q12_b q12c_jp q12d_jp q12e_jp)
-rename (q15 q16 q16other1) (q13 q14_jp q14_other)
-rename (q17 q17other1 q18 q18other1) (q15 q15_other q16 q16_other)
+rename (q15 q16 q16other2) (q13 q14_jp q14_other)
+rename (q17 q17other2 q18 q18other2) (q15 q15_other q16 q16_other)
 rename (q19 q20 q20codes q21 q22 q23 q23codes) (q17 q18 q18codes q19 q20 q21 q21codes)
-rename (q28 q28codes q29 q29codes q30 q30other1 q31 q32) (q22 q22codes q23 q23codes q24 q24_other q25 q26)
+rename (q28 q28codes q29 q29codes q30 q30other2 q31 q32) (q22 q22codes q23 q23codes q24 q24_other q25 q26)
 rename (q331scale q332scale q333scale q334scale q335scale q336scale q337scale q338scale q339scale q3310scale q3311scale q3312scale) (q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_jp q27j_jp q27k_jp q27l_jp)
 rename (q341scale q342scale q343scale q344scale) (q28_a q28_b q28c_jp q28d_jp)
-rename (q35 q36 q36other1) (q29 q30 q30_other)
+rename (q35 q36 q36other2) (q29 q30 q30_other)
 rename (q371scale q372scale q373scale q374scale) (q31a q31b q31c_jp q31d_jp)
-rename (q38 q38other1 q39 q39other1 q40 q40other1) (q32_jp q32_other q33 q33_other q34 q34_other)
+rename (q38 q38other2 q39 q39other2 q40 q40other2) (q32_jp q32_other q33 q33_other q34 q34_other)
 rename (q41 q42 q43 q43other1) (q35 q36 q37 q37_other)
 rename (q441scale q442scale q443scale q444scale q445scale q446scale q447scale q448scale q449scale q4410scale q4411scale) (q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k)
 rename (q45 q45codes) (q39 q39codes)
@@ -93,7 +90,7 @@ rename (q461scale q462scale q463scale q464scale q465scale q466scale) (q40_a q40_
 rename (q471scale q472scale q473scale q474scale q475scale q476scale) (q41_a q41_b q41_c q41d_jp q41e_jp q41f_jp)
 rename (q48 q49) (q42 q43)
 rename (q50 q51 q52 q53 q54) (q45 q46 q47 q48 q49)
-rename (q55 q55other1) (q50 q50_other)
+rename (q55 q55other2) (q50 q50_other)
 rename (q56 q57 q58 q58other1) (q51 q52a_jp q53a_jp q53a_jp_other)
 
 
@@ -131,7 +128,8 @@ lab def q4_label 1 "Hokkaido" 2 "Aomori" 3 "Iwate" 4 "Miyagi" 5 "Akita" ///
 lab val q4 q4_label
 
 * q5 (urban/rural)
-lab def q5_label 1 "City" 2 "Suburb of city" 3 "Small town" 4 "Rural area" 
+recode q5 (999 = .a)
+lab def q5_label 1 "City" 2 "Suburb of city" 3 "Small town" 4 "Rural area" .a "NA"
 lab val q5 q5_label
 
 * q6_jp (insured)
@@ -161,21 +159,22 @@ lab def q10_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA"
 lab val q10 q10_label
 
 * q11 (chronic health)
-foreach v of varlist q11a_jp q11b_jp q11c_jp q11d_jp q11e_jp q11f_jp q11g_jp q11h_jp q11i_jp q11j_jp q11k_jp q11l_jp q11m_jp q11n_jp q11o_jp q11p_jp {
-    replace `v' = .a if `v' == 999
-}
+foreach v of varlist q99a_jp q99b_jp q99c_jp q99d_jp q99e_jp q99f_jp q99g_jp q99h_jp q99i_jp q99j_jp q99k_jp q99l_jp q99m_jp q99n_jp q99o_jp q99p_jp q99q_jp {
+    replace `v' = 0 if `v' == .
+	replace `v' = .a if `v' == 999
+} // Here code all 999 into .a
 
-egen total_q11 = rowtotal(q11a_jp q11b_jp q11c_jp q11d_jp q11e_jp q11f_jp q11g_jp q11h_jp q11i_jp q11j_jp q11k_jp q11l_jp q11m_jp q11n_jp q11o_jp q11p_jp)
+egen total_q11 = rowtotal(q99a_jp q99b_jp q99c_jp q99d_jp q99e_jp q99f_jp q99g_jp q99h_jp q99i_jp q99j_jp q99k_jp q99l_jp q99m_jp q99n_jp q99o_jp q99p_jp q99q_jp)
 gen q11 = total_q11 > 0
 label define q11_label 0 "No" 1 "Yes"
 label values q11 q11_label
 
-drop q11a_jp q11b_jp q11c_jp q11d_jp q11e_jp q11f_jp q11g_jp q11h_jp q11i_jp q11j_jp q11k_jp q11l_jp q11m_jp q11n_jp q11o_jp q11p_jp total_q11
+drop q99a_jp q99b_jp q99c_jp q99d_jp q99e_jp q99f_jp q99g_jp q99h_jp q99i_jp q99j_jp q99k_jp q99l_jp q99m_jp q99n_jp q99o_jp q99p_jp q99q_jp
 
 * q12_a (confendent managing health)
 recode q12_a (999 = .a)
 lab def q12_label 0 "Not at all confident" 1 "Not too confident" 2 "Somewhat confident" 3 "Very confident" .a "NA"
-lab val q12_a q12_a_label
+lab val q12_a q12_label
 
 * q12_b (tell provider concerns) 
 recode q12_b (999 = .a)
@@ -200,12 +199,12 @@ lab val q13 q13_label
 
 * q14_jp (pub/pri facility)
 replace q14_jp = .a if q14_jp == . // code as .a since they are skipped for having no facility going
-lab def q14_jp_label 1 "Public" 2 "Private" 3 "Other(specify)" .a "NA"
+lab def q14_jp_label 1 "Public" 2 "Private" 3 "Other" .a "NA"
 lab val q14_jp q14_jp_label
 
 * q15 (type of facility)
 replace q15 = .a if q15 == . // code as .a since they are skipped for the facility is public
-lab def q15_label 1 "Doctor's office or clinic" 2 "Hospital where referrals are not required" 3 "Hospital where referrals are required" 4 "Other(specify)" .a "NA"
+lab def q15_label 1 "Doctor's office or clinic" 2 "Hospital where referrals are not required" 3 "Hospital where referrals are required" 4 "Other" .a "NA"
 lab val q15 q15_label
 
 * q16 (why this facility)
@@ -213,7 +212,7 @@ recode q16 (8 = 21) // Ask Todd to check if i should code this to 21
 replace q16 = .a if q16 == .
 lab def q16_label 1	"Low cost" 2 "Short distance" 3	"Short waiting time" 4 "Good healthcare provider skills" ///
 				  5	"Staff shows respect" 6	"Medicines and equipment are available" 7 "Only facility available" ///
-				  8	"Covered by insurance" 9 "Other(specify)" 21 "JP: Positive online or social media reviews".a "NA"
+				  8	"Covered by insurance" 9 "Other" 21 "JP: Positive online or social media reviews".a "NA"
 lab val q16 q16_label
 
 * q17 (overall rating of received healthcare)
@@ -259,7 +258,7 @@ lab val q23 q23_label
 replace q24 = .a if q24 == .
 lab def q24_label 1 "Care for an urgent or new health problem such as an accident or injury or a new" ///
 					2 "Follow-up care for a longstanding illness or chronic disease such as hypertension or diabetes. This may include mental health conditions." ///
-					3 "Preventive care or a visit to check on your health, such as an annual check-up, antenatal care, or vaccination." 4 "Other (specify)" .a "NA"
+					3 "Preventive care or a visit to check on your health, such as an annual check-up, antenatal care, or vaccination." 4 "Other" .a "NA"
 lab val q24 q24_label
 
 * q25 (overall rating of virtual)
@@ -356,7 +355,7 @@ lab def q30_label 1	"High cost (e.g., high out of pocket payment, not covered by
 				  4	"Poor healthcare provider skills (e.g., spent too little time with patient, did not conduct a thorough exam)" ///
 				  5	"Staff don't show respect (e.g., staff is rude, impolite, dismissive)" ///
 				  6	"Medicines and equipment are not available (e.g., medicines regularly out of stock, equipment like X-ray machines broken or unavailable)" ///
-				  7	"Illness not serious enough" 10 "Other (specify)"  24 "JP: Equipment like X-ray machines are broken or unavailable" /// 
+				  7	"Illness not serious enough" 10 "Other"  24 "JP: Equipment like X-ray machines are broken or unavailable" /// 
 				  25 "JP: Do not want health care providers to know of the disease or to show the symptomatic part of the body" ///
 				  26 "JP: Busyness" 27 "JP: Did not want to hear about unfavorable diagnoses" .a "NA"
 lab val q30 q30_label
@@ -379,12 +378,12 @@ lab val q31d_jp q31_label
 
 * q32_jp (pub/pri facility)
 recode q32_jp (999 = .a) 
-lab def q32_jp_label 1 "Public" 2 "Private" 3 "Other (specify)" .a "NA" 
+lab def q32_jp_label 1 "Public" 2 "Private" 3 "Other" .a "NA" 
 lab val q32_jp q32_jp_label
 
 * q33 (type of facility)
 recode q33 (999 = .a) 
-lab def q33_label 1 "Doctor's office or clinic" 2 "Hospital where referrals are not required" 3 "Hospital where referrals are required" 4 "Other (specify)" .a "NA" 
+lab def q33_label 1 "Doctor's office or clinic" 2 "Hospital where referrals are not required" 3 "Hospital where referrals are required" 4 "Other" .a "NA" 
 lab val q33 q33_label
 
 * q34 (main reason)
@@ -392,7 +391,7 @@ replace q34 = .a if q34 == .
 lab def q34_label 1 "Care for an urgent or new health problem (an accident or a new symptom like fever, pain, diarrhea, or depression)" ///
 				  2 "Follow-up care for a longstanding illness or chronic disease (hypertension or diabetes, mental health conditions)" ///
 				  3 "Preventive care or a visit to check on your health (for example, antenatal care, vaccination, or eye checks)" ///
-				  4 "Other (specify)" .a "NA"
+				  4 "Other" .a "NA"
 lab val q34 q34_label
 
 * q35 (schedule or walk in)
@@ -413,7 +412,7 @@ replace q37 = .a if q37 == .
 recode q37 (999 = .)
 lab def q37_label 1	"Less than 15 minutes" 2 "15 minutes to less than 30 minutes" 3	"30 minutes to less than 1 hour" ///
 				  4	"1 hour to less than 2 hours" 5	"2 hours to less than 3 hours" 6 "3 hours to less than 4 hours" ///
-				  7	"More than 4 hours (specify)" .a "NA" .r "Refused"
+				  7	"More than 4 hours" .a "NA" .r "Refused"
 lab val q37 q37_label
 
 * q37_other
@@ -570,7 +569,7 @@ lab val q49 q49_label
 
 * q50 (mother tongue)
 recode q50 (999 = .) 
-lab def q50_label 1	"Japanese" 2 "Chinese" 3 "Korean" 4 "Vietnamese" 5 "Tagalog" 6 "Spanish" 7 "English" 8 "Other (specify)"
+lab def q50_label 1	"Japanese" 2 "Chinese" 3 "Korean" 4 "Vietnamese" 5 "Tagalog" 6 "Spanish" 7 "English" 8 "Other"
 lab val q50 q50_label
 
 * q51 (income)
@@ -590,7 +589,7 @@ lab val q52a_jp q52_label
 recode q53a_jp (999 = .a) (998 = .d)
 lab def q53_label 1	"Healthcare system" 2 "Economic policy" 3 "Education" ///
 					4 "Welfare" 5 "Foreign affairs" 6 "Defense" 7 "Environmental and energy policy" 8 "Employment and labor policy" ///
-					9 "Taxation and fiscal policy" 10 "Transportation and infrastructure policy" 11 "Other (specify)" .d "Don't know" .a "NA"
+					9 "Taxation and fiscal policy" 10 "Transportation and infrastructure policy" 11 "Other" .d "Don't know" .a "NA"
 lab val q53a_jp q53_label
 
 * Relabel some variables now so we can use the orignal label values
@@ -630,12 +629,6 @@ foreach q in q4 q5 q7 q8 q15 q33 q50 q51 {
     label values `q' `q'_label
 }
 
-
-*------------------------------------------------------------------------------*
-* Fix interview length variable and other time variables (Don't have it yet)
-
-
-
 *------------------------------------------------------------------------------*
 * Check for implausible values 
 * Q17. Overall respondent's rating of the quality received in this facility
@@ -652,7 +645,7 @@ recode q18_q19 (. = 2.5) if q19 == 2
 recode q18_q19 (. = 7.5) if q19 == 3
 recode q18_q19 (. = 10) if q19 == 4 
 	
-list q18_q19 q19 q21 if q21 > q18_q19 & q21 < . 
+list q18 q18_q19 q19 q20 q21 if q21 > q18_q19 & q21 < . 
 *replace q21 = q18_q19 if q21 > q18_q19 & q21 < . // Ask todd what to do about discrepant info between q18 and q19
 
 list q20 q21 if q21 == 0 | q21 == 1
@@ -692,74 +685,6 @@ label val q51 q51_label2
 label drop q4_label q5_label q15_label q33_label q50_label q51_label
 
 
-*------------------------------------------------------------------------------* No idea waht this is
-* Other specify recode 
-* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
-* This command requires an input file that lists all the variables to be recoded and their new values
-* The command in data quality checks below extracts other, specify values 
-
-gen q11_other_original = q11_other
-label var q11_other_original "Q11_other. Other"
-
-gen q14_other_original = q14_other
-label var q14_other_original "Q14. Other"	
-	
-gen q15_other_original = q15_other
-label var q15_other_original "Q15. Other"
-
-gen q16_other_original = q16_other
-label var q16_other_original "Q16. Other"
-
-gen q24_other_original = q24_other
-label var q24_other_original "Q24. Other"
-
-gen q30_other_original = q30_other
-label var q30_other_original "Q30. Other"
-
-gen q32_other_original = q32_other
-label var q32_other_original "Q32. Other"
-
-gen q33_other_original = q33_other
-label var q33_other_original "Q33. Other"
-	
-gen q34_other_original = q34_other
-label var q34_other_original "Q34. Other"
-
-gen q37_other_original = q37_other
-label var q37_other_original "Q37. Other"	
-
-gen q50_other_original = q50_other 
-label var q50_other_original "Q50. Other"
-
-gen q53a_jp_other_original = q53a_jp_other
-label var q53a_jp_other_original "Q53a. Other"	
-
-foreach i in 8 {
-
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
-	sheet(other_specify_recode)							///	
-	id(respondent_id)	
- 
-}	
-
-drop q11_other q14_other q15_other q16_other q24_other q30_other q32_other q33_other q34_other q37_other q50_other q53a_jp_other
-	 
-ren q11_other_original q11_other
-ren q14_other_original q14_other
-ren q15_other_original q15_other
-ren q16_other_original q16_other
-ren q24_other_original q24_other
-ren q30_other_original q30_other
-ren q32_other_original q32_other
-ren q33_other_original q33_other
-ren q34_other_original q34_other
-ren q37_other_original q37_other
-ren q50_other_original q50_other
-ren q53a_jp_other_original q53a_jp_other
-*/
-
-
-
 *------------------------------------------------------------------------------*
 * Label variables - double check matches the instrument					
 lab var country "Country"
@@ -778,7 +703,6 @@ lab var q8 "Q8. What is the highest level of education that you have completed?"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health, including your mood and your ability to think clearly, is:"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
-lab var q11_other "Q11. Other"
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
 lab var q12c_jp "Q12c_jp. JP only: How confident are you that you can figure out the best treatment options for yourself?"
@@ -874,15 +798,204 @@ label var q52a_jp "Q52a_jp. JP only: Which political party did you vote for in t
 label var q53a_jp "Q53a_jp. JP only: What would be your top priority if you were to vote in the next national election?"
 label var q53a_jp_other "Q53a_jp_other. Other"
 
+
+*------------------------------------------------------------------------------* 
+* Other specify recode 
+* This command recodes all "other specify" variables as listed in /specifyrecode_inputs spreadsheet
+* This command requires an input file that lists all the variables to be recoded and their new values
+* The command in data quality checks below extracts other, specify values 
+
+gen q14_other_original = q14_other
+label var q14_other_original "Q14. Other"	
+	
+gen q15_other_original = q15_other
+label var q15_other_original "Q15. Other"
+
+gen q16_other_original = q16_other
+label var q16_other_original "Q16. Other"
+
+gen q24_other_original = q24_other
+label var q24_other_original "Q24. Other"
+
+gen q30_other_original = q30_other
+label var q30_other_original "Q30. Other"
+
+gen q32_other_original = q32_other
+label var q32_other_original "Q32. Other"
+
+gen q33_other_original = q33_other
+label var q33_other_original "Q33. Other"
+	
+gen q34_other_original = q34_other
+label var q34_other_original "Q34. Other"
+
+gen q37_other_original = q37_other
+label var q37_other_original "Q37. Other"	
+
+gen q50_other_original = q50_other 
+label var q50_other_original "Q50. Other"
+
+gen q53a_jp_other_original = q53a_jp_other
+label var q53a_jp_other_original "Q53a. Other"	
+
+foreach i in 8 {
+
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
+	sheet(other_specify_recode)							///	
+	id(respondent_id)	
+ 
+}	
+
+drop q14_other q15_other q16_other q24_other q30_other q32_other q33_other q34_other q37_other q50_other q53a_jp_other
+	 
+ren q14_other_original q14_other
+ren q15_other_original q15_other
+ren q16_other_original q16_other
+ren q24_other_original q24_other
+ren q30_other_original q30_other
+ren q32_other_original q32_other
+ren q33_other_original q33_other
+ren q34_other_original q34_other
+ren q37_other_original q37_other
+ren q50_other_original q50_other
+ren q53a_jp_other_original q53a_jp_other
+
+*/
+
+
 *------------------------------------------------------------------------------*
 * Create weights
+
+*Dataset Sample Size:
+tab country // N=2000 completed surveys
+
+*Create demographic variables that align with the censor variables:
+** Gender
+gen gender = 1 if q3==0
+replace gender = 2 if q3==1 | q3==2
+label define gender_lbl 1 "Male" 2 "Female"
+label values gender gender_lbl
+tab gender, m // 0 missing
+
+
+
+** Age5 (5 levels)
+* Based on Japan census 2020:
+* 18 - 29 = 18 to 29 (1)
+* 30 - 39 = 30 - 39 (2)
+* 40 - 49 = 40 - 49 (3)
+* 50 - 59 = 50 - 59 (4)
+* 60 or more = 60 - 69 (5), 70-79 (6), 80 or older (7)
+gen age5 = 1 if q2==1 
+replace age5 = 2 if q2==2
+replace age5 = 3 if q2==3
+replace age5 = 4 if q2==4
+replace age5 = 5 if q2==5 | q2==6 | q2==7
+label define age5 1 "18 - 29" 2 "30 - 39" 3 "40 - 49" 4 "50 - 59" 5 "60+"
+label values age5 age5
+tab age5, m // 0 missing
+
+
+
+** Age3 (3 levels)
+* Based on Japan census 2020:
+* 18 - 29 = 18 to 29 (1)
+* 30 - 49 = 30 - 39 (2), 40 - 49 (3)
+* 50 + = 50 - 59 (4), 60 - 69 (5), 70-79 (6), 80 or older (7)
+gen age3 = 1 if q2==1 
+replace age3 = 2 if q2==2 | q2==3
+replace age3 = 3 if q2==4 | q2==5 | q2==6 | q2==7
+label define age3 1 "18 - 29" 2 "30 - 49" 3 "50+"
+label values age3 age3
+tab age3, m // 0 missing
+
+
+
+** Region
+* Based on Japan census 2020:
+* Hokkaido = 8001
+* Tohoku = 8002 - 8007
+* Kanto = 8008 - 8014
+* Chubu = 80015 - 8023
+* Kansai (Kinki) = 8024 - 8030
+* Chugoku = 8031 - 8035
+* Shikoku = 8036 - 8039
+* Kyushu–Okinawa = 8040 - 8047
+gen region = 1 if q4 == 8001
+replace region = 2 if inrange(q4, 8002, 8007)
+replace region = 3 if inrange(q4, 8008, 8014)
+replace region = 4 if inrange(q4, 8015, 8023)
+replace region = 5 if inrange(q4, 8024, 8030)
+replace region = 6 if inrange(q4, 8031, 8035)
+replace region = 7 if inrange(q4, 8036, 8039)
+replace region = 8 if inrange(q4, 8040, 8047)
+label define region ///
+    1 "Hokkaido" ///
+    2 "Tohoku" ///
+    3 "Kanto" ///
+    4 "Chubu" ///
+    5 "Kansai (Kinki)" ///
+    6 "Chugoku" ///
+    7 "Shikoku" ///
+    8 "Kyushu–Okinawa"
+
+label values region region
+tab region, missing // 0 missing
+
+** Education
+gen education = .
+replace education = 1 if q8==8001 // This includes junior high school
+replace education = 2 if q8==8002 // This includes high school
+replace education = 3 if q8==8003 | q8==8004 | q8==8005 // This includes Vocational school, junior college, technical college; our-year university; Postgraduate school or higher
+label define education 1 "Primary or less" 2 "Secondary" 3 "Post-secondary or tertiary"
+label values education education 
+tab education, m // 0 missing
+
+
+*Create joint distribution:
+** Check discrepancy of factors among urbanrural to see if we need joint distribution or not
+tab gender region, row col 
+tab age3 region, row col 
+tab education gender, row col 
+
+
+* gender*age3
+gen gen_age = 1 if gender==1 & age3==1
+replace gen_age = 2 if (gender == 2 | gender == 3) & age3==1
+replace gen_age = 3 if gender==1 & age3==2
+replace gen_age = 4 if (gender == 2 | gender == 3) & age3==2
+replace gen_age = 5 if gender==1 & age3==3
+replace gen_age = 6 if (gender == 2 | gender == 3) & age3==3
+label define gen_age 1 "18-29, Male" 2 "18-29, Female" 3 "30-49, Male" 4 "30-49, Female" 5 "50+, Male" 6 "50+, Female"
+label values gen_age gen_age
+tab gen_age, m // 0 missing
+
+* education*gender
+gen edu_gen = 1 if gender==1 & education==1
+replace edu_gen = 2 if (gender == 2 | gender == 3) & education==1
+replace edu_gen = 3 if gender==1 & education==2
+replace edu_gen = 4 if (gender == 2 | gender == 3) & education==2
+replace edu_gen = 5 if gender==1 & education==3
+replace edu_gen = 6 if (gender == 2 | gender == 3) & education==3
+label define edu_gen 1 "Primary or none, Male" 2 "Primary or none, Female" 3 "Secondary, Male" 4 "Secondary, Female" 5 "Post-secondary, Male" 6 "Post-secondary, Female"
+label values edu_gen edu_gen
+tab edu_gen, m // 0 missing
+
+*After testing, we choose region, education*gender, age3:
+ipfweight region edu_gen age3, gen(weight) ///
+			val(4.2 6.9 35.0 16.7 17.5 5.7 2.9 11.0 /// Region (8 levels)
+			 6.3 7.8 20.5 23.6 20.8 20.9 /// edu_gen
+			 13.6 30.2 56.2 ) /// age3
+			maxit(50)
+
+** Just try to keep data set clean, drop all the variables created above, except wgt
+drop gender age3 age5 region education gen_age edu_gen
 
 *------------------------------------------------------------------------------*
 * Reorder variables
 
 	order q*, sequential
-	* order respondent_id country country_reg wave language date int_length mode weight // we have missing varables so far add later
-	order respondent_id country wave language mode 
+	order respondent_id country wave language date int_length mode weight
 
 *------------------------------------------------------------------------------*
 
