@@ -342,7 +342,8 @@ recode q38_e (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = 
 	   gen(last_know_vge) label(exc_pr_2)	   
 
 replace	last_know_vge = 0 if q38_e == 0 | q38_e == 1 | q38_e == 2 & country == 23
-replace	last_know_vge = 1 if q38_e == 3 | q38_e == 4 & country == 23	   	   	   
+replace	last_know_vge = 1 if q38_e == 3 | q38_e == 4 & country == 23	
+replace	last_know_vge = .a if q38_e == 5 & country == 8	   	   	   
 	   
 recode q38_f (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
@@ -377,7 +378,9 @@ recode q38_j (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = 
 	   gen(last_courtesy_vge) label(exc_pr_2)
 	   
 replace	last_courtesy_vge = 0 if q38_j == 0 | q38_j == 1 | q38_j == 2 & country == 23
-replace	last_courtesy_vge = 1 if q38_j == 3 | q38_j == 4 & country == 23		   
+replace	last_courtesy_vge = 1 if q38_j == 3 | q38_j == 4 & country == 23
+
+replace	last_courtesy_vge = .a if q38_h == 6 & country == 23
 	   
 recode q38_k (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
@@ -518,16 +521,17 @@ lab val insured yes_no
 * For Colombia, moved "no insurance" to "yes" in insured and "public" in "insur_type"
 * insur_type 
 
-recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 8002 10019 11002 12002 12003 ///
-		   12005 12006 14002 16001 4023 4024 4025 4026 17002 2030 ///
-		   18029 19031 20034 20037 21001 21002 21003 21005 22002 10005 10019 2001 23002 23003 23004 24001 = 0 "Public") ///
-		  (1004 1005 2028 2010 2011 3002 5004 5005 5006 3007 2028 7013 7015 8001 10021 11001 12001 ///
-		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 ///
-		  20036 21004 22001 22003 22004 10016 10017 23001 6001 6003 24002 24003 = 1 "Private") /// 
+recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 12002 12003 ///
+		   12005 12006 16001 4023 4024 4025 4026 2030 ///
+		   18029 19031 20034 20037 21001 21002 21003 21005 22002 10005 10019 2001 23002 23003 23004 = 0 "Public") ///
+		  (1004 1005 2028 2010 2011 3002 5004 5005 5006 3007 2028 7013 7015 10021 12001 ///
+		  12004 13005 16005 4027 18004 18030 19032 19033 19034 20035 ///
+		  20036 21004 22001 22003 22004 10016 10017 23001 6001 6003 = 1 "Private") /// 
 		  (1001 1002 1003 2015 2016 2006 2007 16002 16003 16004 13001 13002 13004 7011 7012 7008 7019 10022 ///
 		  = 2 "Social security/military") ///
-		  (1006 2995 2020 12995 12007 13995 4995 18995 19995 20995 21006 7021 10009 10020 5997 23005 6002 24005 = 3 "Other") ///
-		  (.r = .r "Refused") (2030 7014 13014 16007 13003 7002 10001 1000 24004 = .a "NA"), gen(insur_type) //SS: confirm placement of 1000
+		  (1006 2995 2020 12995 12007 13995 4995 18995 19995 20995 21006 7021 10009 10020 5997 23005 6002 = 3 "Other") ///
+		  (.r = .r "Refused") ///
+		  (2030 7014 13014 16007 13003 7002 10001 1000 8001 8002 11001 11002 14001 14002 17001 17002 24001 24002 24003 24004 24005= .a "NA"), gen(insur_type) //SS: confirm placement of 1000
 
 recode insur_type (.a = 0) if q6_za == 1 & !inlist(q7, 9008, 9009, 9995, 9997)
 recode insur_type (0 = .a) if q6_za == 0 | q6_za == .r
@@ -536,8 +540,16 @@ recode insur_type (.r = 0) if q6_za == 1
 replace insur_type = .a if country == 9
 recode insur_type (.a = 1) if q6_za == 1
 
-recode insur_type (.a = 1) if q7_kr == 1
-recode insur_type (.a = 0) if q7_kr == 0
+* insur_type_universal
+recode q7 (8002 11002 14002 17002 24001 = 0 "Public only") ///
+		  (8001 11001 14001 17001 24002 24003 = 1 "Public and supplemental private") /// 
+		  (24005 = 3 "Other") ///
+		  (.r = .r "Refused") (24004  = .a "NA"), gen(insur_type_universal)
+
+recode insur_type_universal (.a = 1) if q7_kr == 1
+recode insur_type_universal (.a = 0) if q7_kr == 0
+
+replace insur_type_universal = .a if !inlist(country, 8, 11, 14, 15, 17, 24)
 
 * education
 recode q8 (1001 1002 3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 ///
@@ -878,6 +890,8 @@ recode q50 (1013 1014 1017 5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 302
 		   20094 20095 20096 20098 20100 20101 20102 20106 21001 2001 7001 6001 24001 24010 = 0 "Majority group") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
 		   
+recode minority (8008 = .a) if q50 == 8008 & country == 8
+		   
 *US & MX:
 recode minority (.a = 1) if q50_mx == 1		   
 recode minority (.a = 1) if q50a_us == 1
@@ -1138,7 +1152,7 @@ recode q35 (0 = 0 "No") (1 = 1 "Yes") ///
 order q*, sequential	   
 order respondent_serial respondent_id country country_reg wave language date /// 
 	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
-	  insured insur_type education health health_vge health_mental health_mental_vge health_chronic ///
+	  insured insur_type insur_type_universal education health health_vge health_mental health_mental_vge health_chronic ///
 	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
 	  usual_reason usual_quality usual_quality_vge visits visits_cat visits_covid_v1 ///
@@ -1163,7 +1177,8 @@ lab var gender "Gender (Q3)"
 lab var urban "Respondent lives in urban vs rural area (Q5)"
 lab var region "Region where respondent lives (County, state, province, etc.) (Q4)"
 lab var insured "Insurance status (Q6)"
-lab var insur_type "Type of insurance (for those who have insurance) (Q7)" 
+lab var insur_type "Type of insurance (for those who have insurance) (Q7)"
+lab var insur_type_universal "Type of insurance (for universal coverage systems) (Q7)"
 lab var education "Highest level of education completed (Q8)"
 lab var health "Self-rated health (Q9)"
 lab var health_vge "Self-rated health (Q9)"
