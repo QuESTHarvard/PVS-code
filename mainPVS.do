@@ -27,7 +27,7 @@ macro drop _all
 
 * Setting user globals 
 
-*global user "/Users/toddlewis/Library/CloudStorage/Box-Box"
+*global user "/Users/t.lewis/Library/CloudStorage/Box-Box"
 *global user "/Users/shs8688/Library/CloudStorage/Box-Box"
 *global user "C:/Users/i.sayeda/Box"
 *global user "/Users/liwei.x/Library/CloudStorage/Box-Box"

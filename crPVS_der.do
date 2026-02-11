@@ -11,8 +11,10 @@
 
 * UPDATE 4-30-2024: SS updated variable names to V2.0 variables
 
+
 ***************************** Deriving variables *******************************
 u "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", clear
+
 
 *------------------------------------------------------------------------------*
 ***************************** Derive variable creation
@@ -551,6 +553,20 @@ recode insur_type_universal (.a = 0) if q7_kr == 0
 
 replace insur_type_universal = .a if !inlist(country, 8, 11, 14, 15, 17, 24)
 
+
+* Variable for countries with universal public coverage + supplemental private coverage
+gen insur_type_universal = .
+	replace insur_type_universal = 0 if insur_type<.
+	replace insur_type_universal = 1 if insur_type==1
+	
+replace insur_type_universal = .a if !inlist(country, 8, 11, 14, 15, 17, 24)
+	
+label define insur_univ_lbl 0 "Public only" 1 "Public + private"
+label values insur_type_universal insur_univ_lbl
+
+* Removing insur_type for countries using insur_type_universal
+replace insur_type = .a if inlist(country, 8, 11, 14, 15, 17, 24)
+
 * education
 recode q8 (1001 1002 3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 ///
 		   14001 12001 15001 16001 16002 4039 17001 18045 19052 20058 21001 21002 ///
@@ -1060,6 +1076,16 @@ forvalues i = 1/24 {
 }
 
 
+*Strata var for countries with cluster sampling for household interviews
+decode country_reg, generate(strata)
+replace strata = "Ethiopia_CATI" if country==3 & mode==1
+replace strata = "Ethiopia_F2F" if country==3 & mode==2
+replace strata = "Kenya_CATI" if country==5 & mode==1
+replace strata = "Kenya_F2F" if country==5 & mode==2
+replace strata = "Somaliland_CATI" if country==6 & mode==1
+replace strata = "Somaliland_F2F" if country==6 & mode==2
+replace strata = "Malawi_CATI" if country==22 & mode==1
+replace strata = "Malawi_F2F" if country==22 & mode==2
 
 *********************************9-20 SS: adding back variables for PVS dashboard:
 gen health = q9 
@@ -1151,7 +1177,7 @@ recode q35 (0 = 0 "No") (1 = 1 "Yes") ///
 
 order q*, sequential	   
 order respondent_serial respondent_id country country_reg wave language date /// 
-	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
+	  int_length mode strata weight psu_id_for_svy_cmds age age_cat gender urban region ///
 	  insured insur_type insur_type_universal education health health_vge health_mental health_mental_vge health_chronic ///
 	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
@@ -1170,15 +1196,16 @@ order respondent_serial respondent_id country country_reg wave language date ///
 	  vignette_good minority income   	   	  
 	
 ***************************** Labeling variables ***************************** 
- 
+
+lab var wave "Survey wave"
 lab var age "Exact respondent age or midpoint of age range (Q1/Q2)"
 lab var age_cat "Age (categorical) (Q1/Q2)"
 lab var gender "Gender (Q3)" 
 lab var urban "Respondent lives in urban vs rural area (Q5)"
 lab var region "Region where respondent lives (County, state, province, etc.) (Q4)"
 lab var insured "Insurance status (Q6)"
-lab var insur_type "Type of insurance (for those who have insurance) (Q7)"
-lab var insur_type_universal "Type of insurance (for universal coverage systems) (Q7)"
+lab var insur_type "Type of insurance (for those who have insurance) (Q7)" 
+lab var insur_type_universal "Supplemental private insurance in universal public systems (Q7)"
 lab var education "Highest level of education completed (Q8)"
 lab var health "Self-rated health (Q9)"
 lab var health_vge "Self-rated health (Q9)"
@@ -1291,11 +1318,16 @@ lab var tele_qual_vge "Overall quality of last telemedicine visit (Q25)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q36)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q38_k)"
 lab var conf_getafford_scvc "Confidence in receiving and affording healthcare if became very sick (Q41_a/Q41_b)"
+lab var strata "Strata for survey mode (household only)"
 *lab var pol_align_v1 "Political alignment in respondent's region / district / state"
 
 **************************** Save data *****************************
 
 drop p32_col p32_per p32_uru p33_col p33_per p33_uru
+
+/* Dropping excess variables (for series 2026)
+drop q1217scale m1_a m1_b m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g m2_a m2_b m2_c m2_d m2_e m2_f m2_g m2_h m2_i m2_i_other m3 m4 m5 m6_a m6_b m6_c m6_d m6_e m6_f m6_g m6_h m6_i m6_j m6_j_other m7 m8 m9 m10 m11 m12 xchannel usw_main2 usw_rural2 usw_under302 usw_mo5 visits_mental m6_total phq2 phq2_cat phq9 phq9_cat m4_vge
+*/
 
 notes drop _all
 compress 
