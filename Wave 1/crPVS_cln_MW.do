@@ -529,6 +529,9 @@ replace recq33 = .r if q33== 999
 gen recq50 = country*1000 + q50 
 *replace recq50 = .r if q50== 999
 
+gen recq51 = country*1000 + q51 
+*replace recq51 = .r if q51== 999
+
 * Relabel some variables now so we can use the orignal label values
 label define country_short 6 "MW" 
 qui elabel list country_short
@@ -542,8 +545,9 @@ local q7l recq7
 local q8l recq8
 local q15l recq15
 local q33l recq33
+local q51l recq51
 
-foreach q in q4 q5 q7 q8 q15 q33 {
+foreach q in q4 q5 q7 q8 q15 q33 q51 {
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -576,7 +580,7 @@ lab val recq50 q50_label
 
 *****************************
 
-drop q4 q5 q7 q8 q15 q33 q50 language
+drop q4 q5 q7 q8 q15 q33 q50 q51 language
 ren rec* *
 
 *------------------------------------------------------------------------------*
@@ -724,7 +728,7 @@ label copy q5_label q5_label2
 label copy q15_label q15_label2
 label copy q33_label q33_label2
 label copy q50_label q50_label2
-label copy recq51 q51_label2
+label copy q51_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
