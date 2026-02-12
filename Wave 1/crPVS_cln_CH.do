@@ -22,7 +22,7 @@ set more off
 *********************************** SWITZERLAND ********************************
 
 * Import data 
-use "$data/Switzerland/01 raw data/PVS Switzerland data wave 1.dta", clear
+use "$data/Switzerland/01 raw data/yougov_pvs_weighted_20260210.dta", clear
 
 * Create country and wave vars
 gen wave = 1
@@ -100,12 +100,16 @@ drop F131_5 // labeled 'age' with largely missing values and 'Y/N' responses
 	drop F094_8 
 	drop F094_999 
 	drop F094_opn
+
+*dropping extra vars (weighting vars?):
+drop education_highest gender_age gender_education linguistic_region malefemale urbanrural age_cat
 	
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
 
 rename caseid respondent_serial // what is 'RecordNo'?
 rename age q1
+rename wgt weight 
 
 *citizenship question, look at Germany data (q4):
 	* Ask todd if the citizenship questions should be q4 instead of q3
@@ -139,8 +143,11 @@ rename age q1
 	rename F013_opn q4e_ch_other*/ drop F013 F013_opn
 
 rename F016 q5
-rename F017 q7
-rename F017_opn q7_other
+
+*rename F017 q7
+drop F017
+*rename F017_opn q7_other
+drop F017_opn
 
 * Do you have any of the following other types of health insurance? If you have a combined supplementary insurance package, please indicate the individual components that it includes. (recode these with F019_999)
 	*SS: confirm if we need these vars in the multi country dataset, would be used for derived. if not, drop.
@@ -153,7 +160,7 @@ rename F019_6 q7f_ch
 rename F019_7 q7g_ch
 rename F019_8 q7h_ch
 rename F019_9 q7i_ch
-rename F019_opn q7_ch_other // SS: check if we recategorized this var in the specify recode spreadsheet
+rename F019_opn q7_ch_other 
 rename F019_999 qj_ch
 
 rename F031 q8
@@ -166,14 +173,14 @@ rename F053 q11_a
 rename F055 q12_a
 rename F056 q12_b
 
-rename F076 q13 // no q14? is everything public or private?
+rename F076 q13 
 rename F077 q15
 rename F077_opn q15_other
 rename F079 q16
 rename F079_opn q16_other
 rename F081 q17 
 
-*rename F067 q17_b // dropped for now
+*rename F067 q17_b // dropped for now - when added back in, q17b_de: need to be renamed to remove `_de'
 drop F067
 
 rename F066 q17f_ch  // add to dd
@@ -200,13 +207,19 @@ rename F093_opn q22_other
 rename F096 q23 
 rename F096_opn q23_other
 
-*they made q24 a multicheckbox field, confirm with Todd how to deal with it:
+/*
 rename F097_1 q24a_ch
 rename F097_2 q24b_ch
 rename F097_3 q24c_ch
 rename F097_4 q24d_ch
 rename F097_999 q24e_ch
-rename F097_opn q24e_ch_other
+*rename F097_opn q24e_ch_other*/
+drop F097_1
+drop F097_2
+drop F097_3
+drop F097_4
+drop F097_999
+drop F097_opn
 
 rename F099 q25
 rename F100 q26
@@ -293,7 +306,7 @@ gen q30 = .
 rename F134 q30_other // SS: no 'q30' will have to recode open-ended answers
 
 rename F135 q29a_ch
-rename F136 q29a_other // will have to recode open-ended answers in the future
+rename F136 q29a_other // SS: note will have to recode open-ended answers in the future
 
 /*new vars
 rename F137_N_1 q31a_ch 
@@ -370,19 +383,23 @@ rename F177 q42
 rename F178 q45 
 rename F179 q46 
 
-*q50: respondent's native language/mother tongue (need to be recoded into one var) - how to deal if participant has multiple answers for this var? q50 with one and then a multi var similar to citzenship?
-	*derived code for minority?
-rename F181_1 q50a_ch
-rename F181_2 q50b_ch
-rename F181_3 q50c_ch
-rename F181_4 q50d_ch
-rename F181_5 q50e_ch
-rename F181_6 q50f_ch
-rename F181_7 q50g_ch
-rename F181_8 q50h_ch
-rename F181_9 q50i_ch
-rename F181_999 q50j_ch
+*q50: respondent's native language/mother tongue-how to deal if participant has multiple answers for this var? q50 with one and then a multi var similar to citzenship?
+	*can't change these variable names due to specifyrecodeinput file
+rename F181_1 q50a_ch // English
+rename F181_2 q50b_ch // French
+rename F181_3 q50c_ch // German
+rename F181_4 q50d_ch // Italian
+rename F181_5 q50f_ch // Ukrainian
+rename F181_6 q50h_ch // Dari
+rename F181_7 q50i_ch // Pashto
+rename F181_8 q50j_ch // Tigrinya
+rename F181_9 q50k_ch // Other (specify) : Textfield
+rename F181_999 q50_ch_dk // I don't know/ I prefer not to answer
 rename F181_opn q50j_ch_other
+
+**adding new q50a vars based on other specify text
+gen q50l_ch = 0 // Spanish
+gen q50m_ch = 0 // Portuguese
 
 *questions about language barriers to care:
 *rename F101 q50k_ch // dropped for now
@@ -421,8 +438,8 @@ gen recq4 = reccountry*1000 + q4
 gen recq5 = reccountry*1000 + q5  
 replace recq5 = .r if q5 == 999
 
-gen recq7 = reccountry*1000 + q7
-replace recq7 = .r if q7== 999
+*gen recq7 = reccountry*1000 + q7
+*replace recq7 = .r if q7== 999
 
 gen recq8 = reccountry*1000 + q8
 replace recq8 = .r if q8== 999
@@ -446,13 +463,13 @@ lab values reclanguage lang
 
 local q4l labels225
 local q5l labels6
-local q7l labels7
+*local q7l labels7
 local q8l labels29
 local q15l labels75 
 local q33l labels174 
 local q51l labels218 
 
-foreach q in q4 q5 q7 q8 q15 q33 q51 {
+foreach q in q4 q5 q8 q15 q33 q51 { // q7
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -481,13 +498,17 @@ foreach q in q4 q5 q7 q8 q15 q33 q51 {
 
 
 
-drop q4 q5 q7 q8 q15 q33 q51 language 
+drop q4 q5 q8 q15 q33 q51 language // q7
 ren rec* * 
   
 *------------------------------------------------------------------------------*
 * Generate variables  
  
 gen respondent_id = "CH" + string(respondent_serial)  
+
+gen mode = 1
+lab def mode 1 "CATI",modify
+lab val mode mode
 
 gen date = .
  
@@ -518,14 +539,15 @@ recode q18_q19 (.r = 7) if q19 == 3
 recode q18_q19 (.r = 10) if q19 == 4
 recode q18_q19 (.r = .r) if q19 == 999
 
+
 *------------------------------------------------------------------------------*
 * Recode all Refused and Don't know responses
 
 * In raw data, 999 = "I don't know/ I prefer not to answer" 
-*removed for now: q28a_ch q28b_ch q50k_ch q50l_ch q17e_ch q17_b
-recode q5 q7 q8 q51a_ch q9 q10 m1_a m1_b m1_c_ch m1_d_ch q11 q11_a q12_a q12_b q17_d /// 
+*removed for now: q28a_ch q28b_ch q50k_ch q50l_ch q17e_ch q17_b q24a_ch q24b_ch q24c_ch q24d_ch q24e_ch
+recode q5 q8 q51a_ch q9 q10 m1_a m1_b m1_c_ch m1_d_ch q11 q11_a q12_a q12_b q17_d /// q7
 	   q17_c q12_b q41f_ch q17f_ch q17g_ch q13 q15 q16 q18 q19 q20 ///
-	   q21 q22 q23 q24a_ch q24b_ch q24c_ch q24d_ch q24e_ch q25 q26 ///
+	   q21 q22 q23 q25 q26 ///
 	   q27i_ch_de q28_a q28_b  m2_ch m3_ch q29 q29a_ch q29b_ch q31a q31b q33 q34 ///
 	   q35 q36 q37 q38_a q38_b q38_c q38_d q38_f q38_g q38_h q38_i q38_k q38_l_ch ///
 	   q38_e q38_j q39 q40_a q40_b q40_c q40_d q40e_ch_de  q40h_ch_de q41_a q41_b ///
@@ -583,8 +605,8 @@ recode q20 (. = .a) if q18 <= 1 | q19 !=2 | q19 !=3 | q19 !=4
 * q21
 recode q21 (. = .a) if q20 !=2
 
-* q24 // SS: might need to change if q23_other is recoded
-recode q24a_ch q24b_ch q24c_ch q24d_ch q24e_ch q25 (. = .a) if q23 <= 0 | q23_other <= 0  | q23 == . | q23 == .a | q23 == .d | q23 == .r
+* q24 // SS: might need to change if q23_other is recoded, removed: q24a_ch q24b_ch q24c_ch q24d_ch q24e_ch
+recode q25 (. = .a) if q23 <= 0 | q23_other <= 0  | q23 == . | q23 == .a | q23 == .d | q23 == .r
 
 * q50k_ch (F012 was dropped)
 *recode q50k_ch q50l_ch (. = .a) if q5 != 2 // dropped
@@ -707,7 +729,7 @@ ren rec* *
 * Adding (.a, .d, .r) value labels:
 label define labels222 .a "NA" .d "Don't know" .r "Refused",add
 label define q5_label .a "NA" .d "Don't know" .r "Refused",add
-label define q7_label .a "NA" .d "Don't know" .r "Refused",add
+*label define q7_label .a "NA" .d "Don't know" .r "Refused",add
 label define q8_label .a "NA" .d "Don't know" .r "Refused",add
 label define labels28 .a "NA" .d "Don't know" .r "Refused",add
 label define labels31 .a "NA" .d "Don't know" .r "Refused",add
@@ -790,7 +812,7 @@ label define labels116 .a "NA" .d "Don't know" .r "Refused",add
 label define labels117 .a "NA" .d "Don't know" .r "Refused",add
 
 
-/*------------------------------------------------------------------------------*
+*------------------------------------------------------------------------------*
 * Renaming variables 
 
 
@@ -798,86 +820,28 @@ label define labels117 .a "NA" .d "Don't know" .r "Refused",add
 label copy q4_label q4_label2
 label copy q5_label q5_label2
 label copy q15_label q15_label2
-label copy recq33 q33_label2
-label copy q50_label q50_label2
-label copy recq51 q51_label2
+label copy q33_label q33_label2
+*label copy q50_label q50_label2
+label copy q51_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
 label val q15 q15_label2
 label val q33 q33_label2
-label val q50 q50_label2
+*label val q50 q50_label2
 label val q51 q51_label2
 
-label drop q4_label q5_label q15_label recq33 q50_label q51_label
+label drop q4_label q5_label q15_label q33_label q51_label // q50_label
 
 * fix labels for mental health module:
-label copy labels76 m1_a_label
-label copy labels77 m1_b_label
-label copy labels78 m1_2_a_label
-label copy labels79 m1_2_b_label
-label copy labels80 m1_2_c_label
-label copy labels81 m1_2_d_label
-label copy labels82 m1_2_e_label
-label copy labels83 m1_2_f_label
-label copy labels84 m1_2_g_label
-label copy labels86 m2_label
-label copy labels89 m3_label
-label copy labels90 m4_label
-label copy labels91 m5_label
-label copy labels92 m6_label
-label copy labels95 m7_label
-label copy labels96 m8_label
-label copy labels97 m9_label
-label copy labels98 m10_label
-label copy labels99 m11_label
-label copy labels100 m12_label
+label copy labels48 m1_a_label
+label copy labels49 m1_b_label
 
 lab val m1_a m1_a_label
 lab val m1_b m1_b_label
-lab val m1_2_a m1_2_a_label
-lab val m1_2_b m1_2_b_label
-lab val m1_2_c m1_2_c_label
-lab val m1_2_d m1_2_d_label
-lab val m1_2_e m1_2_e_label
-lab val m1_2_f m1_2_f_label
-lab val m1_2_g m1_2_g_label
 
-lab val m2_a m2_label 
-lab val m2_b m2_label 
-lab val m2_c m2_label 
-lab val m2_d m2_label 
-lab val m2_e m2_label 
-lab val m2_f m2_label 
-lab val m2_g m2_label
-lab val m2_h m2_label 
-lab val m2_i m2_label
 
-lab val m3 m3_label
-lab val m4 m4_label
-lab val m5 m5_label
- 
-lab val m6_a m6_label
-lab val m6_b m6_label
-lab val m6_c m6_label
-lab val m6_d m6_label
-lab val m6_e m6_label
-lab val m6_f m6_label
-lab val m6_g m6_label
-lab val m6_h m6_label
-lab val m6_i m6_label
-lab val m6_j m6_label
-
-lab val m7 m7_label
-lab val m8 m8_label
-lab val m9 m9_label
-lab val m10 m10_label
-lab val m11 m11_label
-lab val m12 m12_label
-
-label drop labels76 labels77 labels78 labels79 labels80 labels81 labels82 labels83 labels84 labels86 labels89 labels90 labels91 labels92 labels95 labels96 labels97 labels98 labels99 labels100 
- 
- 
+label drop labels48 labels49 
 *------------------------------------------------------------------------------*
 
 * Other specify recode 
@@ -886,41 +850,34 @@ label drop labels76 labels77 labels78 labels79 labels80 labels81 labels82 labels
 * The command in data quality checks below extracts other, specify values 
 
 
-gen q7_other_original = q7_other
-label var q7_other_original "Q7_other. Other"
+gen q7_ch_other_original = q7_ch_other
+label var q7_ch_other_original "Q7ch_other. Other"
 	
 gen q15_other_original = q15_other
 label var q15_other_original "Q15. Other"
 
 gen q16_other_original = q16_other
 label var q16_other_original "Q16. Other"
-
-gen q24_other_original = q24_other
-label var q24_other_original "Q24. Other"
-
+	
 gen q30_other_original = q30_other
 label var q30_other_original "Q30. Other"
 
 gen q33_other_original = q33_other
 label var q33_other_original "Q33. Other"
-	
+
 gen q34_other_original = q34_other
 label var q34_other_original "Q34. Other"	
 
-gen q50_other_original = q50_other 
-label var q50_other_original "Q50. Other"	
-	
-gen q52a_us_other_original = q52a_us_other 
-label var q52a_us_other_original "Q52a. Other"	
+gen q3a_ch_other_original = q3a_ch_other
+label var q3a_ch_other_original "Q3a_other. Other"
 
-gen m2_i_other_original = m2_i_other 
-label var m2_i_other_original "M2_i. Other"	
+gen q50j_ch_other_original = q50j_ch_other
+label var q50j_ch_other_original "Q50_other. Other"
 
-gen m6_j_other_original = m6_j_other 
-label var m6_j_other_original "M6_j. Other"	
+gen m3_ch_other_original = m3_ch_other
+label var m3_ch_other_original "M3_other. Other"
 
-
-foreach i in 12 {
+foreach i in 25 {
 
 ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
 	sheet(other_specify_recode)							///	
@@ -931,27 +888,22 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
 drop q7_other q15_other q16_other q24_other q30_other q33_other q34_other q37_other ///
 	 q50_other q52a_us_other m2_i_other m6_j_other
 	 
-ren q7_other_original q7_other
+ren q7_ch_other_original q7_ch_other
 ren q15_other_original q15_other
 ren q16_other_original q16_other
-ren q24_other_original q24_other
 ren q30_other_original q30_other
 ren q33_other_original q33_other
 ren q34_other_original q34_other
-ren q50_other_original q50_other
-ren q52a_us_other_original q52a_us_other
-ren m2_i_other_original m2_i_other
-ren m6_j_other_original m6_j_other 
- 
+ren q3a_ch_other_original q3a_ch_other
+ren q50j_ch_other_original q50j_ch_other
+ren m3_ch_other_original m3_ch_other
 
 *------------------------------------------------------------------------------*/
 
-/* Reorder variables
-	order m1_a m1_b  m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g m2_a m2_b m2_c m2_d ///
-		  m2_e m2_f m2_g m2_h m2_i m2_i_other m3 m4 m5 m6_a m6_b m6_c m6_d m6_e m6_f m6_g m6_h ///
-		  m6_i m6_j m6_j_other m7 m8 m9 m10 m11 m12 
+*Reorder variables
+	order m1_a m1_b m1_c_ch m1_d_ch m2_ch m3_ch m3_ch_other
 	order q*, sequential
-	order respondent_id respondent_serial wave country weight language date  // weight mode
+	order respondent_id respondent_serial wave country weight language date mode 
 
 *------------------------------------------------------------------------------*
 
