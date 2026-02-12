@@ -885,8 +885,8 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
  
 }	
 
-drop q7_other q15_other q16_other q24_other q30_other q33_other q34_other q37_other ///
-	 q50_other q52a_us_other m2_i_other m6_j_other
+drop q7_ch_other q15_other q16_other q30_other q33_other q34_other q3a_ch_other ///
+	 q50j_ch_other m3_ch_other
 	 
 ren q7_ch_other_original q7_ch_other
 ren q15_other_original q15_other
