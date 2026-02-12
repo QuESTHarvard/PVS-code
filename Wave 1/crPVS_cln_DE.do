@@ -633,13 +633,14 @@ label drop q4_label q5_label q15_label q33_label q50_label q51_label
 *------------------------------------------------------------------------------*
 * Create Sampling Weights
 
-*********************************************************Dataset Sample Size:
+*Dataset Sample Size:
 tab country // N=2698 completed surveys
 
-*********************************************************Create demographic variables that align with the census variables:
+*Create demographic variables that align with the census variables:
 ** Gender
 gen gender = 1 if q3==0
 replace gender = 2 if q3==1
+replace gender = 2 if q3==2
 label define gender_lbl 1 "Male" 2 "Female"
 label values gender gender_lbl
 tab gender, m // 0 missing
@@ -714,14 +715,25 @@ tab Region, m // 1 Refused
 
 gen education = .
 replace education = 1 if q8==24012 | q8==24013
+replace education = 1 if inlist(q8_other, "Grundschulabschluss", "Keinen Abschluss", "Lebenshilfe", "rente")
 replace education = 2 if q8==24008| q8==24009 | q8==24010 | q8==24011
+replace education = 2 if inlist(q8_other, ///
+    "8.Klasse POS", ///
+    "Gymnasiale Ausbildung bis zur 10.Klasse", ///
+    "Kreisvolkshochschule", ///
+    "Realschule", ///
+    "Realschulabschluss", ///
+    "Realschule mit Pflegequalifikation", ///
+    "Wirtschaftsschule", ///
+	"Realabschluss")
 replace education = 3 if q8==24001| q8==24002| q8==24003| q8==24004 |q8==24005| q8==24006| q8==24007
+replace education = 3 if inlist(q8_other, "2.Staatsexamen", "Berater")
 label define education 1 "Primary or less" 2 "Secondary" 3 "Tertiary"
 label values education education 
 tab education, m // 0 missing
 
 
-*********************************************************After testing, we choose age (4 levels),gender,region,education (3 levels):
+*After testing, we choose age (4 levels),gender,region,education (3 levels):
 ipfweight age gender Region education, gen(wgt) ///
 			val(16.7 12.9 25.2 45.1 /// age (4 levels)
 			 49.2 50.8 /// gender

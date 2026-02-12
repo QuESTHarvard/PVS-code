@@ -56,6 +56,11 @@ drop mode
 lab def mode 1 "CATI" 2 "F2F"
 lab var recmode mode
 
+*Creating PSU_ID (missing for Malawi)
+egen psu_id = group(q4_1) if recmode == 2
+tostring psu_id, replace format(%5.0f) //make string to match KE and ET
+replace psu_id = "MW" + psu_id if recmode == 2
+
 encode form_language, gen(language) 
 drop form_language
 
@@ -524,6 +529,9 @@ replace recq33 = .r if q33== 999
 gen recq50 = country*1000 + q50 
 *replace recq50 = .r if q50== 999
 
+gen recq51 = country*1000 + q51 
+*replace recq51 = .r if q51== 999
+
 * Relabel some variables now so we can use the orignal label values
 label define country_short 6 "MW" 
 qui elabel list country_short
@@ -537,8 +545,9 @@ local q7l recq7
 local q8l recq8
 local q15l recq15
 local q33l recq33
+local q51l recq51
 
-foreach q in q4 q5 q7 q8 q15 q33 {
+foreach q in q4 q5 q7 q8 q15 q33 q51 {
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -571,7 +580,7 @@ lab val recq50 q50_label
 
 *****************************
 
-drop q4 q5 q7 q8 q15 q33 q50 language
+drop q4 q5 q7 q8 q15 q33 q50 q51 language
 ren rec* *
 
 *------------------------------------------------------------------------------*
@@ -719,7 +728,7 @@ label copy q5_label q5_label2
 label copy q15_label q15_label2
 label copy q33_label q33_label2
 label copy q50_label q50_label2
-label copy recq51 q51_label2
+label copy q51_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
@@ -786,10 +795,201 @@ ren q50_other_original q50_other
 
 *------------------------------------------------------------------------------*/
 
+* Create weights
+
+tab country // N=1,024 completed surveys
+
+*Create demographic variables that align with the censor variables:
+** Gender: nothing need to change, use the variable q3
+gen gender = 0 if q3==0
+replace gender = 1 if q3==1
+label define gender 0 "Male" 1 "Female"
+label values gender gender
+tab gender, m // 0 missing
+
+** Age (5 levels)
+* 18 - 29, 30 - 39, 40 - 49, 50 - 59, 60 or more
+* 18 - 29 = 18 to 29 (1)
+* 30 - 39 = 30 - 39 (2)
+* 40 - 49 = 40 - 49 (3)
+* 50 - 59 = 50 - 59 (4)
+* 60 or more = 60 - 69 (5), 70-79 (6), 80 or older (7)
+gen age_5g = 0 if q2==1 
+replace age_5g = 1 if q2==2
+replace age_5g = 2 if q2==3
+replace age_5g = 3 if q2==4
+replace age_5g = 4 if q2==5 | q2==6 | q2==7
+label define age_5g 0 "18 - 29" 1 "30 - 39" 2 "40 - 49" 3 "50 - 59" 4 "60+"
+label values age_5g age_5g
+tab age_5g, m // 0 missing
+
+
+
+** Age2 (3 levels)
+* 18 - 29, 30 - 49, 50 +
+* 18 - 29 = 18 to 29 (1)
+* 30 - 49 = 30 - 39 (2), 40 - 49 (3)
+* 50 + = 50 - 59 (4), 60 - 69 (5), 70-79 (6), 80 or older (7)
+gen age_3g = 0 if q2==1 
+replace age_3g = 2 if q2==2 | q2==3
+replace age_3g = 2 if q2==4 | q2==5 | q2==6 | q2==7
+label define age_3g 0 "18 - 29" 1 "30 - 49" 2 "50+"
+label values age_3g age_3g
+tab age_3g, m // 0 missing
+
+
+
+** Region
+* Based on Malawi census 2018:
+* Northern = Chitipa (6005), Karonga (6008), Nkhata Bay (6019), Rumphi (6025), Mzimba (6016), Mzuzu City (6017)
+* Central = Kasungu (6009), Nkhotakota (6020), Ntchisi (6023), Dowa (6007), Salima (6026), Lilongwe (6010), Mchinji (6013), Dedza (6006), Ntcheu (6022)
+* Southern = Mangochi (6012), Machinga (6011), Zomba (6028), Chiradzulu (6004), Blantyre (6002), Mwanza (6015), Thyolo (6027), Mulanje (6014), Phalombe (6024), Chikwawa (6003), Nsanje (6021), Balaka (6001), Neno (6018)
+gen Region = 0 if q4==6005 | q4==6008 | q4==6019 | q4==6025 | q4==6016 | q4==6017
+replace Region = 1 if q4==6009 | q4==6020 | q4==6023 | q4==6007 | q4==6026 | q4==6010 | q4==6013 | q4==6006 | q4==6022
+replace Region = 2 if q4==6012 | q4==6011 | q4==6028 | q4==6004 | q4==6002 | q4==6015 | q4==6027 | q4==6014 | q4==6024 | q4==6003 | q4==6021 | q4==6001 | q4==6018
+label define Region 0 "Northern" 1 "Central" 2 "Southern"
+label values Region Region
+tab Region, m // 0 missing
+
+
+
+** Urban/ Rural: 
+gen urban = 0 if q5==6002
+replace urban = 1 if q5==6001
+label define urban 0 "Urban" 1 "Rural"
+label values urban urban
+tab urban, m // 0 missing
+
+** Education: 
+gen education_4g = 0 if q8==6001
+replace education_4g = 1 if q8==6002
+replace education_4g = 2 if q8==6003
+replace education_4g = 3 if q8==6004
+label define education_4g 0 "None" 1 "Primary" 2 "Secondary" 3 "Tertiary and more" 
+label values education_4g education_4g
+tab education_4g, m // 0 missing
+
+** Education: make a variable that have three categories
+gen education_3g = 0 if q8==6001
+replace education_3g = 0 if q8==6002
+replace education_3g = 1 if q8==6003
+replace education_3g = 2 if q8==6004
+label define education_3g 0 "None or primary" 1 "Secondary" 2 "Tertiary and more" 
+label values education_3g education_3g
+tab education_3g, m // 0 missing
+
+
+*Create joint distribution:
+** Check discrepancy of factors among urbanrural to see if we need joint distribution or not
+tab gender urban, cell // we oversampled urban on both gender
+tab gender Region, cell // we oversampled Northern on both gender
+tab age_5g urban, cell // 
+tab age_3g Region, cell // 
+tab education_4g urban, cell // 
+tab education_4g Region, cell // 
+
+
+
+** urban_gender
+gen urban_gender = 0 if urban==1 & gender==1
+replace urban_gender = 1 if urban==1 & gender==0
+replace urban_gender = 2 if urban==0 & gender==1
+replace urban_gender = 3 if urban==0 & gender==0
+label define urban_gender 0 "Urban, Female" 1 "Urban, Male" 2 "Rural, Female" 3 "Rural, Male"
+label values urban_gender urban_gender
+tab urban_gender, m // 0 missing
+
+
+
+** urban_age_5g
+gen urban_age_5g = 0 if urban==1 & age_5g==0
+replace urban_age_5g = 1 if urban==1 & age_5g==1
+replace urban_age_5g = 2 if urban==1 & age_5g==2
+replace urban_age_5g = 3 if urban==1 & age_5g==3
+replace urban_age_5g = 4 if urban==1 & age_5g==4
+replace urban_age_5g = 5 if urban==0 & age_5g==0
+replace urban_age_5g = 6 if urban==0 & age_5g==1
+replace urban_age_5g = 7 if urban==0 & age_5g==2
+replace urban_age_5g = 8 if urban==0 & age_5g==3
+replace urban_age_5g = 9 if urban==0 & age_5g==4
+label define urban_age_5g 0 "Urban, 18 - 29" 1 "Urban, 30 - 39" 2 "Urban, 40 - 49" 3 "Urban, 50 - 59" 4 "Urban, 60+" 5 "Rural, 18 - 29" 6 "Rural, 30 - 39" 7 "Rural, 40 - 49" 8 "Rural, 50 - 59" 9 "Rural, 60+"
+label values urban_age_5g urban_age_5g
+tab urban_age_5g, m // 0 missing
+
+
+
+** urban_age_3g
+gen urban_age_3g = 0 if urban==1 & age_3g==0
+replace urban_age_3g = 1 if urban==1 & age_3g==1
+replace urban_age_3g = 2 if urban==1 & age_3g==2
+replace urban_age_3g = 3 if urban==0 & age_3g==0
+replace urban_age_3g = 4 if urban==0 & age_3g==1
+replace urban_age_3g = 5 if urban==0 & age_3g==2
+label define urban_age_3g 0 "Urban, 18 - 29" 1 "Urban, 30 - 49" 2 "Urban, 50+" 3 "Rural, 18 - 29" 4 "Rural, 30 - 49" 5 "Rural, 60+"
+label values urban_age_3g urban_age_3g
+tab urban_age_3g, m // 0 missing
+
+
+
+** region_gen
+gen region_gen = 0 if Region==0 & gender==1
+replace region_gen = 1 if Region==1 & gender==1
+replace region_gen = 2 if Region==2 & gender==1
+replace region_gen = 3 if Region==0 & gender==0
+replace region_gen = 4 if Region==1 & gender==0
+replace region_gen = 5 if Region==2 & gender==0
+label define region_gen 0 "Northern, female" 1 "Central, female" 2 "Southern, Female" 3 "Northern, male" 4 "Central, male" 5 "Southern, male"
+label values region_gen region_gen
+tab region_gen, m // 0 missing
+
+
+
+** edu_gender
+gen edu_gender = 0 if education_4g==0 & gender==1
+replace edu_gender = 1 if education_4g==1 & gender==1
+replace edu_gender = 2 if education_4g==2 & gender==1
+replace edu_gender = 3 if education_4g==3 & gender==1
+replace edu_gender = 4 if education_4g==0 & gender==0
+replace edu_gender = 5 if education_4g==1 & gender==0
+replace edu_gender = 6 if education_4g==2 & gender==0
+replace edu_gender = 7 if education_4g==3 & gender==0
+label define edu_gender 0 "None, Female" 1 "Primary, Female" 2 "Secondary, Female" 3 "Tertiary, Female" 4 "None, Male" 5 "Primary, Male" 6 "Secondary, Male" 7 "Tertiary, Male"
+label values edu_gender edu_gender
+tab edu_gender, m // 0 missing
+
+
+
+** edu_3g_gender
+gen edu_3g_gender = 0 if education_3g==0 & gender==1
+replace edu_3g_gender = 1 if education_3g==1 & gender==1
+replace edu_3g_gender = 2 if education_3g==2 & gender==1
+replace edu_3g_gender = 3 if education_3g==0 & gender==0
+replace edu_3g_gender = 4 if education_3g==1 & gender==0
+replace edu_3g_gender = 5 if education_3g==2 & gender==0
+label define edu_3g_gender 0 "None or primary, Female" 1 "Secondary, Female" 2 "Tertiary and more, Female" 3 "None or primary, Male" 4 "Secondary, Male" 5 "Tertiary and more, Male" 
+label values edu_3g_gender edu_3g_gender
+tab edu_3g_gender, m // 0 missing
+
+
+
+
+
+*After testing, we choose wgt6 [age (5 levels),region (3 levels),education by gender (8 levels)]:
+ipfweight age_5g Region edu_gender, gen(weight) ///
+			val(43.15 23.95 14.6 8.01 10.29 /// age (5 levels)
+			 13.02 43.39 43.59  /// region (3 levels)
+			 15.49 25.26 10.73 1.51 8.17 22.05 14.44 2.35) /// edu_gender
+			maxit(50) //
+
+
+** Just try to keep data set clean, drop all the variables created above, except wgt
+drop gender urban age_5g age_3g Region education_4g education_3g urban_gender urban_age_5g urban_age_3g region_gen edu_gender edu_3g_gender
+		
+
 * Reorder variables
 
 	order q*, sequential
-	order respondent_id wave country language mode date int_length // weight
+	order respondent_id wave country language mode date int_length weight
 
 *------------------------------------------------------------------------------*
 
