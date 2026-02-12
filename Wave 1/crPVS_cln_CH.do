@@ -232,7 +232,7 @@ rename F103_5 q27_e
 rename F103_6 q27_f
 rename F103_7 q27_g
 rename F103_8 q27_h
-rename F103_9 q27_k
+rename F103_9 q27k_ch_de
 rename F103_10 q27i_ch // add to dd
 rename F113 q27i_ch_de // confirm with todd
 
@@ -710,7 +710,7 @@ recode recq23 (. = .r) if q23 == .r
 drop q23 q23_other
 
 * q27 
-recode q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27_k q27i_ch (3 = .d)
+recode q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27k_ch_de q27i_ch (3 = .d)
 
 * q45 
 recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse") ///

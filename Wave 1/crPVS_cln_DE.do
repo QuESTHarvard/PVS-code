@@ -55,22 +55,22 @@ rename (Q1 Q3) (q1 q3)
 rename (Q3C Q3D) (q3c_de q3d_de) 
 rename (Q4 Q5 Q6 Q7 Q8) (q4 q5 q6 q7 q8)
 rename (Q8_14_TEXT Q8A) (q8_other q8a_de)
-rename (Q9 Q10 Q11 Q11B Q13) (q9 q10 q11 q11_de q13)
+rename (Q9 Q10 Q11 Q11B Q13) (q9 q10 q11 q11_a q13)
 rename (R1_Q12P R2_Q12P) (q12_a q12_b)
 rename (Q15 Q15_7_TEXT) (q15 q15_other)
 rename (Q16 Q16_11_TEXT) (q16 q16_other)
-rename (Q17 Q17B Q17C Q17D) (q17 q17b_de q17c_de q17d_de)
+rename (Q17 Q17B Q17C Q17D) (q17 q17b_de q17_c q17_d)
 rename (Q18 Q19 Q20 Q21 Q22 Q23) (q18 q19 q20 q21 q22 q23)
 rename (Q24 Q24_4_TEXT) (q24 q24_other)
 rename (Q25 Q26) (q25 q26)
-rename (R1_Q27 R2_Q27 R3_Q27 R4_Q27 R5_Q27 R6_Q27 R7_Q27 R8_Q27 R9_Q27 R10_Q27 R11_Q27) (q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_de q27j_de q27k_de)
+rename (R1_Q27 R2_Q27 R3_Q27 R4_Q27 R5_Q27 R6_Q27 R7_Q27 R8_Q27 R9_Q27 R10_Q27 R11_Q27) (q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_ch_de q27j_de q27k_ch_de)
 rename (R1_Q28 R2_Q28 R3_Q28 R4_Q28) (q28_a q28_b q28c_de q28d_de)
 rename (Q29 Q30 Q30_9_TEXT R1_Q31 R2_Q31) (q29 q30 q30_other q31a q31b)
 rename (Q33 Q33_7_TEXT Q34 Q34_4_TEXT) (q33 q33_other q34 q34_other)
 rename (Q35 Q36 Q37 Q37_7_TEXT) (q35 q36 q37 q37_other)
 rename (R1_Q38 R2_Q38 R3_Q38 R4_Q38 R5_Q38 R6_Q38 R7_Q38 R8_Q38 R9_Q38 R10_Q38 R11_Q38) (q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k)
 rename Q39 q39
-rename (R1_Q40 R2_Q40 R3_Q40 R4_Q40 R5_Q40 R6_Q40 R7_Q40 R8_Q40 R9_Q40 R10_Q40) (q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de)
+rename (R1_Q40 R2_Q40 R3_Q40 R4_Q40 R5_Q40 R6_Q40 R7_Q40 R8_Q40 R9_Q40 R10_Q40) (q40_a q40_b q40_c q40_d q40e_ch_de q40f_de q40g_de q40h_de q40i_de q40j_de)
 rename (R1_Q41 R2_Q41 R3_Q41 R4_Q41) (q41_a q41_b q41_c q41d_de)
 rename (Q42 Q43 Q44 Q45 Q46 Q47 Q48 Q50) (q42 q43 q45 q46 q47 q48 q49 q51)
 rename Q49_9_TEXT q50_other
@@ -322,18 +322,18 @@ recode q36 (9 = .d)
 recode q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k (8 = .d)
 
 * q40a-j 6 = "I am unable to judge" recoded as "don't know"
-recode q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de (6 = .d)
+recode q40_a q40_b q40_c q40_d q40e_ch_de q40f_de q40g_de q40h_de q40i_de q40j_de (6 = .d)
 
 * In raw data, 998 = "don't know"
 recode q18 q21 q22 q23 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h ///
-	   q27i_de q27j_de q27k_de (998 = .d)
+	   q27i_ch_de q27j_de q27k_ch_de (998 = .d)
 
 * In raw data, . = "refused"
-recode q1 q2 q3 q3c_de q3d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q11 q11_de q12_a q12_b q13 q14_de q15 q15a_de q16 q17 q17b_de q17c_de q17d_de q18 q19 q20 q21 ///
-	   q22 q23 q24 q25 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_de q27j_de q27k_de q28_a ///
+recode q1 q2 q3 q3c_de q3d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q11 q11_a q12_a q12_b q13 q14_de q15 q15a_de q16 q17 q17b_de q17_c q17_d q18 q19 q20 q21 ///
+	   q22 q23 q24 q25 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_ch_de q27j_de q27k_ch_de q28_a ///
 	   q28_b q28c_de q28d_de q29 q30 q31a q31b q32_de q33 q34 q35 q36 q37 q38_a q38_b q38_c ///
 	   q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q39 q40_a q40_b q40_c ///
-	   q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de q41_a q41_b q41_c q41d_de q45 q46 q47 q48 q49 q51 (. = .r)
+	   q40_d q40e_ch_de q40f_de q40g_de q40h_de q40i_de q40j_de q41_a q41_b q41_c q41d_de q45 q46 q47 q48 q49 q51 (. = .r)
 	   
 *------------------------------------------------------------------------------*
 * Check for implausible values 
@@ -389,7 +389,7 @@ recode q17 (6 = .a)
 recode q15a_de (-1 = .a) if q15 !=3
 
 *q17b-d
-recode q17b_de q17c_de q17d_de (-1 = .a) if q13 !=2 | q1 > 19
+recode q17b_de q17_c q17_d (-1 = .a) if q13 !=2 | q1 > 19
 
 * NA's for q19-21 
 recode q19 (-1 = .a) if q18 != .d | q18 !=.r
@@ -508,7 +508,7 @@ recode q24 (1 = 1 "Care for an urgent or new health problem such as an accident 
 		   (4 = 4 "Other (specify)") (.r = .r "Refused") (.a = .a "NA") ///
 		   (.d = .d "Don't know"), pre(rec) label(q24_label)
 		   
-recode q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_de q27j_de q27k_de (1 = 0 "No") (2 = 1 "Yes") ///
+recode q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_ch_de q27j_de q27k_ch_de (1 = 0 "No") (2 = 1 "Yes") ///
 (.a = .a "NA") (3 = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q27_label)
 
 recode q28_a q28_b q28c_de q28d_de (2 = 0 "No") (1 = 1 "Yes") (.r = .r "Refused") ///
@@ -588,21 +588,21 @@ recode q51 ///
 	(.d = .d "Don't know") (.a = .a "NA") (.r = .r "Refused"), pre(rec) label(q51_label)
 
 * Recoding all yes/no qs together
-recode q3c_de q6 q11 q11_de q20 q26 q29 q31a q31b (2 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
+recode q3c_de q6 q11 q11_a q20 q26 q29 q31a q31b (2 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
 pre(rec) label(yesno)
 
 *SI Note: these scales were different from the other yes/no questions so created a new label
-recode q13 q17b_de q17c_de q17d_de (1 = 0 "No") (2 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
+recode q13 q17b_de q17_c q17_d (1 = 0 "No") (2 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
 pre(rec) label(yesno2)
 
 * Recoding all poor-excellent rating qs together
-recode q17 q25 q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49 ///
+recode q17 q25 q40_a q40_b q40_c q40_d q40e_ch_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49 ///
 (5 = 0 "Poor") (4 = 1 "Fair") (3 = 2 "Good") (2 = 3 "Very good") (1 = 4 "Excellent") ///
 (.d = .d "Don't know") (.a = .a "NA") (.r = .r "Refused"), pre(rec) label(rating)
 	
-drop q2 q2_de_raw q3 q3c_de q3d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q12_a q12_b q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_de q27j_de q27k_de ///
-q28_a q28_b q28c_de q28d_de q30 q34 q35 q36 q37 q39 q41_a q41_b q41_c q41d_de q45 q46 q51 q11 q11_de q13 q20 q26 q29 q31a q31b q17 q17b_de q17c_de q17d_de q25 ///
-q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q40e_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49
+drop q2 q2_de_raw q3 q3c_de q3d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q12_a q12_b q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_ch_de q27j_de q27k_ch_de ///
+q28_a q28_b q28c_de q28d_de q30 q34 q35 q36 q37 q39 q41_a q41_b q41_c q41d_de q45 q46 q51 q11 q11_a q13 q20 q26 q29 q31a q31b q17 q17b_de q17_c q17_d q25 ///
+q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q40e_ch_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49
 
 ren rec* *
 
@@ -845,7 +845,7 @@ lab var q8a_de "Q8a_de. DE only: What is the title of your highest degree?"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health, including your mood and your ability to think clearly, is:"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
-lab var q11_de "Q11_de. DE only: Are you currently pregnant or have you given birth in the past 12 months?"
+lab var q11_a "q11_a. DE only: Are you currently pregnant or have you given birth in the past 12 months?"
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
 lab var q13 "Q13. Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
@@ -859,8 +859,8 @@ label var q16 "Q16. Why did you choose this healthcare facility? Please tell us 
 lab var q16_other "Q16. Other"
 label var q17 "Q17. Overall, how would you rate the quality of healthcare you received in the past 12 months from this healthcare facility?"
 label var q17b_de "Q17b. DE only: In the past 12 months, have you ever spoken with a medical doctor or any other health care provider in private without your parents?"
-label var q17c_de "Q17c. DE only: Is there any doctor, nurse, or other health professional with whom you are comfortable talking about your sexual health or contraception?"
-label var q17d_de "Q17d. DE only: Is there any doctor, nurse, or other health professional with whom you are comfortable speaking about your mental health?"
+label var q17_c "Q17c. DE only: Is there any doctor, nurse, or other health professional with whom you are comfortable talking about your sexual health or contraception?"
+label var q17_d "Q17d. DE only: Is there any doctor, nurse, or other health professional with whom you are comfortable speaking about your mental health?"
 label var q18 "Q18. How many healthcare visits in total have you made in the past 12 months?"
 label var q19 "Q19. Total number of healthcare visits in the past 12 months choice(range)"
 lab var q18_q19 "Q18/Q19. Total mumber of visits made in past 12 months (q18, q19 mid-point)"
@@ -880,9 +880,9 @@ label var q27_e "Q27e. Had your teeth checked in the past 12 months"
 label var q27_f "Q27f. Had a blood sugar test in the past 12 months"
 label var q27_g "Q27g. Had a blood cholesterol test in the past 12 months"
 label var q27_h "Q27h. Received care for depression, anxiety, or another mental health condition"
-label var q27i_de "Q27i. DE only: Had a colorectal cancer screening to detect bowel cancer"
+label var q27i_ch_de "Q27i. DE only: Had a colorectal cancer screening to detect bowel cancer"
 label var q27j_de "Q27j. DE only: Had a J2 checkup (an additional preventive check-up for adolescents)"
-label var q27k_de "Q27k. DE only: Received any counseling on contraception/birth control"
+label var q27k_ch_de "Q27k. DE only: Received any counseling on contraception/birth control"
 label var q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
 label var q28_b "Q28b. been treated unfairly or discriminated against by a doctor, nurse, or..."
 label var q28c_de "Q28c. DE only: Had the impression that your privacy was not adequately protected during treatment or consultation"
@@ -918,7 +918,7 @@ label var q40_a "Q40a. How would you rate the quality of care during pregnancy a
 label var q40_b "Q40b. How would you rate the quality of childcare such as care of healthy children and treatment of sick children"
 label var q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
 label var q40_d "Q40d. How would you rate the quality of care provided for the mental health?"
-label var q40e_de "Q40e. DE only: How would you rate the quality of care in the area of sexual health or contraception?"
+label var q40e_ch_de "Q40e. DE only: How would you rate the quality of care in the area of sexual health or contraception?"
 label var q40f_de "Q40f. DE only: How would you rate the quality of care provided for dental care?"
 label var q40g_de "Q40g. DE only: How would you rate the quality of care provided for preventive cancer care?"
 label var q40h_de "Q40h. DE only: How would you rate the quality of care provided for rehabilitative care?"
