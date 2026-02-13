@@ -663,7 +663,8 @@ recode q14_gr q32a_gr q32b_gr q15a_gr q15b_gr q15c_gr q33a_gr q33b_gr q52a_gr q5
 recode q27i_ng q40_e_ng (. = .a) if country != 20			
 
 * China:	
-recode q14_cn q27i_cn q27j_cn q32_cn q51_cn (. = .a) if country != 21
+recode q14_cn q27i_cn q27j_cn q32_cn (. = .a) if country != 21
+recode q51a (. = .a) if country != 21 | country !=25 
 
 * Somaliland:
 recode q14_so q15a_so q15b_so q15c_so q32_so q40a_so q40b_so q40e_so q40f_so (. = .a) if country != 22
@@ -703,7 +704,7 @@ q27j_de q28c_de q28d_de q32_de q40f_de q40g_de q40h_de q40i_de q40j_de q41d_de (
 recode CELL1 CELL2 q44 (. = .a) if country == 24
 
 * Germany/Switzerland
-recode q27i_ch_de q27k_ch_de q40e_ch_de q40h_ch_de q41d_ch_de (. = .a) if country != 24 | country !=25
+recode q11_a q17_c q17_d q27i_ch_de q27k_ch_de q40e_ch_de q40h_ch_de q41d_ch_de (. = .a) if country != 24 | country !=25
 
 * Switzerland
 recode q3a_ch q3b_ch q4_ch q7a_ch q7b_ch q7c_ch q7d_ch q7e_ch q7f_ch q7g_ch q7h_ch q7i_ch ///
@@ -715,6 +716,8 @@ recode q3a_ch q3b_ch q4_ch q7a_ch q7b_ch q7c_ch q7d_ch q7e_ch q7f_ch q7g_ch q7h_
 recode m1_a m1_b m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g m2_a m2_b m2_c /// 
 	  m2_d m2_e m2_f m2_g m2_h m2_i m3 m4 m5 m6_a m6_b m6_c m6_d m6_e m6_f m6_g ///
 	  m6_h m6_i m6_j m7 m8 m9 m10 m11 m12 phq2 phq2_cat phq9 phq9_cat (. = .a) if country !=12 | wave !=2
+	  
+recode m1_a m1_b (. = .a) if country !=25
 	  
 * Japan
 recode q6_jp q12c_jp q12d_jp q12e_jp q14_jp q27i_jp q27j_jp q27k_jp q27l_jp q28c_jp q28d_jp ///
@@ -1057,7 +1060,7 @@ lab var q50a_us "Q50a. US only: What is your ethnicity?"
 lab var q50b_other_us "Q50b. US only: Other"
 lab var q50b_us "Q50b. US only: What is your race?"
 lab var q51 "Q51. Total monthly household income"
-lab var q51_cn "Q51a. CN only: What is the number of people in the household, including you, who live with you permanently?" 
+lab var q51a "Q51a. CN only: What is the number of people in the household, including you, who live with you permanently?" 
 lab var q51_gr "Q51. GR only: Including yourself, how many people aged 18 or older currently live in your household"
 *lab var CELL1 "Do you have another mobile phone number besides the one I am calling you on?"
 *lab var CELL2 "How many other mobile phone numbers do you have?"
@@ -1074,6 +1077,6 @@ lab var q53a_jp_other "Q53a_jp_other. Other"
 *------------------------------------------------------------------------------*
 *Save recoded data
 
-*save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
+save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
 
 *------------------------------------------------------------------------------*
