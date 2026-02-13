@@ -139,10 +139,10 @@ lab def fac_owner .a "NA" .r "Refused", modify
 lab def fac_type1 .a "NA" .r "Refused", modify
 lab def fac_type3 .a "NA" .r "Refused", modify
 lab def gender2 3 "AR: Other gender", modify
-lab def labels26 10 "AR: Short waiting time to get appointments" ///
-				 11 "GR: Preferred provider by other family members" ///
-				 12 "GR: Referred from another provider" ///
-				 13 "RO: Recommended by family or friends", modify
+lab def labels26 10 "Short waiting time to get appointments" ///
+				 11 "Preferred provider by other family members" ///
+				 12 "Referred from another provider" ///
+				 13 "Recommended by family or friends", modify
 lab def labels27 .a "NA",modify
 lab def labels37  11 "AR: Delay to get a turn" ////
 				  12 "GR: Fear or anxiety of a healthcare procedure, examination or treatment" ///
