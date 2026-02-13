@@ -140,7 +140,7 @@ gen q44=.
 
 rename q50other q50_other
 
-rename q51a q51_cn
+rename q51a q51a
 rename q51b q51
 
 rename huifang retest
@@ -1031,7 +1031,7 @@ label variable q49 "Q49. How would you rate the quality of care provided? (Vigne
 label variable q50 "Q50. What is your native language or mother tongue?"
 label variable q50_other "Q50_Other. Other languages"
 label variable q51 "Q51. Total monthly household income"
-label variable q51_cn "Q51a. CN only: What is the number of people in the household?"
+label variable q51a "Q51a. CN only: What is the number of people in the household?"
 label variable CELL1 "CELL1. Do you have another mobile phone number besides the one I am calling. "
 label variable CELL2 "CELL2. How many other mobile phone numbers do you have?"
 label variable retest "retest after two weeks"
