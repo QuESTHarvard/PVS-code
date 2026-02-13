@@ -193,7 +193,7 @@ recode q6_za (. = .a) if country != 9
 * Recode all Refused and Don't know responses
 
 * In raw data, 997 = "don't know" 
-recode q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 ///
+recode q16 q23 q25_a q25_b q27 q28 q28_new q30 q31 q32 q33 q34 q35 q36 q38 ///
 	   q66 q67 (997 = .d)
 	   
 *NOTE: currently in data q37_za "don't know" is category 3  

@@ -376,7 +376,7 @@ recode cell2 (. = .a) if cell1 !=1
 
 recode q14 (1 = 1 "Public") (2 = 2 "Private") (4 = 3 "NGO/Faith-based") ///
 		   (997 = 4 "Other, specify") (.a = .a "NA") ///
-		   (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q14_label)  	   
+		   (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q14_label)  
 		   		   
 recode q19 (1 = 0 "0") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more") (.a = .a "NA") ///
 		   (.d = .d "Don't Know") (.r = .r "Refused"), pre(rec) label(q19_label)		   
@@ -590,9 +590,20 @@ ren q33_other_original q33_other
 ren q34_other_original q34_other
 ren q50_other_original q50_other
 
+
+
+* 2-13 SS: Adding after specify recode input so I don't have to change the file:
+recode q16  (1 = 1 "Low cost") (2 = 2 "Short distance") (3 = 3 "Short waiting time") ///
+			(4 = 4 "Good healthcare provider skills") (5 = 5 "Staff shows respect") ///
+			(6 = 6 "Medicines and equipment are available") (7 = 7 "Only facility available") ///
+			(8 = 8 "Covered or assigned by insurance") (997 = 9 "Other, specify") ///
+			(.a = .a "NA") (.r = .r "Refused"), ///
+			pre(rec) label(q16_label)
+drop q16
+ren rec* *
+
 order q*, sequential
 order respondent_serial respondent_id mode country language date int_length weight
-
 *------------------------------------------------------------------------------*/
 
 * Country-specific vars for append -

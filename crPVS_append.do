@@ -698,10 +698,18 @@ recode q13a_lac q31_lac (. = .a) if country != 1 | (wave !=2 & !inlist(country, 
 recode q4_mw q47_mw (. = .a) if country !=6
 
 * Germany
-recode q2_de q3c_de q3d_de q8a_de q11_de q14_de q15a_de q17b_de q17c_de q17d_de ///
-q27i_de q27j_de q27k_de q28c_de q28d_de q32_de q40e_de q40f_de q40g_de q40h_de q40i_de ///
-q40j_de q41d_de (. = .a) if country !=24
+recode q2_de q3c_de q3d_de q8a_de q14_de q15a_de q17b_de q17_c q17_d ///
+q27j_de q28c_de q28d_de q32_de q40f_de q40g_de q40h_de q40i_de q40j_de q41d_de (. = .a) if country !=24
 recode CELL1 CELL2 q44 (. = .a) if country == 24
+
+* Germany/Switzerland
+recode q27i_ch_de q27k_ch_de q40e_ch_de q40h_ch_de q41d_ch_de (. = .a) if country != 24 | country !=25
+
+* Switzerland
+recode q3a_ch q3b_ch q4_ch q7a_ch q7b_ch q7c_ch q7d_ch q7e_ch q7f_ch q7g_ch q7h_ch q7i_ch ///
+	   q7j_ch q8a_ch q17f_ch q17g_ch q27i_ch q29a_ch q29b_ch q38_l_ch q41e_ch q41f_ch q50_ch_dk ///
+	   q50a_ch q50b_ch q50c_ch q50d_ch q50f_ch q50h_ch q50i_ch q50j_ch q50k_ch q50l_ch q50m_ch ///
+	   q51a_ch m1_c_ch m1_d_ch m2_ch m3_ch (. = .a) if country !=25
 
 * Mental health module:
 recode m1_a m1_b m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g m2_a m2_b m2_c /// 
@@ -719,7 +727,15 @@ lab def exc_poor_judge 5 "I am unable to judge" .d "Don't know", modify
 lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
-lab def labels26 14 "CN: Trust hospital" 15 "SO: Determined by the family in the cities" 16 "EC: Ease of getting appointment" 17 "DE: My parents chose this doctor's office or health care facility for me" 18 "DE: This doctor's office or health care facility is child-friendly/youth-friendly" 21 "JP: Positive online or social media reviews", modify
+
+lab def labels26 14	"CN: Trust hospital" 15	"SO: Determined by the family in the cities" ///
+				 16	"EC: Ease of getting appointment" ///
+				 17 "DE: My parents chose this doctor's office or health care facility for me" ///
+				 18	"DE: This doctor's office or health care facility is child-friendly/youth-friendly" ///
+				 19	"US: Patient loyalty" 20 "US: Referral/Specialty care" 21 "JP: Positive online or social media reviews" ///
+				 22	"CH: Confidentiality of care" 23 "CH: Chosen by parents/family", modify
+
+
 lab def labels37 23 "DE: Difficulties with the language spoken by the healthcare provider" ///
 					24 "JP: Equipment like X-ray machines are broken or unavailable" /// 
 					25 "JP: Do not want health care providers to know of the disease or to show the symptomatic part of the body" ///
@@ -739,7 +755,7 @@ recode country (6 = 1 "Malawi") (22 = 2 "Somaliland") (3 = 3 "Ethiopia") (5 = 4 
 			   (12 = 25 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
 
-lab def labels26 19 "US: Patient loyalty" 20 "US: Referral/Specialty care" 21 "JP: Positive online or social media reviews",modify
+
 lab def q24_label 5 "Prescription filling/reviewing results" 6 "Routine follow-up care",modify
 lab def main_reason 5 "SO: Allergies" 6	"SO: Blood transfusion" 7 "SO: Dental issue" 8 "SO: Eye problem" ///
 					9 "SO: Gastric/stomach ache" 10 "SO: Nerve pain" 11 "SO: Visited a hospitalised member of the family" ///
@@ -825,7 +841,7 @@ lab var q8a_de "Q8a_de. DE only: What is the title of your highest degree?"
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health is:"
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
-lab var q11_de "Q11_de. DE only: Are you currently pregnant or have you given birth in the past 12 months?"
+lab var q11_a "Q11. Are you currently pregnant or have you given birth in the past 12 months?"
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
 lab var q12c_jp "Q12c_jp. JP only: How confident are you that you can figure out the best treatment options for yourself?"
@@ -883,8 +899,8 @@ lab var q16 "Q16. Why did you choose this healthcare facility?"
 lab var q16_other "Q16. Other"
 lab var q17 "Q17. Overall respondent's rating of the quality received in this facility"
 lab var q17b_de "Q17b. DE only: In the past 12 months, have you ever spoken with a medical doctor or any other health care provider in private without your parents?"
-lab var q17c_de "Q17c. DE only: Is there any doctor, nurse, or other health professional with whom you are comfortable talking about your sexual health or contraception?"
-lab var q17d_de "Q17d. DE only: Is there any doctor, nurse, or other health professional with whom you are comfortable speaking about your mental health?"
+lab var q17_c "Q17c. Is there any doctor, nurse, or other health professional with whom you are comfortable talking about your sexual health or contraception?"
+lab var q17_d "Q17d. Is there any doctor, nurse, or other health professional with whom you are comfortable speaking about your mental health?"
 lab var q18 "Q18. How many healthcare visits in total have you made in the past 12 months? "
 lab var q18_q19 "Q18/Q19. Total number of visits made in past 12 months (q23, q24 mid-point)"
 lab var q19 "Q19. Total number of healthcare visits in the past 12 months (range)"
@@ -912,9 +928,9 @@ lab var q27i_ng "Q27. NG only: Had sexual or reproductive health care such as fa
 lab var q27i_za "Q27. ZA only: Had a test for HIV in the past 12 months"
 lab var q27j_cn "Q27j. CN only: Received a mammogram (a special X-ray of the breast)"
 lab var q27i_us "Q27i. US only: STI test conducted in past 12 months"
-lab var q27i_de "Q27i. DE only: Had a colorectal cancer screening to detect bowel cancer"
+lab var q27i_ch_de "Q27i. Had a colorectal cancer screening to detect bowel cancer"
 lab var q27j_de "Q27j. DE only: Had a J2 checkup (an additional preventive check-up for adolescents)"
-lab var q27k_de "Q27k. DE only: Received any counseling on contraception/birth control"
+lab var q27k_ch_de "Q27k. Received any counseling on contraception/birth control"
 lab var q27i_jp "Q12i_jp. JP only: Received an endoscope"
 lab var q27j_jp "Q12j_jp. JP only: Received a barium swallow test"
 lab var q27k_jp "Q12k_jp. JP only: Received a fecal occult blood test"
@@ -993,7 +1009,7 @@ lab var q40a_so "Q40a. SO only: Care for pregnant women and newborns, such as an
 lab var q40b_so "Q40b. SO only: Care for infections such as Malaria, Tuberculosis etc."
 lab var q40e_so "Q40e. SO only: First aid and care for emergency conditions such as injuries etc."
 lab var q40f_so "Q40f. SO only: Care for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
-lab var q40e_de "Q40e. DE only: How would you rate the quality of care in the area of sexual health or contraception?"
+lab var q40e_ch_de "Q40e. DE only: How would you rate the quality of care in the area of sexual health or contraception?"
 lab var q40f_de "Q40f. DE only: How would you rate the quality of care provided for dental care?"
 lab var q40g_de "Q40g. DE only: How would you rate the quality of care provided for preventive cancer care?"
 lab var q40h_de "Q40h. DE only: How would you rate the quality of care provided for rehabilitative care?"
@@ -1057,6 +1073,6 @@ lab var q53a_jp_other "Q53a_jp_other. Other"
 *------------------------------------------------------------------------------*
 *Save recoded data
 
-save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
+*save "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", replace
 
 *------------------------------------------------------------------------------*

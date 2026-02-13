@@ -161,7 +161,7 @@ rename F019_7 q7g_ch
 rename F019_8 q7h_ch
 rename F019_9 q7i_ch
 rename F019_opn q7_ch_other 
-rename F019_999 qj_ch
+rename F019_999 q7j_ch
 
 rename F031 q8
 rename F034 q9
@@ -820,18 +820,18 @@ label define labels117 .a "NA" .d "Don't know" .r "Refused",add
 label copy q4_label q4_label2
 label copy q5_label q5_label2
 label copy q15_label q15_label2
+label copy q16_label q16_label2
 label copy q33_label q33_label2
-*label copy q50_label q50_label2
 label copy q51_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
 label val q15 q15_label2
 label val q33 q33_label2
-*label val q50 q50_label2
+label val q16 q16_label2
 label val q51 q51_label2
 
-label drop q4_label q5_label q15_label q33_label q51_label // q50_label
+label drop q4_label q5_label q15_label q16_label q33_label q51_label // q50_label
 
 * fix labels for mental health module:
 label copy labels48 m1_a_label
