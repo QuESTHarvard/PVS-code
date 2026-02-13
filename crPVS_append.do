@@ -731,6 +731,10 @@ lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic ha
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 
+lab def labels37 23 "DE: Difficulties with the language spoken by the healthcare provider" ///
+					24 "JP: Equipment like X-ray machines are broken or unavailable" /// 
+					25 "JP: Do not want health care providers to know of the disease or to show the symptomatic part of the body" ///
+					26 "JP: Busyness" 27 "JP: Did not want to hear about unfavorable diagnoses", modify
 lab def q15_label2 5016 "Mobile clinic", modify
 
 lab def labels26 14	"Trust hospital" 15	"Determined by the family in the cities" ///
@@ -758,7 +762,6 @@ recode country (6 = 1 "Malawi") (22 = 2 "Somaliland") (3 = 3 "Ethiopia") (5 = 4 
 			   (14 = 22 "Italy") (24 = 23 "Germany") (17 = 24 "United Kingdom") ///
 			   (12 = 25 "United States"), gen(country_reg)
 lab var country_reg "Country (ordered by region)" 
-
 
 lab def q24_label 5 "Prescription filling/reviewing results" 6 "Routine follow-up care",modify
 lab def main_reason 5 "SO: Allergies" 6	"SO: Blood transfusion" 7 "SO: Dental issue" 8 "SO: Eye problem" ///

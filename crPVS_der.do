@@ -11,6 +11,7 @@
 
 * UPDATE 4-30-2024: SS updated variable names to V2.0 variables
 
+
 ***************************** Deriving variables *******************************
 u "$data_mc/02 recoded data/input data files/pvs_appended_v2.dta", clear
 
@@ -267,13 +268,25 @@ recode hiv_test (. = .a) if country !=21
 gen sti_test = q27i_us //wave 2 US only
 recode sti_test (. = .a) if country !=12 
 
+gen endoscope = q27i_jp 
+recode endoscope (. = .a) if country !=8
+
+gen barium_test = q27j_jp 
+recode barium_test (. = .a) if country !=8
+
+gen fecal_blood = q27k_jp 
+recode fecal_blood (. = .a) if country !=8
+
+gen electrocardiogram = q27l_jp 
+recode electrocardiogram (. = .a) if country !=8
+
 *SS: confirm with Todd what this should be
 *gen = q27i_gr_in_ro
 
 gen mistake = q28_a
 gen discrim = q28_b
 lab val blood_pressure mammogram cervical_cancer eyes_exam teeth_exam /// 
-	blood_sugar blood_chol hiv_test care_srh care_mental mistake discrim yes_no_dk
+	blood_sugar blood_chol hiv_test care_srh care_mental mistake discrim endoscope barium_test fecal_blood electrocardiogram yes_no_dk
 lab val mistake discrim yes_no_na
 	
 **** Excellent to Poor scales *****	   
@@ -333,7 +346,8 @@ recode q38_e (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = 
 	   gen(last_know_vge) label(exc_pr_2)	   
 
 replace	last_know_vge = 0 if q38_e == 0 | q38_e == 1 | q38_e == 2 & country == 23
-replace	last_know_vge = 1 if q38_e == 3 | q38_e == 4 & country == 23	   	   	   
+replace	last_know_vge = 1 if q38_e == 3 | q38_e == 4 & country == 23	
+replace	last_know_vge = .a if q38_e == 5 & country == 8	   	   	   
 	   
 recode q38_f (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
@@ -368,7 +382,9 @@ recode q38_j (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = 
 	   gen(last_courtesy_vge) label(exc_pr_2)
 	   
 replace	last_courtesy_vge = 0 if q38_j == 0 | q38_j == 1 | q38_j == 2 & country == 23
-replace	last_courtesy_vge = 1 if q38_j == 3 | q38_j == 4 & country == 23		   
+replace	last_courtesy_vge = 1 if q38_j == 3 | q38_j == 4 & country == 23
+
+replace	last_courtesy_vge = .a if q38_h == 6 & country == 23
 	   
 recode q38_k (0 1 2 = 0 "Poor/Fair/Good") (3 4 = 1 "Very good/Excellent") (.r = .r "Refused") /// 
 	   (.a = .a "NA") (.r = .r "Refused"), /// 
@@ -408,7 +424,7 @@ replace	phc_mental_vge = 0 if q40_d == 0 | q40_d == 1 | q40_d == 2 & country == 
 replace	phc_mental_vge = 1 if q40_d == 3 | q40_d == 4 & country == 23		   
 
 *Recoding "I am unable to judge = .d"
-recode phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge (5 = .d) if country == 21 | country == 22
+recode phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge (5 = .d) if country == 21 | country == 22 | country == 8
 
 *"6 = "I am unable to judge" response option in Nepal-only being recoded to missing
 recode phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge (6 = .d) if country ==23
@@ -481,7 +497,7 @@ replace conf_getafford_scvc=.r if conf_sick_scvc==.r | conf_afford_scvc==.r
 lab val conf_getafford_scvc vc_nc_der
 
 *urban/rural
-recode q5 (1001 1002 9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 10012 10013 11001 11003 ///
+recode q5 (1001 1002 9001 9002 9003 5006 5007 7006 7007 8001 8002 2009 2010 3009 3010 10012 10013 11001 11003 ///
 		   12001 12002 12003 13001 13002 13003 14001 14002 14003 15001 16001 16002 ///
            4015 4016 17001 17002 17003 18018 19021 20022 20023 21001 21002 22001 2001 2002 ///
 		   7001 7002 10001 10002 23001 23002 23003 6002 24001 24002 25001 25002 = 1 "Urban") ///
@@ -494,7 +510,7 @@ recode q5 (1001 1002 9001 9002 9003 5006 5007 7006 7007 2009 2010 3009 3010 1001
 * insurance status
 * Note: All are insured in Laos, Italy, Mendoza and UK
 gen insured = q6 
-recode insured (.a = 1) if country == 11 | country == 14 | country == 17 | q6_za == 1 
+recode insured (.a = 1) if country == 11 | country == 14 | country == 17 | q6_za == 1 | country == 8
 recode insured (.a = 0) if inlist(q7,2030,7014,13003,13014) | inlist(q6_kr, 3) | q6_za == 0 
 recode insured (.a = 1) if inlist(q7,2015, 2016, 2017, 2018, 2028, 7010, 7011, 7012, 7013, 10019, 10020, 10021, 10022, 13001, 13002, 13004, 13005, 16001, ///
 								     16002, 16003, 16004, 16005) | inlist(q6_kr, 1, 2)
@@ -521,8 +537,9 @@ recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 110
 		  (1001 1002 1003 2015 2016 2006 2007 16002 16003 16004 13001 13002 ///
 		  13004 7011 7012 7008 7019 10022 ///
 		  = 2 "Social security/military") ///
-		  (1006 2995 2020 12995 12007 13995 4995 18995 19995 20995 21006 7021 10009 10020 5997 23005 6002 24005 = 3 "Other") ///
-		  (.r = .r "Refused") (2030 7014 13014 16007 13003 7002 10001 1000 24004 = .a "NA"), gen(insur_type) //SS: confirm placement of 1000
+		  (1006 2995 2020 12995 12007 13995 4995 18995 19995 20995 21006 7021 10009 10020 5997 23005 6002 = 3 "Other") ///
+		  (.r = .r "Refused") ///
+		  (2030 7014 13014 16007 13003 7002 10001 1000 8001 8002 11001 11002 14001 14002 17001 17002 24001 24002 24003 24004 24005= .a "NA"), gen(insur_type) //SS: confirm placement of 1000
 
 recode insur_type (.a = 0) if q6_za == 1 & !inlist(q7, 9008, 9009, 9995, 9997)
 recode insur_type (0 = .a) if q6_za == 0 | q6_za == .r
@@ -531,8 +548,30 @@ recode insur_type (.r = 0) if q6_za == 1
 replace insur_type = .a if country == 9
 recode insur_type (.a = 1) if q6_za == 1
 
-recode insur_type (.a = 1) if q7_kr == 1
-recode insur_type (.a = 0) if q7_kr == 0
+* insur_type_universal
+recode q7 (8002 11002 14002 17002 24001 = 0 "Public only") ///
+		  (8001 11001 14001 17001 24002 24003 = 1 "Public and supplemental private") /// 
+		  (24005 = 3 "Other") ///
+		  (.r = .r "Refused") (24004  = .a "NA"), gen(insur_type_universal)
+
+recode insur_type_universal (.a = 1) if q7_kr == 1
+recode insur_type_universal (.a = 0) if q7_kr == 0
+
+replace insur_type_universal = .a if !inlist(country, 8, 11, 14, 15, 17, 24)
+
+
+* Variable for countries with universal public coverage + supplemental private coverage
+gen insur_type_universal = .
+	replace insur_type_universal = 0 if insur_type<.
+	replace insur_type_universal = 1 if insur_type==1
+	
+replace insur_type_universal = .a if !inlist(country, 8, 11, 14, 15, 17, 24)
+	
+label define insur_univ_lbl 0 "Public only" 1 "Public + private"
+label values insur_type_universal insur_univ_lbl
+
+* Removing insur_type for countries using insur_type_universal
+replace insur_type = .a if inlist(country, 8, 11, 14, 15, 17, 24)
 
 * education
 recode q8 (1001 1002 3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 ///
@@ -542,7 +581,7 @@ recode q8 (1001 1002 3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11
           (1003 3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 ///
 		   15002 16003 4040 17002 18046 19053 20059 21003 21004 22003 22004 ///
 		   2003 7003 10002 10003 23002 23003 6002 24010 24011 24012 = 1 "Primary") ///
-		   (1004 3004 5009 9016 2028 7021 10035 11003 11004 14004 14005 13003 13004 12004 ///
+		   (1004 3004 5009 9016 2028 7021 8002 10035 11003 11004 14004 14005 13003 13004 12004 ///
 		   15003 15004 16004 4041 17003 18047 19054 19055 20060 21005 21006 ///
 		   22005 2004 7004 10004 23004 23005 23009 6003 24002 24003 24004 24005 24006 24007 ///
 		   24008 24009 25003 25004 = 2 "Secondary") ///
@@ -662,17 +701,22 @@ recode usual_type_own (.a = 0) if country == 12 & wave ==2  & insur_type ==0
 recode usual_type_own (.a = 1) if country == 12 & wave ==2 & insur_type ==1
 recode usual_type_own (.a = 2) if country == 12 & wave ==2 & insur_type ==3
 recode usual_type_own (.a = .r) if country == 12 & wave ==2 & insur_type ==.r | insur_type ==.d
+
+*Japan
+recode usual_type_own (.a = 0) if q14_jp == 1 
+recode usual_type_own (.a = 1) if q14_jp == 2 
+recode usual_type_own (.a = 2) if q14_jp == 3
 	
 * usual type level			  
 recode q15 (1001 1002 1003 1005 1007 3001 3002 3003 3006 3007 3008 /// 
 			3011 5012 5014 5015 5016 5017 5018 5020 9023 9024 9025 9026 9027 9028 9031 9032 9033 9036 ///
-			2080 2085 2090 7001 7002 7008 7040 7043 7045 7047 7048 10092 10094 10096 10098 10100 10102 10104 ///
+			2080 2085 2090 7001 7002 7008 7040 7043 7045 7047 7048 8001 10092 10094 10096 10098 10100 10102 10104 ///
 			14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 12001 12002 12003 12004 ///
 			15001 15002 16001 16003 16005 16006 16009 4067 4068 4069 4072 4073 4074 17001 17002 17003 17004 17005 ///
 			17006 19120 19122 19126 19124 19125 19129 19128 20131 20132 20135 20136 20137 20139 21004 21005 21006 21007 ///
 			2101 2108 7102 7103 7105 7108 10104 10108 23006 23007 23009 23010 23011 23012 23013 23014 6004 6005 6007 24001 24002 24003 24004 25001 25004 = 0 "Primary") /// 
 		   (1004 1006 1008 3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 ///
-		   2081 2082 2086 2087 7041 7042 7044 7046 7049 10093 10097 10101 10105 14003 14004 ///
+		   2081 2082 2086 2087 7041 7042 7044 7046 7049 8002 8003 8004 10093 10097 10101 10105 14003 14004 ///
 		   13003 13004 13006 13007 13010 13011 13014 13016 13019 13020 12005 12006 ///
 		   15003 15004 16002 16004 16007 16008 4070 4071 4075 4076 17007 17008 17009 19121 19127 19123 19130 ///
 		   20133 20134 20138 20140 21001 21002 21003 2109 2111 2115 7106 7109 7110 7114 7115 10107 10112 10113 ///
@@ -781,6 +825,11 @@ recode last_type_own (.a = 1) if country ==12 & wave ==2 & insur_type ==1
 recode last_type_own (.a = 2) if country ==12 & wave ==2 & insur_type ==3
 recode last_type_own (.a = .r) if country ==12 & wave ==2 & insur_type ==.r | insur_type ==.d
 
+*Japan
+recode last_type_own (.a = 0) if q32_jp == 1
+recode last_type_own (.a = 1) if q32_jp == 2
+recode last_type_own (.a = 2) if q32_jp == 3
+
 
 * Other countries:
 recode last_type_own (.a = 0) if q32_uy == 1 | q32_it == 1 | inlist(q32_mx,3,4) | ///
@@ -807,14 +856,14 @@ recode last_type_own (.a = .d) if q32_de == .d
 							  
 * last type level							  
 recode q33 (1001 1002 1005 1007 3001 3002 3003 3006 3007 3008 3011 5012 5014 5015 5016 5017 5018 5020 9023 ///
-			9024 9025 9026 9027 9028 9031 9032 9033 9036 2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 10092 ///
+			9024 9025 9026 9027 9028 9031 9032 9033 9036 2080 2085 2090 7001 7002 7040 7043 7045 7047 7048 8001 10092 ///
 			10094 10096 10100 10102 10104 11002 11003 14001 14002 13001 13002 13005 13008 13009 13012 13013 13015 13017 13018 ///
 			12001 12002 12003 12004 12008 15001 15002 16001 16003 16004 16005 4067 4068 4069 4072 4073 4074 ///
 			17001 17002 17003 17004 17005 17006 19120 19122 19124 19125 19128 19129 20131 20132 20135 20136 20137 20139 ///
 			21004 21005 21006 21007 22002 22003 22005 22061 22064 2101 2108 7102 7103 7105 7108 10104 10108 23006 23007 23009 23010 23011 23012 23013 ///
 		   23014 6004 6005 6007 24001 24002 24003 24004 25001 25004 = 0 "Primary") /// 
 		   (1004 1006 1008 3004 3005 3009 3021 5013 5019 5021 9029 9030 9034 9035 9037 2081 2082 2086 ///
-		   2087 7008 7009 7041 7042 7044 7046 7049 10093 10097 10101 10103 10105 11001 14003 14004 13003 13004 ///
+		   2087 7008 7009 7041 7042 7044 7046 7049 8002 8003 8004 10093 10097 10101 10103 10105 11001 14003 14004 13003 13004 ///
 		   13006 13007 13010 13014 13016 13019 13020 12005 12006 12007 15003 15004 16002 16006 16007 4070 4071 ///
 		   4075 4076 17007 17008 17009 19121 ///
 		   19127 19130 19123 20133 20134 20138 20140 21001 21002 21003 22001 22004 2109 2111 2115 7106 7109 7110 7114 ///
@@ -854,16 +903,18 @@ lab val last_type fac_own_lvl
 recode q50 (11002 11003 11001 12001 12002 12003 = .a) // First recode all to .a for Laos since we will be using q50a_la
 
 recode q50 (1013 1014 1017 5001 5005 5008 5009 5010 5011 5012 5013 5014 5015 3023 3024 3025 ///
-		   3026 3027 3028 3029 3030 3031 3032 7044 7045 7049 2081  ///
+		   3026 3027 3028 3029 3030 3031 3032 7044 7045 7049 8002 2081  ///
 		   15002 9035 9036 9037 9038 9041 9044 2995 3995 5995 11995 3995 9995 ///
 		   4055 4062 4063 4064 4066 4068 4070 4071 4072 4073 4995 11002 11003 11005 18995 19092 19093 19995 ///
 		   20097 20099 20103 20104 20105 20107 20108 20109 20995 21002 2002 2003 2004 2011 2012 2014 7005 7006 ///
 		   7007 7008 7009 7010 7013 3997 4058 4997 5997 9997 6002 6003 6004 6005 6006 24002 24003 24004 24005 ///
 		   24006 24007 24008 24009 24011 = 1 "Minority group") ///
-		   (1015 5002 5003 5004 5006 5007 3021 3022 7053 2087 15001 9033 ///
+		   (1015 5002 5003 5004 5006 5007 3021 3022 7053 8001 2087 15001 9033 ///
 		   9034 9039 9040 9042 9043 4060 4056 4067 4075 4074 4059 4076 4061 4069 4065 11001 18090 19091 ///
 		   20094 20095 20096 20098 20100 20101 20102 20106 21001 2001 7001 6001 24001 24010 = 0 "Majority group") ///
 		   (.r = .r "Refused") (.a = .a "NA"), gen(minority)
+		   
+recode minority (8008 = .a) if q50 == 8008 & country == 8
 		   
 *US & MX:
 recode minority (.a = 1) if q50_mx == 1		   
@@ -904,7 +955,7 @@ replace minority = 0 if q50a_ch	== 1 | q50b_ch == 1	| q50c_ch == 1 | q50d_ch ==1
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
 
 recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 5001 5101 5102 7031 7032 ///
-		   9015 9016 9017 9118 9119 9120 10049 10050 10051 11001 11002 ///
+		   8001 9015 9016 9017 9118 9119 9120 10049 10050 10051 11001 11002 ///
 		   13001 14001 14002 15001 15002 15003 15004 16001 16002 16003 17001 ///
 		   17002 18062 19068 20075 20076 20077 21001 21002 22001 2001 2002 7006 10011 10012 ///
 		   23001 6001 24001 24002 24003 25001 25002 = 0 "Lowest income") /// 
@@ -914,7 +965,7 @@ recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 500
 		   18084 19069 19070 19071 19072 19073 20078 20079 21003 21004 22002 2003 ///
 		   7007 10013 10014 23002 24004 25003 25004 = 1 "Middle income") /// 
 		   (1004 1005 2045 2048 3011 3012 3013 3014 3115 3116 3117 4028 4029 4030 4133 ///
-		   4134 4135 5002 5003 5004 5005 5006 5007 5106 5107 5108 5109 5110 7034 7035 7036 7037 7038 9020 9021 ///
+		   4134 4135 5002 5003 5004 5005 5006 5007 5106 5107 5108 5109 5110 7034 7035 7036 7037 7038 8004 8005 9020 9021 ///
 		   9022 9023 9123 9124 9125 9126 10055 10061 11005 11006 11007 ///
 		   13003 13004 13005 14004 14005 14006 14007 15007 15008 16005 16006 ///
 		   16007 17005 17006 18085 19074 20080 20081 21005 21006 ///
@@ -996,7 +1047,7 @@ foreach i in `countrylev' {
 *adding "NA" for countries' that don't have V1.0 vars
 recode covid_vax_v1 ///
 	   covid_vax_intent_v1 visits_covid_v1 last_visit_time_v1 ever_covid_v1 covid_confirmed_v1 ///
-	   (. = .a) if country == 21 | country == 22 | country == 23
+	   (. = .a) if country == 21 | country == 22 | country == 23 | country == 8
 
 *Generate country dummy variables
 
@@ -1014,6 +1065,7 @@ forvalues i = 1/24 {
     if `i' == 5  local iso "KE"
 	if `i' == 6  local iso "MW"
     if `i' == 7  local iso "PE"
+	if `i' == 8  local iso "JP"
     if `i' == 9  local iso "ZA"
     if `i' == 10 local iso "UY"
     if `i' == 11 local iso "LA"
@@ -1038,8 +1090,17 @@ forvalues i = 1/24 {
     }
 }
 
-drop cc_8
 
+*Strata var for countries with cluster sampling for household interviews
+decode country_reg, generate(strata)
+replace strata = "Ethiopia_CATI" if country==3 & mode==1
+replace strata = "Ethiopia_F2F" if country==3 & mode==2
+replace strata = "Kenya_CATI" if country==5 & mode==1
+replace strata = "Kenya_F2F" if country==5 & mode==2
+replace strata = "Somaliland_CATI" if country==6 & mode==1
+replace strata = "Somaliland_F2F" if country==6 & mode==2
+replace strata = "Malawi_CATI" if country==22 & mode==1
+replace strata = "Malawi_F2F" if country==22 & mode==2
 
 *********************************9-20 SS: adding back variables for PVS dashboard:
 gen health = q9 
@@ -1116,6 +1177,14 @@ replace conf_getafford=0 if conf_sick==0 | conf_afford==0
 replace conf_getafford=.r if conf_sick==.r | conf_afford==.r
 lab val conf_getafford vc_nc_der
 
+*********************************01-12-2026 LW: adding back some derived variables after PVS dashboard:
+* tele_qual
+recode q25 (0 = 0 "Poor") (1 = 1 "Fair") (2 = 2 "Good") (3 = 3 "Very Good") (4 = 4 "Excellent") ///
+			(.r = .r "Refused") (.a = .a "NA") , gen(tele_qual)
+			
+*last_sched
+recode q35 (0 = 0 "No") (1 = 1 "Yes") ///
+		   (.a = .a "NA") (.r = .r "Refused"), gen(last_sched)
 
 *****************************
 
@@ -1123,24 +1192,27 @@ lab val conf_getafford vc_nc_der
 
 order q*, sequential	   
 order respondent_serial respondent_id country country_reg wave language date /// 
-	  int_length mode weight psu_id_for_svy_cmds age age_cat gender urban region ///
-	  insured insur_type education health_vge health_mental_vge health_chronic ///
+	  int_length mode strata weight psu_id_for_svy_cmds age age_cat gender urban region ///
+	  insured insur_type insur_type_universal education health health_vge health_mental health_mental_vge health_chronic ///
 	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///
 	  usual_source usual_type_own usual_type_lvl usual_type ///
-	  usual_reason usual_quality_vge visits visits_cat visits_covid_v1 ///
-	  fac_number visits_home visits_tele tele_qual visits_total inpatient blood_pressure mammogram ///
+	  usual_reason usual_quality usual_quality_vge visits visits_cat visits_covid_v1 ///
+	  fac_number visits_home visits_tele tele_qual tele_qual_vge visits_total inpatient blood_pressure mammogram ///
 	  cervical_cancer eyes_exam teeth_exam blood_sugar blood_chol hiv_test care_srh care_mental /// 
-	  breast_exam color_ultrasound mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
-	  last_type last_reason last_wait_time last_visit_time_v1 last_sched_time ///
-	   last_qual_vge last_skills_vge last_supplies_vge last_respect_vge last_know ///
-	  last_explain_vge last_decisions_vge last_visit_rate_vge last_wait_rate_vge last_courtesy_vge last_sched_rate_vge ///
-	  last_promote phc_women_vge phc_child_vge phc_chronic_vge phc_mental_vge qual_srh_vge care_infections_vge care_nonurgent_vge conf_sick_scvc ///
-	  conf_afford_scvc conf_getafford_scvc conf_opinion qual_public_vge qual_private_vge ///
-	  system_outlook system_reform system_reform_minor covid_manage_vge vignette_poor /// 
+	  breast_exam color_ultrasound sti_test endoscope barium_test fecal_blood electrocardiogram mistake discrim unmet_need unmet_reason last_type_own last_type_lvl ///
+	  last_type last_reason last_sched last_wait_time last_visit_time_v1 last_sched_time ///
+	  last_qual last_qual_vge last_skills last_skills_vge last_supplies last_supplies_vge last_respect last_respect_vge last_know last_know_vge ///
+	  last_explain last_explain_vge last_decisions last_decisions_vge last_visit_rate last_visit_rate_vge last_wait_rate last_wait_rate_vge ///
+	  last_courtesy last_courtesy_vge last_sched_rate last_sched_rate_vge ///
+	  last_promote phc_women phc_women_vge phc_child phc_child_vge phc_chronic phc_chronic_vge phc_mental phc_mental_vge ///
+	  qual_srh qual_srh_vge care_infections care_infections_vge care_nonurgent care_nonurgent_vge ///
+	  conf_sick conf_sick_scvc conf_afford conf_afford_scvc conf_getafford conf_getafford_scvc conf_opinion conf_opinion_scvc qual_public qual_public_vge qual_private qual_private_vge ///
+	  system_outlook system_reform system_reform_minor covid_manage covid_manage_vge vignette_poor /// 
 	  vignette_good minority income   	   	  
 	
 ***************************** Labeling variables ***************************** 
- 
+
+lab var wave "Survey wave"
 lab var age "Exact respondent age or midpoint of age range (Q1/Q2)"
 lab var age_cat "Age (categorical) (Q1/Q2)"
 lab var gender "Gender (Q3)" 
@@ -1148,8 +1220,11 @@ lab var urban "Respondent lives in urban vs rural area (Q5)"
 lab var region "Region where respondent lives (County, state, province, etc.) (Q4)"
 lab var insured "Insurance status (Q6)"
 lab var insur_type "Type of insurance (for those who have insurance) (Q7)" 
+lab var insur_type_universal "Supplemental private insurance in universal public systems (Q7)"
 lab var education "Highest level of education completed (Q8)"
+lab var health "Self-rated health (Q9)"
 lab var health_vge "Self-rated health (Q9)"
+lab var health_mental "Self-rated mental health (Q10)"
 lab var health_mental_vge "Self-rated mental health (Q10)"
 lab var	health_chronic "Longstanding illness or health problem (chronic illness) (Q11)"
 lab var ever_covid_v1 "Ever had COVID-19 or coronavirus (V1.0 - Q12)"
@@ -1162,6 +1237,7 @@ lab var	usual_type_own "Facility ownership for usual source of care (Q14)"
 lab var	usual_type_lvl "Facility level for usual source of care (Q15)"
 lab var	usual_type "Facility ownership and level for usual source of care (Q14/Q15)"
 lab var	usual_reason "Main reason for choosing usual source of care facility (Q16)"
+lab var	usual_quality "Overall quality rating of usual source of care (Q17)"
 lab var	usual_quality_vge "Overall quality rating of usual source of care (Q17)"
 lab var	visits "Visits (continuous) made in-person to a facility in past 12 months (Q18/Q19)"
 lab var	visits_cat "Visits (categorical) made in-person to a facility in past 12 months (Q18/Q19)"
@@ -1178,11 +1254,16 @@ lab var	eyes_exam "Eyes checked by healthcare provider in past 12 months (Q27_d)
 lab var	teeth_exam "Teeth checked by healthcare provider in past 12 months (Q27_e)"
 lab var	blood_sugar "Blood sugar tested by healthcare provider in past 12 months (Q27_f)"
 lab var	blood_chol "Blood cholesterol tested by healthcare provider in past 12 months (Q27_g)"		
+lab var care_srh "NG only: Received care for sexual and reproductive health condition (Q27i_ng)"
 lab var	hiv_test "ZA only: HIV test conducted by healthcare provider in past 12 months (Q27_za)"
 lab var	care_mental	"Received care for depression, anxiety, or another mental health condition (Q27_h)"
 lab var breast_exam "CN only: Breast examination conducted by healtchare provider in past 12 months (Q27i_cn)"
 lab var color_ultrasound "CN: Color Ultrasound Mammography conducted by healtchare provider in past 12 months (Q27j_cn)"
 lab var	sti_test "US only: STI test conducted in past 12 months (Q27i_us)"
+lab var	endoscope "JP only: Endoscope conducted in past 12 months (Q27i_jp)"
+lab var	barium_test "JP only: Barium swallow test conducted in past 12 months (Q27j_jp)"
+lab var	fecal_blood "JP only: Fecal occult blood test conducted in past 12 months (Q27k_jp)"
+lab var	electrocardiogram "JP only: Electrocardiogram conducted in past 12 months (Q27l_jp)"
 
 
 lab var	mistake	"A medical mistake was made in treatment or care in the past 12 months (Q28_a)"	
@@ -1195,45 +1276,73 @@ lab var last_type "Facility ownership and level for last visit to a healthcare p
 lab var	last_reason	"Reason for last healthcare visit (Q34)" 
 lab var	last_wait_time "Length of time waited for last visit to a healthcare provider (Q37)"
 lab var	last_visit_time_v1 "Length of time spent with the provider during last healthcare visit (V1.0 - Q47)"
+lab var	last_qual "Last visit rating: overall quality (Q38A)"
 lab var	last_qual_vge "Last visit rating: overall quality (Q38A)"
+lab var	last_skills "Last visit rating: knowledge and skills of provider (Care competence) (Q38_b)"
 lab var	last_skills_vge "Last visit rating: knowledge and skills of provider (Care competence) (Q38_b)"
+lab var	last_supplies "Last visit rating: equipment and supplies provider had available (Q38_c)"
 lab var	last_supplies_vge "Last visit rating: equipment and supplies provider had available (Q38_c)"
+lab var	last_respect "Last visit rating: provider respect (Q38_d)"
 lab var	last_respect_vge "Last visit rating: provider respect (Q38_d)"
+lab var	last_know "Last visit rating: knowledge of prior tests and visits (Q38_e)"
 lab var	last_know_vge "Last visit rating: knowledge of prior tests and visits (Q38_e)"
+lab var	last_explain "Last visit rating: explained things in an understandable way (Q38_f)"
 lab var	last_explain_vge "Last visit rating: explained things in an understandable way (Q38_f)"
+lab var	last_decisions "Last visit rating: involved you in decisions about your care (Q38_g)"
 lab var	last_decisions_vge "Last visit rating: involved you in decisions about your care (Q38_g)"
+lab var	last_visit_rate "Last visit rating: amount of time provider spent with you (Q38_h)"
 lab var	last_visit_rate_vge "Last visit rating: amount of time provider spent with you (Q38_h)"
+lab var	last_wait_rate "Last visit rating: amount of time you waited before being seen (Q38_i)"
 lab var	last_wait_rate_vge "Last visit rating: amount of time you waited before being seen (Q38_i)"
+lab var	last_courtesy "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
 lab var	last_courtesy_vge "Last visit rating: courtesy and helpfulness of the staff (Q38_j)"
 lab var	last_promote "Net promoter score for facility visited for last visit (Q39)"
+lab var	phc_women "Public primary care system rating for: pregnant women (Q40_a)"
 lab var	phc_women_vge "Public primary care system rating for: pregnant women (Q40_a)"
+lab var	phc_child "Public primary care system rating for: children (Q40_b)"
 lab var	phc_child_vge "Public primary care system rating for: children (Q40_b)"
+lab var	phc_chronic "Public primary care system rating for: chronic conditions (Q40_c)"
 lab var	phc_chronic_vge "Public primary care system rating for: chronic conditions (Q40_c)"
+lab var	phc_mental "Public primary care system rating for: mental health (Q40_d)"
 lab var	phc_mental_vge "Public primary care system rating for: mental health (Q40_d)"
+lab var qual_srh "Rating for quality of care provided for sexual or reproductive health?"
 lab var qual_srh_vge "Rating for quality of care provided for sexual or reproductive health?"
+lab var care_infections "Rating for care for infections such as Malaria, Tuberculosis etc?"
 lab var care_infections_vge "Rating for care for infections such as Malaria, Tuberculosis etc?"
+lab var care_nonurgent "Rating for the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
 lab var care_nonurgent_vge "Rating for the quality of care provided for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
 lab var	conf_sick_scvc "Confidence in receiving good quality healthcare if became very sick (Q41_a)"
+lab var conf_getafford "Confidence in Receiving and affording healthcare if became very sick (Q41a/Q41b)"
 lab var	conf_afford_scvc	"Confidence in ability to afford care healthcare if became very sick (Q41_b)"
 lab var	conf_opinion "Confidence that the gov considers public's opinion when making decisions (Q41_c)"
+lab var	conf_opinion_scvc "Confidence that the gov considers public's opinion when making decisions (Q41_c)"
+lab var	qual_public	"Overall quality rating of gov or public healthcare system in country (Q42)"
 lab var	qual_public_vge	"Overall quality rating of gov or public healthcare system in country (Q42)"
+lab var	qual_private "Overall quality rating of private healthcare system in country (Q43)"
 lab var	qual_private_vge "Overall quality rating of private healthcare system in country (Q43)" 
 lab var	system_outlook "Health system opinion: getting better, staying the same, or getting worse (Q45)"
 lab var	system_reform "Health system opinion: minor, major changes, or must be completely rebuilt (Q46)" 
+lab var	covid_manage "Rating of the government's management of the COVID-19 pandemic (Q47)" 
 lab var	covid_manage_vge "Rating of the government's management of the COVID-19 pandemic (Q47)" 
 lab var	vignette_poor "Rating of vignette in q48 (poor care)"
 lab var	vignette_good "Rating of vignette in q49 (good care)"
 lab var	minority "Minority group (based on native language, ethnicity or race) (Q50)"
 lab var	income "Income group (Q51)"
 lab var tele_qual "Overall quality of last telemedicine visit (Q25)"
+lab var tele_qual_vge "Overall quality of last telemedicine visit (Q25)"
 lab var last_sched_time "Length of days between scheduling visit and seeing provider (Q36)"
 lab var last_sched_rate "Last visit rating: time between scheduling visit and seeing provider (Q38_k)"
 lab var conf_getafford_scvc "Confidence in receiving and affording healthcare if became very sick (Q41_a/Q41_b)"
+lab var strata "Strata for survey mode (household only)"
 *lab var pol_align_v1 "Political alignment in respondent's region / district / state"
 
 **************************** Save data *****************************
 
 drop p32_col p32_per p32_uru p33_col p33_per p33_uru
+
+/* Dropping excess variables (for series 2026)
+drop q1217scale m1_a m1_b m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g m2_a m2_b m2_c m2_d m2_e m2_f m2_g m2_h m2_i m2_i_other m3 m4 m5 m6_a m6_b m6_c m6_d m6_e m6_f m6_g m6_h m6_i m6_j m6_j_other m7 m8 m9 m10 m11 m12 xchannel usw_main2 usw_rural2 usw_under302 usw_mo5 visits_mental m6_total phq2 phq2_cat phq9 phq9_cat m4_vge
+*/
 
 notes drop _all
 compress 
