@@ -161,7 +161,7 @@ rename F019_7 q7g_ch
 rename F019_8 q7h_ch
 rename F019_9 q7i_ch
 rename F019_opn q7_ch_other 
-rename F019_999 qj_ch
+rename F019_999 q7j_ch
 
 rename F031 q8
 rename F034 q9
@@ -232,7 +232,7 @@ rename F103_5 q27_e
 rename F103_6 q27_f
 rename F103_7 q27_g
 rename F103_8 q27_h
-rename F103_9 q27_k
+rename F103_9 q27k_ch_de
 rename F103_10 q27i_ch // add to dd
 rename F113 q27i_ch_de // confirm with todd
 
@@ -710,7 +710,7 @@ recode recq23 (. = .r) if q23 == .r
 drop q23 q23_other
 
 * q27 
-recode q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27_k q27i_ch (3 = .d)
+recode q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27k_ch_de q27i_ch (3 = .d)
 
 * q45 
 recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting worse") ///
@@ -820,18 +820,18 @@ label define labels117 .a "NA" .d "Don't know" .r "Refused",add
 label copy q4_label q4_label2
 label copy q5_label q5_label2
 label copy q15_label q15_label2
+label copy q16_label q16_label2
 label copy q33_label q33_label2
-*label copy q50_label q50_label2
 label copy q51_label q51_label2
 
 label val q4 q4_label2
 label val q5 q5_label2
 label val q15 q15_label2
 label val q33 q33_label2
-*label val q50 q50_label2
+label val q16 q16_label2
 label val q51 q51_label2
 
-label drop q4_label q5_label q15_label q33_label q51_label // q50_label
+label drop q4_label q5_label q15_label q16_label q33_label q51_label // q50_label
 
 * fix labels for mental health module:
 label copy labels48 m1_a_label
@@ -885,8 +885,8 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
  
 }	
 
-drop q7_other q15_other q16_other q24_other q30_other q33_other q34_other q37_other ///
-	 q50_other q52a_us_other m2_i_other m6_j_other
+drop q7_ch_other q15_other q16_other q30_other q33_other q34_other q3a_ch_other ///
+	 q50j_ch_other m3_ch_other
 	 
 ren q7_ch_other_original q7_ch_other
 ren q15_other_original q15_other
