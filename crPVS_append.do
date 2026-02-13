@@ -728,19 +728,20 @@ lab def exc_poor_staff 5 "I have not had prior visits or tests" 6 "The clinic ha
 lab def exc_pr_hlthcare 5 "I did not receive healthcare from this provider in the past 12 months" .a "NA",modify
 lab def exc_pr_visits 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" .a "NA", modify
 
-lab def labels26 14	"CN: Trust hospital" 15	"SO: Determined by the family in the cities" ///
-				 16	"EC: Ease of getting appointment" ///
-				 17 "DE: My parents chose this doctor's office or health care facility for me" ///
-				 18	"DE: This doctor's office or health care facility is child-friendly/youth-friendly" ///
-				 19	"US: Patient loyalty" 20 "US: Referral/Specialty care" 21 "JP: Positive online or social media reviews" ///
-				 22	"CH: Confidentiality of care" 23 "CH: Chosen by parents/family", modify
+lab def q15_label2 5016 "Mobile clinic", modify
+
+lab def labels26 14	"Trust hospital" 15	"Determined by the family in the cities" ///
+				 16	"Ease of getting appointment" ///
+				 17 "My parents chose this doctor's office or health care facility for me" ///
+				 18	"This doctor's office or health care facility is child-friendly/youth-friendly" ///
+				 19	"Patient loyalty" 20 "Referral/Specialty care" 21 "Positive online or social media reviews" ///
+				 22	"Confidentiality of care" 23 "Chosen by parents/family", modify
 
 
 lab def labels37 23 "DE: Difficulties with the language spoken by the healthcare provider" ///
 					24 "JP: Equipment like X-ray machines are broken or unavailable" /// 
 					25 "JP: Do not want health care providers to know of the disease or to show the symptomatic part of the body" ///
 					26 "JP: Busyness" 27 "JP: Did not want to hear about unfavorable diagnoses", modify
-lab def q15_label2 5016 "Mobile clinic", modify
 
 
 *** New country var based on region ***
