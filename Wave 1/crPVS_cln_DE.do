@@ -52,7 +52,7 @@ gen wave = 1
 
 rename id respondent_serial
 rename (Q1 Q3) (q1 q3)
-rename (Q3C Q3D) (q3c_de q3d_de) 
+rename (Q3C Q3D) (q4c_de q4d_de) 
 rename (Q4 Q5 Q6 Q7 Q8) (q4 q5 q6 q7 q8)
 rename (Q8_14_TEXT Q8A) (q8_other q8a_de)
 rename (Q9 Q10 Q11 Q11B Q13) (q9 q10 q11 q11_a q13)
@@ -76,15 +76,15 @@ rename (Q42 Q43 Q44 Q45 Q46 Q47 Q48 Q50) (q42 q43 q45 q46 q47 q48 q49 q51)
 rename Q49_9_TEXT q50_other
 
 
-*SI NOTE: responses for q3b_de (citizenship) were extracted from Q3B_1 - Q3B_196. If respondent is a citizen for multiple countries, these are appended as a response and we can discuss how to handle
+*SI NOTE: responses for q4b_de (citizenship) were extracted from Q3B_1 - Q3B_196. If respondent is a citizen for multiple countries, these are appended as a response and we can discuss how to handle
 
 ds Q3B_*
 local countries `r(varlist)'
 egen citizenship = rowtotal(`countries') /// Count number of citizenships (Ja == 1)
 
-gen q3b_de = ""
+gen q4b_de = ""
 
-* Loop through each Q3B_* variable and collapse into q3b_de
+* Loop through each Q3B_* variable and collapse into q4b_de
 foreach var of local countries {
     local full_label : variable label `var'
     local dash_pos = strpos("`full_label'", " -")
@@ -92,27 +92,27 @@ foreach var of local countries {
     local cname = strtrim("`cname'")
 	
     * If multiple citizenships, append with semicolon
-    replace q3b_de = cond(citizenship > 1 & `var' == 1, ///
-        q3b_de + cond(q3b_de != "", "; ", "") + "`cname'", ///
-        q3b_de)
+    replace q4b_de = cond(citizenship > 1 & `var' == 1, ///
+        q4b_de + cond(q4b_de != "", "; ", "") + "`cname'", ///
+        q4b_de)
 
     * If only 1 citizenship, assign directly from Q3_B* variable
-    replace q3b_de = cond(citizenship == 1 & `var' == 1 & q3b_de == "", "`cname'", q3b_de)
+    replace q4b_de = cond(citizenship == 1 & `var' == 1 & q4b_de == "", "`cname'", q4b_de)
 }
 
-* New variable: q3a - does respondent have German citizenship? (if yes to Q3B_1)
-gen q3a = .
-replace q3a = 1 if Q3B_1 == 1
-replace q3a = 0 if Q3B_1 == 0
-lab def q3a_label 0 "No" 1 "Yes"
-lab val q3a q3a_label
+* New variable: q4a_de - does respondent have German citizenship? (if yes to Q3B_1)
+gen q4a_de = .
+replace q4a_de = 1 if Q3B_1 == 1
+replace q4a_de = 0 if Q3B_1 == 0
+lab def q4a_de_label 0 "No" 1 "Yes"
+lab val q4a_de q4a_de_label
 
 * New variable: q3b - Single or multiple citizenship? (based on Q3B_1 - Q3B_196)
-gen q3b = .
-replace q3b = 1 if citizenship == 1
-replace q3b = 2 if citizenship > 1
-lab def q3b_label 1 "Single citizenship" 2 "Multiple citizenship"
-lab val q3b q3b_label
+gen q4b = .
+replace q4b = 1 if citizenship == 1
+replace q4b = 2 if citizenship > 1
+lab def q4b_label 1 "Single citizenship" 2 "Multiple citizenship"
+lab val q4b q4b_label
 
 drop TRP1 TRP2_1 TRP2_2 TRP2_3 TRP2_4 R1_Q12 R2_Q12 citizenship Q3B_* NUMBEROFVISITS Q20MAXVALUE Q3B
 
@@ -329,7 +329,7 @@ recode q18 q21 q22 q23 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h ///
 	   q27i_ch_de q27j_de q27k_ch_de (998 = .d)
 
 * In raw data, . = "refused"
-recode q1 q2 q3 q3c_de q3d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q11 q11_a q12_a q12_b q13 q14_de q15 q15a_de q16 q17 q17b_de q17_c q17_d q18 q19 q20 q21 ///
+recode q1 q2 q3 q4c_de q4d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q11 q11_a q12_a q12_b q13 q14_de q15 q15a_de q16 q17 q17b_de q17_c q17_d q18 q19 q20 q21 ///
 	   q22 q23 q24 q25 q26 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_ch_de q27j_de q27k_ch_de q28_a ///
 	   q28_b q28c_de q28d_de q29 q30 q31a q31b q32_de q33 q34 q35 q36 q37 q38_a q38_b q38_c ///
 	   q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q39 q40_a q40_b q40_c ///
@@ -372,7 +372,7 @@ drop visits_total
 *q1/q2 - no missing data
 
 *q3d
-recode q3d_de (-1 = .a) if q3c_de != 2
+recode q4d_de (-1 = .a) if q4c_de != 2
 
 *q7
 recode q7 (23999 = .a) if q6 != 1
@@ -447,7 +447,7 @@ label values q2_de q2_de_label
 
 recode q3 (1 = 0 "Male") (2 = 1 "Female") (3 = 2 "Another gender"), pre(rec) label(gender)
 
-recode q3d_de (1 = 1 "Less than 1 year") (2 = 2 "Between 1 year and 3 years") (3 = 3 "Between 3 years and 10 years") (4 = 4 "More than 10 years") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q3d_de_label)
+recode q4d_de (1 = 1 "Less than 1 year") (2 = 2 "Between 1 year and 3 years") (3 = 3 "Between 3 years and 10 years") (4 = 4 "More than 10 years") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q4d_de_label)
 
 recode q4 (24001 = 24001 "DE: Baden-Württemberg") (24002 = 24002 "DE: Bavaria (Bayern)") (24003 = 24003 "DE: Berlin") (24004 = 24004 "DE: Brandenburg") ///
 (24005 = 24005 "DE: Bremen") (24006 = 24006 "DE: Hamburg") (24007 = 24007 "DE: Hesse (Hessen)") (24008 = 24008 "DE: Lower Saxony (Niedersachsen)") ///
@@ -588,7 +588,7 @@ recode q51 ///
 	(.d = .d "Don't know") (.a = .a "NA") (.r = .r "Refused"), pre(rec) label(q51_label)
 
 * Recoding all yes/no qs together
-recode q3c_de q6 q11 q11_a q20 q26 q29 q31a q31b (2 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
+recode q4c_de q6 q11 q11_a q20 q26 q29 q31a q31b (2 = 0 "No") (1 = 1 "Yes") (.a = .a "NA") (.d = .d "Don't know") (.r = .r "Refused"), ///
 pre(rec) label(yesno)
 
 *SI Note: these scales were different from the other yes/no questions so created a new label
@@ -600,7 +600,7 @@ recode q17 q25 q40_a q40_b q40_c q40_d q40e_ch_de q40f_de q40g_de q40h_de q40i_d
 (5 = 0 "Poor") (4 = 1 "Fair") (3 = 2 "Good") (2 = 3 "Very good") (1 = 4 "Excellent") ///
 (.d = .d "Don't know") (.a = .a "NA") (.r = .r "Refused"), pre(rec) label(rating)
 	
-drop q2 q2_de_raw q3 q3c_de q3d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q12_a q12_b q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_ch_de q27j_de q27k_ch_de ///
+drop q2 q2_de_raw q3 q4c_de q4d_de q4 q5 q6 q7 q8 q8a_de q9 q10 q12_a q12_b q16 q19 q24 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_ch_de q27j_de q27k_ch_de ///
 q28_a q28_b q28c_de q28d_de q30 q34 q35 q36 q37 q39 q41_a q41_b q41_c q41d_de q45 q46 q51 q11 q11_a q13 q20 q26 q29 q31a q31b q17 q17b_de q17_c q17_d q25 ///
 q38_a q38_b q38_c q38_d q38_e q38_f q38_g q38_h q38_i q38_j q38_k q40_a q40_b q40_c q40_d q40e_ch_de q40f_de q40g_de q40h_de q40i_de q40j_de q42 q43 q47 q48 q49
 
@@ -830,11 +830,11 @@ lab var q1 "Q1. Respondent's еxact age"
 lab var q2 "Q2. Respondent's age group"
 lab var q2_de "Q2. DE only: Sample"
 lab var q3 "Q3. Respondent's gender"
-lab var q3a "Q3a. Does respondent have German citizenship?"
-lab var q3b "Q3b. Does respondent have single or multiple citizenship?"
-lab var q3b_de "Q3b_de. DE only: Country of citizenship"
-lab var q3c_de "Q3c_de. DE only: Were you born in Germany?"
-lab var q3d_de "Q3d_de. DE only: How long have you lived in Germany in total?"
+lab var q4a_de "Q4a_de. Does respondent have German citizenship?"
+lab var q4b "Q4b. Does respondent have single or multiple citizenship?"
+lab var q4b_de "Q4b_de. DE only: Country of citizenship"
+lab var q4c_de "Q4c_de. DE only: Were you born in Germany?"
+lab var q4d_de "Q4d_de. DE only: How long have you lived in Germany in total?"
 lab var q4 "Q4. What region do you live in?"
 lab var q5 "Q5. Which of these options best describes the place where you live?"
 lab var q6 "Q6. Do you have health insurance?"

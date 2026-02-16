@@ -699,12 +699,12 @@ recode q13a_lac q31_lac (. = .a) if country != 1 | (wave !=2 & !inlist(country, 
 recode q4_mw q47_mw (. = .a) if country !=6
 
 * Germany
-recode q2_de q3c_de q3d_de q8a_de q14_de q15a_de q17b_de q17_c q17_d ///
+recode q2_de q4a_de q4c_de q4d_de q8a_de q14_de q15a_de q17b_de q17_c q17_d ///
 q27j_de q28c_de q28d_de q32_de q40f_de q40g_de q40h_de q40i_de q40j_de q41d_de (. = .a) if country !=24
 recode CELL1 CELL2 q44 (. = .a) if country == 24
 
 * Germany/Switzerland
-recode q11_a q17_c q17_d q27i_ch_de q27k_ch_de q40e_ch_de q40h_ch_de q41d_ch_de (. = .a) if country != 24 | country !=25
+recode q4b q11_a q17_c q17_d q27i_ch_de q27k_ch_de q40e_ch_de q40h_ch_de q41d_ch_de (. = .a) if country != 24 | country !=25
 
 * Switzerland
 recode q3a_ch q3b_ch q4_ch q7a_ch q7b_ch q7c_ch q7d_ch q7e_ch q7f_ch q7g_ch q7h_ch q7i_ch ///
@@ -819,15 +819,23 @@ lab var mode "mode"
 lab var psu_id_for_svy_cmds "PSU ID"
 lab var weight  "Weight"
 lab var q1 "Q1. Respondent's еxact age"
+
 lab var q2 "Q2. Respondent's age group"
 lab var q2_de "Q2. DE only: Sample"
+
 lab var q3 "Q3. Respondent's gender"
 lab var q3a_co_pe_uy_ar "Q3a. CO/PE/UY/AR/EC only: Are you a man or a woman?"
-lab var q3a "Q3a. Does respondent have German citizenship?"
-lab var q3b "Q3b. Does respondent have single or multiple citizenship?"
-lab var q3b_de "Q3b_de. DE only: Country of citizenship"
-lab var q3c_de "Q3c_de. DE only: Were you born in Germany?"
-lab var q3d_de "Q3d_de. DE only: How long have you lived in Germany in total?"
+lab var q4a_de "Q4a. DE only: Does respondent have German citizenship?"
+lab var q3a_ch "Q3a. CH only:  Some people feel that they are a different gender from their sex. What is your gender?"
+lab var q3a_ch_other "Q3a. CH only: Other gender"
+lab var q3b_ch "Q3b. CH only: How would you currently describe your sexual orientation?"
+lab var q3b_ch_other "Q3b. CH only: Other sexual orientation"
+
+lab var q4b "Q4b. Does respondent have single or multiple citizenship?"
+lab var q4b_de "Q4b_de. DE only: Country of citizenship"
+lab var q4c_de "Q4c_de. DE only: Were you born in Germany?"
+lab var q4d_de "Q4d_de. DE only: How long have you lived in Germany in total?"
+
 lab var q4 "Q4. County, state, region where respondent lives"
 lab var q4_other_it "Q4. Other"
 lab var q5 "Q5. Type of area where respondent lives"

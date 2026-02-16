@@ -898,6 +898,10 @@ ren q3a_ch_other_original q3a_ch_other
 ren q50j_ch_other_original q50j_ch_other
 ren m3_ch_other_original m3_ch_other
 
+
+*------------------------------------------------------------------------------*/ 
+    q4_ch q7_ch_other q8a_ch q17f_ch q17g_ch q27i_ch q27i_ch_de q27k_ch_de q29a_ch q29b_ch q38_l_ch q40h_ch_de q41d_ch_de q41e_ch q41f_ch q50_ch_dk q51a_ch m1_c_ch m1_d_ch m2_ch m3_ch m3_ch_other
+
 *------------------------------------------------------------------------------*/
 
 *Reorder variables
