@@ -168,6 +168,7 @@ egen total_q11 = rowtotal(q99a_jp q99b_jp q99c_jp q99d_jp q99e_jp q99f_jp q99g_j
 gen q11 = total_q11 > 0
 label define q11_label 0 "No" 1 "Yes"
 label values q11 q11_label
+drop total_q11
 
 drop q99a_jp q99b_jp q99c_jp q99d_jp q99e_jp q99f_jp q99g_jp q99h_jp q99i_jp q99j_jp q99k_jp q99l_jp q99m_jp q99n_jp q99o_jp q99p_jp q99q_jp
 
@@ -989,13 +990,13 @@ ipfweight region edu_gen age3, gen(weight) ///
 			maxit(50)
 
 ** Just try to keep data set clean, drop all the variables created above, except wgt
-drop gender age3 age5 region education gen_age edu_gen
+drop gender age3 age5 region education gen_age edu_gen q58other2
 
 *------------------------------------------------------------------------------*
 * Reorder variables
 
 	order q*, sequential
-	order respondent_id country wave language date int_length mode weight
+	order respondent_id country wave language date int_length mode weight 
 
 *------------------------------------------------------------------------------*
 

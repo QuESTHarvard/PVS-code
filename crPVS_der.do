@@ -559,7 +559,23 @@ recode insur_type_universal (.a = 0) if q7_kr == 0
 
 replace insur_type_universal = .a if !inlist(country, 8, 11, 14, 15, 17, 24)
 
-
+*Swiss updates to insur_type_universal (SS: ask for code review, this question was a multi-checkbox field so one participant could've checked multiple answers)
+replace insur_type_universal (.a = 0) if q7i_ch == 1
+replace insur_type_universal (.a = 1) if q7a_ch == 1 | /// Suppl dental ins.
+										 q7b_ch ==1 | /// Suppl hosp. ins.
+										 q7c_ch ==1 | /// Suppl pharmacy ins.
+										 q7d_ch ==1 | /// Suppl alternative med. ins.
+										 q7e_ch == 1 |/// Suppl glasses ins.
+										 q7f_ch ==1 | /// Suppl ins. for sport and wellness
+										 q7g_ch == 1 // Suppl health ins. for travel
+replace insur_type_universal (.a = .r) if q7a_ch !=1 & q7b_ch !=1 & ///
+										 q7c_ch !=1 & q7d_ch !=1 & q7e_ch!=1 & ///
+										 q7f_ch !=1 & q7g_ch !=1 & q7h_ch !=1 & q7i_ch !=1 & ///
+										 q7j_ch == 1 // confirm this, especially the addition of "other here", essentially just trying to select the people who said yes only to "don't know/prefer not to answer"
+										 
+*removing these from finalized dataset (confirm if they should be kept in)
+drop q7a_ch q7b_ch q7c_ch q7d_ch q7e_ch q7f_ch q7g_ch q7h_ch q7i_ch q7j_ch
+										 
 * Variable for countries with universal public coverage + supplemental private coverage
 gen insur_type_universal = .
 	replace insur_type_universal = 0 if insur_type<.
@@ -950,6 +966,10 @@ replace minority = 0 if q50a_np ==2 | q50a_np == 4 | q50a_np == 5 | q50a_np == 6
 replace minority = 1 if q50f_ch == 1 | q50h_ch == 1 | q50i_ch == 1 | ///
 						q50j_ch == 1 | q50l_ch == 1 | q50m_ch == 1
 replace minority = 0 if q50a_ch	== 1 | q50b_ch == 1	| q50c_ch == 1 | q50d_ch ==1	
+
+*removing the multi-checkbox vars from final MC dataset:
+drop q50a_ch q50b_ch q50c_ch q50d_ch q50f_ch q50h_ch q50i_ch q50j_ch q50k_ch q50l_ch q50m_ch
+
 
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 

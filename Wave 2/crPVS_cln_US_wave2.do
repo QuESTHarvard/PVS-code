@@ -55,6 +55,7 @@ recode xchannel_num (2 = 1) (1 = 3)
 label define xchannel_lbl 1 "CATI" 3 "CAWI", replace
 label values xchannel_num xchannel_lbl
 rename xchannel_num mode
+drop xchannel
 	
 
 rename q5a q50a_us
@@ -292,8 +293,8 @@ lab var m6_total "PVS US only: Number of resources or practices for problems peo
 *renaming US based weights variables:
 rename weight_main_2 usw_main2
 rename weight_rural_2 usw_rural2
-rename weight_under30_2 usw_under302
-rename weight_mo_5 usw_mo5
+rename weight_under30_2 usw_under30_2
+rename weight_mo_5 usw_mo_5
 
 lab var usw_main2 "PVS US only: Main weight for N=2500 sample"
 
