@@ -496,10 +496,12 @@ drop q8a
 rename Q8a_other q50_other
 
 encode q8b, gen(recq51)
-recode recq51 (6 = .r)
 drop q8b
-
-
+recode recq51 (1 = 6001) (2 = 6005) (3 = 6003) (4 = 6004) (5 = 6002) (6 = .r)
+lab def q51_label 6001 "Less than MK52,000" 6002 "MK52,000 to <MK100,000" 6003 "MK100,000 to <MK500,000" ///
+				  6004 "MK500,000 to <MK1,000,000" 6005 "MK1,000,000 or more" .r "Refused"
+lab val recq51 q51_label			  
+	
 ren rec* *
 
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
@@ -529,9 +531,6 @@ replace recq33 = .r if q33== 999
 gen recq50 = country*1000 + q50 
 *replace recq50 = .r if q50== 999
 
-gen recq51 = country*1000 + q51 
-*replace recq51 = .r if q51== 999
-
 * Relabel some variables now so we can use the orignal label values
 label define country_short 6 "MW" 
 qui elabel list country_short
@@ -545,9 +544,8 @@ local q7l recq7
 local q8l recq8
 local q15l recq15
 local q33l recq33
-local q51l recq51
 
-foreach q in q4 q5 q7 q8 q15 q33 q51 {
+foreach q in q4 q5 q7 q8 q15 q33 {
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -580,7 +578,7 @@ lab val recq50 q50_label
 
 *****************************
 
-drop q4 q5 q7 q8 q15 q33 q50 q51 language
+drop q4 q5 q7 q8 q15 q33 q50 language
 ren rec* *
 
 *------------------------------------------------------------------------------*
@@ -737,7 +735,7 @@ label val q33 q33_label2
 label val q50 q50_label2
 label val q51 q51_label2
 
-label drop q4_label q5_label q15_label q33_label recq50 recq51
+label drop q4_label q5_label q15_label q33_label q50_label q51_label
 
 *------------------------------------------------------------------------------*
 

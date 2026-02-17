@@ -63,6 +63,10 @@ rename q5a q50a_us
 rename q7_7_other q7_other
 rename q15_7_other q15_other
 rename q16_9_other q16_other
+
+*SS: adding q19_us because q19 doesn't exactly line up with our standardized value labels
+rename q19 q19_us
+
 rename q24_4_other q24_other // check to see if this can be recoded back into the parent variable
 rename q27_d q27i_us // STI check
 rename q27_e q27_d // eye check
@@ -273,11 +277,11 @@ lab val q2 q2_label
 * q18/q19 mid-point var 
 gen q18_q19 = q18 
 
-recode q18_q19 (998 = 0) if q19 == 0
-recode q18_q19 (998 = 1) if q19 == 1
-recode q18_q19 (998 = 2.5) if q19 == 2
-recode q18_q19 (998 = 7) if q19 == 3
-recode q18_q19 (998 = 10) if q19 == 4
+recode q18_q19 (998 = 0) if q19_us == 0
+recode q18_q19 (998 = 1) if q19_us == 1
+recode q18_q19 (998 = 3) if q19_us == 2
+recode q18_q19 (998 = 7) if q19_us == 3
+recode q18_q19 (998 = 10) if q19_us == 4
 
 gen q14 = .a
 gen q32 = .a
@@ -331,10 +335,10 @@ drop q5b_1 q5b_2 q5b_3 q5b_4 q5b_5 q5b_6 q5b_999
 * Recode all Refused and Don't know responses
 
 * In raw data, 998 = "don't know" 
-recode q18 q19 q18_q19 q22 q23 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_us (998 = .d) 
+recode q18 q19_us q18_q19 q22 q23 q27_a q27_b q27_c q27_d q27_e q27_f q27_g q27_h q27i_us (998 = .d) 
 
 * In raw data, 999 = "refused" 
-recode q9 q10 q11 q12_a q12_b q13 q16 q17 q18 q19 q18_q19 q22 q23 q24 q26 q28_a ///
+recode q9 q10 q11 q12_a q12_b q13 q16 q17 q18 q19_us q18_q19 q22 q23 q24 q26 q28_a ///
 	   q28_b q29 q34 q35 q36 q38_a q38_b q38_c q38_d q41_c q41_us q42 q43 q45 q38_e ///
 	   q38_f q38_g q38_h q38_i q38_j q38_k q40_b q40_c q41_a q41_b q41_c q41_us q42 ///
 	   q43 q45 q46 q47 q52a_us q52b_us m1_a m2_a m2_b m2_c m2_d m2_e m2_f m2_g m2_h m2_i ///
@@ -385,9 +389,9 @@ recode q7 (nonmissing = .a) if q6 == 0
 recode q15 q16 q17 (. = .a) if q13 !=1
 
 * NA's for q19-21 
-recode q19 (. = .a) if q18 != .d | q18 !=.r
+recode q19_us (. = .a) if q18 != .d | q18 !=.r
 
-recode q20 (. = .a) if q18 <1 | q18 == .d | q18 == .r | q19 != 2 | q19 != 3 | q19 != 4
+recode q20 (. = .a) if q18 <1 | q18 == .d | q18 == .r | q19_us <=0 | q19_us == . | q19_us ==.d | q19_us == .a | q19_us ==.r
 
 recode q21 (. = .a) if q20 !=0 
 
@@ -398,8 +402,8 @@ recode q24 q25 (. = .a) if q23 == 0  | q23 == .d | q23 == .r
 recode q27_b q27_c (. = .a) if q3 !=1 
 
 *q28
-recode q28_a q28_b (. = .a) if q18 == 0 | q18 == .d | q18 == .r | q19 == 1 | q19 == .d | ///
-							   q19 == .r | q22 == 0 | q22 == .d | q22 == .r | ///
+recode q28_a q28_b (. = .a) if q18 == 0 | q18 == .d | q18 == .r | q19_us == 0 | q19_us == .d | ///
+							   q19_us == .r | q22 == 0 | q22 == .d | q22 == .r | ///
 							   q23 == 0 | q23 == .d | q23 == .r
 
 * q30
@@ -408,7 +412,7 @@ recode q30 (. = .a) if q29 !=1
 * q33-38
 recode q33 q34 q35 q36 q37 q38_a q38_b q38_c q38_d q38_e q38_f /// 
 	   q38_g q38_h q38_i q38_j q38_k q39 (. = .a) if q18 == 0 | q18 == .d | q18 == .r | ///
-													 q19 == 1 | q19 == .d | q19 == .r
+													 q19_us == 0 | q19_us == .d | q19_us == .r
 													 
 replace q38_e = .a if q38_e == 5  // I have not had prior visits or tests or The clinic had no other staff
 replace q38_j = .a if q38_j == 5  // I have not had prior visits or tests or The clinic had no other staff													 
@@ -462,8 +466,8 @@ recode phq9_cat (. = .a) if phq2<3
 
 recode q17 (5 = .a)
 
-recode q19 (0 = 0) (1 = 1 "1-4") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more"), gen(recq19) // originally 1 was seperated out
-drop q19
+recode q19_us (0 = 0) (1 = 1 "1-4") (2 = 1 "1-4") (3 = 2 "5-9") (4 = 3 "10 or more"), gen(recq19) // originally 1 was seperated out
+drop q19_us
 
 recode q30 (1 = 1 "High cost (e.g., high out of pocket payment, not covered by insurance)") ///
 		   (2 = 2 "Far distance (e.g., too far to walk or drive, transport not readily available)") ///

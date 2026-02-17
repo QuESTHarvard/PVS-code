@@ -560,23 +560,26 @@ recode insur_type_universal (.a = 0) if q7_kr == 0
 replace insur_type_universal = .a if !inlist(country, 8, 11, 14, 15, 17, 24)
 
 *Swiss updates to insur_type_universal (SS: ask for code review, this question was a multi-checkbox field so one participant could've checked multiple answers)
-replace insur_type_universal (.a = 0) if q7i_ch == 1
-replace insur_type_universal (.a = 1) if q7a_ch == 1 | /// Suppl dental ins.
+recode insur_type_universal (.a = 0) if q7i_ch == 1
+
+recode insur_type_universal (.a = 1) if q7a_ch ==1 | /// Suppl dental ins.
 										 q7b_ch ==1 | /// Suppl hosp. ins.
 										 q7c_ch ==1 | /// Suppl pharmacy ins.
 										 q7d_ch ==1 | /// Suppl alternative med. ins.
-										 q7e_ch == 1 |/// Suppl glasses ins.
+										 q7e_ch ==1 | /// Suppl glasses ins.
 										 q7f_ch ==1 | /// Suppl ins. for sport and wellness
-										 q7g_ch == 1 // Suppl health ins. for travel
-replace insur_type_universal (.a = .r) if q7a_ch !=1 & q7b_ch !=1 & ///
+										 q7g_ch ==1 // Suppl health ins. for travel
+										 
+recode insur_type_universal (.a = .r) if q7a_ch !=1 & q7b_ch !=1 & ///
 										 q7c_ch !=1 & q7d_ch !=1 & q7e_ch!=1 & ///
 										 q7f_ch !=1 & q7g_ch !=1 & q7h_ch !=1 & q7i_ch !=1 & ///
 										 q7j_ch == 1 // confirm this, especially the addition of "other here", essentially just trying to select the people who said yes only to "don't know/prefer not to answer"
 										 
 *removing these from finalized dataset (confirm if they should be kept in)
 drop q7a_ch q7b_ch q7c_ch q7d_ch q7e_ch q7f_ch q7g_ch q7h_ch q7i_ch q7j_ch
-										 
-* Variable for countries with universal public coverage + supplemental private coverage
+			
+* Ask Liwei to confirm this section of code
+/* Variable for countries with universal public coverage + supplemental private coverage
 gen insur_type_universal = .
 	replace insur_type_universal = 0 if insur_type<.
 	replace insur_type_universal = 1 if insur_type==1
@@ -587,7 +590,7 @@ label define insur_univ_lbl 0 "Public only" 1 "Public + private"
 label values insur_type_universal insur_univ_lbl
 
 * Removing insur_type for countries using insur_type_universal
-replace insur_type = .a if inlist(country, 8, 11, 14, 15, 17, 24)
+replace insur_type = .a if inlist(country, 8, 11, 14, 15, 17, 24)*/
 
 * education
 recode q8 (1001 1002 3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11001 13001 ///
@@ -968,29 +971,30 @@ replace minority = 1 if q50f_ch == 1 | q50h_ch == 1 | q50i_ch == 1 | ///
 replace minority = 0 if q50a_ch	== 1 | q50b_ch == 1	| q50c_ch == 1 | q50d_ch ==1	
 
 *removing the multi-checkbox vars from final MC dataset:
-drop q50a_ch q50b_ch q50c_ch q50d_ch q50f_ch q50h_ch q50i_ch q50j_ch q50k_ch q50l_ch q50m_ch
+drop q50a_ch q50b_ch q50c_ch q50d_ch q50f_ch q50h_ch q50i_ch q50j_ch q50k_ch q50l_ch q50m_ch q50_ch_dk
 
 
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
 
-recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 5001 5101 5102 7031 7032 ///
+recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 5001 5101 5102 6001 7031 7032 ///
 		   8001 9015 9016 9017 9118 9119 9120 10049 10050 10051 11001 11002 ///
 		   13001 14001 14002 15001 15002 15003 15004 16001 16002 16003 17001 ///
 		   17002 18062 19068 20075 20076 20077 21001 21002 22001 2001 2002 7006 10011 10012 ///
-		   23001 6001 24001 24002 24003 25001 25002 = 0 "Lowest income") /// 
-		   (1003 2042 2043 2044 3010 3113 3114 4027 4130 4131 4132 5103 5104 5105 7033 9018 9019 9121 9122 ////
+		   23001 24001 24002 24003 25001 25002 = 0 "Lowest income") /// 
+		   (1003 2042 2043 2044 3010 3113 3114 4027 4130 4131 4132 5103 5104 5105 6002 7033 9018 9019 9121 9122 ////
 		   10052 10053 10054 11003 11004 13002 14003 15005 15006 ///
 		   16004 16005 17003 17004 4026 18063 18064 18065 18066 18067 18082 18083 ///
 		   18084 19069 19070 19071 19072 19073 20078 20079 21003 21004 22002 2003 ///
 		   7007 10013 10014 23002 24004 25003 25004 = 1 "Middle income") /// 
 		   (1004 1005 2045 2048 3011 3012 3013 3014 3115 3116 3117 4028 4029 4030 4133 ///
-		   4134 4135 5002 5003 5004 5005 5006 5007 5106 5107 5108 5109 5110 7034 7035 7036 7037 7038 8004 8005 9020 9021 ///
+		   4134 4135 5002 5003 5004 5005 5006 5007 5106 5107 5108 5109 5110 6003 6004 6005 7034 7035 7036 ///
+		   7037 7038 8004 8005 9020 9021 ///
 		   9022 9023 9123 9124 9125 9126 10055 10061 11005 11006 11007 ///
 		   13003 13004 13005 14004 14005 14006 14007 15007 15008 16005 16006 ///
 		   16007 17005 17006 18085 19074 20080 20081 21005 21006 ///
-		   22003 22004 22005 22006 22007 2004 2005 7008 7009 7010 10015 23003 23004 23005 23006 6003 6004 6005 24005 24006 24007 24008 24009 25005 25006 25007 25008 25009 ///
-		   = 2 "Highest income") ///
+		   22003 22004 22005 22006 22007 2004 2005 7008 7009 7010 10015 ///
+		   23003 23004 23005 23006 24005 24006 24007 24008 24009 25005 25006 25007 25008 25009 = 2 "Highest income") ///
 		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
 	
 * United States income recoding:
