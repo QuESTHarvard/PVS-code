@@ -185,7 +185,7 @@ drop F067
 
 rename F066 q17f_ch  // add to dd
 rename F068 q17g_ch  // add to dd
-rename F068_opn q17g_other
+rename F068_opn q17g_ch_other
 
 rename F060_1 q17_d
 rename F060_2 q17_c
@@ -306,7 +306,7 @@ gen q30 = .
 rename F134 q30_other // SS: no 'q30' will have to recode open-ended answers
 
 rename F135 q29a_ch
-rename F136 q29a_other // SS: note will have to recode open-ended answers in the future
+rename F136 q29a_ch_other // SS: note will have to recode open-ended answers in the future
 
 /*new vars
 rename F137_N_1 q31a_ch 
@@ -718,6 +718,9 @@ recode q45 (1 = 2 "Getting better") (2 = 1 "Staying the same") (3 = 0 "Getting w
 		   (.r = .r "Refused"), gen(recq45)
 drop q45
 
+lab def YN 1 "Yes" 2 "No" .a "NA" .d "Don't know" .r "Refused"
+lab val q7a_ch q7b_ch q7c_ch q7d_ch q7e_ch q7f_ch q7g_ch q7h_ch q7i_ch q7j_ch YN
+
 
 *q51a - recode based on "other" var that has the integer values
 gen recq51a = q51a_other
@@ -896,7 +899,7 @@ ren q33_other_original q33_other
 ren q34_other_original q34_other
 ren q3a_ch_other_original q3a_ch_other
 ren q50j_ch_other_original q50j_ch_other
-ren m3_ch_other_original m3_ch_other
+ren m3_ch_other_original m3_ch_other            
 
 *------------------------------------------------------------------------------*/
 

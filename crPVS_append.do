@@ -699,12 +699,12 @@ recode q13a_lac q31_lac (. = .a) if country != 1 | (wave !=2 & !inlist(country, 
 recode q4_mw q47_mw (. = .a) if country !=6
 
 * Germany
-recode q2_de q3c_de q3d_de q8a_de q14_de q15a_de q17b_de q17_c q17_d ///
-q27j_de q28c_de q28d_de q32_de q40f_de q40g_de q40h_de q40i_de q40j_de q41d_de (. = .a) if country !=24
+recode q2_de q4a_de q4c_de q4d_de q8a_de q14_de q15a_de q17b_de q17_c q17_d ///
+q27j_de q28c_de q28d_de q32_de q40f_de q40g_de q40h_ch_de q40i_de q40j_de q41d_ch_de (. = .a) if country !=24
 recode CELL1 CELL2 q44 (. = .a) if country == 24
 
 * Germany/Switzerland
-recode q11_a q17_c q17_d q27i_ch_de q27k_ch_de q40e_ch_de q40h_ch_de q41d_ch_de (. = .a) if country != 24 | country !=25
+recode q4b q11_a q17_c q17_d q27i_ch_de q27k_ch_de q40e_ch_de q40h_ch_de q41d_ch_de (. = .a) if country != 24 | country !=25
 
 * Switzerland
 recode q3a_ch q3b_ch q4_ch q7a_ch q7b_ch q7c_ch q7d_ch q7e_ch q7f_ch q7g_ch q7h_ch q7i_ch ///
@@ -804,6 +804,9 @@ drop respondent_num interviewer_gender interviewer_id time q1_codes intervieweri
 
 					
 * Reorder variables
+order m1_a m1_b  m1_2_a m1_2_b m1_2_c m1_2_d m1_2_e m1_2_f m1_2_g m1_c_ch m1_d_ch m2_a m2_b m2_c m2_d ///
+		  m2_e m2_f m2_g m2_h m2_i m2_i_other m2_ch m3 m3_ch m3_ch_other m4 m4_vge m5 m6_a m6_b m6_c m6_d m6_e m6_f m6_g m6_h ///
+		  m6_i m6_j m6_j_other m6_total m7 m8 m9 m10 m11 m12 phq2 phq2_cat phq9 phq9_cat visits_mental
 order q*, sequential
 order respondent_serial respondent_id mode country country_reg wave language language_other date ///
 	  int_length psu_id_for_svy_cmds weight 		  
@@ -815,21 +818,32 @@ lab var int_length "Interview length (minutes)"
 lab var date "Date of the interview"
 lab var respondent_id "Respondent ID"
 lab var language "Language"
-lab var mode "mode"
+lab var mode "Mode of data collection"
+lab var wave "Wave of data collection"
 lab var psu_id_for_svy_cmds "PSU ID"
 lab var weight  "Weight"
 lab var q1 "Q1. Respondent's еxact age"
+
 lab var q2 "Q2. Respondent's age group"
 lab var q2_de "Q2. DE only: Sample"
+
 lab var q3 "Q3. Respondent's gender"
 lab var q3a_co_pe_uy_ar "Q3a. CO/PE/UY/AR/EC only: Are you a man or a woman?"
-lab var q3a "Q3a. Does respondent have German citizenship?"
-lab var q3b "Q3b. Does respondent have single or multiple citizenship?"
-lab var q3b_de "Q3b_de. DE only: Country of citizenship"
-lab var q3c_de "Q3c_de. DE only: Were you born in Germany?"
-lab var q3d_de "Q3d_de. DE only: How long have you lived in Germany in total?"
+lab var q4a_de "Q4a. DE only: Does respondent have German citizenship?"
+lab var q3a_ch "Q3a. CH only:  Some people feel that they are a different gender from their sex. What is your gender?"
+lab var q3a_ch_other "Q3a. CH only: Other gender"
+lab var q3b_ch "Q3b. CH only: How would you currently describe your sexual orientation?"
+lab var q3b_ch_other "Q3b. CH only: Other sexual orientation"
+
 lab var q4 "Q4. County, state, region where respondent lives"
+lab var q4b "Q4b. Does respondent have single or multiple citizenship?"
+lab var q4_ch "Q4. CH only: Stadtraum" // confirm translation wtih Swiss team
+lab var q4b_de "Q4b_de. DE only: Country of citizenship"
+lab var q4c_de "Q4c_de. DE only: Were you born in Germany?"
+lab var q4d_de "Q4d_de. DE only: How long have you lived in Germany in total?"
 lab var q4_other_it "Q4. Other"
+lab var q4_mw "Q4. MW only: What region do you live in?" // SS: confirm and add to dd
+
 lab var q5 "Q5. Type of area where respondent lives"
 lab var q6 "Q6. Do you have health insurance?"
 /*lab var q6_gb
@@ -839,22 +853,30 @@ lab var q6_la
 lab var q6_za */ 
 lab var q6_lac "Q6. LAC only: What type of health insurance do you have?" //confirm translation, found this one the change log doc
 lab var q6_jp "Q6. JP only: In addition to the Statutory Health Insurance System (SHIS), are you currently covered by private health insurance?"
+
 lab var q7 "Q7. What type of health insurance do you have?"
 *lab var q7_kr 
 lab var q7_other "Q7. Other type of health insurance" 
+lab var q7_ch_other "Q7. CH only: Other"
+
 lab var q8 "Q8. Highest level of education completed by the respondent"
 lab var q8_other "Q8. Other"
-lab var q8a_de "Q8a_de. DE only: What is the title of your highest degree?"
+lab var q8a_de "Q8a. DE only: What is the title of your highest degree?"
+lab var q8a_ch "Q8a. CH only: Are you currently in school or university? "
+
 lab var q9 "Q9. In general, would you say your health is:"
 lab var q10 "Q10. In general, would you say your mental health is:"
+
 lab var q11 "Q11. Do you have any longstanding illness or health problem?"
 lab var q11_a "Q11. Are you currently pregnant or have you given birth in the past 12 months?"
+
 lab var q12_a "Q12a. How confident are you that you are responsible for managing your health?"
 lab var q12_b "Q12b. Can tell a healthcare provider your concerns even when not asked?"
-lab var q12c_jp "Q12c_jp. JP only: How confident are you that you can figure out the best treatment options for yourself?"
-lab var q12d_jp "Q12d_jp. JP only: How confident are you that you can understand what healthcare providers tell you?"
-lab var q12e_jp "Q12e_jp. JP only: How confident are you that you can find the right information to help you manage health problems?"
+lab var q12c_jp "Q12c. JP only: How confident are you that you can figure out the best treatment options for yourself?"
+lab var q12d_jp "Q12d. JP only: How confident are you that you can understand what healthcare providers tell you?"
+lab var q12e_jp "Q12e. JP only: How confident are you that you can find the right information to help you manage health problems?"
 lab var q12_v1 "Q12 (V1.0). Have you ever had COVID-19 or coronavirus?"
+
 lab var q13 "Q13. Is there one healthcare facility or provider's group you usually go to?"
 lab var q13_v1 "Q13 (V1.0). Was it confirmed by a test?"
 lab var q13a_la "Q13A. LA only: Is there one place you usually...? (incl pharm, traditional)"
@@ -865,12 +887,16 @@ lab var q13e_other_co_pe_uy_ar_v1 "Q13E_Other (V1.0). CO/PE/UY only: Other"
 *lab var q13a_co_pe_uy "Q13a. LAC only: Is there one healthcare facility or healthcare provider's group you usually go to for most of your healthcare?"
 lab var q13a_lac "Q13a. LAC/EC only: Are there any other places, such as pharmacies, traditional healers, or alternative medicine, that you go to most frequently for care?"
 lab var q13a_lac_other "Q13a. LAC/EC only: Other"
+
 lab var q14_lac "Q14. LAC only: Usual type"
 lab var q14_ec "Q14. EC only: Is this facility...?"
 lab var q14_ec_other "Q14. EC only: Other"
 lab var q14_ar "Q14. AR only: Is this facility Public, OSEP, Other 'obras sociales', A medical center/hospital owned by PAMI, or Private/prepaid?"
 lab var q14_cn "Q14. CN only: Is this a public, private, or NGO/faith-based healthcare facility?"
 lab var q14_co_pe_v1 "Q14. (V1.0) CO/PE only: Is this a public or private healthcare facility?"
+lab var q14_co "Q14. CO only: Is this a public or private healthcare facility?"
+lab var q14_pe "Q14. PE only: What is this establishment?"
+lab var q14_uy "Q14. UY only: Is this a public, private, or other healthcare facility?"
 lab var q14_gr "Q14. GR only: Is this a public, private, contracted to public, or an NGO healthcare facility?"
 lab var q14_gr_other "Q14. Other"
 lab var q14_it "Q14. IT only: Is this facility… public, private SSN, or private not SSN?"
@@ -890,6 +916,7 @@ lab var q14_v1 "Q14 (V1.0). How many doses of a COVID-19 vaccine have you receiv
 lab var q14a_gb "Q14a. GB only: Is it a National Health Service (NHS) facility or private health?"
 lab var q14b_gb "Q14b. GB only: Is it a Health and Social Care (HSC) facility or private health?"
 lab var q14_de "Q14. DE only: When receiving health services from this doctor's office or other health care facility, which of the following do you typically use to cover the costs?"
+
 lab var q15 "Q15. What type of healthcare facility is this?"
 lab var q15_la_v1 "Q15B (V1.0). LA only: If a vaccine against COVID-19 is or becomes available to you, do you plan to get vaccinated?"
 lab var q15_other "Q15. Other"
@@ -902,25 +929,35 @@ lab var q15b_gr "Q15b. GR only: Have you registered with a personal doctor?"
 lab var q15b_gr_other "Q15b. Other"
 lab var q15c_gr "Q15c. GR only: Is your usual healthcare provider the personal doctor that you have registered with?"
 lab var q15c_gr_other "Q15c. Other"
+
 lab var q16 "Q16. Why did you choose this healthcare facility?"
 lab var q16_other "Q16. Other"
+
 lab var q17 "Q17. Overall respondent's rating of the quality received in this facility"
 lab var q17b_de "Q17b. DE only: In the past 12 months, have you ever spoken with a medical doctor or any other health care provider in private without your parents?"
 lab var q17_c "Q17c. Is there any doctor, nurse, or other health professional with whom you are comfortable talking about your sexual health or contraception?"
 lab var q17_d "Q17d. Is there any doctor, nurse, or other health professional with whom you are comfortable speaking about your mental health?"
-lab var q18 "Q18. How many healthcare visits in total have you made in the past 12 months? "
+lab var q17f_ch "Q17f. CH only: Is there a doctor, nurse, or other health care provider with whom you can speak confidentially?" 
+lab var q17g_ch "Q17g. CH only: Are there mental or physical health services that you wish you had access to, or is there anything else you would like to improve in the health system?" 
+lab var q17g_ch_other "Q17g. CH only: Other mental or physical health services that you wish you had access to/would improve."
+
+lab var q18 "Q18. How many healthcare visits in total have you made in the past 12 months?"
 lab var q18_q19 "Q18/Q19. Total number of visits made in past 12 months (q23, q24 mid-point)"
 lab var q19 "Q19. Total number of healthcare visits in the past 12 months (range)"
+
 lab var q20 "Q20. Were all of the visits you made to the same healthcare facility?"
 lab var q21 "Q21. How many different healthcare facilities did you go to? "
 lab var q22 "Q22. How many visits did you have with a healthcare provider at your home?"
 lab var q23 "Q23. How many virtual or telemedicine visits did you have?"
 lab var q24 "Q24. What was the main reason for the virtual or telemedicine visit?"
 lab var q24_other "Q24. Other"
+
 lab var q25 "Q25. How would you rate the overall quality of your last telemedicine visit?"
 lab var q25_a_v1 "Q25_A (V1.0). Was this visit for COVID-19?"
 lab var q25_b_v1 "Q25_B (V1.0). How many of these visits were for COVID-19?"
+
 lab var q26 "Q26. Did you stay overnight at a healthcare facility as a patient?"
+
 lab var q27_a "Q27_a. Blood pressure tested in the past 12 months"
 lab var q27_b "Q27_b. Received a mammogram in the past 12 months"
 lab var q27_c "Q27_c. Received cervical cancer screening, like a pap test or visual inspection in the past 12 months"
@@ -930,32 +967,41 @@ lab var q27_f "Q27_f. Had a blood sugar test in the past 12 months"
 lab var q27_g "Q27_g. Had a blood cholesterol test in the past 12 months"
 lab var q27_h "Q27_h. Received care for depression, anxiety, or another mental health condition"
 lab var q27i_cn "Q27i. CN only: Breast colour ultrasound (B-ultrasound)"
-lab var q27i_gr_in_ro "Q27. GR/IN/RO only: Have you received any of the following health services in the past 12 months?"
-lab var q27i_ng "Q27. NG only: Had sexual or reproductive health care such as family planning in the past 12 months"
-lab var q27i_za "Q27. ZA only: Had a test for HIV in the past 12 months"
+lab var q27i_gr_in_ro "Q27i. GR/IN/RO only: Have you received any of the following health services in the past 12 months?"
+lab var q27i_ng "Q27i. NG only: Had sexual or reproductive health care such as family planning in the past 12 months"
+lab var q27i_za "Q27i. ZA only: Had a test for HIV in the past 12 months"
 lab var q27j_cn "Q27j. CN only: Received a mammogram (a special X-ray of the breast)"
 lab var q27i_us "Q27i. US only: STI test conducted in past 12 months"
 lab var q27i_ch_de "Q27i. Had a colorectal cancer screening to detect bowel cancer"
 lab var q27j_de "Q27j. DE only: Had a J2 checkup (an additional preventive check-up for adolescents)"
 lab var q27k_ch_de "Q27k. Received any counseling on contraception/birth control"
-lab var q27i_jp "Q12i_jp. JP only: Received an endoscope"
-lab var q27j_jp "Q12j_jp. JP only: Received a barium swallow test"
-lab var q27k_jp "Q12k_jp. JP only: Received a fecal occult blood test"
-lab var q27l_jp "Q12l_jp. JP only: Received an electrocardiogram"
+lab var q27i_jp "Q27i. JP only: Received an endoscope"
+lab var q27j_jp "Q27j. JP only: Received a barium swallow test"
+lab var q27k_jp "Q27k. JP only: Received a fecal occult blood test"
+lab var q27l_jp "Q27l. JP only: Received an electrocardiogram"
+lab var q27i_ch "Q27i. CH only: Had a health check-up"
+
 lab var q28_a "Q28a. A medical mistake was made in your treatment or care in the past 12 months"
 lab var q28_b "Q28b. You were treated unfairly or discriminated against in the past 12 months"
 lab var q28c_de "Q28c. DE only: Had the impression that your privacy was not adequately protected during treatment or consultation"
 lab var q28d_de "Q28d. DE only: Received treatment without feeling sufficiently informed about it"
-lab var q28c_jp "Q28c_jp. JP only: did not get enough explanation on the disease"
-lab var q28d_jp "Q28d_jp. JP only: had to wait a long time"
+lab var q28c_jp "Q28c. JP only: did not get enough explanation on the disease"
+lab var q28d_jp "Q28d. JP only: had to wait a long time"
+
 lab var q29 "Q29. Have you needed medical attention but you did not get it in past 12 months?"
+lab var q29a_ch "Q29a. CH only: Have you needed mental health care, but you did not get it in past 12 months?"
+lab var q29a_ch_other "Q29a. CH only: Main reason you did not receive mental healthcare?"
+lab var q29b_ch "Q29b. CH only: Have you needed care related to your sexual health but you did not get it in past 12 months?"
+
 lab var q30 "Q30. The last time this happened, what was the main reason?"
 lab var q30_other "Q30. Other"
+
 lab var q31a "Q31a. In the past 12 months, have you ever needed to borrow money from family, friends, or another source to pay for healthcare"
 lab var q31b "Q31b. In the past 12 months, have you ever needed to sell items such as furniture or jewelry to pay for healthcare"
 lab var q31_lac "Q31. LAC/EC only: In the last 12 months, have you stopped paying any utility bills (cable, electricity, water, etc.) to pay for healthcare?"
-lab var q31c_jp "Q31c_jp. JP only: Difficulty paying medical expenses; consulted with the government office"
-lab var q31d_jp "Q31d_jp. JP only: was worried about whether I can pay medical or treatment fees"
+lab var q31c_jp "Q31c. JP only: Difficulty paying medical expenses; consulted with the government office"
+lab var q31d_jp "Q31d. JP only: was worried about whether I can pay medical or treatment fees"
+
 lab var q32_ar "Q32. AR only: Is this facility Public, OSEP, or Private?"
 lab var q32_cn "Q32. CN only: Last visit facility type public/private/social security/NGO/faith-based?"
 lab var q32_co_pe_v1 "Q32 (V1.0). CO/PE only: Is this a public or private healthcare facility?"
@@ -976,25 +1022,30 @@ lab var q32a_gr_other "Q32a. Other"
 lab var q32b_gb "Q32b. GB only: Did you go to a health and social care facility (HSC) or private?"
 lab var q32b_gr "Q32b. GR only: In your last visit did you pay part of the healthcare cost or did you not pay at all?"
 lab var q32_cn "Q32. CN only: Is this a public or private healthcare facility?"
-lab var q32_so "Q32b. SO only: Was this a public, private or another type of facility?"
+lab var q32_so "Q32. SO only: Was this a public, private or another type of facility?"
 lab var q32_de "Q32. DE only: In your most recent visit, which of the following did you use to cover the costs of the treatment or consultation?"
-lab var q32_jp "Q32_jp. JP only: Was the facility public or private?"
-lab var q32_other "Q32_jp. JP only: Other"
+lab var q32_jp "Q32. JP only: Was the facility public or private?"
+lab var q32_other "Q32. JP only: Other"
+
 lab var q33 "Q33. What type of healthcare facility is this?"
 lab var q33_other "Q33. Other"
 lab var q33a_gr "Q33a. GR only: Can you please tell me the specialty of your provider in your last healthcare visit?"
 lab var q33a_gr_other "Q33a. Other"
 lab var q33b_gr "Q33b. GR only: The healthcare provider that you saw in your last visit was the personal doctor that you have registered with?"
 lab var q33b_gr_other "Q33b. Other"
+
 lab var q34 "Q34. What was the main reason you went?"
 lab var q34_other "Q34. Other"
+
 lab var q35 "Q35. Was this a scheduled visit or did you go without an appt.?"
 lab var q36 "Q36. In days: how long between scheduling and seeing provider?"
 lab var q36_v1 "Q36. In days: how long between scheduling and seeing provider? (V1.0)"
+
 lab var q37 "Q37. In minutes: Approximately how long did you wait before seeing the provider?"
 lab var q37_v1 "Q37. In minutes: Approximately how long did you wait before seeing the provider? (V1.0)"
 lab var q37_v1_other "Q37_Other (V1.0). Other"
 lab var q37b_refused_v1 "Q37B. Refused (V1.0- Q46B refused)"
+
 lab var q38_a "Q38a. How would you rate the overall quality of care you received?"
 lab var q38_b "Q38b. How would you rate the knowledge and skills of your provider?"
 lab var q38_c "Q38c. How would you rate the equipment and supplies that the provider had?"
@@ -1006,7 +1057,10 @@ lab var q38_h "Q38h. How would you rate the amount of time your provider spent w
 lab var q38_i "Q38i. How would you rate the amount of time you waited before being seen?"
 lab var q38_j "Q38j. How would you rate the courtesy and helpfulness at the facility?"
 lab var q38_k "Q38k. How would you rate how long it took for you to get this appointment?"
+lab var q38_l_ch "Q38l. CH only: How would you rate the degree of privacy you had?"
+
 lab var q39 "Q39. How likely would recommend this facility to a friend or family member?"
+
 lab var q40_a "Q40a. How would you rate the quality of care provided for care for pregnancy?"
 lab var q40_b "Q40b. How would you rate the quality of care provided for children?"
 lab var q40_c "Q40c. How would you rate the quality of care provided for chronic conditions?"
@@ -1016,24 +1070,29 @@ lab var q40a_so "Q40a. SO only: Care for pregnant women and newborns, such as an
 lab var q40b_so "Q40b. SO only: Care for infections such as Malaria, Tuberculosis etc."
 lab var q40e_so "Q40e. SO only: First aid and care for emergency conditions such as injuries etc."
 lab var q40f_so "Q40f. SO only: Care for other non-urgent common illnesses such as skin, ear conditions, stomach problems, urinary problems, joint paints etc."
-lab var q40e_ch_de "Q40e. DE only: How would you rate the quality of care in the area of sexual health or contraception?"
+lab var q40e_ch_de "Q40e. CH/DE only: How would you rate the quality of care in the area of sexual health or contraception?"
 lab var q40f_de "Q40f. DE only: How would you rate the quality of care provided for dental care?"
 lab var q40g_de "Q40g. DE only: How would you rate the quality of care provided for preventive cancer care?"
-lab var q40h_de "Q40h. DE only: How would you rate the quality of care provided for rehabilitative care?"
+lab var q40h_ch_de "Q40h. CH/DE only only: How would you rate the quality of care provided for rehabilitative care?"
 lab var q40i_de "Q40i. DE only: How would you rate the quality of care provided for nursing care such as home nursing care or care for the elderly?"
 lab var q40j_de "Q40j. DE only: How would you rate the quality of care provided for preventive care, for example, vaccinations?"
-lab var q40e_jp "Q40e_jp. How would you rate the quality of health checkup?"
-lab var q40f_jp "Q40f_jp. How would you rate the quality of infertility treatment (e.g. artificial insemination)?"
+lab var q40e_jp "Q40e. JP only: How would you rate the quality of health checkup?"
+lab var q40f_jp "Q40f. JP only: How would you rate the quality of infertility treatment (e.g. artificial insemination)?"
+
 lab var q41_a "Q41a. How confident are you that you'd get good healthcare if you were very sick?"
 lab var q41_b "Q41b. How confident are you that you'd be able to afford the care you required?"
 lab var q41_c "Q41c. How confident are you that the government considers the public's opinion?"
 lab var q41_us "Q41. US only: In general, how much do you trust the healthcare system as a whole?"
-lab var q41d_de "Q41d. DE only: How confident are you that the health care system addresses the needs of your age group, e.g., by clarifying contraceptive methods available to women of reproductive age?"
-lab var q41d_jp "Q41d_jp. How confident are you that you would be able to afford the healthcare you needed when you are older?"
-lab var q41e_jp "Q41e_jp. How confident are you that you would be able to get the healthcare you need in case of a natural disaster or emergency?"
-lab var q41f_jp "Q41f_jp. How confident are you that you would receive good quality healthcare even if you do not live in a city?"
+lab var q41d_ch_de "Q41d. DE only: How confident are you that the health care system addresses the needs of your age group, e.g., by clarifying contraceptive methods available to women of reproductive age?"
+lab var q41d_jp "Q41d. JP only: How confident are you that you would be able to afford the healthcare you needed when you are older?"
+lab var q41e_jp "Q41e. JP only: How confident are you that you would be able to get the healthcare you need in case of a natural disaster or emergency?"
+lab var q41f_jp "Q41f. JP only: How confident are you that you would receive good quality healthcare even if you do not live in a city?"
+lab var q41e_ch "Q41e. CH only: How confident are you that you could access prescription contraception if you needed it?"
+lab var q41f_ch "Q41f. CH only:  How confident are you that you could pay for prescription contraception yourself if you needed it?"
+
 lab var q42 "Q42. How would you rate the quality of public healthcare system in your country?"
 lab var q43 "Q43. How would you rate the quality of private healthcare?"
+
 *lab var q44 "Q44. What type of healthcare facility is this?"
 lab var q44_multi "Q44. ET/GR/IN/KE/NG/RO/ZA only: How would you rate quality of NGO/faith-based healthcare?"
 lab var q44_ec "Q44. EC only: How would you rate quality of the social security health system (IESS)?"
@@ -1044,14 +1103,21 @@ lab var q44a_mx "Q44a. MX only: How would you rate the quality of services provi
 lab var q44b_ar "Q44b. AR only: How would you rate the quality of the other 'obras sociales' health system?"
 lab var q44b_mx "Q44b. MX only: How would you rate the quality of services...IMSS BIENESTAR?"
 lab var q44c_ar "Q44c. AR only: How would you rate the quality of the PAMI health system in the province of Mendoza?"
-lab var q45 "Q45. Is your country's health system is getting better, same or worse?s"
+lab var q44_co "Q44. CO only: How would you rate the quality of your country's contributory healthcare system?"
+
+lab var q45 "Q45. Is your country's health system is getting better, same or worse?"
+
 lab var q46 "Q46. Which of these statements do you agree with the most?"
 lab var q46_refused_v1 "Q46 (V1.0). Refused"
+
 lab var q47 "Q47. How would you rate the government's management of the COVID-19 pandemic?"
 lab var q47_refused_v1 "Q47 (V1.0). Refused"
 lab var q47_v1 "Q47 (V1.0). In minutes:  Approximately how much time did the provider spend with you?"
+lab var q47_mw "Q47. MW only: How would you rate the government's management of the Cholera outbreak overall?"
+
 lab var q48 "Q48. How would you rate the quality of care provided? (Vignette, option 1)"
 lab var q49 "Q49. How would you rate the quality of care provided? (Vignette, option 2)"
+
 lab var q50 "Q50. Respondent's mother tongue or native language"
 lab var q50_gb "Q50. GB only: What is your race?"
 lab var q50_mx "Q50. MX only: Do you speak any indigenous language or dialect?"
@@ -1062,21 +1128,36 @@ lab var q50a_other_la "Q50a. LA only: Other"
 lab var q50a_us "Q50a. US only: What is your ethnicity?"
 lab var q50b_other_us "Q50b. US only: Other"
 lab var q50b_us "Q50b. US only: What is your race?"
+
 lab var q51 "Q51. Total monthly household income"
-lab var q51a "Q51a. CN only: What is the number of people in the household, including you, who live with you permanently?" 
+lab var q51a "Q51a. What is the number of people in the household, including you, who live with you permanently?" 
 lab var q51_gr "Q51. GR only: Including yourself, how many people aged 18 or older currently live in your household"
+lab var q51a_ch "Q51a. CH only: Are you currently working for pay full-time, part-time, or not at all?"
+
 *lab var CELL1 "Do you have another mobile phone number besides the one I am calling you on?"
 *lab var CELL2 "How many other mobile phone numbers do you have?"
+
 lab var q52 "Q52. Which political party did you vote for in the last election?"
 lab var q52_gb "Q52. GB only: Which political party did you vote for in the last election?"
 lab var q52a_gr "Q52a. GR only: Do you happen to have a mobile phone or not?" 
 lab var q52a_us "Q52a. US only: Republican, Democrat, an Independent, or something else?"
+lab var q52a_us_other "Q52a. US only: Other political party affiliation"
 lab var q52b_gr "Q52b. GR only: Is this mobile phone your only phone, or do you also have a landline telephone at home that is used to makeand receive calls?"
 lab var q52b_us "Q52b. US only: Do you lean more towards the Republican or Democratic Party?"
 lab var q52a_jp "Q52a_jp. JP only: Which political party did you vote for in the last election?"
+
 lab var q53a_jp "Q53a_jp. JP only: What would be your top priority if you were to vote in the next national election?"
 lab var q53a_jp_other "Q53a_jp_other. Other"
 
+* Additional mental health questions:
+lab var m1_c_ch "M1c. Over past 2 weeks: Feeling nervous, anxious, or on edge"
+lab var m1_d_ch "M1d. Over past 2 weeks: Not being able to stop or control worrying"
+lab var m2_ch "M2. CH only: In the past 12 months, have you discussed your mental health with any health care provider? "
+lab var m3_ch "M3. CH only: Who is the health care provider you mainly went to talk about your mental health? "
+lab var m3_ch_other "M3. CH only: Other health care provider."
+
+
+drop q14 q32 // SS: investigate where this was created
 *------------------------------------------------------------------------------*
 *Save recoded data
 
