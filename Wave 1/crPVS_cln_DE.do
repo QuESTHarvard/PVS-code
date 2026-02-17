@@ -460,8 +460,8 @@ recode q5 (24001 = 24001 "DE: City") (24002 = 24002 "DE: Suburb of city") (24003
 pre(rec) label(q5_label)
 
 recode q7 (24001 = 24001 "DE: Statutory health insurance – (Gesetzliche Krankenversicherung or GKV)") (24002 = 24002 "DE: Private health insurance (Private Krankenversicherung or PKV) - This does not refer to private supplementary insurance to statutory health insurance") ///
-(24003 = 24003 "DE: Other entitlement to health care, e.g. foreign health insurance") (24004 = 24004 "DE: No health insurance, self-payer using cash or card") ///
-(24005 = 24005 "DE: Other (specify)") (.a = .a "NA" ) (.d = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q7_label)
+(24003 = 24003 "DE: Other entitlement to health care, e.g. foreign health insurance") ///
+(24005 = 24005 "DE: Other (specify)") (24004 .a = .a "NA" ) (.d = .d "Don't know") (.r = .r "Refused"), pre(rec) label(q7_label)
 
 recode q8 (24001 = 24001 "DE: University or university of applied sciences degree") (24002 = 24002 "DE: Mastercraftsman (meister), technician or equivalent technical college qualification") (24003 = 24003 "DE: Graduation from a school for educators") ///
 (24004 = 24004 "DE: Training at a school/academy for health and social professions") (24005 = 24005 "DE: Preparatory service for the intermediate civil service in public administration") (24006 = 24006 "DE: Apprenticeship or vocational training in the dual system completed") ///
