@@ -713,6 +713,7 @@ tab Region, m // 1 Refused
 * ISCED 2 + 3 (24008, 24009, 24010, 24011)
 * ISCED 4 + (24001, 24002, 24003, 24004, 24005, 24006, 24007)
 
+* Recoded "other" responses
 gen education = .
 replace education = 0 if q8==24013
 replace education = 1 if q8==24012
