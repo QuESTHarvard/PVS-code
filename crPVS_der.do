@@ -1078,7 +1078,7 @@ recode covid_vax_v1 ///
 local map 1 EC 2 CO 3 ET 4 IN 5 KE 6 MW 7 PE 9 ZA 10 UY 11 LA 12 US 13 MX ///
            14 IT 15 KR 16 AR 17 GB 18 GR 19 RO 20 NG 21 CN 22 SO 23 NP 24 DE 25 CH
 
-forvalues i = 1/24 {
+forvalues i = 1/25 {
     gen cc_`i' = (country == `i')
 
     local iso ""
