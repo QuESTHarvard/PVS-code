@@ -128,19 +128,19 @@ lab def q4_label 1 "Hokkaido" 2 "Aomori" 3 "Iwate" 4 "Miyagi" 5 "Akita" ///
 lab val q4 q4_label
 
 * q5 (urban/rural)
-recode q5 (999 = .a)
-lab def q5_label 1 "City" 2 "Suburb of city" 3 "Small town" 4 "Rural area" .a "NA"
+recode q5 (999 = .r)
+lab def q5_label 1 "City" 2 "Suburb of city" 3 "Small town" 4 "Rural area" .a "NA" .r "Refused"
 lab val q5 q5_label
 
 * q6_jp (insured)
-recode q7 (1 = 1) (2 = 0), gen(q6_jp) // Confirm with Todd how to code 999: BLANK
-recode q6_jp (999 = .a)
-lab def q6_label 0 " No, do not have private insurance" 1 "Yes, have private insurance" .a "NA" 
+recode q7 (1 = 1) (2 = 0), gen(q6_jp) 
+recode q6_jp (999 = .r)
+lab def q6_label 0 " No, do not have private insurance" 1 "Yes, have private insurance" .a "NA" .r "Refused"
 lab val q6_jp q6_label
  
 * q7 (insured_type)
-recode q7 (999 = .a) // Confirm with Todd how to code 999: BLANK
-lab def q7_label 1 "Additional private insurance" 2 "Only public insurance" .a "NA"
+recode q7 (999 = .r) 
+lab def q7_label 1 "Additional private insurance" 2 "Only public insurance" .a "NA" .r "Refused"
 lab val q7 q7_label
 
 * q8 (education)
@@ -149,13 +149,13 @@ lab def q8_label 1 "Junior high school" 2 "High school" 3 "Vocational school, ju
 lab val q8 q8_label
 
 * q9 (general health)
-recode q9 (999 = .a) // Confirm with Todd how to code 999: BLANK
-lab def q9_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA"
+recode q9 (999 = .r)
+lab def q9_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA" .r "Refused"
 lab val q9 q9_label
 
 * q10 (mental health)
-recode q10 (999 = .a) // Confirm with Todd how to code 999: BLANK
-lab def q10_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA"
+recode q10 (999 = .r)
+lab def q10_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA" .r "Refused"
 lab val q10 q10_label
 
 * q11 (chronic health)
@@ -172,29 +172,29 @@ label values q11 q11_label
 drop q99a_jp q99b_jp q99c_jp q99d_jp q99e_jp q99f_jp q99g_jp q99h_jp q99i_jp q99j_jp q99k_jp q99l_jp q99m_jp q99n_jp q99o_jp q99p_jp q99q_jp
 
 * q12_a (confendent managing health)
-recode q12_a (999 = .a)
-lab def q12_label 0 "Not at all confident" 1 "Not too confident" 2 "Somewhat confident" 3 "Very confident" .a "NA"
+recode q12_a (999 = .r)
+lab def q12_label 0 "Not at all confident" 1 "Not too confident" 2 "Somewhat confident" 3 "Very confident" .a "NA" .r "Refused"
 lab val q12_a q12_label
 
 * q12_b (tell provider concerns) 
-recode q12_b (999 = .a)
+recode q12_b (999 = .r)
 lab val q12_b q12_label
 
 * q12c_jp (best treatment)
-recode q12c_jp (999 = .a) // extra questions, ask Todd if we drop them
+recode q12c_jp (999 = .r) // extra questions, ask Todd if we drop them
 lab val q12c_jp q12_label
 
 * q12d_jp (understand)
-recode q12d_jp (999 = .a) // extra questions, ask Todd if we drop them
+recode q12d_jp (999 = .r) // extra questions, ask Todd if we drop them
 lab val q12d_jp q12_label
 
 * q12e_jp (find information)
-recode q12e_jp (999 = .a) // extra questions, ask Todd if we drop them
+recode q12e_jp (999 = .r) // extra questions, ask Todd if we drop them
 lab val q12e_jp q12_label
 
 * q13 (sepcific facility visit)
-recode q13 (999 = .a) // extra questions, ask Todd if we drop them
-lab def q13_label 0 "No" 1 "Yes" .a "NA"
+recode q13 (999 = .r) // extra questions, ask Todd if we drop them
+lab def q13_label 0 "No" 1 "Yes" .a "NA" .r "Refused"
 lab val q13 q13_label
 
 * q14_jp (pub/pri facility)
@@ -216,38 +216,38 @@ lab def q16_label 1	"Low cost" 2 "Short distance" 3	"Short waiting time" 4 "Good
 lab val q16 q16_label
 
 * q17 (overall rating of received healthcare)
-recode q17 (. = .a) (5 = .a) (999 = .a) // Confirm with Todd how to code 999: BLANK
-lab def q17_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA"
+recode q17 (. = .a) (5 = .a) (999 = .r) // Confirm with Todd how to code 999: BLANK
+lab def q17_label 0 "Poor" 1 "Fair" 2 "Good" 3 "Very good" 4 "Excellent" .a "NA" .r "Refused"
 lab val q17 q17_label
 
 * q18 (# of visits)
-recode q18 (998 = .d) (999 = .a)
-lab def q18_label .d "Don't know" .a "NA"
+recode q18 (998 = .d) (999 = .r)
+lab def q18_label .d "Don't know" .a "NA" .r "Refused"
 lab val q18 q18_label
 
 * q19 (categorized of # of visits)
-recode q19 (. = .a) (999 = .a) (1 = 0) (2 = 1) (3 = 2) (4 = 3)
-lab def q19_label 0 "0" 1 "1-4" 2 "5-9" 3 "10 or more" .a "NA"
+recode q19 (. = .a) (999 = .r) (1 = 0) (2 = 1) (3 = 2) (4 = 3)
+lab def q19_label 0 "0" 1 "1-4" 2 "5-9" 3 "10 or more" .a "NA" .r "Refused"
 lab val q19 q19_label
 
 * q20 (same or different facility)
-recode q20 (. = .a) (999 = .a)
-lab def q20_label 0 "No" 1 "Yes" .a "NA"
+recode q20 (. = .a) (999 = .r)
+lab def q20_label 0 "No" 1 "Yes" .a "NA" .r "Refused"
 lab val q20 q20_label
 
 * q21 (# of different facilities)
-recode q21 (. = .a) (999 = .a) (998 = .d)
-lab def q21_label .d "Don't know" .a "NA"
+recode q21 (. = .a) (999 = .r) (998 = .d)
+lab def q21_label .d "Don't know" .a "NA" .r "Refused"
 lab val q21 q21_label
 
 * q22 (# of home visits)
-recode q22 (999 = .a) (998 = .d)
-lab def q22_label .d "Don't know" .a "NA"
+recode q22 (999 = .r) (998 = .d)
+lab def q22_label .d "Don't know" .a "NA" .r "Refused"
 lab val q22 q22_label
 
 * q23 (# of virtual visits)
-recode q23 (999 = .a) (998 = .d)
-lab def q23_label .d "Don't know" .a "NA"
+recode q23 (999 = .r) (998 = .d)
+lab def q23_label .d "Don't know" .a "NA" .r "Refused"
 lab val q23 q23_label
 
 * q24 (reason of virtual)
@@ -267,78 +267,78 @@ lab def q26_label 0 "No" 1 "Yes"
 lab val q26 q26_label
 
 * q27_a (bp check)
-recode q27_a (999 = .a) (998 = .d)
-lab def q27_label 0 "No" 1 "Yes" .a "NA" .d "Don't know"
+recode q27_a (999 = .r) (998 = .d)
+lab def q27_label 0 "No" 1 "Yes" .a "NA" .d "Don't know" .r "Refused"
 lab val q27_a q27_label
 
 * q27_b (mammo)
-recode q27_b (. = .a) (999 = .a) (998 = .d)
+recode q27_b (. = .a) (999 = .r) (998 = .d)
 lab val q27_b q27_label
 
 * q27_c (cervical)
-recode q27_c (. = .a) (999 = .a) (998 = .d)
+recode q27_c (. = .a) (999 = .r) (998 = .d)
 lab val q27_c q27_label
 
 * q27_d (vision)
-recode q27_d (999 = .a) (998 = .d)
+recode q27_d (999 = .r) (998 = .d)
 lab val q27_d q27_label
 
 * q27_e (teeth)
-recode q27_e (999 = .a) (998 = .d)
+recode q27_e (999 = .r) (998 = .d)
 lab val q27_e q27_label
 
 * q27_f (bs)
-recode q27_f (999 = .a) (998 = .d)
+recode q27_f (999 = .r) (998 = .d)
 lab val q27_f q27_label
 
 * q27_g (cholesterol)
-recode q27_g (999 = .a) (998 = .d)
+recode q27_g (999 = .r) (998 = .d)
 lab val q27_g q27_label
 
 * q27_h (deoression)
-recode q27_h (999 = .a) (998 = .d)
+recode q27_h (999 = .r) (998 = .d)
 lab val q27_h q27_label
 
 * q27i_jp (endoscope)
-recode q27i_jp (999 = .a) (998 = .d)
+recode q27i_jp (999 = .r) (998 = .d)
 lab val q27i_jp q27_label
 
 * q27j_jp (barium swalllow)
-recode q27j_jp (999 = .a) (998 = .d)
+recode q27j_jp (999 = .r) (998 = .d)
 lab val q27j_jp q27_label
 
 * q27k_jp (fecal occult bloot test)
-recode q27k_jp (999 = .a) (998 = .d)
+recode q27k_jp (999 = .r) (998 = .d)
 lab val q27k_jp q27_label
 
 * q27l_jp (electrocardiogram)
-recode q27l_jp (999 = .a) (998 = .d)
+recode q27l_jp (999 = .r) (998 = .d)
 lab val q27l_jp q27_label
 
 * q28_a (medical mistake)
-recode q28_a (. = .a) (999 = .)
-lab def q28_label 0 "No" 1 "Yes" .a "I did not get healthcare in past 12 months" .a "NA"
+recode q28_a (. = .a) (999 = .r)
+lab def q28_label 0 "No" 1 "Yes" .a "I did not get healthcare in past 12 months" .a "NA" .r "Refused"
 lab val q28_a q28_label
 
 * q28_b (treat unfairly)
-recode q28_b (. = .a) (999 = .)
+recode q28_b (. = .a) (999 = .r)
 lab val q28_b q28_label
 
 * q28c_jp (not enough explaination)
-recode q28c_jp (. = .a) (999 = .a)
+recode q28c_jp (. = .a) (999 = .r)
 lab val q28c_jp q28_label
 
 * q28d_jp (wait long time)
-recode q28d_jp (. = .a) (999 = .a)
+recode q28d_jp (. = .a) (999 = .r)
 lab val q28d_jp q28_label
 
 * q29 (not get healthcare)
-recode q29 (999 = .a) 
-lab def q29_label 0 "No" 1 "Yes" .a "NA"
+recode q29 (999 = .r) 
+lab def q29_label 0 "No" 1 "Yes" .a "NA" .r "Refused"
 lab val q29 q29_label
 
 * q30 (reason)
-recode q30 (7 = 24) (9 = 25) (10 = 26) (11 = 27) (8 = 7) (12 = 10)
+recode q30 (7 = 24) (9 = 25) (10 = 26) (11 = 27) (8 = 7) (12 = 10) (. = .a)
 lab def q30_label 1	"High cost (e.g., high out of pocket payment, not covered by insurance)" ///
 				  2	"Far distance (e.g., too far to walk or drive, transport not readily available)" ///
 				  3	"Long waiting time (e.g., long line to access facility, long wait for the provider)" ///
@@ -351,29 +351,29 @@ lab def q30_label 1	"High cost (e.g., high out of pocket payment, not covered by
 lab val q30 q30_label
 
 * q31a (borrow)
-lab def q31_label 0 "No" 1 "Yes" .a "NA"
+lab def q31_label 0 "No" 1 "Yes" .a "NA" .r "Refused"
 lab val q31a q31_label
 
 * q31b (sell)
-recode q31b (999 = .a) 
+recode q31b (999 = .r) 
 lab val q31b q31_label
 
 * q31c_jp (government)
-recode q31c_jp (999 = .a) 
+recode q31c_jp (999 = .r) 
 lab val q31c_jp q31_label
 
 * q31d_jp (worried)
-recode q31d_jp (999 = .a) 
+recode q31d_jp (999 = .r) 
 lab val q31d_jp q31_label
 
 * q32_jp (pub/pri facility)
-recode q32_jp (999 = .a) 
-lab def q32_jp_label 1 "Public" 2 "Private" 3 "Other" .a "NA" 
+recode q32_jp (999 = .r) (. = .a)
+lab def q32_jp_label 1 "Public" 2 "Private" 3 "Other" .a "NA" .r "Refused"
 lab val q32_jp q32_jp_label
 
 * q33 (type of facility)
-recode q33 (999 = .a) 
-lab def q33_label 1 "Doctor's office or clinic" 2 "Hospital where referrals are not required" 3 "Hospital where referrals are required" 4 "Other" .a "NA" 
+recode q33 (. = .a) (999 = .r) 
+lab def q33_label 1 "Doctor's office or clinic" 2 "Hospital where referrals are not required" 3 "Hospital where referrals are required" 4 "Other" .a "NA" .r "Refused"
 lab val q33 q33_label
 
 * q34 (main reason)
@@ -409,152 +409,152 @@ lab val q37 q37_label
 tostring q37_other, replace
 
 * q38_a (overall quality)
-recode q38_a (. = .a) (999 = .a)
-lab def q38_label 4 "Excellent" 3 "Very good" 2 "Good" 1 "Fair"  0 "Poor" .a "NA" 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" // ask Todd how to deal with this extra answer
+recode q38_a (. = .a) (999 = .r)
+lab def q38_label 4 "Excellent" 3 "Very good" 2 "Good" 1 "Fair"  0 "Poor" .a "NA" .r "Refused" 5 "I have not had prior visits or tests" 6 "The clinic had no other staff" // ask Todd how to deal with this extra answer
 lab val q38_a q38_label  
 
 * q38_b (knowledge and skill)
-recode q38_b (. = .a) (999 = .a)
+recode q38_b (. = .a) (999 = .r)
 lab val q38_b q38_label 
 
 * q38_c (equip and clinical)
-recode q38_c (. = .a) (999 = .a)
+recode q38_c (. = .a) (999 = .r)
 lab val q38_c q38_label 
 
 * q38_d (respect)
-recode q38_d (. = .a) (999 = .a)
+recode q38_d (. = .a) (999 = .r)
 lab val q38_d q38_label 
 
 * q38_e (prior)
-recode q38_e (. = .a) (999 = .a)
+recode q38_e (. = .a) (999 = .r)
 lab val q38_e q38_label 
 
 * q38_f (explain)
-recode q38_f (. = .a) (999 = .a)
+recode q38_f (. = .a) (999 = .r)
 lab val q38_f q38_label 
 
 * q38_g (your opnion)
-recode q38_g (. = .a) (999 = .a)
+recode q38_g (. = .a) (999 = .r)
 lab val q38_g q38_label 
 
 * q38_h (time spent)
-recode q38_h (. = .a) (999 = .a)
+recode q38_h (. = .a) (999 = .r)
 lab val q38_h q38_label 
 
 * q38_i (wait time)
-recode q38_i (. = .a) (999 = .a)
+recode q38_i (. = .a) (999 = .r)
 lab val q38_i q38_label 
 
 * q38_j (courtesy and helpfulness)
-recode q38_j (. = .a) (999 = .a)
+recode q38_j (. = .a) (999 = .r)
 lab val q38_j q38_label 
 
 * q38_k (time to get appointment)
-recode q38_k (. = .a) (999 = .a)
+recode q38_k (. = .a) (999 = .r)
 lab val q38_k q38_label 
 
 * q39 (recommment)
-recode q39 (. = .a) (999 = .a)
-lab def q39_label .a "NA"
+recode q39 (. = .a) (999 = .r)
+lab def q39_label .a "NA" .r "Refused"
 lab val q39 q39_label
 
 * q40_a (women)
-recode q40_a (999 = .a) (5 = .d)
+recode q40_a (999 = .r) (5 = .d)
 lab def q40_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" ///
-				  .d "I am unable to judge" .a "NA"
+				  .d "I am unable to judge" .a "NA" .r "Refused"
 lab val q40_a q40_label
 
 * q40_b (children)
-recode q40_b (999 = .a) (5 = .d)
+recode q40_b (999 = .r) (5 = .d)
 lab val q40_b q40_label
 
 * q40_c (chronic condition)
-recode q40_c (999 = .a) (5 = .d)
+recode q40_c (999 = .r) (5 = .d)
 lab val q40_c q40_label
 
 * q40_d (mental health)
-recode q40_d (999 = .a) (5 = .d)
+recode q40_d (999 = .r) (5 = .d)
 lab val q40_d q40_label
 
 * q40e_jp (health checkup)
-recode q40e_jp (999 = .a) (5 = .d)
+recode q40e_jp (999 = .r) (5 = .d)
 lab val q40e_jp q40_label
 
 * q40f_jp (infertility treatment)
-recode q40f_jp (999 = .a) (5 = .d)
+recode q40f_jp (999 = .r) (5 = .d)
 lab val q40f_jp q40_label
 
 * q41_a (get)
-recode q41_a (999 = .a)
-lab def q41_label 3 "Very confident" 2"Somewhat confident" 1 "Not too confident" 0 "Not at all confident" .a "NA"
+recode q41_a (999 = .r)
+lab def q41_label 3 "Very confident" 2"Somewhat confident" 1 "Not too confident" 0 "Not at all confident" .a "NA" .r "Refused"
 lab val q41_a q41_label
 
 * q41_b (afford)
-recode q41_b (999 = .a)
+recode q41_b (999 = .r)
 lab val q41_b q41_label
 
 * q41_c (government opnion)
-recode q41_c (999 = .a)
+recode q41_c (999 = .r)
 lab val q41_c q41_label
 
 * q41d_jp (afford when old)
-recode q41d_jp (999 = .a)
+recode q41d_jp (999 = .r)
 lab val q41d_jp q41_label
 
 * q41e_jp (get in disaster)
-recode q41e_jp (999 = .a)
+recode q41e_jp (999 = .r)
 lab val q41e_jp q41_label
 
 * q41f_jp (get in area not city)
-recode q41f_jp (999 = .a)
+recode q41f_jp (999 = .r)
 lab val q41f_jp q41_label
 
 * q42 (pub system)
-recode q42 (999 = .a)
-lab def q42_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .a "NA"
+recode q42 (999 = .r)
+lab def q42_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .a "NA" .r "Refused"
 lab val q42 q42_label
 
 * q43 (pri system)
-recode q43 (999 = .)
+recode q43 (. = .r) (999 = .r)
 lab val q43 q42_label
 
 * q45 (better, same, worse)
-recode q45 (999 = .a) (1 = 2) (2 = 1) (3 = 0)
-lab def q45_label 2	"Getting better" 1 "Staying the same" 0	"Getting worse" .a "NA"
+recode q45 (999 = .r) (1 = 2) (2 = 1) (3 = 0)
+lab def q45_label 2	"Getting better" 1 "Staying the same" 0	"Getting worse" .a "NA" .r "Refused"
 lab val q45 q45_label
 
 * q46 (rebuild, major, minor)
-recode q46 (999 = .a) 
+recode q46 (999 = .r) 
 lab def q46_label 1	"Our healthcare system has so much wrong with it that we need to completely rebuild it." ///
 					2 "There are some good things in our healthcare system, but major changes are needed to make it work better." ///
 					3 "On the whole, the system works pretty well and only minor changes are necessary to make it work better." ///
-					.a "NA"
+					.a "NA" .r "Refused"
 lab val q46 q46_label
 
 * q47 (covid mamangement)
-recode q47 (999 = .a) 
-lab def q47_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .a "NA"
+recode q47 (999 = .r) 
+lab def q47_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .a "NA" .r "Refused"
 lab val q47 q47_label
 
 * q48 (vignette 1)
-recode q48 (999 = .a) 
-lab def q48_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .a "NA"
+recode q48 (999 = .r) 
+lab def q48_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .a "NA" .r "Refused"
 lab val q48 q48_label
 
 * q49 (vignette 2)
-recode q49 (999 = .a) 
-lab def q49_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .a "NA"
+recode q49 (999 = .r) 
+lab def q49_label 4	"Excellent" 3 "Very good" 2	"Good" 1 "Fair" 0 "Poor" .a "NA" .r "Refused"
 lab val q49 q49_label
 
 * q50 (mother tongue)
-recode q50 (999 = .a) 
-lab def q50_label 1	"Japanese" 2 "Chinese" 3 "Korean" 4 "Vietnamese" 5 "Tagalog" 6 "Spanish" 7 "English" 8 "Other" .a "NA"
+recode q50 (999 = .r) 
+lab def q50_label 1	"Japanese" 2 "Chinese" 3 "Korean" 4 "Vietnamese" 5 "Tagalog" 6 "Spanish" 7 "English" 8 "Other" .a "NA" .r "Refused"
 lab val q50 q50_label
 
 * q51 (income)
-recode q51 (999 = .a) 
+recode q51 (999 = .r) 
 lab def q51_label 1	"Less than 3 million yen" 2 "3 million-less than 4.8 million yen" 3 "4.8 million-less than 6.5 million yen" ///
-					4 "6.5 million-less than 8.5 million yen" 5 "8.5 million yen or over" .a "NA"
+					4 "6.5 million-less than 8.5 million yen" 5 "8.5 million yen or over" .a "NA" .r "Refused"
 lab val q51 q51_label
 
 * q52a_jp (political party)
@@ -565,10 +565,10 @@ lab def q52_label 1	"Liberal Democratic Party" 2 "Constitutional Democratic Part
 lab val q52a_jp q52_label
 
 * q53a_jp (priority of election)
-recode q53a_jp (999 = .a) (998 = .d)
+recode q53a_jp (999 = .r) (998 = .d)
 lab def q53_label 1	"Healthcare system" 2 "Economic policy" 3 "Education" ///
 					4 "Welfare" 5 "Foreign affairs" 6 "Defense" 7 "Environmental and energy policy" 8 "Employment and labor policy" ///
-					9 "Taxation and fiscal policy" 10 "Transportation and infrastructure policy" 11 "Other" .d "Don't know" .a "NA"
+					9 "Taxation and fiscal policy" 10 "Transportation and infrastructure policy" 11 "Other" .d "Don't know" .a "NA" .r "Refused"
 lab val q53a_jp q53_label
 
 * Relabel some variables now so we can use the orignal label values
