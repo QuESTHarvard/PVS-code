@@ -587,6 +587,14 @@ append using "$data_mc/02 recoded data/input data files/pvs_ch.dta"
 
 qui do `label20'
 
+tempfile label21
+label save q4_label2 q5_label2 q15_label2 q33_label2 q50_label2 q51_label2 Language using `label21'
+label drop q4_label2 q5_label2 q15_label2 q33_label2 q50_label2 q51_label2 Language
+
+append using "$data_mc/02 recoded data/input data files/pvs_it_wave2.dta"
+
+qui do `label21'
+
 ********************************************************************************
 * Country - add new countries here
 lab def labels0 1 "Ecuador" 6 "Malawi" 11 "Lao PDR" 12 "United States" 13 "Mexico" 14 "Italy" ///
