@@ -1124,10 +1124,10 @@ replace strata = "Ethiopia_CATI" if country==3 & mode==1
 replace strata = "Ethiopia_F2F" if country==3 & mode==2
 replace strata = "Kenya_CATI" if country==5 & mode==1
 replace strata = "Kenya_F2F" if country==5 & mode==2
-replace strata = "Somaliland_CATI" if country==6 & mode==1
-replace strata = "Somaliland_F2F" if country==6 & mode==2
-replace strata = "Malawi_CATI" if country==22 & mode==1
-replace strata = "Malawi_F2F" if country==22 & mode==2
+replace strata = "Somaliland_CATI" if country==22 & mode==1
+replace strata = "Somaliland_F2F" if country==22 & mode==2
+replace strata = "Malawi_CATI" if country==6 & mode==1
+replace strata = "Malawi_F2F" if country==6 & mode==2
 
 *********************************9-20 SS: adding back variables for PVS dashboard:
 gen health = q9 
