@@ -160,6 +160,10 @@ recode q30 (1 15 19 21 = 1 "Cost/financial") ///
            (. .r 10 17 23 26 = .r "Other or Refused") ///
            (.d = .d "Don't know") ///
            (.a 7 = .a "NA") , gen(unmet_reason)
+		   
+recode q34 (1 = 1 "Urgent or new problem") (2 = 2 "Follow-up for chronic disease") ///
+		   (3 = 3 "Preventative or health check") (4 5 6 7 8 9 10 11 12 13 = 4 "Other") (.a = .a "NA") ///
+		   (.r = .r "Refused"), gen(last_reason)
 
 *last_wait_time
 * SS: updated 4-15-25 with V2.0 var 
