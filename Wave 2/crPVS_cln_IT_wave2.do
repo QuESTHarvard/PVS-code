@@ -32,7 +32,13 @@ drop country_reg q4_municipality q4_zipcode q27i_ita q27j_ita q27_h_access q27_h
 p_r_eta_6 a_istat_reg zona_5istat zona_5istatlaurea group_code genere_a sesso n_children age_child* ///
 vacc_imp vacc_safe vacc_eff priv_exp invite vacc_frag vacc_comp vacc_opt tech_use tech_impr tech_syst ///
 reg_acc reg_qual inc_help inc_phys inc_scre inc_vacc inc_diet inc_smok inc_no emp_sector emp_sector_other ///
-emp_role emp_role_other area zipcode municipality province id_raw laurea
+emp_role emp_role_other area zipcode municipality province id_raw laurea age age_cat gender region urban ///
+insured education health health_mental health_chronic activation usual_source usual_type_own usual_type_lvl ///
+usual_type usual_reason usual_quality visits visits_cat last_type_own last_type_lvl last_type last_reason ///
+last_sched last_sched_time last_qual last_skills last_supplies last_respect last_know last_explain last_decisions ///
+last_visit_rate last_wait_rate last_courtesy last_sched_rate last_promote phc_women phc_child phc_chronic phc_mental ///
+conf_sick conf_afford conf_getafford conf_opinion qual_public qual_private system_outlook system_reform covid_manage ///
+vignette_good vignette_poor minority income
 
 *------------------------------------------------------------------------------*
 * Rename some variables, and some recoding if variable will be dropped 
