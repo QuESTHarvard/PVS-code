@@ -84,16 +84,18 @@ lab def pa 0 "Not activated" ///
 lab val activation pa
 
 * usual_reason 
-recode q16 (2 16 = 1 "Convenience (short distance)") /// 
-			(1 8 = 2 "Cost (low cost, covered by insurance)") ///
-			(4 = 3 "Technical quality (provider skills)") ///
-			(3 5 10 22 = 4 "Interpersonal quality (short waiting time, respect)") /// SS: confirm placement of 21 with PVS team
-			(6 = 5 "Service readiness (medicines and equipment available)") ///
-			(7 = 6 "Only facility available") ///
-			(11 13 17 23 = 7 "Recommended by family or friends") ///
-			(12 20 = 8 "Referral from a provider") ///
-			(.r 9 14 15 18 19 21 997 = .r "Other or Refused") /// SS: confirm placement of 21 with PVS team
-			(.a = .a "NA") , gen(usual_reason)
+recode q16 (2 16 = 1 "Proximity/convenience") /// 
+           (1 8 = 2 "Cost/financial coverage") ///
+           (4 14 = 3 "Technical quality") ///
+           (5 22 = 4 "Interpersonal quality") ///
+           (3 10 = 5 "Access/efficiency") ///
+           (6 = 6 "Service readiness") ///
+           (7 = 7 "Only facility available") ///
+           (11 13 21 = 8 "Recommended by others") ///
+           (15 17 23 = 9 "Chosen by family") ///
+           (12 = 10 "Provider referral") ///
+           (.r . 9 18 19 997 = .r "Other or Refused") ///
+           (.a = .a "NA") , gen(usual_reason)
 
 * visits
 gen visits = q18_q19
@@ -143,17 +145,22 @@ egen visits_total = rowtotal(q18_q19 q22 q23)
 * value label for all numeric var
 lab val visits visits_total visits_home visits_tele na_rf
 
-* unmet_reason - confirm placements of 12-23
-recode q30 (1 = 1 "Cost (High cost)") ///
-			(2 22 = 2 "Convenience (Far distance)") ///
-			(3 5 11 26 = 3 "Interpersonal quality (Long waiting time, Respect)") ///
-			(4 = 4 "Technical quality (Poor provider skills)") ///
-			(6 24 = 5 "Service readiness (Medicines and equipment not available)") ///
-			(8 9 = 6 "COVID (COVID restritions or COVID fear)") ///
-			(10 12 13 14 15 16 17 18 19 20 21 22 23 25 27 = 7 "Other") /// SS: confirm placement of 19,20,21,22
-			(.a 7 = .a "NA or Illness not serious") ///
-			(.r = .r "Refused"), gen(unmet_reason)
-
+* unmet_reason
+* Note: "Illness not serious enough" (q30=7) is coded as .a (structural missing) 
+* because if the patient did not perceive a need, the health system cannot be 
+* said to have failed to meet it -- this is therefore not true unmet need.
+recode q30 (1 15 19 21 = 1 "Cost/financial") ///
+           (2 = 2 "Distance/convenience") ///
+           (3 11 20 22 16 18 = 3 "Access/efficiency") ///
+           (4 = 4 "Technical quality") ///
+           (5 = 5 "Interpersonal quality") ///
+           (6 24 = 6 "Service readiness") ///
+           (8 9 = 7 "COVID") ///
+           (12 13 14 25 27 = 8 "Fear/avoidance") ///
+           (. .r 10 17 23 26 = .r "Other or Refused") ///
+           (.d = .d "Don't know") ///
+           (.a 7 = .a "NA") , gen(unmet_reason)
+		   
 recode q34 (1 = 1 "Urgent or new problem") (2 = 2 "Follow-up for chronic disease") ///
 		   (3 = 3 "Preventative or health check") (4 5 6 7 8 9 10 11 12 13 = 4 "Other") (.a = .a "NA") ///
 		   (.r = .r "Refused"), gen(last_reason)
@@ -1135,10 +1142,10 @@ replace strata = "Ethiopia_CATI" if country==3 & mode==1
 replace strata = "Ethiopia_F2F" if country==3 & mode==2
 replace strata = "Kenya_CATI" if country==5 & mode==1
 replace strata = "Kenya_F2F" if country==5 & mode==2
-replace strata = "Somaliland_CATI" if country==6 & mode==1
-replace strata = "Somaliland_F2F" if country==6 & mode==2
-replace strata = "Malawi_CATI" if country==22 & mode==1
-replace strata = "Malawi_F2F" if country==22 & mode==2
+replace strata = "Somaliland_CATI" if country==22 & mode==1
+replace strata = "Somaliland_F2F" if country==22 & mode==2
+replace strata = "Malawi_CATI" if country==6 & mode==1
+replace strata = "Malawi_F2F" if country==6 & mode==2
 
 *********************************9-20 SS: adding back variables for PVS dashboard:
 gen health = q9 

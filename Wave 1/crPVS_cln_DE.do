@@ -713,22 +713,25 @@ tab Region, m // 1 Refused
 * ISCED 2 + 3 (24008, 24009, 24010, 24011)
 * ISCED 4 + (24001, 24002, 24003, 24004, 24005, 24006, 24007)
 
+* Recoded "other" responses
 gen education = .
-replace education = 1 if q8==24012 | q8==24013
-replace education = 1 if inlist(q8_other, "Grundschulabschluss", "Keinen Abschluss", "Lebenshilfe", "rente")
-replace education = 2 if q8==24008| q8==24009 | q8==24010 | q8==24011
+replace education = 0 if q8==24013
+replace education = 1 if q8==24012
+replace education = 1 if q8==24011
+replace education = 2 if q8==24008 | q8==24009 | q8==24010
+replace education = 3 if q8==24001 | q8==24002 | q8==24003 | q8==24004 | q8==24005 | q8==24006 | q8==24007
+replace education = 0 if inlist(q8_other, "Keinen Abschluss", "Lebenshilfe") & q8==24014
+replace education = 1 if inlist(q8_other, "Grundschulabschluss", "8.Klasse POS") & q8==24014
 replace education = 2 if inlist(q8_other, ///
-    "8.Klasse POS", ///
     "Gymnasiale Ausbildung bis zur 10.Klasse", ///
-    "Kreisvolkshochschule", ///
     "Realschule", ///
     "Realschulabschluss", ///
     "Realschule mit Pflegequalifikation", ///
     "Wirtschaftsschule", ///
-	"Realabschluss")
-replace education = 3 if q8==24001| q8==24002| q8==24003| q8==24004 |q8==24005| q8==24006| q8==24007
-replace education = 3 if inlist(q8_other, "2.Staatsexamen", "Berater")
-label define education 1 "Primary or less" 2 "Secondary" 3 "Tertiary"
+    "Realabschluss") & q8==24014
+replace education = 3 if inlist(q8_other, "2.Staatsexamen", "Kreisvolkshochschule") & q8==24014
+replace education = .d if inlist(q8_other, "Berater", "rente") & q8==24014
+label define education 0 "None (or no formal education)" 1 "Primary or less" 2 "Secondary" 3 "Tertiary"
 label values education education 
 tab education, m // 0 missing
 
