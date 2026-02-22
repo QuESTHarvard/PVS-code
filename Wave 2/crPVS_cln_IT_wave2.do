@@ -227,7 +227,7 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
 
 *------------------------------------------------------------------------------*/
 *dropping derived vars that weren't actually categorized/ or that we can just use the derived variable code (no new code)
-drop urban insured education usual_type_own usual_type_lvl last_type_own last_type_lvl
+drop urban insured education usual_type_own usual_type_lvl last_type_own last_type_lvl age qual_private qual_public age_cat gender region health health_mental health_chronic activation usual_source usual_type usual_reason usual_quality visits visits_cat last_type last_reason last_sched last_sched_time last_qual last_skills last_supplies last_respect last_know last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate last_promote phc_women phc_child phc_chronic phc_mental conf_sick conf_afford conf_getafford conf_opinion system_outlook system_reform covid_manage vignette_poor vignette_good
 
 * Reorder variables
 	order q*, sequential

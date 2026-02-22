@@ -977,18 +977,19 @@ replace minority = 0 if q50a_ch	== 1 | q50b_ch == 1	| q50c_ch == 1 | q50d_ch ==1
 	drop q50a_ch q50b_ch q50c_ch q50d_ch q50f_ch q50h_ch q50i_ch q50j_ch q50k_ch q50l_ch q50m_ch q50_ch_dk
 
 * Italy
-recode minority (.a = 1) if minority_it = 1
-recode minority (.a = 0) if minority_it = 0
+recode minority (.a = 1) if minority_it == 1
+recode minority (.a = 0) if minority_it == 0
+drop minority_it
 
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
 
-recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 5001 5101 5102 6001 7031 7032 ///
+recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 04025 4127 4128 4129 5001 5101 5102 6001 7031 7032 ///
 		   8001 9015 9016 9017 9118 9119 9120 10049 10050 10051 11001 11002 ///
 		   13001 14001 14002 15001 15002 15003 15004 16001 16002 16003 17001 ///
 		   17002 18062 19068 20075 20076 20077 21001 21002 22001 2001 2002 7006 10011 10012 ///
 		   23001 24001 24002 24003 25001 25002 = 0 "Lowest income") /// 
-		   (1003 2042 2043 2044 3010 3113 3114 4027 4130 4131 4132 5103 5104 5105 6002 7033 9018 9019 9121 9122 ////
+		   (1003 2042 2043 2044 3010 3113 3114 4027 4130 4131 4132 5103 5104 5105 6002 7033 8002 8003 9018 9019 9121 9122 ////
 		   10052 10053 10054 11003 11004 13002 14003 15005 15006 ///
 		   16004 16005 17003 17004 4026 18063 18064 18065 18066 18067 18082 18083 ///
 		   18084 19069 19070 19071 19072 19073 20078 20079 21003 21004 22002 2003 ///
@@ -1001,7 +1002,7 @@ recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 500
 		   16007 17005 17006 18085 19074 20080 20081 21005 21006 ///
 		   22003 22004 22005 22006 22007 2004 2005 7008 7009 7010 10015 ///
 		   23003 23004 23005 23006 24005 24006 24007 24008 24009 25005 25006 25007 25008 25009 = 2 "Highest income") ///
-		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
+		   (.r = .r "Refused") (.d = .d "Don't know") (.a = .a "NA"), gen(income)
 	
 * United States income recoding:
 replace income = 0 if q51 == 12001 | 12002 & country ==12  & wave ==1
@@ -1016,7 +1017,8 @@ replace income = 0 if income_it ==0 & country ==14 & wave ==2
 replace income = 1 if income_it ==1 & country ==14 & wave ==2
 replace income = 2 if income_it ==2 & country ==14 & wave ==2
 drop income_it
-	
+
+recode income (. = .r)
 	
 * Colombia q23 values seem implausible
 recode visits_tele (80 = .) if country == 2 
@@ -1183,6 +1185,9 @@ gen care_nonurgent = q40f_so
 recode care_nonurgent (. = .a) if country !=22
 lab val phc_women phc_child phc_chronic phc_mental qual_srh care_infections ///
 		care_nonurgent exc_poor_judge
+		
+recode phc_women phc_child (. = .a) if country ==22
+recode phc_women phc_chronic phc_child phc_mental (. = .r) if country ==23
 	
 gen qual_public = q42
 gen qual_private = q43 
@@ -1219,7 +1224,7 @@ recode q35 (0 = 0 "No") (1 = 1 "Yes") ///
 **** Order Variables ****
 
 order q*, sequential	   
-order respondent_serial respondent_id country country_reg wave language date /// 
+order respondent_serial respondent_id country country_reg wave language language_other date /// 
 	  int_length mode strata weight psu_id_for_svy_cmds age age_cat gender urban region ///
 	  insured insur_type insur_type_universal education health health_vge health_mental health_mental_vge health_chronic ///
 	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///
