@@ -528,18 +528,18 @@ lab val insured yes_no
 * insur_type 
 
 recode q7 (2017 2018 2003 2012 2013 2018 3001 5003 2017 2018 7010 7004 10019 11002 12002 12003 ///
-		   12005 12006 14002 16001 4023 4024 4025 4026 17002 2030 ///
+		   12005 12006 16001 4023 4024 4025 4026 17002 2030 ///
 		   18029 19031 20034 20037 21001 21002 21003 21005 22002 10005 10019 ///
 		   2001 23002 23003 23004 24001 = 0 "Public") ///
 		  (1004 1005 2028 2010 2011 3002 5004 5005 5006 3007 2028 7013 7015 10021 11001 12001 ///
-		  12004 13005 14001 16005 4027 17001 18004 18030 19032 19033 19034 20035 ///
+		  12004 13005 16005 4027 17001 18004 18030 19032 19033 19034 20035 ///
 		  20036 21004 22001 22003 22004 10016 10017 23001 6001 6003 24002 24003 = 1 "Private") /// 
 		  (1001 1002 1003 2015 2016 2006 2007 16002 16003 16004 13001 13002 ///
 		  13004 7011 7012 7008 7019 10022 ///
 		  = 2 "Social security/military") ///
 		  (1006 2995 2020 12995 12007 13995 4995 18995 19995 20995 21006 7021 10009 10020 5997 23005 6002 = 3 "Other") ///
 		  (.r = .r "Refused") ///
-		  (2030 7014 13014 16007 13003 7002 10001 1000 8001 8002 11001 11002 14001 14002 17001 17002 24001 24002 24003 24004 24005= .a "NA"), gen(insur_type) //SS: confirm placement of 1000
+		  (2030 7014 13014 16007 13003 7002 10001 1000 8001 8002 11001 11002 17001 17002 24001 24002 24003 24004 24005= .a "NA"), gen(insur_type) //SS: confirm placement of 1000
 
 recode insur_type (.a = 0) if q6_za == 1 & !inlist(q7, 9008, 9009, 9995, 9997)
 recode insur_type (0 = .a) if q6_za == 0 | q6_za == .r
@@ -549,13 +549,16 @@ replace insur_type = .a if country == 9
 recode insur_type (.a = 1) if q6_za == 1
 
 * insur_type_universal
-recode q7 (8002 11002 14002 17002 24001 = 0 "Public only") ///
-		  (8001 11001 14001 17001 24002 24003 = 1 "Public and supplemental private") /// 
+recode q7 (8002 11002 17002 24001 = 0 "Public only") ///
+		  (8001 11001 17001 24002 24003 = 1 "Public and supplemental private") /// 
 		  (24005 = 3 "Other") ///
 		  (.r = .r "Refused") (24004  = .a "NA"), gen(insur_type_universal)
 
 recode insur_type_universal (.a = 1) if q7_kr == 1
 recode insur_type_universal (.a = 0) if q7_kr == 0
+
+recode insur_type_universal (.a = 1) if q6_it == 1
+recode insur_type_universal (.a = 0) if q6_it == 0
 
 replace insur_type_universal = .a if !inlist(country, 8, 11, 14, 15, 17, 24)
 
@@ -597,10 +600,10 @@ recode q8 (1001 1002 3001 3002 5007 9012 9013 2025 2026 7018 7019 10032 10033 11
 		   14001 12001 15001 16001 16002 4039 17001 18045 19052 20058 21001 21002 ///
 		   22001 22002 2001 2002 7001 7002 10001 23001 23010 23011 6001 ///
 		   24013 = 0 "None (or no formal education)") ///
-          (1003 3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 14003 12002 12003 ///
+          (1003 3003 5008 9014 9015 2027 7020 10034 11002 13002 14002 12002 12003 ///
 		   15002 16003 4040 17002 18046 19053 20059 21003 21004 22003 22004 ///
 		   2003 7003 10002 10003 23002 23003 6002 24010 24011 24012 = 1 "Primary") ///
-		   (1004 3004 5009 9016 2028 7021 8002 10035 11003 11004 14004 14005 13003 13004 12004 ///
+		   (1004 3004 5009 9016 2028 7021 8002 10035 11003 11004 14003 14004 14005 13003 13004 12004 ///
 		   15003 15004 16004 4041 17003 18047 19054 19055 20060 21005 21006 ///
 		   22005 2004 7004 10004 23004 23005 23009 6003 24002 24003 24004 24005 24006 24007 ///
 		   24008 24009 25003 25004 = 2 "Secondary") ///
@@ -741,7 +744,7 @@ recode q15 (1001 1002 1003 1005 1007 3001 3002 3003 3006 3007 3008 ///
 		   20133 20134 20138 20140 21001 21002 21003 2109 2111 2115 7106 7109 7110 7114 7115 10107 10112 10113 ///
 		   10115 23001 23002 23003 23004 23005 23016 23017 6001 6002 6003 6008 24005 24006 25002 25003 = 1 "Secondary (or higher)") ///
 		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 18996 25006 = .a "NA") ///
-		   (3995 9995 12995 4995 18995 20995 21008 .r 3997 4997 5997 9997 23015 12007 24007 = .r "Refused"), gen(usual_type_lvl)
+		   (3995 9995 12995 4995 14005 18995 20995 21008 .r 3997 4997 5997 9997 23015 12007 24007 = .r "Refused"), gen(usual_type_lvl)
 
 		   recode usual_type_lvl (.a = 0) if inlist(q14_q15a_la,2,4,6) | ///
 								  inlist(q14_q15b_la,2,4,6)
@@ -888,7 +891,7 @@ recode q33 (1001 1002 1005 1007 3001 3002 3003 3006 3007 3008 3011 5012 5014 501
 		   19127 19130 19123 20133 20134 20138 20140 21001 21002 21003 22001 22004 2109 2111 2115 7106 7109 7110 7114 ///
 		   7115 10107 10112 10113 10115 23001 23002 23003 23004 23005 23016 23017 6001 6002 6003 6008 24005 24006 25002 25003 = 1 "Secondary (or higher)") ///
 		   (.a 18106 18107 18108 18109 18110 18111 18112 18113 18115 18116 18117 = .a "NA") ///
-		   (.r 3995 9995 11995 12995 12996 13995 4995 18995 20995 21008 22006 3997 5997 9997 23015 6010 24007 25006 = .r "Refused"), gen(last_type_lvl)
+		   (.r 3995 9995 11995 12995 12996 13995 4995 14005 18995 20995 21008 22006 3997 5997 9997 23015 6010 24007 25006 = .r "Refused"), gen(last_type_lvl)
 
 * Greece recode
 recode last_type_lvl (.a = 0) if q33a_gr == 1 | q33a_gr == 2
@@ -970,19 +973,23 @@ replace minority = 1 if q50f_ch == 1 | q50h_ch == 1 | q50i_ch == 1 | ///
 						q50j_ch == 1 | q50l_ch == 1 | q50m_ch == 1
 replace minority = 0 if q50a_ch	== 1 | q50b_ch == 1	| q50c_ch == 1 | q50d_ch ==1	
 
-*removing the multi-checkbox vars from final MC dataset:
-drop q50a_ch q50b_ch q50c_ch q50d_ch q50f_ch q50h_ch q50i_ch q50j_ch q50k_ch q50l_ch q50m_ch q50_ch_dk
+	*removing the multi-checkbox vars from final MC dataset:
+	drop q50a_ch q50b_ch q50c_ch q50d_ch q50f_ch q50h_ch q50i_ch q50j_ch q50k_ch q50l_ch q50m_ch q50_ch_dk
 
+* Italy
+recode minority (.a = 1) if minority_it == 1
+recode minority (.a = 0) if minority_it == 0
+drop minority_it
 
 * income 
 * Note - this is the income categories trying to reflex tertiles as close as possible based on distribution in sample 
 
-recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 5001 5101 5102 6001 7031 7032 ///
+recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 04025 4127 4128 4129 5001 5101 5102 6001 7031 7032 ///
 		   8001 9015 9016 9017 9118 9119 9120 10049 10050 10051 11001 11002 ///
 		   13001 14001 14002 15001 15002 15003 15004 16001 16002 16003 17001 ///
 		   17002 18062 19068 20075 20076 20077 21001 21002 22001 2001 2002 7006 10011 10012 ///
 		   23001 24001 24002 24003 25001 25002 = 0 "Lowest income") /// 
-		   (1003 2042 2043 2044 3010 3113 3114 4027 4130 4131 4132 5103 5104 5105 6002 7033 9018 9019 9121 9122 ////
+		   (1003 2042 2043 2044 3010 3113 3114 4027 4130 4131 4132 5103 5104 5105 6002 7033 8002 8003 9018 9019 9121 9122 ////
 		   10052 10053 10054 11003 11004 13002 14003 15005 15006 ///
 		   16004 16005 17003 17004 4026 18063 18064 18065 18066 18067 18082 18083 ///
 		   18084 19069 19070 19071 19072 19073 20078 20079 21003 21004 22002 2003 ///
@@ -995,7 +1002,7 @@ recode q51 (1001 1002 2039 2040 2041 3009 3111 3112 4024 4025 4127 4128 4129 500
 		   16007 17005 17006 18085 19074 20080 20081 21005 21006 ///
 		   22003 22004 22005 22006 22007 2004 2005 7008 7009 7010 10015 ///
 		   23003 23004 23005 23006 24005 24006 24007 24008 24009 25005 25006 25007 25008 25009 = 2 "Highest income") ///
-		   (.r = .r "Refused") (.d = .d "Don't know"), gen(income)
+		   (.r = .r "Refused") (.d = .d "Don't know") (.a = .a "NA"), gen(income)
 	
 * United States income recoding:
 replace income = 0 if q51 == 12001 | 12002 & country ==12  & wave ==1
@@ -1004,7 +1011,14 @@ replace income = 2 if q51 == 12005 & country ==12 & wave ==1
 replace income = 0 if q51 == 12101 | q51 == 12102 | q51 == 12103 & country == 12 & wave ==2
 replace income = 1 if q51 == 12104 | q51 == 12105 & country ==12 & wave ==2
 replace income = 2 if q51 == 12106 | q51 == 12107 & country ==12 & wave ==2
-	
+
+*Italy income recoding
+replace income = 0 if income_it ==0 & country ==14 & wave ==2
+replace income = 1 if income_it ==1 & country ==14 & wave ==2
+replace income = 2 if income_it ==2 & country ==14 & wave ==2
+drop income_it
+
+recode income (. = .r)
 	
 * Colombia q23 values seem implausible
 recode visits_tele (80 = .) if country == 2 
@@ -1078,7 +1092,7 @@ recode covid_vax_v1 ///
 local map 1 EC 2 CO 3 ET 4 IN 5 KE 6 MW 7 PE 9 ZA 10 UY 11 LA 12 US 13 MX ///
            14 IT 15 KR 16 AR 17 GB 18 GR 19 RO 20 NG 21 CN 22 SO 23 NP 24 DE 25 CH
 
-forvalues i = 1/24 {
+forvalues i = 1/25 {
     gen cc_`i' = (country == `i')
 
     local iso ""
@@ -1154,14 +1168,6 @@ lab val last_courtesy exc_poor_staff
 
 *phc women, child, chronic, mental, qual_srh, care_infection, care_nonurgent, conf_sick, conf_afford, conf_getafford,qual_public, qual_private, covid_manage
 gen phc_women = q40_a
-recode phc_women (. = 0) if q40a_so == 0 & country ==22
-recode phc_women (. = 1) if q40a_so == 1 & country ==22
-recode phc_women (. = 2) if q40a_so == 2 & country ==22
-recode phc_women (. = 3) if q40a_so == 3 & country ==22
-recode phc_women (. = 4) if q40a_so == 4 & country ==22
-recode phc_women (. = 5) if q40a_so == 5 & country ==22
-recode phc_women(. = .r) if q40a_so == .r & country ==22
-
 gen phc_child = q40_b
 gen phc_chronic = q40_c
 gen phc_mental = q40_d
@@ -1179,6 +1185,9 @@ gen care_nonurgent = q40f_so
 recode care_nonurgent (. = .a) if country !=22
 lab val phc_women phc_child phc_chronic phc_mental qual_srh care_infections ///
 		care_nonurgent exc_poor_judge
+		
+recode phc_women phc_child (. = .a) if country ==22
+recode phc_women phc_chronic phc_child phc_mental (. = .r) if country ==23
 	
 gen qual_public = q42
 gen qual_private = q43 
@@ -1215,7 +1224,7 @@ recode q35 (0 = 0 "No") (1 = 1 "Yes") ///
 **** Order Variables ****
 
 order q*, sequential	   
-order respondent_serial respondent_id country country_reg wave language date /// 
+order respondent_serial respondent_id country country_reg wave language language_other date /// 
 	  int_length mode strata weight psu_id_for_svy_cmds age age_cat gender urban region ///
 	  insured insur_type insur_type_universal education health health_vge health_mental health_mental_vge health_chronic ///
 	  ever_covid_v1 covid_confirmed_v1 covid_vax_v1 covid_vax_intent_v1 activation ///

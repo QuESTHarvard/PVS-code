@@ -75,6 +75,15 @@ lab drop recq52
 drop q4_province q52
 rename recq52 q52
 
+
+**recoding derived variables
+recode minority (1 = 0) (2 = 1), gen(minority_it)
+lab def minority 0 "Minority group" 1 "Majority group"
+lab val minority minority 
+drop minority
+
+rename income income_it
+
 *------------------------------------------------------------------------------*
 * Generate vairables
 * Fix interview length variable and other time variables 
@@ -173,6 +182,12 @@ recode q30 (997 = 8)
 
 label define insurlbl 0 "No, do not have private insurance", modify
 label define q17lbl .a "NA or I did not receive healthcare from this provider in the past 12 months", modify
+label define q24lbl 1 "Care for an urgent or new health problem such as an accident or injury or a new symptom like fever, pain, diarrhea, or depression." ///
+					2 "Follow-up care for a longstanding illness or chronic disease such as hypertension or diabetes. This may include mental health conditions." ///
+					3 "Preventive care or a visit to check on your health, such as an annual check-up, antenatal care, or vaccination." ///
+					4 "Other (specify)" ///
+					5 "Prescription filling/reviewing results" ///
+					6 "Routine follow-up care",modify
 
 *------------------------------------------------------------------------------*
 * Fix labels 
@@ -203,7 +218,7 @@ label drop q4_label arealbl q15lbl q33lbl q50lbl inclbl
 
 foreach i in 14 {
 
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsx",	///
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_id)	
  
@@ -211,6 +226,8 @@ ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_in
 
 
 *------------------------------------------------------------------------------*/
+*dropping derived vars that weren't actually categorized/ or that we can just use the derived variable code (no new code)
+drop urban insured education usual_type_own usual_type_lvl last_type_own last_type_lvl age qual_private qual_public age_cat gender region health health_mental health_chronic activation usual_source usual_type usual_reason usual_quality visits visits_cat last_type last_reason last_sched last_sched_time last_qual last_skills last_supplies last_respect last_know last_explain last_decisions last_visit_rate last_wait_rate last_courtesy last_sched_rate last_promote phc_women phc_child phc_chronic phc_mental conf_sick conf_afford conf_getafford conf_opinion system_outlook system_reform covid_manage vignette_poor vignette_good
 
 * Reorder variables
 	order q*, sequential
