@@ -624,14 +624,6 @@ label val q5 q5_label
 
 * Q6 okay - q6 is US only, q6_it, is Italy specific 
 * Q7 - combine q7_us and q7_mx
-* create values for Italy		
-
-recode q6_it (1 = 1 "Additional private insurance") ///
-			 (2 = 2 "Only public insurance") ///
-			 (.a = .a "NA") (.r = .r "Refused"), gen(q7_it) lab(q7_it_label)
-gen recq7_it = reccountry*1000 + q7_it
-replace recq7_it = .a if q7_it == .a
-replace recq7_it = .r if q7_it == .r
 
 gen recq7_mx = q7_mx
 replace recq7_mx = 995 if q7_mx == 6
@@ -658,11 +650,10 @@ replace recq7_us = reccountry*1000 + recq7_us
 replace recq7_us = .a if q7_us == .a
 replace recq7_us = .r if q7_us == .r
 
-gen q7 = max(recq7_it, recq7_mx, recq7_us)
-recode q7 (. = .r) if q7_it == .r | q7_mx == .r | q7_us == .r
-recode q7 (. = .a) if q7_it == .a | q7_mx == .a | q7_us == .a 
+gen q7 = max(recq7_mx, recq7_us)
+recode q7 (. = .r) if q7_mx == .r | q7_us == .r
+recode q7 (. = .a) if q7_mx == .a | q7_us == .a 
 
-local l14 q7_it_label
 local l13 labels23
 local l12 labels22
 
@@ -963,7 +954,7 @@ lab def labels73 .a "NA" .r "Refused", modify
 * Renaming variables 
 * Rename variables to match question numbers in current survey
 
-drop country q7_it q7_mx q7_us recq7_mx recq7_us recq7_it q8_it q8_mx q8_us recq8_it ///
+drop country q7_mx q7_us recq7_mx recq7_us q8_it q8_mx q8_us recq8_it ///
      recq8_mx recq8_us q5_it q5_mx q5_us ///
 	 recq5_it recq5_mx recq5_us q7_other_mx q7_other_us q19_other_it q19_other_mx ///
 	 q20_it q20_mx q20_us recq20_it recq20_mx recq20_us q20_other_it q20_other_mx ///
@@ -1135,7 +1126,7 @@ replace q45_other = subinstr(q45_other, `"""',  "", .)
 
 foreach i in 12 13 14 {
 
-ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'.xlsm",	///
+ipacheckspecifyrecode using "$in_out/Input/specifyrecode_inputs/specifyrecode_inputs_`i'_wave1.xlsm",	///
 	sheet(other_specify_recode)							///	
 	id(respondent_id)	
  

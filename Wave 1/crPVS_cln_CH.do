@@ -89,7 +89,7 @@ drop F131_5 // labeled 'age' with largely missing values and 'Y/N' responses
 	drop F052_N_10 //q11j_ch
 	drop F052_N_opn //q11j_ch_other
 
-	*type of home care services (confirm with Todd if we want to keep these)
+	*type of home care services 
 	drop F094_1 
 	drop F094_2 
 	drop F094_3 
@@ -112,7 +112,7 @@ rename age q1
 rename wgt weight 
 
 *citizenship question, look at Germany data (q4):
-	* Ask todd if the citizenship questions should be q4 instead of q3
+	* Change all the citizenship questions to be q4 instead of q3
 	
 	/* Does the respondent have swiss citizenship? dropped- will need to double check this coding when we want to use this data
 	gen q4a_ch = .
@@ -243,7 +243,7 @@ drop F115
 *rename F115_opn q28b_ch_other // dropped for now
 drop F115_opn
 
-rename F117 m2_ch // confirm with todd, similar to m2 in mental health module but not quite
+rename F117 m2_ch // add to dd
 rename F118 m3_ch // same as above, similar but not exact
 rename F118_opn m3_ch_other
 	
@@ -376,8 +376,8 @@ rename F173_1 q41_a
 rename F173_2 q41_b
 rename F173_3 q41_c
 rename F173_4 q41d_ch_de // add to dd (similar to q41d_de)
-rename F064 q41e_ch // confirm w todd to keep this (access contraception)
-rename F065 q41f_ch // confirm: pay for contraception
+rename F064 q41e_ch // add to dd
+rename F065 q41f_ch // add to dd
 
 rename F177 q42
 rename F178 q45 
