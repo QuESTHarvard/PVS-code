@@ -80,6 +80,24 @@ lab drop recq52
 drop q4_province q52
 rename recq52 q52
 
+recode q8 ///
+    (14001 = 14001 "IT: Mai frequentato la scuola o solo Nido e Scuola dell infanzia") ///
+    (14002 = 14002 "IT: Scuola primaria") ///
+    (14003 = 14003 "IT: Scuola secondaria di primo grado") ///
+    (14004 = 14005 "IT: Liceo, Istituto tecnico o Istituto professionale") ///
+    (14005 = 14006 "IT: Università Laurea triennale(compreso alta formazione artistica)") ///
+    (14006 = 14007 "IT: Università Laurea Magistrale o ciclo unico") ///
+    (14007 = 14008 "IT: Dottorato") ///
+	(. = .r "Refused") ///
+    , gen(recq8)
+	
+lab copy recq8 q8_label
+lab values recq8 q8_label
+lab drop recq8
+
+drop q8
+rename recq8 q8                                    
+
 *------------------------------------------------------------------------------*
 * Generate vairables
 * Fix interview length variable and other time variables 
@@ -209,7 +227,6 @@ label copy sexlbl gender2
 label copy q4_label q4_label2
 label copy arealbl q5_label2
 label copy insurlbl yes_no_ins
-label copy edulbl q8_label
 label copy q15lbl q15_label2
 label copy q33lbl q33_label2
 label copy q50lbl q50_label2
@@ -222,7 +239,6 @@ label val q3 gender2
 label val q4 q4_label2
 label val q5 q5_label2
 label val q6_it yes_no_ins
-label val q8 q8_label
 label val q15 q15_label2
 label val q33 q33_label2
 label val q50 q50_label2
