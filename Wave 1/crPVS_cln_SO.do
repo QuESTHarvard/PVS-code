@@ -106,6 +106,10 @@ replace q33 = 8 if q33 == .           	// . → refused
 *gen reclanguage = reccountry*1000 + language  // SS: missing from dataset
 *gen recinterviewer_id = reccountry*1000 + interviewer_id // SS: missing from dataset
 
+gen language = .a
+label define Language .a "NA", replace
+label values language Language
+
 gen recq4 = reccountry*1000 + q4
 *replace recq4 = .r if q4 == 998 // not needed in SO
 

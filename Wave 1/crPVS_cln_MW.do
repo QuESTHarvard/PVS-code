@@ -714,8 +714,8 @@ lab def q39_label .a "NA"
 lab val q39 q39_label
 
 label drop language
-lab def language 6001 "Chichewa" 6002 "English" 6003 "Tumbuka"
-lab val language language 
+lab def Language 6001 "MW: Chichewa" 6002 "MW: English" 6003 "MW: Tumbuka"
+lab val language Language 
 
 *------------------------------------------------------------------------------*
 * Renaming variables 

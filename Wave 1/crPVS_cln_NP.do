@@ -160,8 +160,9 @@ replace recq51 = .r if q51== 999
 
 * Relabel some variables now so we can use the orignal label values
 
+recode reclanguage (. = .a)
 lab def lang 23001 "NP: Nepali" 23002 "NP: Maithali" 23003 "NP: Newari" 23004 "NP: Bhojpuri" ///
-			 23005 "NP: Tharu"  23006 "NP: Tamang" 23007 "NP: Doteli" 23008 "NP: Other"
+			 23005 "NP: Tharu"  23006 "NP: Tamang" 23007 "NP: Doteli" 23008 "NP: Other" .a "NA"
 lab values reclanguage lang
 
 local q4l province
@@ -262,6 +263,9 @@ drop visits_total
  * Recode missing values to NA for intentionally skipped questions - SS:check q18,q26,q41_a q41_b q41_c, q42,q43,q44,q45 q46,q47,q51,q52b_np 
 
 *q1/q2 - no missing data
+
+* q6
+recode q6 (. = .a)
 
 * q7 
 recode q7 (. = .a) if q6 == 0 | q6 == .r | q6 == .
