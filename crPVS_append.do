@@ -588,8 +588,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_ch.dta"
 qui do `label20'
 
 tempfile label21
-label save q4_label2 q5_label2 q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language using `label21'
-label drop q4_label2 q5_label2 q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language
+label save q4_label2 q5_label2 q15_label2 q33_label2 q50_label2 q51_label2 Language using `label21'
+label drop q4_label2 q5_label2 q15_label2 q33_label2 q50_label2 q51_label2 Language
 
 append using "$data_mc/02 recoded data/input data files/pvs_it_wave2.dta"
 
@@ -731,10 +731,6 @@ recode m1_a m1_b (. = .a) if country !=25
 recode q6_jp q12c_jp q12d_jp q12e_jp q14_jp q27i_jp q27j_jp q27k_jp q27l_jp q28c_jp q28d_jp ///
 		q31c_jp q31d_jp q32_jp q40e_jp q40f_jp q41d_jp q41e_jp q41f_jp q52a_jp q53a_jp (. = .a) if country !=8
 recode CELL1 CELL2 q44 (. = .a) if country == 8
-
-* Italy Wave 2
-recode q6_it q14_it q32_it (. = .a) if country !=14
-recode CELL1 CELL2 q7 q31a q31b q37 q44 (. = .a) if country ==14 & wave == 2
 *-------------------------------------------------------------------------------*	
 	
 * Other value label modifcations
