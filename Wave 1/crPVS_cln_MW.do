@@ -496,10 +496,12 @@ drop q8a
 rename Q8a_other q50_other
 
 encode q8b, gen(recq51)
-recode recq51 (6 = .r)
 drop q8b
-
-
+recode recq51 (1 = 6001) (2 = 6005) (3 = 6003) (4 = 6004) (5 = 6002) (6 = .r)
+lab def q51_label 6001 "Less than MK52,000" 6002 "MK52,000 to <MK100,000" 6003 "MK100,000 to <MK500,000" ///
+				  6004 "MK500,000 to <MK1,000,000" 6005 "MK1,000,000 or more" .r "Refused"
+lab val recq51 q51_label			  
+	
 ren rec* *
 
 * gen rec variable for variables that have overlap values to be country code * 1000 + variable 
@@ -529,9 +531,6 @@ replace recq33 = .r if q33== 999
 gen recq50 = country*1000 + q50 
 *replace recq50 = .r if q50== 999
 
-gen recq51 = country*1000 + q51 
-*replace recq51 = .r if q51== 999
-
 * Relabel some variables now so we can use the orignal label values
 label define country_short 6 "MW" 
 qui elabel list country_short
@@ -545,9 +544,8 @@ local q7l recq7
 local q8l recq8
 local q15l recq15
 local q33l recq33
-local q51l recq51
 
-foreach q in q4 q5 q7 q8 q15 q33 q51 {
+foreach q in q4 q5 q7 q8 q15 q33 {
 	qui elabel list ``q'l'
 	local `q'n = r(k)
 	local `q'val = r(values)
@@ -580,7 +578,7 @@ lab val recq50 q50_label
 
 *****************************
 
-drop q4 q5 q7 q8 q15 q33 q50 q51 language
+drop q4 q5 q7 q8 q15 q33 q50 language
 ren rec* *
 
 *------------------------------------------------------------------------------*
@@ -737,7 +735,7 @@ label val q33 q33_label2
 label val q50 q50_label2
 label val q51 q51_label2
 
-label drop q4_label q5_label q15_label q33_label recq50 recq51
+label drop q4_label q5_label q15_label q33_label q50_label q51_label
 
 *------------------------------------------------------------------------------*
 
@@ -795,7 +793,7 @@ ren q50_other_original q50_other
 
 *------------------------------------------------------------------------------*/
 
-* Create weights
+* Weight creation: Variables created first, then weight construction follows
 
 tab country // N=1,024 completed surveys
 
@@ -972,18 +970,110 @@ tab edu_3g_gender, m // 0 missing
 
 
 
+*********************************************************
+* WEIGHT CONSTRUCTION - Adjusting for mixed modes 
+* Source for phone ownership: Afrobarometer 2024/2025
+* Malawi Dispatch AD1094 - 66% of adult Malawians own mobile phone
+*********************************************************
 
+*********************************************************
+* STEP 1: Design weights for CATI and CAPI
+* Corrects for Northern Region oversampling
+* Achieved F2F sample (from data): North=61, Central=120, South=119, Total=300
+* Population shares (census): North=12%, Central=50%, South=38%
+*********************************************************
 
-*After testing, we choose wgt6 [age (5 levels),region (3 levels),education by gender (8 levels)]:
-ipfweight age_5g Region edu_gender, gen(weight) ///
-			val(43.15 23.95 14.6 8.01 10.29 /// age (5 levels)
-			 13.02 43.39 43.59  /// region (3 levels)
-			 15.49 25.26 10.73 1.51 8.17 22.05 14.44 2.35) /// edu_gender
-			maxit(50) //
+gen dw_f2f = .
 
+* Northern (pop share = 12%, F2F n = 61, total F2F = 300)
+replace dw_f2f = 0.12 / (61/300) if mode==2 & inlist(region, 6005, 6008, 6025)
 
-** Just try to keep data set clean, drop all the variables created above, except wgt
-drop gender urban age_5g age_3g Region education_4g education_3g urban_gender urban_age_5g urban_age_3g region_gen edu_gender edu_3g_gender
+* Central (pop share = 50%, F2F n = 120, total F2F = 300)
+replace dw_f2f = 0.50 / (120/300) if mode==2 & inlist(region, 6006, 6007, 6013, 6020, 6022, 6023)
+
+* Southern (pop share = 38%, F2F n = 119, total F2F = 300)
+replace dw_f2f = 0.38 / (119/300) if mode==2 & inlist(region, 6001, 6003, 6014, 6015, 6018, 6021)
+
+* CATI: SRS so design weight = 1
+replace dw_f2f = 1 if mode==1
+
+* Verify - should return 0
+count if missing(dw_f2f)
+
+*********************************************************
+* STEP 2: Blending weights by mode
+* Phone ownership prevalence: 69% (Afrobarometer 2024/2025, AD1094)
+* CATI frame = phone owners (69% of adult population)
+* F2F frame  = rural non-phone owners (31% of adult population)
+*********************************************************
+
+local phone_own     = 0.69   // CATI frame share (Afrobarometer 2024, AD1094)
+local non_phone_own = 0.31   // F2F frame share
+
+count if mode==1
+local n_cati = r(N)
+count if mode==2
+local n_f2f = r(N)
+count
+local n_total = r(N)
+
+scalar cati_share = `n_cati' / `n_total'
+scalar f2f_share  = `n_f2f'  / `n_total'
+
+gen blend_wgt = .
+replace blend_wgt = `phone_own'     / cati_share if mode==1
+replace blend_wgt = `non_phone_own' / f2f_share  if mode==2
+
+assert !missing(blend_wgt)
+
+*********************************************************
+* STEP 3: Combine for base weight
+*********************************************************
+
+gen base_wgt = dw_f2f * blend_wgt
+
+*********************************************************
+* STEP 4: Normalizing base weight
+* Rescale so mean = 1 (weights sum to total sample size)
+*********************************************************
+
+sum base_wgt
+gen base_wgt_norm = base_wgt / r(mean)
+
+*********************************************************
+* STEP 5: IPF raking to pop benchmarks
+* Dimensions: age (5 levels), region (3 levels), edu_gender (8 levels)
+*********************************************************
+
+ipfweight age_5g Region edu_gender, gen(weight) startwgt(base_wgt_norm) ///
+    val(43.15 23.95 14.6 8.01 10.29 ///
+        13.02  43.39 43.59           ///
+        15.49 25.26 10.73 1.51 8.17 22.05 14.44 2.35) ///
+    maxit(50) tolerance(0.005) upthreshold(5)
+
+*********************************************************
+* STEP 6: DIAGNOSTICS
+*********************************************************
+
+* Weight distribution
+sum weight, detail
+
+* Check by mode — F2F should have higher average weight given smaller sample
+tab mode, sum(weight)
+
+* Flag extreme weights (> 5x mean is a common threshold)
+sum weight
+gen extreme_wgt = (weight > 5 * r(mean))
+tab extreme_wgt mode
+
+* Verify weighted marginals match population targets
+foreach var of varlist age_5g Region edu_gender {
+    di "--- `var' ---"
+    tab `var' [iweight=weight]
+}
+
+** Dropping unneeded weighting variables
+drop gender urban age_5g age_3g Region education_4g education_3g urban_gender urban_age_5g urban_age_3g region_gen edu_gender edu_3g_gender dw_f2f blend_wgt base_wgt base_wgt_norm
 		
 
 * Reorder variables
