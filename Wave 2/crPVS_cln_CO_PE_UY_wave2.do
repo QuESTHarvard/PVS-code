@@ -360,7 +360,7 @@ rename p49 q49
 recode p50_all (1 = 1 "Spanish") (2 = 2 "Lenguas caribes") (3 = 3 "Lenguas chocó") (4 = 4 "Lenguas tucanas") ///
 			   (5 = 5 "Quechua") (6 = 6 "Aimara") (7 = 7 "Awajún/Aguaruna") (8 = 8 "Shipibo/Konibo") ///
 			   (9 = 9 "Shawi/Chayahuita") (10 = 10 "Other native language") (11 = 11 "Portuguese") ///
-			   (12 = 12 "English") (13 = 13 "Another foreign language") (14 = 14 "Other") (15 = .r "No response"), gen(q50)
+			   (12 = 12 "English") (13 = 13 "Another foreign language") (14 = 14 "Other") (15 = .r "No response") (. = .a "NA"), gen(q50)
 drop p50_all			   
 
 recode p51_all (1 = 1 "Less than 500,000 pesos") (2 = 2 "Between 500,000 and 1 million pesos") ///
@@ -377,6 +377,30 @@ rename duracion int_length
 
 *gen reclanguage = country*1000 + language  
 *gen recinterviewer_id = country*1000 + interviewer_id *interviewer_id in a string fmt
+
+gen language = country*1000 + q50 
+recode language (. = .a)
+label define Language ///
+    2001 "CO: Spanish" ///
+    2002 "CO: Lenguas caribes" ///
+    2003 "CO: Lenguas chocó" ///
+    2004 "CO: Lenguas tucanas" ///
+    2011 "CO: Portuguese" ///
+    2012 "CO: English" ///
+    2014 "CO: Other" ///
+    7001 "PE: Spanish" ///
+    7005 "PE: Quechua" ///
+    7006 "PE: Aimara" ///
+    7007 "PE: Awajún/Aguaruna" ///
+    7008 "PE: Shipibo/Konibo" ///
+    7009 "PE: Shawi/Chayahuita" ///
+    7010 "PE: Other native language" ///
+	7013 "PE: Another foreign language" ///
+    .r   "Refused" ///
+	.a   "NA"
+
+label values language Language
+
 
 gen recq4 = country*1000 + q4
 *replace recq4 = .r if q4 == 999
@@ -796,7 +820,7 @@ label drop labels69 labels70 labels71
 
 *Reorder variables
 order q*, sequential
-order respondent_serial respondent_id mode country wave date int_length weight // language not in dataset
+order respondent_serial respondent_id mode country wave language date int_length weight // language was not in dataset
 
 *-------------------------------------------------------------------------------*
 
@@ -807,6 +831,7 @@ lab var respondent_serial "Respondent Serial #"
 lab var int_length "Interview length (minutes)" 
 lab var date "Date of the interview"
 lab var respondent_id "Respondent ID"
+lab var language "Language"
 
 lab var mode "mode"
 lab var q1 "Q1. Respondent's еxact age"

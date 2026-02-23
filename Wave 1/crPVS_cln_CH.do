@@ -458,8 +458,8 @@ replace recq51 = .r if q51== 999
 
 * Relabel some variables now so we can use the orignal label values
 
-lab def lang 25001 "CH: German" 25002 "CH: French" 25003 "CH: Italian"
-lab values reclanguage lang
+lab def Language 25001 "CH: German" 25002 "CH: French" 25003 "CH: Italian"
+lab values reclanguage Language
 
 local q4l labels225
 local q5l labels6

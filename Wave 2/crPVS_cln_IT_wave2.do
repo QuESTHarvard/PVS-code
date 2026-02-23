@@ -44,9 +44,10 @@ gen respondent_id = "IT" + string(respondent_serial, "%09.0f")
 replace q4 = 14022 if q4 == 14021 & q4_province == 7
 replace q4 = 14021 if q4 == 14017 & q4_province == 21
 replace q4 = 14017 if q4 == 14017 & q4_province == 22
+recode q4 (. = .a)
 
 lab copy region_lbl q4_label
-lab define q4_label 14017 "IT: Provincia Autonoma Trento" 14021 "IT: Provincia Autonoma Bolzano/Bozen" 14022 "IT: Valle d'Aosta", modify
+lab define q4_label 14017 "IT: Provincia Autonoma Trento" 14021 "IT: Provincia Autonoma Bolzano/Bozen" 14022 "IT: Valle d'Aosta" .a "NA", modify
 lab val q4 q4_label
 lab drop region_lbl
 

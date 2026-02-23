@@ -508,8 +508,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_cn.dta"
 qui do `label10'
 
 tempfile label11
-label save q4_label2 q5_label2 q7_label q8_label q33_label2 q50_label2 q51_label2 using `label11'
-label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q50_label2 q51_label2 
+label save q4_label2 q5_label2 q7_label q8_label q33_label2 q50_label2 q51_label2 Language using `label11'
+label drop q4_label2 q5_label2 q7_label q8_label q33_label2 q50_label2 q51_label2 Language
 
 append using "$data_mc/02 recoded data/input data files/pvs_so.dta"
 
@@ -532,8 +532,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_et_in_ke_za_wave2.dt
 qui do `label13'
 
 tempfile label14
-label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 using `label14'
-label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2
+label save q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language using `label14'
+label drop q4_label2 q5_label2 q7_label q8_label q15_label2 q33_label2 q50_label2 q51_label2 Language
 
 append using "$data_mc/02 recoded data/input data files/pvs_co_pe_uy_wave2.dta"
 
@@ -580,8 +580,8 @@ append using "$data_mc/02 recoded data/input data files/pvs_jp.dta"
 qui do `label19'
 
 tempfile label20
-label save q4_label2 q5_label2 q8_label q15_label2 q33_label2 q51_label2 lang using `label20'
-label drop q4_label2 q5_label2 q8_label q15_label2 q33_label2 q51_label2 lang
+label save q4_label2 q5_label2 q8_label q15_label2 q33_label2 q51_label2 Language using `label20'
+label drop q4_label2 q5_label2 q8_label q15_label2 q33_label2 q51_label2 Language
 
 append using "$data_mc/02 recoded data/input data files/pvs_ch.dta"
 
